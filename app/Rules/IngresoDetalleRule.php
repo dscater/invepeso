@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Rules;
+
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Translation\PotentiallyTranslatedString;
+
+class IngresoDetalleRule implements ValidationRule
+{
+
+    /**
+     * Run the validation rule.
+     *
+     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
+     */
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        if (!is_array($value)) {
+            $fail('Debes ingresar al menos 1 producto');
+            return;
+        }
+
+        foreach ($value as $index => $detalle) {
+            // precio
+            if ($detalle['costo'] === "" || $detalle['costo'] === null) {
+                $fail("El costo del producto " . ($index + 1) . " es obligatorio.");
+            }
+
+            if (!is_numeric($detalle['costo']) || $detalle['costo'] < 0) {
+                $fail("El costo del producto " . ($index + 1) . " debe ser mayor a 0.");
+            }
+            // cantidad
+            if ($detalle['cantidad'] === "" || $detalle['cantidad'] === null) {
+                $fail("La cantidad del producto " . ($index + 1) . " es obligatorio.");
+            }
+
+            if (!is_numeric($detalle['cantidad']) || $detalle['cantidad'] < 0) {
+                $fail("La cantidad del producto " . ($index + 1) . " debe ser mayor a 0.");
+            }
+        }
+    }
+}
