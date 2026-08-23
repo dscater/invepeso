@@ -104,10 +104,13 @@ class IngresoProductoService
                 "tipo_ingreso_id" => $ingreso_producto->tipo_ingreso_id,
                 "producto_id" => $item["producto_id"],
                 "cantidad" => $item["cantidad"],
+                "verificado" => NULL, // AÚN NO SE VERIFICO
+                "faltantes" => NULL, // AÚN NO SE VERIFICO
+                "respuesto" => NULL, // AÚN NO SE VERIFICO
+                "observacion" => NULL, // AÚN NO SE VERIFICO
+                "cantidad_fisica" => NULL, // AÚN NO SE VERIFICO
                 "costo" => $item["costo"],
                 "subtotal" => $item["subtotal"],
-                "disponible" => $item["cantidad"],
-                "fecha_vencimiento" => $item["fecha_vencimiento"] ?? NULL,
             ];
 
             $ingreso_detalle = IngresoDetalle::create($dato_ingreso_detalle);
@@ -130,6 +133,7 @@ class IngresoProductoService
         }
 
         // TODO: REGISTRAR VALOR CANCELADO EN MOVIMIENTO DE CAJAS
+
 
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA INGRESO DE PRODUCTO", $ingreso_producto);

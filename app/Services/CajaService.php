@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class CajaService
 {
-    private $modulo = "SUCURSALES";
+    private $modulo = "CAJAS";
 
     public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
 

@@ -242,8 +242,6 @@ const agregarProductoCompra = async (item) => {
                 cantidad: cantidad,
                 costo: costo,
                 subtotal: subtotal.toFixed(2),
-                disponible: cantidad,
-                fecha_vencimiento: "",
             });
         } else {
             // existe
@@ -508,7 +506,7 @@ onMounted(() => {
                                                             >
                                                                 <label
                                                                     class="mb-0"
-                                                                    >Costo
+                                                                    >C/U
                                                                     Bs.</label
                                                                 >
                                                                 <div
@@ -714,9 +712,7 @@ onMounted(() => {
                                                     )
                                                 "
                                             />
-                                            <div class="text-xxs">
-                                                Costo Bs.
-                                            </div>
+                                            <div class="text-xxs">C/U Bs.</div>
                                         </div>
                                         <div class="col-md-4 text-end">
                                             <div
