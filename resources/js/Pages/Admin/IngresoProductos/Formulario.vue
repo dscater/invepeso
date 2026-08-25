@@ -388,7 +388,7 @@ onMounted(() => {
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder="Nombre del Producto"
+                                    placeholder="Producto"
                                     v-model="nombreProducto"
                                     @keyup="filtrarNombres"
                                 />

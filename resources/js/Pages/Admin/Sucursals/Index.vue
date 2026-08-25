@@ -109,13 +109,13 @@ const eliminarSucursal = (item) => {
 };
 </script>
 <template>
-    <Head title="Sucursales"></Head>
+    <Head title="Sucursales/Almacenes"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-building"></i> Sucursales
+                        <i class="fa fa-building"></i> Sucursales/Almacenes
                     </h3>
                 </div>
                 <!-- /.col -->
@@ -124,7 +124,9 @@ const eliminarSucursal = (item) => {
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
-                        <li class="breadcrumb-item active">Sucursales</li>
+                        <li class="breadcrumb-item active">
+                            Sucursales/Almacenes
+                        </li>
                     </ol>
                 </div>
                 <!-- /.col -->

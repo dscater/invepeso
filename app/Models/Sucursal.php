@@ -20,4 +20,9 @@ class Sucursal extends Model
     {
         return date("d/m/Y", strtotime($this->fecha_registro));
     }
+
+    public function cajas()
+    {
+        return $this->hasMany(Caja::class, 'sucursal_id');
+    }
 }

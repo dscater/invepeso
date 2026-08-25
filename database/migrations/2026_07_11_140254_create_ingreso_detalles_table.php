@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger("producto_id");
             $table->double("cantidad", 8, 2);
             $table->double("verificado", 8, 2)->nullable();
-            $table->integer("faltantes");
+            $table->integer("faltantes")->nullable();
             $table->double("repuesto", 8, 2)->default(0);
             $table->string("observacion", 900)->nullable();
             $table->double("cantidad_fisica", 8, 2)->nullable(); // Cantidad que ingresa al stock

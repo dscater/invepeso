@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 23-08-2026 a las 17:40:10
+-- Tiempo de generación: 25-08-2026 a las 01:44:34
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -20,40 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `invepeso_db`
 --
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `cajas`
---
-
-CREATE TABLE `cajas` (
-  `id` bigint UNSIGNED NOT NULL,
-  `sucursal_id` bigint UNSIGNED NOT NULL,
-  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `activo` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `caja_users`
---
-
-CREATE TABLE `caja_users` (
-  `id` bigint UNSIGNED NOT NULL,
-  `sucursal_id` bigint UNSIGNED NOT NULL,
-  `caja_id` bigint UNSIGNED NOT NULL,
-  `user_id` bigint UNSIGNED NOT NULL,
-  `fecha` date NOT NULL,
-  `hora` time NOT NULL,
-  `fecha_ultimo` date DEFAULT NULL,
-  `hora_ultimo` time DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -154,6 +120,15 @@ CREATE TABLE `historial_accions` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `historial_accions`
+--
+
+INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `datos_original`, `datos_nuevo`, `modulo`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
+(1, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 3, \"saldo\": \"1080.00\", \"total\": \"1080.00\", \"codigo\": \"L-00003\", \"user_id\": 1, \"cancelado\": \"0\", \"created_at\": \"2026-08-25T01:33:33.000000Z\", \"updated_at\": \"2026-08-25T01:33:33.000000Z\", \"descripcion\": \"\", \"sucursal_id\": \"1\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-08-24\", \"tipo_ingreso_id\": \"1\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-08-24', '21:33:33', '2026-08-25 01:33:33', '2026-08-25 01:33:33'),
+(2, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 300 EN LA SUCURSAL ALMACÉN', '{\"id\": 1, \"hora\": \"21:35:28\", \"fecha\": \"2026-08-24\", \"monto\": \"300\", \"modulo\": \"IngresoProducto\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"created_at\": \"2026-08-25T01:35:28.000000Z\", \"updated_at\": \"2026-08-25T01:35:28.000000Z\", \"descripcion\": \"COMPRA DE PRODUCTOS\", \"registro_id\": 4, \"sucursal_id\": \"1\", \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-08-24', '21:35:28', '2026-08-25 01:35:28', '2026-08-25 01:35:28'),
+(3, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 4, \"saldo\": \"0.00\", \"total\": \"300.00\", \"codigo\": \"L-00004\", \"user_id\": 1, \"cancelado\": \"300\", \"created_at\": \"2026-08-25T01:35:28.000000Z\", \"updated_at\": \"2026-08-25T01:35:28.000000Z\", \"descripcion\": \"\", \"sucursal_id\": \"1\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-08-24\", \"tipo_ingreso_id\": \"1\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-08-24', '21:35:28', '2026-08-25 01:35:28', '2026-08-25 01:35:28');
+
 -- --------------------------------------------------------
 
 --
@@ -167,16 +142,25 @@ CREATE TABLE `ingreso_detalles` (
   `producto_id` bigint UNSIGNED NOT NULL,
   `cantidad` double NOT NULL,
   `verificado` double(8,2) DEFAULT NULL,
-  `faltantes` int NOT NULL,
+  `faltantes` int DEFAULT NULL,
   `repuesto` double(8,2) NOT NULL DEFAULT '0.00',
   `observacion` varchar(900) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cantidad_fisica` double(8,2) DEFAULT NULL,
   `costo` decimal(24,2) NOT NULL,
   `subtotal` decimal(24,2) NOT NULL,
-  `disponible` double NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `ingreso_detalles`
+--
+
+INSERT INTO `ingreso_detalles` (`id`, `ingreso_producto_id`, `tipo_ingreso_id`, `producto_id`, `cantidad`, `verificado`, `faltantes`, `repuesto`, `observacion`, `cantidad_fisica`, `costo`, `subtotal`, `created_at`, `updated_at`) VALUES
+(1, 3, 1, 2, 4, NULL, NULL, 0.00, NULL, NULL, 120.00, 480.00, '2026-08-25 01:33:33', '2026-08-25 01:33:33'),
+(2, 3, 1, 3, 1, NULL, NULL, 0.00, NULL, NULL, 300.00, 300.00, '2026-08-25 01:33:33', '2026-08-25 01:33:33'),
+(3, 3, 1, 4, 1, NULL, NULL, 0.00, NULL, NULL, 300.00, 300.00, '2026-08-25 01:33:33', '2026-08-25 01:33:33'),
+(4, 4, 1, 4, 1, NULL, NULL, 0.00, NULL, NULL, 300.00, 300.00, '2026-08-25 01:35:28', '2026-08-25 01:35:28');
 
 -- --------------------------------------------------------
 
@@ -200,6 +184,14 @@ CREATE TABLE `ingreso_productos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `ingreso_productos`
+--
+
+INSERT INTO `ingreso_productos` (`id`, `codigo`, `sucursal_id`, `tipo_ingreso_id`, `proveedor_id`, `descripcion`, `total`, `cancelado`, `saldo`, `fecha_registro`, `user_id`, `status`, `created_at`, `updated_at`) VALUES
+(3, 'L-00003', 1, 1, 1, '', 1080.00, 0.00, 1080.00, '2026-08-24', 1, 1, '2026-08-25 01:33:33', '2026-08-25 01:33:33'),
+(4, 'L-00004', 1, 1, 1, '', 300.00, 300.00, 0.00, '2026-08-24', 1, 1, '2026-08-25 01:35:28', '2026-08-25 01:35:28');
 
 -- --------------------------------------------------------
 
@@ -288,12 +280,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (17, '2026_07_11_124939_create_ingreso_productos_table', 3),
 (18, '2026_07_11_140254_create_ingreso_detalles_table', 3),
 (19, '2026_07_11_140255_create_salida_productos_table', 3),
-(20, '2026_07_11_140302_create_cajas_table', 3),
 (21, '2026_07_11_140303_create_ventas_table', 3),
 (22, '2026_07_11_140306_create_venta_detalles_table', 4),
 (23, '2026_07_11_140640_create_venta_detalle_lotes_table', 4),
 (24, '2026_07_11_140814_create_movimiento_cajas_table', 4),
-(25, '2026_07_11_140836_create_caja_users_table', 4),
 (26, '2026_07_11_140855_create_kardex_productos_table', 4),
 (27, '2026_07_11_141426_create_producto_sucursals_table', 4);
 
@@ -321,10 +311,11 @@ CREATE TABLE `modulos` (
 
 CREATE TABLE `movimiento_cajas` (
   `id` bigint UNSIGNED NOT NULL,
-  `sucursal_id` bigint UNSIGNED NOT NULL,
-  `caja_id` bigint UNSIGNED DEFAULT NULL,
-  `modulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `registro_id` bigint UNSIGNED NOT NULL,
+  `sucursal_id` bigint UNSIGNED DEFAULT NULL,
+  `modulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `registro_id` bigint UNSIGNED DEFAULT NULL,
+  `monto` decimal(24,2) NOT NULL,
+  `tipo_movimiento` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tipo_pago` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` varchar(900) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `fecha` date NOT NULL,
@@ -333,6 +324,13 @@ CREATE TABLE `movimiento_cajas` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `movimiento_cajas`
+--
+
+INSERT INTO `movimiento_cajas` (`id`, `sucursal_id`, `modulo`, `registro_id`, `monto`, `tipo_movimiento`, `tipo_pago`, `descripcion`, `fecha`, `hora`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 'IngresoProducto', 4, 300.00, 'EGRESO', 'EFECTIVO', 'COMPRA DE PRODUCTOS', '2026-08-24', '21:35:28', 1, '2026-08-25 01:35:28', '2026-08-25 01:35:28');
 
 -- --------------------------------------------------------
 
@@ -689,22 +687,6 @@ CREATE TABLE `venta_detalle_lotes` (
 --
 
 --
--- Indices de la tabla `cajas`
---
-ALTER TABLE `cajas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `cajas_sucursal_id_foreign` (`sucursal_id`);
-
---
--- Indices de la tabla `caja_users`
---
-ALTER TABLE `caja_users`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `caja_users_sucursal_id_foreign` (`sucursal_id`),
-  ADD KEY `caja_users_caja_id_foreign` (`caja_id`),
-  ADD KEY `caja_users_user_id_foreign` (`user_id`);
-
---
 -- Indices de la tabla `categorias`
 --
 ALTER TABLE `categorias`
@@ -782,7 +764,6 @@ ALTER TABLE `modulos`
 ALTER TABLE `movimiento_cajas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `movimiento_cajas_sucursal_id_foreign` (`sucursal_id`),
-  ADD KEY `movimiento_cajas_caja_id_foreign` (`caja_id`),
   ADD KEY `movimiento_cajas_user_id_foreign` (`user_id`);
 
 --
@@ -908,18 +889,6 @@ ALTER TABLE `venta_detalle_lotes`
 --
 
 --
--- AUTO_INCREMENT de la tabla `cajas`
---
-ALTER TABLE `cajas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `caja_users`
---
-ALTER TABLE `caja_users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
@@ -941,19 +910,19 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
 --
 ALTER TABLE `ingreso_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_productos`
 --
 ALTER TABLE `ingreso_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `kardex_productos`
@@ -983,7 +952,7 @@ ALTER TABLE `modulos`
 -- AUTO_INCREMENT de la tabla `movimiento_cajas`
 --
 ALTER TABLE `movimiento_cajas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
@@ -1080,20 +1049,6 @@ ALTER TABLE `venta_detalle_lotes`
 --
 
 --
--- Filtros para la tabla `cajas`
---
-ALTER TABLE `cajas`
-  ADD CONSTRAINT `cajas_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`);
-
---
--- Filtros para la tabla `caja_users`
---
-ALTER TABLE `caja_users`
-  ADD CONSTRAINT `caja_users_caja_id_foreign` FOREIGN KEY (`caja_id`) REFERENCES `cajas` (`id`),
-  ADD CONSTRAINT `caja_users_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`),
-  ADD CONSTRAINT `caja_users_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-
---
 -- Filtros para la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
@@ -1127,7 +1082,6 @@ ALTER TABLE `kardex_productos`
 -- Filtros para la tabla `movimiento_cajas`
 --
 ALTER TABLE `movimiento_cajas`
-  ADD CONSTRAINT `movimiento_cajas_caja_id_foreign` FOREIGN KEY (`caja_id`) REFERENCES `cajas` (`id`),
   ADD CONSTRAINT `movimiento_cajas_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`),
   ADD CONSTRAINT `movimiento_cajas_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 

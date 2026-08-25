@@ -2,7 +2,7 @@
 import Content from "@/Components/Content.vue";
 import MiTable from "@/Components/MiTable.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
-import { useSucursals } from "@/composables/sucursals/useSucursals";
+import { useIngresoProductos } from "@/composables/ingreso_productos/useIngresoProductos";
 import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
@@ -20,35 +20,41 @@ onMounted(() => {
     appStore.stopLoading();
 });
 
-const { setSucursal, limpiarSucursal, form } = useSucursals();
+const { setIngresoProducto, limpiarIngresoProducto, form } =
+    useIngresoProductos();
 const { axiosDelete } = useAxios();
 
 const miTable = ref(null);
 const headers = [
     {
-        label: "NRO.",
-        key: "id",
+        label: "CÓDIGO",
+        key: "codigo",
         sortable: true,
         width: "4%",
     },
     {
-        label: "NOMBRE",
-        key: "nombre",
+        label: "SUCURSAL",
+        key: "sucursal.nombre",
         sortable: true,
     },
     {
-        label: "VENTAS",
-        key: "ventas",
+        label: "PROVEEDOR",
+        key: "proveedor.nombre",
         sortable: true,
     },
     {
-        label: "ACTIVO",
-        key: "activo",
+        label: "TIPO DE INGRESO",
+        key: "tipo_ingreso.nombre",
         sortable: true,
     },
     {
-        label: "DESCRIPCIÓN",
-        key: "descripcion",
+        label: "TOTAL BS.",
+        key: "total",
+        sortable: true,
+    },
+    {
+        label: "SALDO BS.",
+        key: "saldo",
         sortable: true,
     },
     {
@@ -72,19 +78,19 @@ const multiSearch = ref({
 const muestra_formulario = ref(false);
 
 const agregarRegistro = () => {
-    limpiarSucursal();
+    limpiarIngresoProducto();
     muestra_formulario.value = true;
 };
 
 const updateDatatable = async () => {
     if (miTable.value) {
         await miTable.value.cargarDatos();
-        limpiarSucursal();
+        limpiarIngresoProducto();
         muestra_formulario.value = false;
     }
 };
 
-const eliminarSucursal = (item) => {
+const eliminarIngresoProducto = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
         html: `<strong>${item.nombre}</strong>`,
@@ -99,7 +105,7 @@ const eliminarSucursal = (item) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
             let respuesta = await axiosDelete(
-                route("sucursals.destroy", item.id),
+                route("ingreso_productos.destroy", item.id),
             );
             if (respuesta && respuesta.sw) {
                 updateDatatable();
@@ -109,13 +115,13 @@ const eliminarSucursal = (item) => {
 };
 </script>
 <template>
-    <Head title="Sucursales"></Head>
+    <Head title="Historial de Compras"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-building"></i> Sucursales
+                        <i class="fa fa-boxes"></i> Historial de Compras
                     </h3>
                 </div>
                 <!-- /.col -->
@@ -124,7 +130,9 @@ const eliminarSucursal = (item) => {
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
-                        <li class="breadcrumb-item active">Sucursales</li>
+                        <li class="breadcrumb-item active">
+                            Historial de Compras
+                        </li>
                     </ol>
                 </div>
                 <!-- /.col -->
@@ -135,19 +143,18 @@ const eliminarSucursal = (item) => {
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-4">
-                        <button
+                        <Link
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
                                 props_page.auth?.user.permisos.includes(
-                                    'sucursals.create',
+                                    'ingreso_productos.create',
                                 )
                             "
-                            type="button"
+                            :href="route('ingreso_productos.create')"
                             class="btn btn-primary text-sm"
-                            @click="agregarRegistro"
                         >
-                            <i class="fa fa-plus"></i> Nueva Sucursal
-                        </button>
+                            <i class="fa fa-plus"></i> Nueva Compra
+                        </Link>
                     </div>
                     <div class="col-md-8 my-1">
                         <div class="row justify-content-end">
@@ -179,7 +186,7 @@ const eliminarSucursal = (item) => {
                             ref="miTable"
                             :cols="headers"
                             :api="true"
-                            :url="route('sucursals.paginado')"
+                            :url="route('ingreso_productos.paginado')"
                             :numPages="5"
                             :multiSearch="multiSearch"
                             :syncOrderBy="'id'"
@@ -188,38 +195,22 @@ const eliminarSucursal = (item) => {
                             :header-class="'bg__primary'"
                             fixed-header
                         >
-                            <template #ventas="{ item }">
-                                <span
-                                    class="badge text-xs"
-                                    :class="[
-                                        item.ventas == 1
-                                            ? 'bgActivo'
-                                            : 'bgPrecargado',
-                                    ]"
-                                    >{{
-                                        item.ventas == 1 ? "VENTAS" : "ALMACÉN"
-                                    }}</span
-                                >
+                            <template #total="{ item }">
+                                <span class="badge text-sm bg-success">{{
+                                    item.total
+                                }}</span>
                             </template>
-                            <template #activo="{ item }">
-                                <span
-                                    class="badge text-xs"
-                                    :class="[
-                                        item.activo == 1
-                                            ? 'bgActivo'
-                                            : 'bgInactivo',
-                                    ]"
-                                    >{{
-                                        item.activo == 1 ? "ACTIVO" : "INACTIVO"
-                                    }}</span
-                                >
+                            <template #saldo="{ item }">
+                                <span class="badge text-sm bg-danger">{{
+                                    item.saldo
+                                }}</span>
                             </template>
                             <template #accion="{ item }">
                                 <template
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
-                                            'sucursals.edit',
+                                            'ingreso_productos.edit',
                                         )
                                     "
                                 >
@@ -232,7 +223,7 @@ const eliminarSucursal = (item) => {
                                         <button
                                             class="btn btn-warning"
                                             @click="
-                                                setSucursal(item);
+                                                setIngresoProducto(item);
                                                 muestra_formulario = true;
                                             "
                                         >
@@ -244,7 +235,7 @@ const eliminarSucursal = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
-                                            'sucursals.destroy',
+                                            'ingreso_productos.destroy',
                                         )
                                     "
                                 >
@@ -256,7 +247,9 @@ const eliminarSucursal = (item) => {
                                     >
                                         <button
                                             class="btn btn-danger"
-                                            @click="eliminarSucursal(item)"
+                                            @click="
+                                                eliminarIngresoProducto(item)
+                                            "
                                         >
                                             <i
                                                 class="fa fa-trash-alt"

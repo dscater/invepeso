@@ -30,6 +30,13 @@ const sincronizarMenus = () => {
     }
 
     if (
+        route_current.value == "sucursals.index" ||
+        route_current.value == "cajas.index"
+    ) {
+        openMenus.sucursals = true;
+    }
+
+    if (
         route_current.value == "productos.index" ||
         route_current.value == "categorias.index" ||
         route_current.value == "marcas.index" ||
@@ -328,7 +335,7 @@ onUnmounted(() => {});
                             permisos == '*' ||
                             permisos.includes('sucursals.index')
                         "
-                        :label="'Sucursales'"
+                        :label="'Sucursales/Almacenes'"
                         :ruta="'sucursals.index'"
                         :icon="'fa fa-building'"
                     ></ItemMenu>

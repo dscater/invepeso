@@ -18,7 +18,12 @@ class IngresoProductoService
 {
     private $modulo = "INGRESO DE PRODUCTOS";
 
-    public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService, private KardexProductoService $kardex_producto_service) {}
+    public function __construct(
+        private  CargarArchivoService $cargarArchivoService,
+        private HistorialAccionService $historialAccionService,
+        private KardexProductoService $kardex_producto_service,
+        private MovimientoCajaService $movimiento_caja_service
+    ) {}
 
     public function listado(): Collection
     {
@@ -37,7 +42,13 @@ class IngresoProductoService
      */
     public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
-        $ingreso_productos = IngresoProducto::select("ingreso_productos.*");
+        $ingreso_productos = IngresoProducto::with([
+            "sucursal:id,nombre",
+            "proveedor:id,nombre",
+            "tipo_ingreso:id,nombre",
+        ])
+            ->select("ingreso_productos.*")
+            ->where("status", 1);
 
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {
@@ -118,26 +129,36 @@ class IngresoProductoService
             $producto = Producto::findOrFail($ingreso_detalle->producto_id);
 
             // REGISTRAR INGRESO STOCK
-            $this->kardex_producto_service->registrarMovimiento(
-                $ingreso_producto->sucursal_id,
-                "INGRESO DE PRODUCTO",
-                "INGRESO",
-                $ingreso_detalle->id,
-                $producto,
-                $ingreso_detalle->cantidad,
-                $ingreso_detalle->costo,
-                $ingreso_producto->descripcion,
-                "IngresoDetalle",
-                $ingreso_detalle->id
-            );
+            // $this->kardex_producto_service->registrarMovimiento(
+            //     $ingreso_producto->sucursal_id,
+            //     "INGRESO DE PRODUCTO",
+            //     "INGRESO",
+            //     $ingreso_detalle->id,
+            //     $producto,
+            //     $ingreso_detalle->cantidad,
+            //     $ingreso_detalle->costo,
+            //     $ingreso_producto->descripcion,
+            //     "IngresoDetalle",
+            //     $ingreso_detalle->id
+            // );
         }
 
-        // TODO: REGISTRAR VALOR CANCELADO EN MOVIMIENTO DE CAJAS
-
+        // REGISTRAR VALOR CANCELADO EN MOVIMIENTO DE CAJAS
+        if ((float)$ingreso_producto->cancelado > 0) {
+            $movimiento_caja = [
+                "sucursal_id" => $ingreso_producto->sucursal_id,
+                "modulo" => "IngresoProducto",
+                "registro_id" => $ingreso_producto->id,
+                "monto" => $ingreso_producto->cancelado,
+                "tipo_movimiento" => "EGRESO",
+                "tipo_pago" => "EFECTIVO",
+                "descripcion" => "COMPRA DE PRODUCTOS",
+            ];
+            $this->movimiento_caja_service->crear($movimiento_caja);
+        }
 
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA INGRESO DE PRODUCTO", $ingreso_producto);
-
         return $ingreso_producto;
     }
 

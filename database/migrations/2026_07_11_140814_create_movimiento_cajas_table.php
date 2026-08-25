@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('movimiento_cajas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("sucursal_id");
-            $table->unsignedBigInteger("caja_id")->nullable();
-            $table->string("modulo");
-            $table->unsignedBigInteger("registro_id");
-            $table->string("tipo_pago");
+            $table->unsignedBigInteger("sucursal_id")->nullable();
+            $table->string("modulo")->nullable();
+            $table->unsignedBigInteger("registro_id")->nullable();
+            $table->decimal("monto", 24, 2);
+            $table->string("tipo_movimiento"); //INGRESO-EGRESO
+            $table->string("tipo_pago"); //EFECTIVO-QR
             $table->string("descripcion", 900);
             $table->date("fecha");
             $table->time("hora");
@@ -25,7 +26,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign("sucursal_id")->on("sucursals")->references("id");
-            $table->foreign("caja_id")->on("cajas")->references("id");
             $table->foreign("user_id")->on("users")->references("id");
         });
     }
