@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IngresoProductoStoreRequest;
 use App\Http\Requests\IngresoProductoUpdateRequest;
+use App\Http\Requests\IngresoProductoVerificarRequest;
 use App\Models\IngresoProducto;
 use App\Models\User;
 use App\Services\IngresoProductoService;
@@ -95,6 +96,40 @@ class IngresoProductoController extends Controller
             return redirect()->route("ingreso_productos.create")->with("bien", "Registro realizado");
         } catch (\Exception $e) {
             DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+    public function lista_sin_verificar(Request $request)
+    {
+        $fecha_ini = $request->input("fecha_ini", null);
+        $fecha_fin = $request->input("fecha_fin", null);
+
+        $ingreso_productos = IngresoProducto::with(["sucursal", "tipo_ingreso", "proveedor", "ingreso_detalles.producto"])
+            ->whereHas("ingreso_detalles", function ($q) {
+                $q->where("faltantes", NULL);
+            })->get();
+        return response()->JSON($ingreso_productos);
+    }
+
+    public function verificacion_ingresos()
+    {
+        return Inertia::render("Admin/IngresoProductos/VerificacionIngresos");
+    }
+
+
+    public function verificar(IngresoProductoVerificarRequest $request, IngresoProducto $ingreso_producto)
+    {
+        DB::beginTransaction();
+        try {
+            // actualizar ingreso_producto
+            $this->ingreso_productoService->verificar($request->validated(), $ingreso_producto);
+            DB::commit();
+            return redirect()->route("ingreso_productos.verificacion_ingresos")->with("bien", "Registro actualizado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log::debug($e->getMessage());
             throw ValidationException::withMessages([
                 'error' =>  $e->getMessage(),
             ]);

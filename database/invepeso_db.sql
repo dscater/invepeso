@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 25-08-2026 a las 01:44:34
+-- Tiempo de generación: 26-08-2026 a las 00:58:39
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -141,7 +141,7 @@ CREATE TABLE `ingreso_detalles` (
   `tipo_ingreso_id` bigint UNSIGNED NOT NULL,
   `producto_id` bigint UNSIGNED NOT NULL,
   `cantidad` double NOT NULL,
-  `verificado` double(8,2) DEFAULT NULL,
+  `verificado` double(8,2) DEFAULT '0.00',
   `faltantes` int DEFAULT NULL,
   `repuesto` double(8,2) NOT NULL DEFAULT '0.00',
   `observacion` varchar(900) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -157,10 +157,10 @@ CREATE TABLE `ingreso_detalles` (
 --
 
 INSERT INTO `ingreso_detalles` (`id`, `ingreso_producto_id`, `tipo_ingreso_id`, `producto_id`, `cantidad`, `verificado`, `faltantes`, `repuesto`, `observacion`, `cantidad_fisica`, `costo`, `subtotal`, `created_at`, `updated_at`) VALUES
-(1, 3, 1, 2, 4, NULL, NULL, 0.00, NULL, NULL, 120.00, 480.00, '2026-08-25 01:33:33', '2026-08-25 01:33:33'),
-(2, 3, 1, 3, 1, NULL, NULL, 0.00, NULL, NULL, 300.00, 300.00, '2026-08-25 01:33:33', '2026-08-25 01:33:33'),
-(3, 3, 1, 4, 1, NULL, NULL, 0.00, NULL, NULL, 300.00, 300.00, '2026-08-25 01:33:33', '2026-08-25 01:33:33'),
-(4, 4, 1, 4, 1, NULL, NULL, 0.00, NULL, NULL, 300.00, 300.00, '2026-08-25 01:35:28', '2026-08-25 01:35:28');
+(1, 3, 1, 2, 4, 4.00, 0, 0.00, NULL, 4.00, 120.00, 480.00, '2026-08-25 01:33:33', '2026-08-26 00:56:23'),
+(2, 3, 1, 3, 1, 1.00, 0, 0.00, NULL, 1.00, 300.00, 300.00, '2026-08-25 01:33:33', '2026-08-26 00:56:23'),
+(3, 3, 1, 4, 1, 1.00, 0, 0.00, NULL, 1.00, 300.00, 300.00, '2026-08-25 01:33:33', '2026-08-26 00:56:23'),
+(4, 4, 1, 4, 1, 0.00, NULL, 0.00, NULL, NULL, 300.00, 300.00, '2026-08-25 01:35:28', '2026-08-25 01:35:28');
 
 -- --------------------------------------------------------
 
@@ -222,6 +222,15 @@ CREATE TABLE `kardex_productos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `kardex_productos`
+--
+
+INSERT INTO `kardex_productos` (`id`, `sucursal_id`, `ingreso_detalle_id`, `tipo_registro`, `registro_id`, `modulo`, `producto_id`, `detalle`, `precio`, `tipo_is`, `cantidad_ingreso`, `cantidad_salida`, `cantidad_saldo`, `cu`, `monto_ingreso`, `monto_salida`, `monto_saldo`, `fecha`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'INGRESO DE PRODUCTO', 1, 'IngresoDetalle', 2, 'INGRESO DE PRODUCTO', 120.00, 'INGRESO', 4, NULL, 4, 120.00, 480.00, NULL, 480.00, '2026-08-25', 1, '2026-08-26 00:56:23', '2026-08-26 00:56:23'),
+(2, 1, 2, 'INGRESO DE PRODUCTO', 2, 'IngresoDetalle', 3, 'INGRESO DE PRODUCTO', 300.00, 'INGRESO', 1, NULL, 1, 300.00, 300.00, NULL, 300.00, '2026-08-25', 1, '2026-08-26 00:56:23', '2026-08-26 00:56:23'),
+(3, 1, 3, 'INGRESO DE PRODUCTO', 3, 'IngresoDetalle', 4, 'INGRESO DE PRODUCTO', 300.00, 'INGRESO', 1, NULL, 1, 300.00, 300.00, NULL, 300.00, '2026-08-25', 1, '2026-08-26 00:56:23', '2026-08-26 00:56:23');
 
 -- --------------------------------------------------------
 
@@ -392,6 +401,15 @@ CREATE TABLE `producto_sucursals` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `producto_sucursals`
+--
+
+INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `producto_id`, `stock_actual`, `created_at`, `updated_at`) VALUES
+(1, 1, 2, 4, '2026-08-26 00:56:23', '2026-08-26 00:56:23'),
+(2, 1, 3, 1, '2026-08-26 00:56:23', '2026-08-26 00:56:23'),
+(3, 1, 4, 1, '2026-08-26 00:56:23', '2026-08-26 00:56:23');
 
 -- --------------------------------------------------------
 
@@ -928,7 +946,7 @@ ALTER TABLE `ingreso_productos`
 -- AUTO_INCREMENT de la tabla `kardex_productos`
 --
 ALTER TABLE `kardex_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -970,7 +988,7 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `producto_sucursals`
 --
 ALTER TABLE `producto_sucursals`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedors`

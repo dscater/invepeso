@@ -171,6 +171,10 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // INGRESOS
     Route::get("ingreso_productos/paginado", [IngresoProductoController::class, 'paginado'])->name("ingreso_productos.paginado");
     Route::get("ingreso_productos/listado", [IngresoProductoController::class, 'listado'])->name("ingreso_productos.listado");
+    Route::get("ingreso_productos/lista_sin_verificar", [IngresoProductoController::class, 'lista_sin_verificar'])->name("ingreso_productos.lista_sin_verificar");
+    Route::get("ingreso_productos/lista_para_reponer", [IngresoProductoController::class, 'lista_para_reponer'])->name("ingreso_productos.lista_para_reponer");
+    Route::get("ingreso_productos/verificacion_ingresos", [IngresoProductoController::class, 'verificacion_ingresos'])->name("ingreso_productos.verificacion_ingresos");
+    Route::put("ingreso_productos/verificar/{ingreso_producto}", [IngresoProductoController::class, 'verificar'])->name("ingreso_productos.verificar");
     Route::resource("ingreso_productos", IngresoProductoController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );

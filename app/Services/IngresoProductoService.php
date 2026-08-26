@@ -178,6 +178,36 @@ class IngresoProductoService
         return $codigo;
     }
 
+    public function verificar(array $datos, IngresoProducto $ingreso_producto)
+    {
+        foreach ($datos["ingreso_detalles"] as $item) {
+            $dato_ingreso_detalle = [
+                "verificado" => $item["verificado"],
+                "faltantes" => $item["faltantes"],
+                "observacion" => $item["observacion"] ?? NULL,
+                "cantidad_fisica" => $item["verificado"],
+            ];
+
+            $ingreso_detalle = IngresoDetalle::findOrFail($item["id"]);
+            $producto = Producto::findOrFail($ingreso_detalle->producto_id);
+            // ACTUALIZAR CANTIDAD
+            $ingreso_detalle->update($dato_ingreso_detalle);
+            // REGISTRAR INGRESO STOCK
+            $this->kardex_producto_service->registrarMovimiento(
+                $ingreso_producto->sucursal_id,
+                "INGRESO DE PRODUCTO",
+                "INGRESO",
+                $ingreso_detalle->id,
+                $producto,
+                $ingreso_detalle->verificado,
+                $ingreso_detalle->costo,
+                $ingreso_producto->descripcion,
+                "IngresoDetalle",
+                $ingreso_detalle->id
+            );
+        }
+    }
+
     /**
      * Actualizar ingreso_producto
      *

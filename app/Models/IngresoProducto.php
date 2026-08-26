@@ -20,6 +20,13 @@ class IngresoProducto extends Model
         "status",
     ];
 
+    protected $appends = ["fecha_registro_t"];
+
+    public function getFechaRegistroTAttribute()
+    {
+        return date("d/m/Y", strtotime($this->fecha_registro));
+    }
+
     public function sucursal()
     {
         return $this->belongsTo(Sucursal::class, 'sucursal_id');
