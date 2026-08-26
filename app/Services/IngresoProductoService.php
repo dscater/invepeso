@@ -201,7 +201,7 @@ class IngresoProductoService
                 $producto,
                 $ingreso_detalle->verificado,
                 $ingreso_detalle->costo,
-                $ingreso_producto->descripcion,
+                $ingreso_producto->tipo_ingreso->nombre,
                 "IngresoDetalle",
                 $ingreso_detalle->id
             );
