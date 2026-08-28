@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string("nombre", 300)->unique();
             $table->string("descripcion", 900)->nullable();
             $table->boolean("activo")->default(true);
-            $table->boolean("ventas")->default(true);
             $table->date("fecha_registro")->nullable();
             $table->timestamps();
         });

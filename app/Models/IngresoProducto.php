@@ -9,6 +9,7 @@ class IngresoProducto extends Model
     protected $fillable = [
         "codigo",
         "sucursal_id",
+        "almacen_id",
         "tipo_ingreso_id",
         "proveedor_id",
         "descripcion",

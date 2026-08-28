@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("codigo_venta");
             $table->unsignedBigInteger("sucursal_id");
+            $table->unsignedBigInteger("almacen_id");
             $table->unsignedBigInteger("caja_id");
             $table->unsignedBigInteger("cliente_id");
             $table->unsignedBigInteger("tipo_documento_id")->nullable();
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign("sucursal_id")->on("sucursals")->references("id");
+            $table->foreign("almacen_id")->on("almacens")->references("id");
             $table->foreign("caja_id")->on("cajas")->references("id");
             $table->foreign("cliente_id")->on("clientes")->references("id");
             $table->foreign("tipo_documento_id")->on("clientes")->references("id");

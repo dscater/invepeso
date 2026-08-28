@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('producto_sucursals', function (Blueprint $table) {
+        Schema::create('almacens', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("sucursal_id");
-            $table->unsignedBigInteger("almacen_id");
-            $table->unsignedBigInteger("producto_id");
-            $table->double("stock_actual", 8, 2);
+            $table->string("nombre", 300)->unique();
+            $table->string("descripcion", 900)->nullable();
+            $table->boolean("activo")->default(true);
+            $table->date("fecha_registro")->nullable();
             $table->timestamps();
 
             $table->foreign("sucursal_id")->on("sucursals")->references("id");
-            $table->foreign("almacen_id")->on("almacens")->references("id");
-            $table->foreign("producto_id")->on("productos")->references("id");
         });
     }
 
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('producto_sucursals');
+        Schema::dropIfExists('almacens');
     }
 };

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('kardex_productos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("sucursal_id");
+            $table->unsignedBigInteger("almacen_id");
             $table->unsignedBigInteger("ingreso_detalle_id")->nullable();
             $table->string("tipo_registro", 255)->nullable();
             $table->unsignedBigInteger("registro_id")->nullable();
@@ -35,6 +36,7 @@ return new class extends Migration
 
             $table->foreign("producto_id")->on("productos")->references("id");
             $table->foreign("sucursal_id")->on("sucursals")->references("id");
+            $table->foreign("almacen_id")->on("almacens")->references("id");
             $table->foreign("ingreso_detalle_id")->on("ingreso_detalles")->references("id");
         });
     }

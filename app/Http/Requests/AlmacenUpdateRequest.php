@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SucursalUpdateRequest extends FormRequest
+class AlmacenUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +23,8 @@ class SucursalUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nombre" => "required|string|unique:sucursals,nombre," . $this->sucursal->id,
+            "sucursal_id" => "required",
+            "nombre" => "required|string|unique:almacens,nombre," . $this->almacen->id,
             "activo" => "required",
             "descripcion" => "nullable|string"
         ];
@@ -37,6 +38,7 @@ class SucursalUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
+            "sucursal_id.required" => "Debes completar este campo",
             "nombre.required" => "Debes completar este campo",
             "nombre.string" => "Debes ingresar un texto valido",
             "nombre.unique" => "Este nombre ya fue registrado",

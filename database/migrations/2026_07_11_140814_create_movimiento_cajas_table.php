@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('movimiento_cajas', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("sucursal_id")->nullable();
+            $table->unsignedBigInteger("almacen_id")->nullable();
             $table->string("modulo")->nullable();
             $table->unsignedBigInteger("registro_id")->nullable();
             $table->decimal("monto", 24, 2);
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign("sucursal_id")->on("sucursals")->references("id");
+            $table->foreign("almacen_id")->on("almacens")->references("id");
             $table->foreign("user_id")->on("users")->references("id");
         });
     }

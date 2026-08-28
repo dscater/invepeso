@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('salida_productos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("sucursal_id");
-            $table->unsignedBigInteger("ingreso_detalle_id");
+            $table->unsignedBigInteger("almacen_id");
             $table->unsignedBigInteger("tipo_salida_id");
             $table->unsignedBigInteger("producto_id");
             $table->double("cantidad");
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign("sucursal_id")->on("sucursals")->references("id");
-            $table->foreign("ingreso_detalle_id")->on("ingreso_detalles")->references("id");
+            $table->foreign("almacen_id")->on("almacens")->references("id");
             $table->foreign("tipo_salida_id")->on("tipo_salidas")->references("id");
             $table->foreign("producto_id")->on("productos")->references("id");
             $table->foreign("user_id")->on("users")->references("id");

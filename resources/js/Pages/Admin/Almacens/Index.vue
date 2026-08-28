@@ -2,7 +2,7 @@
 import Content from "@/Components/Content.vue";
 import MiTable from "@/Components/MiTable.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
-import { useSucursals } from "@/composables/sucursals/useSucursals";
+import { useAlmacens } from "@/composables/almacens/useAlmacens";
 import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
@@ -20,7 +20,7 @@ onMounted(() => {
     appStore.stopLoading();
 });
 
-const { setSucursal, limpiarSucursal, form } = useSucursals();
+const { setAlmacen, limpiarAlmacen, form } = useAlmacens();
 const { axiosDelete } = useAxios();
 
 const miTable = ref(null);
@@ -30,6 +30,11 @@ const headers = [
         key: "id",
         sortable: true,
         width: "4%",
+    },
+    {
+        label: "SUCURSAL",
+        key: "sucursal.nombre",
+        sortable: true,
     },
     {
         label: "NOMBRE",
@@ -67,19 +72,19 @@ const multiSearch = ref({
 const muestra_formulario = ref(false);
 
 const agregarRegistro = () => {
-    limpiarSucursal();
+    limpiarAlmacen();
     muestra_formulario.value = true;
 };
 
 const updateDatatable = async () => {
     if (miTable.value) {
         await miTable.value.cargarDatos();
-        limpiarSucursal();
+        limpiarAlmacen();
         muestra_formulario.value = false;
     }
 };
 
-const eliminarSucursal = (item) => {
+const eliminarAlmacen = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
         html: `<strong>${item.nombre}</strong>`,
@@ -94,7 +99,7 @@ const eliminarSucursal = (item) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
             let respuesta = await axiosDelete(
-                route("sucursals.destroy", item.id),
+                route("almacens.destroy", item.id),
             );
             if (respuesta && respuesta.sw) {
                 updateDatatable();
@@ -104,13 +109,13 @@ const eliminarSucursal = (item) => {
 };
 </script>
 <template>
-    <Head title="Sucursales"></Head>
+    <Head title="Almacenes"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-building"></i> Sucursales
+                        <i class="fa fa-warehouse"></i> Almacenes
                     </h3>
                 </div>
                 <!-- /.col -->
@@ -119,7 +124,7 @@ const eliminarSucursal = (item) => {
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
-                        <li class="breadcrumb-item active">Sucursales</li>
+                        <li class="breadcrumb-item active">Almacenes</li>
                     </ol>
                 </div>
                 <!-- /.col -->
@@ -134,14 +139,14 @@ const eliminarSucursal = (item) => {
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
                                 props_page.auth?.user.permisos.includes(
-                                    'sucursals.create',
+                                    'almacens.create',
                                 )
                             "
                             type="button"
                             class="btn btn-primary text-sm"
                             @click="agregarRegistro"
                         >
-                            <i class="fa fa-plus"></i> Nueva Sucursal
+                            <i class="fa fa-plus"></i> Nuevo Almacen
                         </button>
                     </div>
                     <div class="col-md-8 my-1">
@@ -174,7 +179,7 @@ const eliminarSucursal = (item) => {
                             ref="miTable"
                             :cols="headers"
                             :api="true"
-                            :url="route('sucursals.paginado')"
+                            :url="route('almacens.paginado')"
                             :numPages="5"
                             :multiSearch="multiSearch"
                             :syncOrderBy="'id'"
@@ -183,6 +188,19 @@ const eliminarSucursal = (item) => {
                             :header-class="'bg__primary'"
                             fixed-header
                         >
+                            <template #ventas="{ item }">
+                                <span
+                                    class="badge text-xs"
+                                    :class="[
+                                        item.ventas == 1
+                                            ? 'bgActivo'
+                                            : 'bgPrecargado',
+                                    ]"
+                                    >{{
+                                        item.ventas == 1 ? "VENTAS" : "ALMACÉN"
+                                    }}</span
+                                >
+                            </template>
                             <template #activo="{ item }">
                                 <span
                                     class="badge text-xs"
@@ -201,7 +219,7 @@ const eliminarSucursal = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
-                                            'sucursals.edit',
+                                            'almacens.edit',
                                         )
                                     "
                                 >
@@ -214,7 +232,7 @@ const eliminarSucursal = (item) => {
                                         <button
                                             class="btn btn-warning"
                                             @click="
-                                                setSucursal(item);
+                                                setAlmacen(item);
                                                 muestra_formulario = true;
                                             "
                                         >
@@ -226,7 +244,7 @@ const eliminarSucursal = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
-                                            'sucursals.destroy',
+                                            'almacens.destroy',
                                         )
                                     "
                                 >
@@ -238,7 +256,7 @@ const eliminarSucursal = (item) => {
                                     >
                                         <button
                                             class="btn btn-danger"
-                                            @click="eliminarSucursal(item)"
+                                            @click="eliminarAlmacen(item)"
                                         >
                                             <i
                                                 class="fa fa-trash-alt"

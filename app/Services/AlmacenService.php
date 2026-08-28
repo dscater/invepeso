@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Services\HistorialAccionService;
+use App\Models\Almacen;
 use App\Models\IngresoProducto;
 use App\Models\SalidaProducto;
-use App\Services\HistorialAccionService;
-use App\Models\Sucursal;
 use App\Models\User;
 use App\Models\Venta;
 use Illuminate\Http\UploadedFile;
@@ -15,25 +15,25 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\ValidationException;
 
-class SucursalService
+class AlmacenService
 {
-    private $modulo = "SUCURSALES";
+    private $modulo = "ALMACENES";
 
     public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
 
     public function listado($activo = null): Collection
     {
-        $sucursals = Sucursal::select("sucursals.*");
+        $almacens = Almacen::select("almacens.*");
 
         if ($activo && $activo == 1) {
-            $sucursals->where("activo", 1);
+            $almacens->where("activo", 1);
         }
 
-        $sucursals = $sucursals->get();
-        return $sucursals;
+        $almacens = $almacens->get();
+        return $almacens;
     }
     /**
-     * Lista de sucursals paginado con filtros
+     * Lista de almacens paginado con filtros
      *
      * @param integer $length
      * @param integer $page
@@ -44,25 +44,25 @@ class SucursalService
      */
     public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
-        $sucursals = Sucursal::select("sucursals.*");
+        $almacens = Almacen::with(["sucursal:id,nombre"])->select("almacens.*");
 
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {
             if (!is_null($value)) {
-                $sucursals->where("sucursals.$key", $value);
+                $almacens->where("almacens.$key", $value);
             }
         }
 
         // Filtros por rango
         foreach ($columnsBetweenFilter as $key => $value) {
             if (isset($value[0], $value[1])) {
-                $sucursals->whereBetween("sucursals.$key", $value);
+                $almacens->whereBetween("almacens.$key", $value);
             }
         }
 
         // Búsqueda en múltiples columnas con LIKE
         if (!empty($search) && !empty($columnsSerachLike)) {
-            $sucursals->where(function ($query) use ($search, $columnsSerachLike) {
+            $almacens->where(function ($query) use ($search, $columnsSerachLike) {
                 foreach ($columnsSerachLike as $col) {
                     $query->orWhere("$col", "LIKE", "%$search%");
                 }
@@ -72,24 +72,25 @@ class SucursalService
         // Ordenamiento
         foreach ($orderBy as $value) {
             if (isset($value[0], $value[1])) {
-                $sucursals->orderBy($value[0], $value[1]);
+                $almacens->orderBy($value[0], $value[1]);
             }
         }
 
 
-        $sucursals = $sucursals->paginate($length, ['*'], 'page', $page);
-        return $sucursals;
+        $almacens = $almacens->paginate($length, ['*'], 'page', $page);
+        return $almacens;
     }
 
     /**
-     * Crear sucursal
+     * Crear almacen
      *
      * @param array $datos
-     * @return Sucursal
+     * @return Almacen
      */
-    public function crear(array $datos): Sucursal
+    public function crear(array $datos): Almacen
     {
-        $sucursal = Sucursal::create([
+        $almacen = Almacen::create([
+            "sucursal_id" => $datos["sucursal_id"],
             "nombre" => mb_strtoupper($datos["nombre"]),
             "activo" => $datos["activo"],
             "descripcion" => mb_strtoupper($datos["descripcion"]) ?? null,
@@ -97,64 +98,66 @@ class SucursalService
         ]);
 
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA SUCURSAL", $sucursal);
+        $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN ALMACÉN", $almacen);
 
-        return $sucursal;
+        return $almacen;
     }
 
     /**
-     * Actualizar sucursal
+     * Actualizar almacen
      *
      * @param array $datos
-     * @param Sucursal $sucursal
-     * @return Sucursal
+     * @param Almacen $almacen
+     * @return Almacen
      */
-    public function actualizar(array $datos, Sucursal $sucursal): Sucursal
+    public function actualizar(array $datos, Almacen $almacen): Almacen
     {
-        $old_sucursal = clone $sucursal;
+        $old_almacen = clone $almacen;
 
-        $sucursal->update([
+        $almacen->update([
+            "sucursal_id" => $datos["sucursal_id"],
             "nombre" => mb_strtoupper($datos["nombre"]),
             "activo" => $datos["activo"],
             "descripcion" => mb_strtoupper($datos["descripcion"]) ?? null,
         ]);
 
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UNA SUCURSAL", $old_sucursal, $sucursal->withoutRelations());
+        $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN ALMACÉN", $old_almacen, $almacen->withoutRelations());
 
-        return $sucursal;
+        return $almacen;
     }
 
     /**
-     * Eliminar sucursal
+     * Eliminar almacen
      *
-     * @param Sucursal $sucursal
+     * @param Almacen $almacen
      * @return boolean
      */
-    public function eliminar(Sucursal $sucursal): bool|Exception
+    public function eliminar(Almacen $almacen): bool|Exception
     {
-        $old_sucursal = clone $sucursal;
-        $usos = Venta::where("sucursal_id", $sucursal->id)->count();
+        $old_almacen = clone $almacen;
+
+        $usos = Venta::where("almacen_id", $almacen->id)->count();
         if ($usos > 0) {
-            throw new Exception("No es posible eliminar el registro " . $sucursal->nombre . ", porque fue usado en ventas");
+            throw new Exception("No es posible eliminar el registro " . $almacen->nombre . ", porque fue usado en ventas");
         }
 
-        $usos = IngresoProducto::where("sucursal_id", $sucursal->id)->count();
+        $usos = IngresoProducto::where("almacen_id", $almacen->id)->count();
         if ($usos > 0) {
-            throw new Exception("No es posible eliminar el registro " . $sucursal->nombre . ", porque fue usado en ingreso de productos");
+            throw new Exception("No es posible eliminar el registro " . $almacen->nombre . ", porque fue usado en ingreso de productos");
         }
 
-        $usos = SalidaProducto::where("sucursal_id", $sucursal->id)->count();
+        $usos = SalidaProducto::where("almacen_id", $almacen->id)->count();
         if ($usos > 0) {
-            throw new Exception("No es posible eliminar el registro " . $sucursal->nombre . ", porque fue usado en salida de productos");
+            throw new Exception("No es posible eliminar el registro " . $almacen->nombre . ", porque fue usado en salida de productos");
         }
 
         // TODO: PARA TRANSFERENCIAS
 
-        $sucursal->delete();
+        $almacen->delete();
 
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UNA SUCURSAL", $old_sucursal, $sucursal);
+        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN ALMACÉN", $old_almacen, $almacen);
 
         return true;
     }

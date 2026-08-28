@@ -1,8 +1,9 @@
 import { useForm } from "@inertiajs/vue3";
 
-export const useSucursals = () => {
+export const useAlmacens = () => {
     const initialState = {
         id: 0,
+        sucursal_id: null,
         nombre: "",
         descripcion: "",
         activo: 1,
@@ -11,14 +12,14 @@ export const useSucursals = () => {
 
     const form = useForm({ ...initialState });
 
-    const setSucursal = (item) => {
+    const setAlmacen = (item) => {
         form.clearErrors();
         form.reset();
         Object.assign(form, item);
         form._method = "PUT";
     };
 
-    const limpiarSucursal = () => {
+    const limpiarAlmacen = () => {
         form.clearErrors();
         form.reset();
         form.defaults({ ...initialState });
@@ -26,7 +27,7 @@ export const useSucursals = () => {
 
     return {
         form,
-        setSucursal,
-        limpiarSucursal,
+        setAlmacen,
+        limpiarAlmacen,
     };
 };

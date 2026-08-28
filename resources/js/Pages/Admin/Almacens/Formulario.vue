@@ -18,8 +18,8 @@ const form = props.form;
 
 const tituloDialog = computed(() => {
     return form.id == 0
-        ? `<i class="fa fa-plus"></i> Nueva Sucursal`
-        : `<i class="fa fa-edit"></i> Editar Sucursal`;
+        ? `<i class="fa fa-plus"></i> Nuevo Almacen`
+        : `<i class="fa fa-edit"></i> Editar Almacen`;
 });
 
 const textBtn = computed(() => {
@@ -36,8 +36,8 @@ const enviarFormulario = () => {
     enviando.value = true;
     let url =
         form.id == 0
-            ? route("sucursals.store")
-            : route("sucursals.update", form.id);
+            ? route("almacens.store")
+            : route("almacens.update", form.id);
 
     form.post(url, {
         preserveScroll: true,
@@ -110,7 +110,24 @@ const cerrarFormulario = () => {
     document.getElementsByTagName("body")[0].classList.remove("modal-open");
 };
 
-onMounted(() => {});
+const listSucursals = ref([]);
+const cargarSucursals = () => {
+    axios
+        .get(
+            route("sucursals.listado", {
+                params: {
+                    activo: 1,
+                },
+            }),
+        )
+        .then((response) => {
+            listSucursals.value = response.data.sucursals;
+        });
+};
+
+onMounted(() => {
+    cargarSucursals();
+});
 </script>
 
 <template>
@@ -138,7 +155,32 @@ onMounted(() => {});
                 </p>
                 <div class="row">
                     <div class="col-md-6 mt-2">
-                        <label class="required">Nombre de Sucursal</label>
+                        <label class="required">Seleccionar Sucursal</label>
+                        <el-select
+                            v-model="form.sucursal_id"
+                            placeholder="Sucursal"
+                            filterable
+                            no-data-text="Sin datos"
+                            no-match-text="Sin resultados"
+                        >
+                            <el-option
+                                v-for="item in listSucursals"
+                                :key="item.id"
+                                :value="item.id"
+                                :label="item.nombre"
+                            ></el-option>
+                        </el-select>
+                        <ul
+                            v-if="form.errors?.sucursal_id"
+                            class="d-block text-danger list-unstyled"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.sucursal_id }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <label class="required">Nombre de Almacen</label>
                         <el-input
                             type="text"
                             :class="{
