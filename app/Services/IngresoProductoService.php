@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Almacen;
 use App\Models\IngresoDetalle;
 use App\Services\HistorialAccionService;
 use App\Models\IngresoProducto;
@@ -44,6 +45,7 @@ class IngresoProductoService
     {
         $ingreso_productos = IngresoProducto::with([
             "sucursal:id,nombre",
+            "almacen:id,nombre",
             "proveedor:id,nombre",
             "tipo_ingreso:id,nombre",
         ])
@@ -93,9 +95,12 @@ class IngresoProductoService
      */
     public function crear(array $datos): IngresoProducto
     {
+        $almacen = Almacen::findOrFail($datos["almacen_id"]);
+
         $ingreso_producto = IngresoProducto::create([
             "codigo" => "",
-            "sucursal_id" => $datos["sucursal_id"],
+            "sucursal_id" => $almacen->sucursal_id,
+            "almacen_id" => $almacen->id,
             "tipo_ingreso_id" => $datos["tipo_ingreso_id"],
             "proveedor_id" => $datos["proveedor_id"],
             "descripcion" => mb_strtoupper($datos["descripcion"]) ?? NULL,
@@ -126,8 +131,7 @@ class IngresoProductoService
 
             $ingreso_detalle = IngresoDetalle::create($dato_ingreso_detalle);
 
-            $producto = Producto::findOrFail($ingreso_detalle->producto_id);
-
+            // $producto = Producto::findOrFail($ingreso_detalle->producto_id);
             // REGISTRAR INGRESO STOCK
             // $this->kardex_producto_service->registrarMovimiento(
             //     $ingreso_producto->sucursal_id,
@@ -147,6 +151,7 @@ class IngresoProductoService
         if ((float)$ingreso_producto->cancelado > 0) {
             $movimiento_caja = [
                 "sucursal_id" => $ingreso_producto->sucursal_id,
+                "almacen_id" => $ingreso_producto->almacen_id,
                 "modulo" => "IngresoProducto",
                 "registro_id" => $ingreso_producto->id,
                 "monto" => $ingreso_producto->cancelado,

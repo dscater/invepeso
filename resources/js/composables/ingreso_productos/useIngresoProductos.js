@@ -5,7 +5,7 @@ export const useIngresoProductos = () => {
     const initialState = {
         id: 0,
         codigo: "",
-        sucursal_id: "",
+        almacen_id: "",
         tipo_ingreso_id: "",
         proveedor_id: "",
         descripcion: "",

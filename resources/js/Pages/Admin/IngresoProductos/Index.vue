@@ -33,8 +33,8 @@ const headers = [
         width: "4%",
     },
     {
-        label: "SUCURSAL",
-        key: "sucursal.nombre",
+        label: "ALMACÉN-SUCURSAL",
+        key: "ubicacion",
         sortable: true,
     },
     {
@@ -195,6 +195,15 @@ const eliminarIngresoProducto = (item) => {
                             :header-class="'bg__primary'"
                             fixed-header
                         >
+                            <template #ubicacion="{ item }">
+                                <span class="text-dark text-sm">{{
+                                    item.almacen?.nombre
+                                }}</span>
+                                -
+                                <span class="text-dark text-sm">{{
+                                    item.sucursal?.nombre
+                                }}</span>
+                            </template>
                             <template #total="{ item }">
                                 <span class="badge text-sm bg-success">{{
                                     item.total

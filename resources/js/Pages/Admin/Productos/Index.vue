@@ -214,6 +214,18 @@ const eliminarProducto = (item) => {
                             :header-class="'bg__primary'"
                             fixed-header
                         >
+                            <template #precio="{ item }">
+                                <div class="fw-bold">Bs. {{ item.precio }}</div>
+                                <div class="fw-bolder" v-if="item.precio2">
+                                    Bs. {{ item.precio2 }}
+                                </div>
+                                <div class="fw-bolder" v-if="item.precio3">
+                                    Bs. {{ item.precio3 }}
+                                </div>
+                                <div class="fw-bolder" v-if="item.precio4">
+                                    Bs. {{ item.precio4 }}
+                                </div>
+                            </template>
                             <template #activo="{ item }">
                                 <span
                                     class="badge text-xs"

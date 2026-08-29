@@ -8,9 +8,11 @@ import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
 import Verificar from "./Verificar.vue";
 import { buttonProps } from "element-plus";
+import { useDate } from "@/composables/useDate.js";
 import axios from "axios";
 // const { mobile, identificaDispositivo } = useMenu();
 
+const { getFechaActual } = useDate();
 const { props: props_page } = usePage();
 
 const appStore = useAppStore();
@@ -18,17 +20,46 @@ const appStore = useAppStore();
 const { setIngresoProducto, limpiarIngresoProducto, form } =
     useIngresoProductos();
 
+const listAlmacens = ref([]);
+const almacen_id = ref(null);
+const fecha_ini = ref(getFechaActual());
+const fecha_fin = ref(getFechaActual());
 const ingreso_productos = ref([]);
+
+const cargarAlmacens = async () => {
+    try {
+        const res = await axios.get(route("almacens.listado"));
+        listAlmacens.value = res.data.almacens;
+    } catch (e) {
+        console.log(e);
+    } finally {
+    }
+};
 
 const cargarIngresosSinVerificar = () => {
     axios
-        .get(route("ingreso_productos.lista_sin_verificar"))
+        .get(route("ingreso_productos.lista_sin_verificar"), {
+            params: {
+                fecha_ini: fecha_ini.value,
+                fecha_fin: fecha_fin.value,
+                almacen_id: almacen_id.value,
+            },
+        })
         .then((response) => {
             ingreso_productos.value = response.data;
         });
 };
 
+const intervalTimeOutListado = ref(null);
+const cargaListado = () => {
+    clearInterval(intervalTimeOutListado.value);
+    setTimeout(() => {
+        cargarIngresosSinVerificar();
+    }, 700);
+};
+
 onBeforeMount(() => {
+    cargarAlmacens();
     cargarIngresosSinVerificar();
     appStore.startLoading();
 });
@@ -73,6 +104,47 @@ const muestra_formulario = ref(false);
             </div>
             <!-- /.row -->
         </template>
+        <div class="row mb-2">
+            <div class="col-md-4 col-sm-12">
+                <span class="text-muted text-sm">Almacén</span>
+                <el-select
+                    v-model="almacen_id"
+                    class="el-select-input-group-right"
+                    no-data-text="Sin datos"
+                    no-match-text="Sin resultados"
+                    placeholder="Seleccionar Almacén"
+                    filterable
+                    @change="cargarIngresosSinVerificar"
+                >
+                    <el-option
+                        v-for="item in listAlmacens"
+                        :key="item.id"
+                        :value="item.id"
+                        :label="`${item.nombre} - ${item.sucursal.nombre}`"
+                    ></el-option>
+                </el-select>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <span class="text-muted text-sm">Desde</span>
+                <input
+                    type="date"
+                    v-model="fecha_ini"
+                    class="form-control"
+                    @keyup="cargaListado"
+                    @change="cargarIngresosSinVerificar"
+                />
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <span class="text-muted text-sm">Hasta</span>
+                <input
+                    type="date"
+                    v-model="fecha_fin"
+                    class="form-control"
+                    @keyup="cargaListado"
+                    @change="cargarIngresosSinVerificar"
+                />
+            </div>
+        </div>
         <div class="row" v-if="ingreso_productos.length > 0">
             <div
                 class="col-md-6 col-lg-4"
@@ -90,7 +162,7 @@ const muestra_formulario = ref(false);
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-4 text-end">
+                            <div class="col-6 text-end border-end">
                                 <div class="row">
                                     <div class="col-12 text-sm text-center">
                                         {{ item.proveedor.nombre }}
@@ -98,11 +170,14 @@ const muestra_formulario = ref(false);
                                     <div
                                         class="col-12 text-xs text-muted text-center"
                                     >
-                                        Proveedor
+                                        <i
+                                            class="fa fa-user-tag"
+                                            title="Proveedor"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-4 text-end">
+                            <div class="col-6 text-end">
                                 <div class="row">
                                     <div class="col-12 text-sm text-center">
                                         {{ item.tipo_ingreso.nombre }}
@@ -110,19 +185,42 @@ const muestra_formulario = ref(false);
                                     <div
                                         class="col-12 text-xs text-muted text-center"
                                     >
-                                        Tipo Ingreso
+                                        <i
+                                            class="fa fa-clipboard-list"
+                                            title="Tipo"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-4 text-end">
+                            <div
+                                class="col-6 text-center border-top pt-2 border-end"
+                            >
                                 <div class="row">
                                     <div class="col-12 text-sm text-center">
-                                        {{ item.sucursal.nombre }}
+                                        {{ item.sucursal?.nombre }}
                                     </div>
                                     <div
                                         class="col-12 text-xs text-muted text-center"
                                     >
-                                        Sucursal
+                                        <i
+                                            class="fa fa-building"
+                                            title="Sucursal"
+                                        ></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 text-center border-top pt-2">
+                                <div class="row">
+                                    <div class="col-12 text-sm text-center">
+                                        {{ item.almacen?.nombre }}
+                                    </div>
+                                    <div
+                                        class="col-12 text-xs text-muted text-center"
+                                    >
+                                        <i
+                                            class="fa fa-warehouse"
+                                            title="Almacén"
+                                        ></i>
                                     </div>
                                 </div>
                             </div>

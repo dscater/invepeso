@@ -12,6 +12,7 @@ use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ProductoSucursalService
@@ -21,7 +22,7 @@ class ProductoSucursalService
     public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
 
     public function listado(
-        $sucursal_id = "",
+        $almacen_id = "",
         $categoria_id = "",
         $marca_id = "",
         $nombreProducto = "",
@@ -31,15 +32,15 @@ class ProductoSucursalService
             DB::raw('COALESCE(SUM(producto_sucursals.stock_actual),0) as stock_total')
 
         )->with(["categoria:id,nombre", "marca:id,nombre"])
-            ->leftJoin('producto_sucursals', function ($join) use ($sucursal_id) {
+            ->leftJoin('producto_sucursals', function ($join) use ($almacen_id) {
                 $join->on('productos.id', '=', 'producto_sucursals.producto_id');
-
-                if (!empty($sucursal_id) && $sucursal_id != 'todos') {
-                    $join->where('producto_sucursals.sucursal_id', $sucursal_id);
+                if (!empty($almacen_id) && $almacen_id != 'todos') {
+                    $join->where('producto_sucursals.almacen_id', $almacen_id);
                 }
             });
 
         if (!empty($categoria_id) && $categoria_id != 'todos') {
+            Log::debug("categoria");
             $productos->where('productos.categoria_id', $categoria_id);
         }
 
@@ -98,7 +99,6 @@ class ProductoSucursalService
                 $producto_sucursals->orderBy($value[0], $value[1]);
             }
         }
-
 
         $producto_sucursals = $producto_sucursals->paginate($length, ['*'], 'page', $page);
         return $producto_sucursals;

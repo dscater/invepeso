@@ -33,6 +33,11 @@ class IngresoProducto extends Model
         return $this->belongsTo(Sucursal::class, 'sucursal_id');
     }
 
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class, 'almacen_id');
+    }
+
     public function tipo_ingreso()
     {
         return $this->belongsTo(TipoIngreso::class, 'tipo_ingreso_id');

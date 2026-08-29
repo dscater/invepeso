@@ -38,10 +38,10 @@ class AlmacenController extends Controller
      *
      * @return JsonResponse
      */
-    public function listado(): JsonResponse
+    public function listado(Request $request): JsonResponse
     {
         return response()->JSON([
-            "almacens" => $this->almacenService->listado()
+            "almacens" => $this->almacenService->listado($request->input("activo", null))
         ]);
     }
 

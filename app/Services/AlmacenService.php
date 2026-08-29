@@ -23,7 +23,8 @@ class AlmacenService
 
     public function listado($activo = null): Collection
     {
-        $almacens = Almacen::select("almacens.*");
+        $almacens = Almacen::select("almacens.*")
+            ->with(["sucursal:id,nombre"]);
 
         if ($activo && $activo == 1) {
             $almacens->where("activo", 1);

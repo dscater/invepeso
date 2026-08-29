@@ -24,7 +24,7 @@ class IngresoProductoStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "sucursal_id" => "required",
+            "almacen_id" => "required",
             "tipo_ingreso_id" => "required",
             "proveedor_id" => "required",
             "descripcion" => "nullable",
@@ -38,7 +38,7 @@ class IngresoProductoStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            "sucursal_id.required" => "Debes indicar la sucursal",
+            "almacen_id.required" => "Debes indicar el almacén",
             "tipo_ingreso_id.required" => "Debes seleccionar el tipo de ingreso",
             "proveedor_id.required" => "Debes seleccionar un proveedor",
             "descripcion.required" => "Debes completar este campo",

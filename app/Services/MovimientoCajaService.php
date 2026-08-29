@@ -27,9 +27,11 @@ class MovimientoCajaService
         $hora_actual = Carbon::now("America/La_Paz")->format("H:i:s");
 
         $sucursal = Sucursal::findOrFail($datos["sucursal_id"]);
+        $almacen = Sucursal::findOrFail($datos["almacen_id"]);
 
         $movimiento_caja = MovimientoCaja::create([
             "sucursal_id" => $datos["sucursal_id"],
+            "almacen_id" => $datos["almacen_id"],
             "modulo" => $datos["modulo"],
             "registro_id" => $datos["registro_id"],
             "monto" => $datos["monto"],
@@ -42,10 +44,13 @@ class MovimientoCajaService
         ]);
 
         // registrar accion
-
         $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $datos["monto"];
         if ($sucursal) {
             $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $datos["monto"] . " EN LA SUCURSAL " . $sucursal->nombre;
+        }
+
+        if ($sucursal && $almacen) {
+            $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $datos["monto"] . " EN LA SUCURSAL " . $sucursal->nombre . "; almacén " . $almacen->nombre;
         }
 
         $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", $descripcion_accion, $movimiento_caja, null);

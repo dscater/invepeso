@@ -19,6 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger("marca_id");
             $table->unsignedBigInteger("unidad_medida_id");
             $table->decimal("precio", 24, 2);
+            $table->decimal("precio2", 24, 2)->nullable();
+            $table->decimal("precio3", 24, 2)->nullable();
+            $table->decimal("precio4", 24, 2)->nullable();
             $table->decimal("precio_compra", 24, 2);
             $table->double("stock_min", 8, 2);
             $table->string("imagen", 255)->nullable();

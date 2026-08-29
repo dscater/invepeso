@@ -23,11 +23,15 @@ class ProductoService
 
     public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
 
-    public function listado(): Collection
+    public function listado($activo = null): Collection
     {
         $productos = Producto::select("productos.*")
-            ->with(["marca:id,nombre", "categoria:id,nombre"])
-            ->get();
+            ->with(["marca:id,nombre", "categoria:id,nombre"]);
+        if ($activo && $activo == 1) {
+            $productos->where("activo", 1);
+        }
+
+        $productos = $productos->get();
         return $productos;
     }
     /**
@@ -95,6 +99,9 @@ class ProductoService
             "marca_id" => $datos["marca_id"],
             "unidad_medida_id" => $datos["unidad_medida_id"],
             "precio" => $datos["precio"],
+            "precio2" => $datos["precio2"],
+            "precio3" => $datos["precio3"],
+            "precio4" => $datos["precio4"],
             "precio_compra" => $datos["precio_compra"],
             "stock_min" => $datos["stock_min"],
             "activo" => $datos["activo"],
@@ -131,6 +138,9 @@ class ProductoService
             "marca_id" => $datos["marca_id"],
             "unidad_medida_id" => $datos["unidad_medida_id"],
             "precio" => $datos["precio"],
+            "precio2" => $datos["precio2"],
+            "precio3" => $datos["precio3"],
+            "precio4" => $datos["precio4"],
             "precio_compra" => $datos["precio_compra"],
             "stock_min" => $datos["stock_min"],
             "activo" => $datos["activo"],

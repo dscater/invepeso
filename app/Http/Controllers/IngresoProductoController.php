@@ -105,11 +105,19 @@ class IngresoProductoController extends Controller
     {
         $fecha_ini = $request->input("fecha_ini", null);
         $fecha_fin = $request->input("fecha_fin", null);
+        $almacen_id = $request->input("almacen_id", null);
 
-        $ingreso_productos = IngresoProducto::with(["sucursal", "tipo_ingreso", "proveedor", "ingreso_detalles.producto"])
+        $ingreso_productos = IngresoProducto::with(["sucursal", "almacen", "tipo_ingreso", "proveedor", "ingreso_detalles.producto"])
             ->whereHas("ingreso_detalles", function ($q) {
                 $q->where("faltantes", NULL);
-            })->get();
+            })
+            ->where("almacen_id", $almacen_id);
+
+        if ($fecha_ini && $fecha_fin) {
+            $ingreso_productos->whereBetween("fecha_registro", [$fecha_ini, $fecha_fin]);
+        }
+
+        $ingreso_productos = $ingreso_productos->get();
         return response()->JSON($ingreso_productos);
     }
 

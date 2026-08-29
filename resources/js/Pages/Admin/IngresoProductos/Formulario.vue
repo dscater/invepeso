@@ -24,7 +24,7 @@ const textBtn = computed(() => {
 
 const enviarFormulario = () => {
     enviando.value = true;
-    form.sucursal_id = sucursal_id.value;
+    form.almacen_id = almacen_id.value;
     let url =
         form.id == 0
             ? route("ingreso_productos.store")
@@ -91,15 +91,15 @@ const enviarFormulario = () => {
 
 const emits = defineEmits(["envio-formulario"]);
 
-const listSucursals = ref([]);
+const listAlmacens = ref([]);
 const listTipoIngresos = ref([]);
 const tipo_ingreso_id_default = ref("");
 const listProveedors = ref([]);
 const listCategorias = ref([]);
 const listMarcas = ref([]);
-const listProductoSucursals = ref([]);
+const listProductoAlmacens = ref([]);
 const loadingLista = ref(true);
-const sucursal_id = ref("");
+const almacen_id = ref("");
 const categoria_id = ref("todos");
 const marca_id = ref("todos");
 const nombreProducto = ref("");
@@ -108,13 +108,13 @@ const cargarProductos = async () => {
     try {
         const res = await axios.get(route("producto_sucursals.listado"), {
             params: {
-                sucursal_id: sucursal_id.value,
+                almacen_id: almacen_id.value,
                 categoria_id: categoria_id.value,
                 marca_id: marca_id.value,
                 nombreProducto: nombreProducto.value,
             },
         });
-        listProductoSucursals.value = res.data.producto_sucursals.map(
+        listProductoAlmacens.value = res.data.producto_sucursals.map(
             (item) => ({
                 ...item,
                 cantidad: 1,
@@ -136,10 +136,10 @@ const filtrarNombres = () => {
     }, 370);
 };
 
-const cargarSucursals = async () => {
+const cargarAlmacens = async () => {
     try {
-        const res = await axios.get(route("sucursals.listado"));
-        listSucursals.value = res.data.sucursals;
+        const res = await axios.get(route("almacens.listado"));
+        listAlmacens.value = res.data.almacens;
     } catch (e) {
         console.log(e);
     } finally {
@@ -196,7 +196,7 @@ const cargarTipoIngresos = async () => {
 const cargarListas = () => {
     cargarTipoIngresos();
     cargarProductos();
-    cargarSucursals();
+    cargarAlmacens();
     cargarProveedors();
     cargarCategorias();
     cargarMarcas();
@@ -312,41 +312,36 @@ onMounted(() => {
                 <div class="card">
                     <div class="card-header shadow-bottom">
                         <div class="row">
-                            <div class="col-12">
-                                <h4 class="card-title">
-                                    <i class="fa fa-boxes"></i> Productos
-                                </h4>
-                            </div>
                             <div class="col-12 mt-2">
                                 <div class="input-group">
                                     <span class="input-group-text">
-                                        <i class="fa fa-building"></i>
+                                        <i class="fa fa-warehouse"></i>
                                     </span>
                                     <div class="form-control border-0 p-0">
                                         <el-select
-                                            v-model="sucursal_id"
+                                            v-model="almacen_id"
                                             class="el-select-input-group-right"
                                             no-data-text="Sin datos"
                                             no-match-text="Sin resultados"
-                                            placeholder="Sucursal"
+                                            placeholder="Seleccionar Almacén"
                                             filterable
                                             @change="cargarProductos"
                                         >
                                             <el-option
-                                                v-for="item in listSucursals"
+                                                v-for="item in listAlmacens"
                                                 :key="item.id"
                                                 :value="item.id"
-                                                :label="item.nombre"
+                                                :label="`${item.nombre} - ${item.sucursal.nombre}`"
                                             ></el-option>
                                         </el-select>
                                     </div>
                                 </div>
                                 <ul
-                                    v-if="form.errors?.sucursal_id"
+                                    v-if="form.errors?.almacen_id"
                                     class="d-block text-danger list-unstyled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors?.sucursal_id }}
+                                        {{ form.errors?.almacen_id }}
                                     </li>
                                 </ul>
                             </div>
@@ -395,11 +390,19 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
+                    <div class="card-header">
+                        <div class="col-12">
+                            <h4 class="card-title text-center w-100">
+                                <i class="fa fa-truck-loading"></i> Agregar
+                                Productos
+                            </h4>
+                        </div>
+                    </div>
                     <div
                         class="card-body bgGrayLight"
                         style="max-height: 63vh; overflow: auto"
                     >
-                        <div class="row" v-if="sucursal_id">
+                        <div class="row" v-if="almacen_id">
                             <div class="col-12">
                                 <div class="vacio_info" v-if="loadingLista">
                                     <i
@@ -409,7 +412,7 @@ onMounted(() => {
                                 <div class="row" v-if="!loadingLista">
                                     <div
                                         class="col-md-6 col-sm-12 producto-item-listado"
-                                        v-for="item in listProductoSucursals"
+                                        v-for="item in listProductoAlmacens"
                                         :key="item.id"
                                     >
                                         <div class="card mt-2">
@@ -555,7 +558,7 @@ onMounted(() => {
                         </div>
                         <div class="vacio_info text-muted py-5" v-else>
                             <i class="fa fa-building fs-1"></i>
-                            <div>Selecciona una sucursal</div>
+                            <div>Selecciona una almacen</div>
                         </div>
                     </div>
                 </div>

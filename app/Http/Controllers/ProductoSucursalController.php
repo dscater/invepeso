@@ -42,7 +42,7 @@ class ProductoSucursalController extends Controller
     {
         return response()->JSON([
             "producto_sucursals" => $this->producto_sucursalService->listado(
-                $request->input("sucursal_id", ""),
+                $request->input("almacen_id", ""),
                 $request->input("categoria_id", ""),
                 $request->input("marca_id", ""),
                 $request->input("nombreProducto", "")

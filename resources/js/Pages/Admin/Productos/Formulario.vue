@@ -283,23 +283,6 @@ onMounted(() => {
                         </ul>
                     </div>
                     <div class="col-md-4 mt-2">
-                        <label class="required">Precio de Venta Bs.</label>
-                        <input
-                            type="number"
-                            min="0"
-                            class="form-control"
-                            v-model="form.precio"
-                        />
-                        <ul
-                            v-if="form.errors?.precio"
-                            class="d-block text-danger list-unstyled"
-                        >
-                            <li class="parsley-required">
-                                {{ form.errors?.precio }}
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4 mt-2">
                         <label class="required">Precio de Compra Bs.</label>
                         <input
                             type="number"
@@ -374,6 +357,76 @@ onMounted(() => {
                                 --el-switch-off-color: #ff4949;
                             "
                         />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 mt-2">
+                        <label class="required">Precio de Venta 1 Bs.</label>
+                        <input
+                            type="number"
+                            min="0"
+                            class="form-control"
+                            v-model="form.precio"
+                        />
+                        <ul
+                            v-if="form.errors?.precio"
+                            class="d-block text-danger list-unstyled"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.precio }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label class="">Precio de Venta 2 Bs.</label>
+                        <input
+                            type="number"
+                            min="0"
+                            class="form-control"
+                            v-model="form.precio2"
+                        />
+                        <ul
+                            v-if="form.errors?.precio2"
+                            class="d-block text-danger list-unstyled"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.precio2 }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label class="">Precio de Venta 3 Bs.</label>
+                        <input
+                            type="number"
+                            min="0"
+                            class="form-control"
+                            v-model="form.precio3"
+                        />
+                        <ul
+                            v-if="form.errors?.precio3"
+                            class="d-block text-danger list-unstyled"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.precio3 }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label class="">Precio de Venta 4 Bs.</label>
+                        <input
+                            type="number"
+                            min="0"
+                            class="form-control"
+                            v-model="form.precio4"
+                        />
+                        <ul
+                            v-if="form.errors?.precio4"
+                            class="d-block text-danger list-unstyled"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.precio4 }}
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </form>

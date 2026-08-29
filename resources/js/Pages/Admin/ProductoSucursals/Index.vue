@@ -12,12 +12,12 @@ onBeforeMount(() => {
     appStore.startLoading();
 });
 
-const listSucursals = ref([]);
+const listAlmacens = ref([]);
 const listCategorias = ref([]);
 const listMarcas = ref([]);
 const listProductoSucursals = ref([]);
 const loadingLista = ref(false);
-const sucursal_id = ref("todos");
+const almacen_id = ref("todos");
 const categoria_id = ref("todos");
 const marca_id = ref("todos");
 const nombreProducto = ref("");
@@ -26,7 +26,7 @@ const cargarProductos = async () => {
     try {
         const res = await axios.get(route("producto_sucursals.listado"), {
             params: {
-                sucursal_id: sucursal_id.value,
+                almacen_id: almacen_id.value,
                 categoria_id: categoria_id.value,
                 marca_id: marca_id.value,
                 nombreProducto: nombreProducto.value,
@@ -50,11 +50,11 @@ const filtrarNombres = () => {
 
 const cargarSucursals = async () => {
     try {
-        const res = await axios.get(route("sucursals.listado"));
-        listSucursals.value = res.data.sucursals;
-        listSucursals.value.unshift({
+        const res = await axios.get(route("almacens.listado"));
+        listAlmacens.value = res.data.almacens;
+        listAlmacens.value.unshift({
             id: "todos",
-            nombre: "Todas las Sucursales",
+            nombre: "Todos los almacenes",
         });
     } catch (e) {
         console.log(e);
@@ -133,23 +133,23 @@ const { axiosDelete } = useAxios();
                     <div class="col-12 fs-7">Filtrar por:</div>
                     <div class="col-12">
                         <div class="row">
-                            <div class="col-lg-2 col-md-3 col-sm-6 mt-1">
+                            <div class="col-lg-3 col-md-4 col-sm-6 mt-1">
                                 <el-select
-                                    v-model="sucursal_id"
+                                    v-model="almacen_id"
                                     no-data-text="Sin Datos"
                                     no-match-text="Sin Resultados"
                                     filterable
                                     @change="cargarProductos"
                                 >
                                     <el-option
-                                        v-for="item in listSucursals"
+                                        v-for="item in listAlmacens"
                                         :key="item.id"
                                         :value="item.id"
-                                        :label="item.nombre"
+                                        :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
                                     ></el-option>
                                 </el-select>
                             </div>
-                            <div class="col-lg-2 col-md-3 col-sm-6 mt-1">
+                            <div class="col-lg-2 col-md-4 col-sm-6 mt-1">
                                 <el-select
                                     v-model="categoria_id"
                                     no-data-text="Sin Datos"
@@ -165,7 +165,7 @@ const { axiosDelete } = useAxios();
                                     ></el-option>
                                 </el-select>
                             </div>
-                            <div class="col-lg-2 col-md-3 col-sm-6 mt-1">
+                            <div class="col-lg-2 col-md-4 col-sm-6 mt-1">
                                 <el-select
                                     v-model="marca_id"
                                     no-data-text="Sin Datos"
@@ -181,7 +181,7 @@ const { axiosDelete } = useAxios();
                                     ></el-option>
                                 </el-select>
                             </div>
-                            <div class="col-lg-2 col-md-3 col-sm-6 mt-1">
+                            <div class="col-lg-2 col-md-4 col-sm-6 mt-1">
                                 <input
                                     type="text"
                                     class="form-control"
