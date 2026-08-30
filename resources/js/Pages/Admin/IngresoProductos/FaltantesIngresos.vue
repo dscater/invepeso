@@ -6,7 +6,7 @@ import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
-import Verificar from "./Verificar.vue";
+import Faltante from "./Faltante.vue";
 import { buttonProps } from "element-plus";
 import { useDate } from "@/composables/useDate.js";
 import axios from "axios";
@@ -36,9 +36,9 @@ const cargarAlmacens = async () => {
     }
 };
 
-const cargarIngresosSinVerificar = () => {
+const cargarIngresosFaltantes = () => {
     axios
-        .get(route("ingreso_productos.lista_sin_verificar"), {
+        .get(route("ingreso_productos.lista_faltantes"), {
             params: {
                 fecha_ini: fecha_ini.value,
                 fecha_fin: fecha_fin.value,
@@ -54,13 +54,13 @@ const intervalTimeOutListado = ref(null);
 const cargaListado = () => {
     clearInterval(intervalTimeOutListado.value);
     setTimeout(() => {
-        cargarIngresosSinVerificar();
+        cargarIngresosFaltantes();
     }, 700);
 };
 
 onBeforeMount(() => {
     cargarAlmacens();
-    cargarIngresosSinVerificar();
+    cargarIngresosFaltantes();
     appStore.startLoading();
 });
 
@@ -68,7 +68,7 @@ onMounted(() => {
     appStore.stopLoading();
 });
 
-const verificar = (item) => {
+const recepcionar = (item) => {
     setIngresoProducto(item);
     muestra_formulario.value = true;
 };
@@ -76,19 +76,19 @@ const verificar = (item) => {
 const updateIngresos = () => {
     muestra_formulario.value = false;
     limpiarIngresoProducto();
-    cargarIngresosSinVerificar();
+    cargarIngresosFaltantes();
 };
 
 const muestra_formulario = ref(false);
 </script>
 <template>
-    <Head title="Verificar Compras"></Head>
+    <Head title="Recepción de Faltantes"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-boxes"></i> Verificar Compras
+                        <i class="fa fa-boxes"></i> Recepción de Faltantes
                     </h3>
                 </div>
                 <!-- /.col -->
@@ -98,7 +98,7 @@ const muestra_formulario = ref(false);
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
                         <li class="breadcrumb-item active">
-                            Verificar Compras
+                            Recepción de Faltantes
                         </li>
                     </ol>
                 </div>
@@ -116,7 +116,7 @@ const muestra_formulario = ref(false);
                     no-match-text="Sin resultados"
                     placeholder="Seleccionar Almacén"
                     filterable
-                    @change="cargarIngresosSinVerificar"
+                    @change="cargarIngresosFaltantes"
                 >
                     <el-option
                         v-for="item in listAlmacens"
@@ -133,7 +133,7 @@ const muestra_formulario = ref(false);
                     v-model="fecha_ini"
                     class="form-control"
                     @keyup="cargaListado"
-                    @change="cargarIngresosSinVerificar"
+                    @change="cargarIngresosFaltantes"
                 />
             </div>
             <div class="col-md-4 col-sm-6">
@@ -143,7 +143,7 @@ const muestra_formulario = ref(false);
                     v-model="fecha_fin"
                     class="form-control"
                     @keyup="cargaListado"
-                    @change="cargarIngresosSinVerificar"
+                    @change="cargarIngresosFaltantes"
                 />
             </div>
         </div>
@@ -259,10 +259,10 @@ const muestra_formulario = ref(false);
                             <div class="col-12">
                                 <button
                                     class="btn btn-sm btn-primary float-end"
-                                    @click="verificar(item)"
+                                    @click="recepcionar(item)"
                                 >
                                     <i class="fa fa-external-link-alt"></i>
-                                    Verificar
+                                    Recepcionar
                                 </button>
                             </div>
                         </div>
@@ -273,17 +273,17 @@ const muestra_formulario = ref(false);
         <div class="row" v-else>
             <div class="col-12">
                 <h4 class="text-center text-muted fs-3">
-                    <i class="fa fa-info-circle"></i> No hay compras para
-                    verificar
+                    <i class="fa fa-info-circle"></i> No hay registros para
+                    recepción de faltantes recepcionar
                 </h4>
             </div>
         </div>
-        <Verificar
+        <Faltante
             v-if="muestra_formulario"
             :muestra_formulario="muestra_formulario"
             :form="form"
             @envio-formulario="updateIngresos"
             @cerrar-formulario="muestra_formulario = false"
-        ></Verificar>
+        ></Faltante>
     </Content>
 </template>

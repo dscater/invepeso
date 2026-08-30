@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\IngresoDetalleVerificarRule;
+use App\Rules\IngresoDetalleFaltantesRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class IngresoProductoVerificarRequest extends FormRequest
+class IngresoProductoFaltantesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,13 +26,11 @@ class IngresoProductoVerificarRequest extends FormRequest
         return [
             "sucursal_id" => "required",
             "almacen_id" => "required",
-            "tipo_ingreso_id" => "required",
-            "proveedor_id" => "required",
             "descripcion" => "nullable",
             "total" => "required",
             "cancelado" => "required",
             "saldo" => "required",
-            "ingreso_detalles" => ["required", new IngresoDetalleVerificarRule()],
+            "ingreso_detalles" => ["required", new IngresoDetalleFaltantesRule()],
         ];
     }
 

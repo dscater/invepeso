@@ -18,6 +18,8 @@ class IngresoProducto extends Model
         "saldo",
         "fecha_registro",
         "user_id",
+        "estado_ingreso", //PENDIENTE, VERIFICADO
+        "estado_faltantes", //NULL, SIN FALTANTES, PENDIENTE, COMPLETO 
         "status",
     ];
 

@@ -135,6 +135,7 @@ class IngresoProductoService
             // REGISTRAR INGRESO STOCK
             // $this->kardex_producto_service->registrarMovimiento(
             //     $ingreso_producto->sucursal_id,
+            //     $ingreso_producto->almcen_id,
             //     "INGRESO DE PRODUCTO",
             //     "INGRESO",
             //     $ingreso_detalle->id,
@@ -185,6 +186,8 @@ class IngresoProductoService
 
     public function verificar(array $datos, IngresoProducto $ingreso_producto)
     {
+        $count_faltantes = 0;
+
         foreach ($datos["ingreso_detalles"] as $item) {
             $dato_ingreso_detalle = [
                 "verificado" => $item["verificado"],
@@ -192,6 +195,9 @@ class IngresoProductoService
                 "observacion" => $item["observacion"] ?? NULL,
                 "cantidad_fisica" => $item["verificado"],
             ];
+            if ((float)$item["faltantes"] > 0) {
+                $count_faltantes++;
+            }
 
             $ingreso_detalle = IngresoDetalle::findOrFail($item["id"]);
             $producto = Producto::findOrFail($ingreso_detalle->producto_id);
@@ -200,6 +206,7 @@ class IngresoProductoService
             // REGISTRAR INGRESO STOCK
             $this->kardex_producto_service->registrarMovimiento(
                 $ingreso_producto->sucursal_id,
+                $ingreso_producto->almacen_id,
                 "INGRESO DE PRODUCTO",
                 "INGRESO",
                 $ingreso_detalle->id,
@@ -211,6 +218,56 @@ class IngresoProductoService
                 $ingreso_detalle->id
             );
         }
+        $ingreso_producto->estado_faltantes = $count_faltantes > 0 ? 'PENDIENTE' : 'SIN FALTANTES';
+        $ingreso_producto->estado_ingreso = 'VERIFICADO';
+        $ingreso_producto->save();
+    }
+
+    public function faltante(array $datos, IngresoProducto $ingreso_producto)
+    {
+        $count_faltantes = 0;
+        foreach ($datos["ingreso_detalles"] as $item) {
+            if ((float)$item["repuesto"] > (float)$item["faltantes"]) {
+                throw new Exception("La cantidad repuesta no puede ser mayor a los faltantes");
+            }
+
+            $ingreso_detalle = IngresoDetalle::findOrFail($item["id"]);
+            $faltantes = (float)$item["faltantes"] - (float)$item["repuesto"];
+            $cantidad_fisica = $ingreso_detalle->cantidad_fisica + (float)$item["repuesto"];
+            $dato_ingreso_detalle = [
+                // "faltantes" => $faltantes,
+                "repuesto" => $item["repuesto"],
+                "observacion" => $item["observacion"] ?? NULL,
+                "cantidad_fisica" => $cantidad_fisica,
+            ];
+            if ((float)$faltantes > 0) {
+                $count_faltantes++;
+            }
+
+            if ((float)$item["repuesto"] == 0) {
+                continue;
+            }
+
+            $producto = Producto::findOrFail($ingreso_detalle->producto_id);
+            // ACTUALIZAR CANTIDAD
+            $ingreso_detalle->update($dato_ingreso_detalle);
+            // REGISTRAR INGRESO STOCK
+            $this->kardex_producto_service->registrarMovimiento(
+                $ingreso_producto->sucursal_id,
+                $ingreso_producto->almacen_id,
+                "INGRESO DE PRODUCTO",
+                "INGRESO",
+                $ingreso_detalle->id,
+                $producto,
+                (float)$item["repuesto"],
+                $ingreso_detalle->costo,
+                "INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA",
+                "IngresoDetalle",
+                $ingreso_detalle->id
+            );
+        }
+        $ingreso_producto->estado_faltantes = $count_faltantes > 0 ? 'PENDIENTE' : 'COMPLETO';
+        $ingreso_producto->save();
     }
 
     /**

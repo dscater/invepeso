@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IngresoProductoFaltantesRequest;
 use App\Http\Requests\IngresoProductoStoreRequest;
 use App\Http\Requests\IngresoProductoUpdateRequest;
 use App\Http\Requests\IngresoProductoVerificarRequest;
@@ -108,9 +109,26 @@ class IngresoProductoController extends Controller
         $almacen_id = $request->input("almacen_id", null);
 
         $ingreso_productos = IngresoProducto::with(["sucursal", "almacen", "tipo_ingreso", "proveedor", "ingreso_detalles.producto"])
-            ->whereHas("ingreso_detalles", function ($q) {
-                $q->where("faltantes", NULL);
-            })
+            ->where("estado_ingreso", "PENDIENTE")
+            ->where("almacen_id", $almacen_id);
+
+        if ($fecha_ini && $fecha_fin) {
+            $ingreso_productos->whereBetween("fecha_registro", [$fecha_ini, $fecha_fin]);
+        }
+
+        $ingreso_productos = $ingreso_productos->get();
+        return response()->JSON($ingreso_productos);
+    }
+
+
+    public function lista_faltantes(Request $request)
+    {
+        $fecha_ini = $request->input("fecha_ini", null);
+        $fecha_fin = $request->input("fecha_fin", null);
+        $almacen_id = $request->input("almacen_id", null);
+
+        $ingreso_productos = IngresoProducto::with(["sucursal", "almacen", "tipo_ingreso", "proveedor", "ingreso_detalles.producto"])
+            ->where("estado_faltantes", "PENDIENTE")
             ->where("almacen_id", $almacen_id);
 
         if ($fecha_ini && $fecha_fin) {
@@ -135,6 +153,27 @@ class IngresoProductoController extends Controller
             $this->ingreso_productoService->verificar($request->validated(), $ingreso_producto);
             DB::commit();
             return redirect()->route("ingreso_productos.verificacion_ingresos")->with("bien", "Registro actualizado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log::debug($e->getMessage());
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+    public function faltantes_ingresos()
+    {
+        return Inertia::render("Admin/IngresoProductos/FaltantesIngresos");
+    }
+
+    public function faltante(IngresoProductoFaltantesRequest $request, IngresoProducto $ingreso_producto)
+    {
+        DB::beginTransaction();
+        try {
+            // actualizar ingreso_producto
+            $this->ingreso_productoService->faltante($request->validated(), $ingreso_producto);
+            DB::commit();
+            return redirect()->route("ingreso_productos.faltantes_ingresos")->with("bien", "Registro actualizado");
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());

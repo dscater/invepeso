@@ -52,6 +52,7 @@ const sincronizarMenus = () => {
         route_current.value == "ingreso_productos.create" ||
         route_current.value == "ingreso_productos.edit" ||
         route_current.value == "ingreso_productos.verificacion_ingresos" ||
+        route_current.value == "ingreso_productos.faltantes_ingresos" ||
         route_current.value == "salida_productos.create" ||
         route_current.value == "salida_productos.edit"
     ) {
@@ -256,21 +257,32 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
+                                    permisos.includes('ingresos.create')
+                                "
+                                :label="'Verificar Compras'"
+                                :ruta="'ingreso_productos.verificacion_ingresos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes(
+                                        'ingresos.faltantes_ingresos',
+                                    )
+                                "
+                                :label="'Recepción de Faltantes'"
+                                :ruta="'ingreso_productos.faltantes_ingresos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
                                     permisos.includes(
                                         'producto_sucursals.index',
                                     )
                                 "
                                 :label="'Stock de Inventario'"
                                 :ruta="'producto_sucursals.index'"
-                                :icon="'fa fa-angle-right'"
-                            ></ItemMenu>
-                            <ItemMenu
-                                v-if="
-                                    permisos == '*' ||
-                                    permisos.includes('ingresos.create')
-                                "
-                                :label="'Verificar Compras'"
-                                :ruta="'ingreso_productos.verificacion_ingresos'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                             <ItemMenu

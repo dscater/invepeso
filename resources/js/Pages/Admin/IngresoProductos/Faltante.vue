@@ -20,7 +20,7 @@ const enviando = ref(false);
 const form = props.form;
 
 const tituloDialog = computed(() => {
-    return `<i class="fa fa-list"></i> Verificación de Productos`;
+    return `<i class="fa fa-list"></i> Recepción de Productos Faltantes`;
 });
 
 const textBtn = computed(() => {
@@ -32,7 +32,7 @@ const textBtn = computed(() => {
 
 const enviarFormulario = () => {
     enviando.value = true;
-    let url = route("ingreso_productos.verificar", form.id);
+    let url = route("ingreso_productos.faltante", form.id);
 
     form.post(url, {
         preserveScroll: true,
@@ -88,7 +88,6 @@ const enviarFormulario = () => {
                     },
                 });
             }
-            console.log("error: " + err.error);
         },
         onFinish: () => {
             enviando.value = false;
@@ -113,33 +112,19 @@ const inputCheckRecibidos = ref(false);
 
 const recepcionTodos = () => {
     if (inputCheckRecibidos.value === true) {
-        form.ingreso_detalles.map((item) => (item.verificado = item.cantidad));
+        form.ingreso_detalles.map((item) => (item.repuesto = item.faltantes));
     } else {
-        form.ingreso_detalles.map((item) => (item.verificado = 0));
+        form.ingreso_detalles.map((item) => (item.repuesto = 0));
     }
-    calculaFaltantes();
 };
 
-const calculaFaltantes = () => {
-    form.ingreso_detalles.forEach((item) => {
-        if (item.verificado && parseFloat(item.verificado) > 0) {
-            item.faltantes = item.cantidad - item.verificado;
-        } else {
-            item.faltantes = null;
-        }
-    });
-};
-
-const calculaFaltantesIndex = (index) => {
-    const verificado = form.ingreso_detalles[index].verificado;
-    const cantidad = form.ingreso_detalles[index].cantidad;
-
-    let faltantes = null;
-    if (verificado && parseFloat(verificado) > 0) {
-        faltantes = cantidad - verificado;
+const calculaFaltantesIndex = (e, index) => {
+    const check = e.target.checked;
+    form.ingreso_detalles[index].repuesto = 0;
+    if (check) {
+        form.ingreso_detalles[index].repuesto =
+            form.ingreso_detalles[index].faltantes;
     }
-
-    form.ingreso_detalles[index].faltantes = faltantes;
 };
 
 const booleanInputs = computed(() => {
@@ -199,15 +184,18 @@ onMounted(() => {});
                                     </th>
                                     <th class="bg-principal text-white">
                                         Recibido
+                                    </th>
+                                    <th class="bg-principal text-white">
+                                        Faltantes
+                                    </th>
+                                    <th class="bg-principal text-white">
+                                        Repuesto
                                         <input
                                             type="checkbox"
                                             v-model="inputCheckRecibidos"
                                             style="height: 15px; width: 15px"
                                             @change="recepcionTodos"
                                         />
-                                    </th>
-                                    <th class="bg-principal text-white">
-                                        Faltantes
                                     </th>
                                     <th class="bg-principal text-white">
                                         Observación
@@ -226,19 +214,38 @@ onMounted(() => {});
                                     <td class="text-center">
                                         {{ item.cantidad }}
                                     </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            step="1"
-                                            class="form-control"
-                                            v-model="item.verificado"
-                                            @keyup="
-                                                calculaFaltantesIndex(index)
-                                            "
-                                        />
-                                    </td>
+                                    <td>{{ item.verificado }}</td>
                                     <td class="text-center">
                                         {{ item.faltantes }}
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                {{ item.repuesto }}
+                                            </span>
+                                            <span
+                                                class="input-group-text"
+                                                v-if="item.faltantes > 0"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    :checked="
+                                                        item.repuesto ==
+                                                        item.faltantes
+                                                    "
+                                                    style="
+                                                        height: 15px;
+                                                        width: 15px;
+                                                    "
+                                                    @change="
+                                                        calculaFaltantesIndex(
+                                                            $event,
+                                                            index,
+                                                        )
+                                                    "
+                                                />
+                                            </span>
+                                        </div>
                                     </td>
                                     <td>
                                         <el-input

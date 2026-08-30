@@ -557,8 +557,8 @@ onMounted(() => {
                             </div>
                         </div>
                         <div class="vacio_info text-muted py-5" v-else>
-                            <i class="fa fa-building fs-1"></i>
-                            <div>Selecciona una almacen</div>
+                            <i class="fa fa-warehouse fs-1"></i>
+                            <div>Selecciona una almacén</div>
                         </div>
                     </div>
                 </div>

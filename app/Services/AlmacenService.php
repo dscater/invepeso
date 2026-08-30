@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Services\HistorialAccionService;
 use App\Models\Almacen;
 use App\Models\IngresoProducto;
+use App\Models\ProductoSucursal;
 use App\Models\SalidaProducto;
 use App\Models\User;
 use App\Models\Venta;
@@ -114,6 +115,9 @@ class AlmacenService
     public function actualizar(array $datos, Almacen $almacen): Almacen
     {
         $old_almacen = clone $almacen;
+        if (!$this->verificarActualizacion($almacen) && $datos["sucursal_id"] != $almacen->sucursal_id) {
+            throw new Exception("No es posible modificar el almacén " . $almacen->nombre . ", porque ya tiene productos con stock registrados");
+        }
 
         $almacen->update([
             "sucursal_id" => $datos["sucursal_id"],
@@ -126,6 +130,19 @@ class AlmacenService
         $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN ALMACÉN", $old_almacen, $almacen->withoutRelations());
 
         return $almacen;
+    }
+
+    public function verificarActualizacion(Almacen $almacen)
+    {
+        $producto_sucursals = ProductoSucursal::where("almacen_id", $almacen->id)
+            ->where("stock_actual", ">", 0)
+            ->count();
+
+        if ($producto_sucursals > 0) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

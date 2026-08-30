@@ -34,6 +34,7 @@ class KardexProductoService
      */
     public function registrarMovimiento(
         int $sucursal_id,
+        int $almacen_id,
         string $tipo_registro,
         string $ingreso_salida,
         int $ingreso_detalle_id,
@@ -46,6 +47,7 @@ class KardexProductoService
     ): void {
         //buscar el ultimo registro y usar sus valores
         $ultimo = KardexProducto::where('producto_id', $producto->id)
+            ->where("almacen_id", $almacen_id)
             ->where("sucursal_id", $sucursal_id)
             ->where("status", 1);
         $ultimo = $ultimo->orderBy('created_at', 'asc')
@@ -59,6 +61,7 @@ class KardexProductoService
 
         $datos_movimiento = [
             "sucursal_id" => $sucursal_id,
+            "almacen_id" => $almacen_id,
             'tipo_registro' => $tipo_registro, //INGRESO, EGRESO, VENTA, COMPRA,etc...
             'registro_id' => $registro_id != 0 ? $registro_id : NULL,
             "modulo" => $modulo,
@@ -115,9 +118,9 @@ class KardexProductoService
         if ($ingreso_salida == 'INGRESO') {
             // INCREMENTAR STOCK
             // Log::debug("INCREMENTAR STOCK DEL PRODUCTO " . $producto->id . " CANTIDAD: " . $cantidad);
-            $this->productoService->incrementarStock($sucursal_id, $producto->id, $cantidad);
+            $this->productoService->incrementarStock($sucursal_id, $almacen_id, $producto->id, $cantidad);
         } else {
-            $this->productoService->decrementarStock($sucursal_id, $producto->id, $cantidad);
+            $this->productoService->decrementarStock($sucursal_id, $almacen_id, $producto->id, $cantidad);
         }
     }
 }

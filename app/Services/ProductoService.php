@@ -213,16 +213,18 @@ class ProductoService
         return true;
     }
 
-    public function incrementarStock(int $sucursal_id, int $producto_id, int $cantidad = 1)
+    public function incrementarStock(int $sucursal_id, int $almacen_id, int $producto_id, int $cantidad = 1)
     {
         $producto = ProductoSucursal::where("producto_id", $producto_id)
             ->where("sucursal_id", $sucursal_id)
+            ->where("almacen_id", $almacen_id)
             ->get()
             ->first();
 
         if (!$producto) {
             $producto = ProductoSucursal::create([
                 "sucursal_id" => $sucursal_id,
+                "almacen_id" => $almacen_id,
                 "producto_id" => $producto_id,
                 "stock_actual" => 0,
             ]);
@@ -232,14 +234,15 @@ class ProductoService
         $producto->save();
         return $producto;
     }
-    public function decrementarStock(int $sucursal_id, int $producto_id, int $cantidad = 1)
+    public function decrementarStock(int $sucursal_id, int $almacen_id, int $producto_id, int $cantidad = 1)
     {
         $producto = Producto::where("producto_id", $producto_id)
             ->where("sucursal_id", $sucursal_id)
+            ->where("almacen_id", $almacen_id)
             ->get()
             ->first();
         // validar stock
-        if (!$this->verificaStock($sucursal_id, $producto_id, $cantidad)) {
+        if (!$this->verificaStock($sucursal_id, $almacen_id, $producto_id, $cantidad)) {
             throw new Exception("Stock insuficiente del producto " . $producto->nombre . ", disponible " . $producto->stock_actual);
         }
 
@@ -250,10 +253,11 @@ class ProductoService
     }
 
     // stock_actual
-    public function verificaStock($sucursal_id, $producto_id, $cantidad): bool
+    public function verificaStock($sucursal_id, $almacen_id, $producto_id, $cantidad): bool
     {
         $producto = ProductoSucursal::where("producto_id", $producto_id)
             ->where("sucursal_id", $sucursal_id)
+            ->where("almacen_id", $almacen_id)
             ->get()
             ->first();
         $disponible = false;
@@ -265,10 +269,11 @@ class ProductoService
     }
 
     // stock_actual
-    public function verificaStockCantidad($sucursal_id, $producto_id, $cantidad): array
+    public function verificaStockCantidad($sucursal_id, $almacen_id, $producto_id, $cantidad): array
     {
         $producto = ProductoSucursal::where("producto_id", $producto_id)
             ->where("sucursal_id", $sucursal_id)
+            ->where("almacen_id", $almacen_id)
             ->get()
             ->first();
         $disponible = false;
@@ -280,10 +285,11 @@ class ProductoService
     }
 
     // stock_actual
-    public function validaStockCantidad($sucursal_id, $producto_id, $cantidad)
+    public function validaStockCantidad($sucursal_id, $almacen_id, $producto_id, $cantidad)
     {
         $producto = ProductoSucursal::where("producto_id", $producto_id)
             ->where("sucursal_id", $sucursal_id)
+            ->where("almacen_id", $almacen_id)
             ->get()
             ->first();
         $disponible = false;
@@ -296,31 +302,32 @@ class ProductoService
         return true;
     }
 
-    // cantidad disponible
-    // VERIFICAR EN UNA TABLA DONDE SE GUARDAN MOVIMIENTOS ACTUALES COMO VENTAS
-    // TODO: modificar y aplicar
-    public function verificaStockDisponible($sucursal_id, $producto_id, $cantidad, $pedido_id = 0): array
-    {
-        $producto = ProductoSucursal::where("producto_id", $producto_id)
-            ->where("sucursal_id", $sucursal_id)
-            ->get()
-            ->first();
-        $disponible = false;
-        $c_pedidos_pendientes = PedidoDetalle::where("producto_id", $producto_id)
-            ->whereHas("pedido", function ($q) use ($pedido_id) {
-                $q->where("estado", "PENDIENTE");
-                $q->where("status", 1);
-                if ($pedido_id != 0) {
-                    $q->where("id", "!=", $pedido_id);
-                }
-            })->sum("cantidad_total");
+    // // cantidad disponible
+    // // VERIFICAR EN UNA TABLA DONDE SE GUARDAN MOVIMIENTOS ACTUALES COMO VENTAS
+    // // TODO: modificar y aplicar
+    // public function verificaStockDisponible($sucursal_id, $almacen_id, $producto_id, $cantidad, $pedido_id = 0): array
+    // {
+    //     $producto = ProductoSucursal::where("producto_id", $producto_id)
+    //         ->where("sucursal_id", $sucursal_id)
+    //         ->where("almacen_id", $almacen_id)
+    //         ->get()
+    //         ->first();
+    //     $disponible = false;
+    //     $c_pedidos_pendientes = PedidoDetalle::where("producto_id", $producto_id)
+    //         ->whereHas("pedido", function ($q) use ($pedido_id) {
+    //             $q->where("estado", "PENDIENTE");
+    //             $q->where("status", 1);
+    //             if ($pedido_id != 0) {
+    //                 $q->where("id", "!=", $pedido_id);
+    //             }
+    //         })->sum("cantidad_total");
 
-        $stock_disponible = (float)$producto->stock_actual - (float)$c_pedidos_pendientes;
+    //     $stock_disponible = (float)$producto->stock_actual - (float)$c_pedidos_pendientes;
 
-        if ($stock_disponible >= $cantidad) {
-            $disponible = true;
-        }
+    //     if ($stock_disponible >= $cantidad) {
+    //         $disponible = true;
+    //     }
 
-        return [$disponible, $stock_disponible];
-    }
+    //     return [$disponible, $stock_disponible];
+    // }
 }

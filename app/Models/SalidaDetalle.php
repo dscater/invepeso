@@ -4,15 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SalidaProducto extends Model
+class SalidaDetalle extends Model
 {
     protected $fillable = [
-        "sucursal_id",
-        "almacen_id",
+        "salida_producto_id",
         "tipo_salida_id",
+        "producto_id",
         "cantidad",
-        "descripcion",
-        "fecha_registro",
-        "user_id",
+        "observacion",
     ];
 }

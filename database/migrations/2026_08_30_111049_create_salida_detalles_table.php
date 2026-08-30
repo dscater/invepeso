@@ -11,21 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('salida_productos', function (Blueprint $table) {
+        Schema::create('salida_detalles', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("sucursal_id");
-            $table->unsignedBigInteger("almacen_id");
+            $table->unsignedBigInteger("salida_producto_id");
             $table->unsignedBigInteger("tipo_salida_id");
+            $table->unsignedBigInteger("producto_id");
             $table->double("cantidad", 8, 2);
-            $table->string("descripcion", 800);
-            $table->date("fecha_registro");
-            $table->unsignedBigInteger("user_id");
+            $table->string("observacion", 900)->nullable();
             $table->timestamps();
 
-            $table->foreign("sucursal_id")->on("sucursals")->references("id");
-            $table->foreign("almacen_id")->on("almacens")->references("id");
+            $table->foreign("salida_producto_id")->on("salida_productos")->references("id");
             $table->foreign("tipo_salida_id")->on("tipo_salidas")->references("id");
-            $table->foreign("user_id")->on("users")->references("id");
+            $table->foreign("producto_id")->on("productos")->references("id");
         });
     }
 
@@ -34,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('salida_productos');
+        Schema::dropIfExists('salida_detalles');
     }
 };

@@ -24,6 +24,8 @@ return new class extends Migration
             $table->decimal("saldo", 24, 2);
             $table->date("fecha_registro")->nullable();
             $table->unsignedBigInteger("user_id");
+            $table->string("estado_ingreso")->default("PENDIENTE"); //PENDIENTE, VERIFICADO
+            $table->string("estado_faltantes")->nullable()->default(NULL); //NULL, SIN FALTANTES, PENDIENTE, COMPLETO 
             $table->integer("status")->default(1);
             $table->timestamps();
 
