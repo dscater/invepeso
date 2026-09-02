@@ -54,4 +54,10 @@ class IngresoProducto extends Model
     {
         return $this->hasMany(IngresoDetalle::class, 'ingreso_producto_id');
     }
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

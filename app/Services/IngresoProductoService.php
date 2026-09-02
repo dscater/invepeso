@@ -135,7 +135,7 @@ class IngresoProductoService
             // REGISTRAR INGRESO STOCK
             // $this->kardex_producto_service->registrarMovimiento(
             //     $ingreso_producto->sucursal_id,
-            //     $ingreso_producto->almcen_id,
+            //     $ingreso_producto->almacen_id,
             //     "INGRESO DE PRODUCTO",
             //     "INGRESO",
             //     $ingreso_detalle->id,
@@ -164,7 +164,7 @@ class IngresoProductoService
         }
 
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA INGRESO DE PRODUCTO", $ingreso_producto);
+        $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA INGRESO DE PRODUCTO", $ingreso_producto, null, ["ingreso_detalles"]);
         return $ingreso_producto;
     }
 

@@ -236,7 +236,7 @@ class ProductoService
     }
     public function decrementarStock(int $sucursal_id, int $almacen_id, int $producto_id, int $cantidad = 1)
     {
-        $producto = Producto::where("producto_id", $producto_id)
+        $producto = ProductoSucursal::where("producto_id", $producto_id)
             ->where("sucursal_id", $sucursal_id)
             ->where("almacen_id", $almacen_id)
             ->get()

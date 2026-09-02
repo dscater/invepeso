@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 30-08-2026 a las 16:16:48
+-- Tiempo de generación: 02-09-2026 a las 14:27:39
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -158,7 +158,8 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (7, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 5, \"saldo\": \"1500.00\", \"total\": \"1500.00\", \"codigo\": \"L-00005\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-08-29T15:44:23.000000Z\", \"updated_at\": \"2026-08-29T15:44:23.000000Z\", \"descripcion\": \"DESC\", \"sucursal_id\": 1, \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-08-29\", \"tipo_ingreso_id\": \"1\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-08-29', '11:44:23', '2026-08-29 15:44:23', '2026-08-29 15:44:23'),
 (8, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 6, \"saldo\": \"3000.00\", \"total\": \"3000.00\", \"codigo\": \"L-00006\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-08-30T16:01:02.000000Z\", \"updated_at\": \"2026-08-30T16:01:02.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"proveedor_id\": \"2\", \"fecha_registro\": \"2026-08-30\", \"tipo_ingreso_id\": \"2\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-08-30', '12:01:02', '2026-08-30 16:01:02', '2026-08-30 16:01:02'),
 (9, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 7, \"saldo\": \"1200.00\", \"total\": \"1200.00\", \"codigo\": \"L-00007\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-08-30T16:05:07.000000Z\", \"updated_at\": \"2026-08-30T16:05:07.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-08-30\", \"tipo_ingreso_id\": \"1\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-08-30', '12:05:07', '2026-08-30 16:05:07', '2026-08-30 16:05:07'),
-(10, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 8, \"saldo\": \"480.00\", \"total\": \"480.00\", \"codigo\": \"L-00008\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-08-30T16:13:09.000000Z\", \"updated_at\": \"2026-08-30T16:13:09.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-08-30\", \"tipo_ingreso_id\": \"1\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-08-30', '12:13:09', '2026-08-30 16:13:09', '2026-08-30 16:13:09');
+(10, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 8, \"saldo\": \"480.00\", \"total\": \"480.00\", \"codigo\": \"L-00008\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-08-30T16:13:09.000000Z\", \"updated_at\": \"2026-08-30T16:13:09.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-08-30\", \"tipo_ingreso_id\": \"1\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-08-30', '12:13:09', '2026-08-30 16:13:09', '2026-08-30 16:13:09'),
+(11, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA SALIDA DE PRODUCTOS', '{\"id\": 6, \"user_id\": 1, \"cantidad\": \"2\", \"almacen_id\": 1, \"created_at\": \"2026-09-02T14:23:39.000000Z\", \"updated_at\": \"2026-09-02T14:23:39.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-02\", \"tipo_salida_id\": null, \"salida_detalles\": [{\"id\": 7, \"cantidad\": 1, \"created_at\": \"2026-09-02T14:23:39.000000Z\", \"updated_at\": \"2026-09-02T14:23:39.000000Z\", \"observacion\": null, \"producto_id\": 2, \"tipo_salida_id\": 1, \"salida_producto_id\": 6}, {\"id\": 8, \"cantidad\": 1, \"created_at\": \"2026-09-02T14:23:39.000000Z\", \"updated_at\": \"2026-09-02T14:23:39.000000Z\", \"observacion\": null, \"producto_id\": 3, \"tipo_salida_id\": 2, \"salida_producto_id\": 6}]}', NULL, 'SALIDA DE PRODUCTOS', '2026-09-02', '10:23:39', '2026-09-02 14:23:39', '2026-09-02 14:23:39');
 
 -- --------------------------------------------------------
 
@@ -283,7 +284,9 @@ INSERT INTO `kardex_productos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_deta
 (10, 1, 1, 7, 'INGRESO DE PRODUCTO', 7, 'IngresoDetalle', 3, 'INGRESO POR FALTANTE DE COMPRA', 300.00, 'INGRESO', 1, NULL, 10, 300.00, 300.00, NULL, 3000.00, '2026-08-30', 1, '2026-08-30 16:05:52', '2026-08-30 16:05:52'),
 (11, 1, 1, 7, 'INGRESO DE PRODUCTO', 7, 'IngresoDetalle', 3, 'INGRESO POR FALTANTE DE COMPRA', 300.00, 'INGRESO', 2, NULL, 12, 300.00, 600.00, NULL, 3600.00, '2026-08-30', 1, '2026-08-30 16:12:35', '2026-08-30 16:12:35'),
 (12, 1, 1, 8, 'INGRESO DE PRODUCTO', 8, 'IngresoDetalle', 2, 'INGRESO 1', 120.00, 'INGRESO', 2, NULL, 6, 120.00, 240.00, NULL, 720.00, '2026-08-30', 1, '2026-08-30 16:13:25', '2026-08-30 16:13:25'),
-(13, 1, 1, 8, 'INGRESO DE PRODUCTO', 8, 'IngresoDetalle', 2, 'INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA', 120.00, 'INGRESO', 2, NULL, 8, 120.00, 240.00, NULL, 960.00, '2026-08-30', 1, '2026-08-30 16:16:35', '2026-08-30 16:16:35');
+(13, 1, 1, 8, 'INGRESO DE PRODUCTO', 8, 'IngresoDetalle', 2, 'INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA', 120.00, 'INGRESO', 2, NULL, 8, 120.00, 240.00, NULL, 960.00, '2026-08-30', 1, '2026-08-30 16:16:35', '2026-08-30 16:16:35'),
+(17, 1, 1, 7, 'SALIDA DE PRODUCTO', 7, 'SalidaDetalle', 2, 'SALIDA 1', 120.00, 'EGRESO', NULL, 1, 7, 120.00, NULL, 120.00, 840.00, '2026-09-02', 1, '2026-09-02 14:23:39', '2026-09-02 14:23:39'),
+(18, 1, 1, 8, 'SALIDA DE PRODUCTO', 8, 'SalidaDetalle', 3, 'SALIDA 2', 300.00, 'EGRESO', NULL, 1, 11, 300.00, NULL, 300.00, 3300.00, '2026-09-02', 1, '2026-09-02 14:23:39', '2026-09-02 14:23:39');
 
 -- --------------------------------------------------------
 
@@ -467,8 +470,8 @@ CREATE TABLE `producto_sucursals` (
 --
 
 INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `almacen_id`, `producto_id`, `stock_actual`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 2, 8, '2026-08-26 00:56:23', '2026-08-30 16:16:35'),
-(2, 1, 1, 3, 12, '2026-08-26 00:56:23', '2026-08-30 16:12:35'),
+(1, 1, 1, 2, 7, '2026-08-26 00:56:23', '2026-09-02 14:23:39'),
+(2, 1, 1, 3, 11, '2026-08-26 00:56:23', '2026-09-02 14:23:39'),
 (3, 1, 1, 4, 16, '2026-08-26 00:56:23', '2026-08-30 16:02:46');
 
 -- --------------------------------------------------------
@@ -535,6 +538,14 @@ CREATE TABLE `salida_detalles` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `salida_detalles`
+--
+
+INSERT INTO `salida_detalles` (`id`, `salida_producto_id`, `tipo_salida_id`, `producto_id`, `cantidad`, `observacion`, `created_at`, `updated_at`) VALUES
+(7, 6, 1, 2, 1, NULL, '2026-09-02 14:23:39', '2026-09-02 14:23:39'),
+(8, 6, 2, 3, 1, NULL, '2026-09-02 14:23:39', '2026-09-02 14:23:39');
+
 -- --------------------------------------------------------
 
 --
@@ -544,7 +555,8 @@ CREATE TABLE `salida_detalles` (
 CREATE TABLE `salida_productos` (
   `id` bigint UNSIGNED NOT NULL,
   `sucursal_id` bigint UNSIGNED NOT NULL,
-  `tipo_salida_id` bigint UNSIGNED NOT NULL,
+  `almacen_id` bigint UNSIGNED NOT NULL,
+  `tipo_salida_id` bigint UNSIGNED DEFAULT NULL,
   `cantidad` double(8,2) NOT NULL,
   `descripcion` varchar(800) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `fecha_registro` date NOT NULL,
@@ -552,6 +564,13 @@ CREATE TABLE `salida_productos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `salida_productos`
+--
+
+INSERT INTO `salida_productos` (`id`, `sucursal_id`, `almacen_id`, `tipo_salida_id`, `cantidad`, `descripcion`, `fecha_registro`, `user_id`, `created_at`, `updated_at`) VALUES
+(6, 1, 1, NULL, 2.00, '', '2026-09-02', 1, '2026-09-02 14:23:39', '2026-09-02 14:23:39');
 
 -- --------------------------------------------------------
 
@@ -927,7 +946,8 @@ ALTER TABLE `salida_productos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `salida_productos_sucursal_id_foreign` (`sucursal_id`),
   ADD KEY `salida_productos_user_id_foreign` (`user_id`),
-  ADD KEY `salida_productos_tipo_salida_id` (`tipo_salida_id`);
+  ADD KEY `salida_productos_tipo_salida_id` (`tipo_salida_id`),
+  ADD KEY `salida_productos_almacen_id` (`almacen_id`);
 
 --
 -- Indices de la tabla `sucursals`
@@ -1030,7 +1050,7 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
@@ -1048,7 +1068,7 @@ ALTER TABLE `ingreso_productos`
 -- AUTO_INCREMENT de la tabla `kardex_productos`
 --
 ALTER TABLE `kardex_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -1108,13 +1128,13 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `salida_detalles`
 --
 ALTER TABLE `salida_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `salida_productos`
 --
 ALTER TABLE `salida_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `sucursals`
@@ -1255,6 +1275,7 @@ ALTER TABLE `salida_detalles`
 -- Filtros para la tabla `salida_productos`
 --
 ALTER TABLE `salida_productos`
+  ADD CONSTRAINT `salida_productos_almacen_id` FOREIGN KEY (`almacen_id`) REFERENCES `almacens` (`id`),
   ADD CONSTRAINT `salida_productos_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`),
   ADD CONSTRAINT `salida_productos_tipo_salida_id` FOREIGN KEY (`tipo_salida_id`) REFERENCES `tipo_salidas` (`id`),
   ADD CONSTRAINT `salida_productos_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);

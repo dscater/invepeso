@@ -74,6 +74,11 @@ class SalidaProductoController extends Controller
         ]);
     }
 
+    public function create(): ResponseInertia
+    {
+        return Inertia::render("Admin/SalidaProductos/Create");
+    }
+
     /**
      * Registrar un nuevo salida_producto
      *
@@ -105,6 +110,12 @@ class SalidaProductoController extends Controller
     public function show(SalidaProducto $salida_producto): JsonResponse
     {
         return response()->JSON($salida_producto);
+    }
+
+    public function edit(SalidaProducto $salida_producto): ResponseInertia
+    {
+        $salida_producto = $salida_producto->load(["salida_detalles.producto", "salida_detalles.tipo_salida"]);
+        return Inertia::render("Admin/SalidaProductos/Edit", compact("salida_producto"));
     }
 
     public function update(SalidaProducto $salida_producto, SalidaProductoUpdateRequest $request)

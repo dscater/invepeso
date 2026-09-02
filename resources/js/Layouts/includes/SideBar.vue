@@ -297,15 +297,6 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('salida_productos.create')
-                                "
-                                :label="'Salida de Productos'"
-                                :ruta="'salida_productos.create'"
-                                :icon="'fa fa-angle-right'"
-                            ></ItemMenu>
-                            <ItemMenu
-                                v-if="
-                                    permisos == '*' ||
                                     permisos.includes('ingreso_productos.index')
                                 "
                                 :label="'Historial de Compras'"
@@ -315,10 +306,19 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('ingreso_productos.index')
+                                    permisos.includes('salida_productos.create')
+                                "
+                                :label="'Salida de Productos'"
+                                :ruta="'salida_productos.create'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('salida_productos.index')
                                 "
                                 :label="'Historial de Salidas'"
-                                :ruta="'ingreso_productos.index'"
+                                :ruta="'salida_productos.index'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                         </ul>

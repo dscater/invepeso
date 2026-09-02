@@ -4,14 +4,15 @@ import { onMounted, ref } from "vue";
 export const useSalidaProductos = () => {
     const initialState = {
         id: 0,
-        nombre: "",
-        tipo_documento_id: "",
-        nro_documento: "",
-        complemento: "",
-        fono: "",
-        correo: "",
+        sucursal_id: "",
+        almacen_id: "",
+        tipo_salida_id: "",
+        cantidad: "",
+        descripcion: "",
         fecha_registro: "",
-        status: "",
+        user_id: "",
+        salida_detalles: [],
+        eliminados: [],
         _method: "POST",
     };
 
