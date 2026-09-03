@@ -8,6 +8,7 @@ use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\IngresoProductoController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\MarcaController;
+use App\Http\Controllers\MovimientoCajaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoSucursalController;
 use App\Http\Controllers\ProfileController;
@@ -18,8 +19,10 @@ use App\Http\Controllers\SalidaProductoController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\TipoIngresoController;
+use App\Http\Controllers\TipoPagoController;
 use App\Http\Controllers\TipoSalidaController;
 use App\Http\Controllers\TipoUsuarioController;
+use App\Http\Controllers\TipoVentaController;
 use App\Http\Controllers\UnidadMedidaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsuarioController;
@@ -64,6 +67,12 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::resource("configuracions", ConfiguracionController::class)->only(
         ["index", "show", "update"]
     );
+
+    // TIPO PAGOS
+    Route::get("tipo_pagos/listado", [TipoPagoController::class, 'listado'])->name("tipo_pagos.listado");
+
+    // TIPO VENTA
+    Route::get("tipo_ventas/listado", [TipoVentaController::class, 'listado'])->name("tipo_ventas.listado");
 
     // USUARIO
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -194,6 +203,13 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("salida_productos/paginado", [SalidaProductoController::class, 'paginado'])->name("salida_productos.paginado");
     Route::get("salida_productos/listado", [SalidaProductoController::class, 'listado'])->name("salida_productos.listado");
     Route::resource("salida_productos", SalidaProductoController::class)->only(
+        ["index", "create", "store", "edit", "show", "update", "destroy"]
+    );
+
+    // MOVIMIENTO CAJAS
+    Route::get("movimiento_cajas/paginado", [MovimientoCajaController::class, 'paginado'])->name("movimiento_cajas.paginado");
+    Route::get("movimiento_cajas/listado", [MovimientoCajaController::class, 'listado'])->name("movimiento_cajas.listado");
+    Route::resource("movimiento_cajas", MovimientoCajaController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );
 

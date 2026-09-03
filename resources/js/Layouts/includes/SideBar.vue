@@ -30,10 +30,10 @@ const sincronizarMenus = () => {
     }
 
     if (
-        route_current.value == "sucursals.index" ||
-        route_current.value == "cajas.index"
+        route_current.value == "movimiento_cajas.index" ||
+        route_current.value == "movimiento_cajas.create"
     ) {
-        openMenus.sucursals = true;
+        openMenus.movimiento_cajas = true;
     }
 
     if (
@@ -197,7 +197,7 @@ onUnmounted(() => {});
                         "
                         :label="'Nueva Venta'"
                         :ruta="'ventas.create'"
-                        :icon="'fa fa-cash-register'"
+                        :icon="'fa fa-money-check-alt'"
                     ></ItemMenu>
                     <ItemMenu
                         v-if="
@@ -207,6 +207,84 @@ onUnmounted(() => {});
                         :ruta="'ventas.index'"
                         :icon="'fa fa-list-alt'"
                     ></ItemMenu>
+                    <li
+                        class="nav-item"
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('movimiento_cajas.index') ||
+                            permisos.includes('movimiento_cajas.create')
+                        "
+                        :class="{ 'menu-open': openMenus.movimiento_cajas }"
+                    >
+                        <a
+                            href="#"
+                            class="nav-link"
+                            :class="[
+                                route_current == 'movimiento_cajas.index' ||
+                                route_current == 'movimiento_cajas.create'
+                                    ? 'active menu-is-opening menu-open'
+                                    : '',
+                            ]"
+                            @click.prevent="toggleSubMenu('movimiento_cajas')"
+                        >
+                            <i class="nav-icon fa fa-cash-register"></i>
+                            <p>
+                                Movimiento de Cajas
+                                <i class="nav-arrow fa fa-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul
+                            class="nav nav-treeview"
+                            role="navigation"
+                            aria-label="Navigation 4"
+                            :style="{
+                                maxHeight: openMenus.movimiento_cajas
+                                    ? '500px'
+                                    : '0px',
+                            }"
+                        >
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('ingresos.create')
+                                "
+                                :label="'Lista de Movimientos'"
+                                :ruta="'movimiento_cajas.index'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('ingresos.create')
+                                "
+                                :label="'Registrar Movimiento'"
+                                :ruta="'movimiento_cajas.create'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes(
+                                        'producto_sucursals.index',
+                                    )
+                                "
+                                :label="'Cobro de Créditos'"
+                                :ruta="'producto_sucursals.index'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes(
+                                        'ingresos.faltantes_ingresos',
+                                    )
+                                "
+                                :label="'Pago de Compras'"
+                                :ruta="'ingreso_productos.faltantes_ingresos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                        </ul>
+                    </li>
                     <li
                         class="nav-item"
                         v-if="
@@ -259,6 +337,15 @@ onUnmounted(() => {});
                                     permisos == '*' ||
                                     permisos.includes('ingresos.create')
                                 "
+                                :label="'Nueva Orden de Compra'"
+                                :ruta="'ingreso_productos.create'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('ingresos.create')
+                                "
                                 :label="'Verificar Compras'"
                                 :ruta="'ingreso_productos.verificacion_ingresos'"
                                 :icon="'fa fa-angle-right'"
@@ -283,15 +370,6 @@ onUnmounted(() => {});
                                 "
                                 :label="'Stock de Inventario'"
                                 :ruta="'producto_sucursals.index'"
-                                :icon="'fa fa-angle-right'"
-                            ></ItemMenu>
-                            <ItemMenu
-                                v-if="
-                                    permisos == '*' ||
-                                    permisos.includes('ingresos.create')
-                                "
-                                :label="'Compra de Productos'"
-                                :ruta="'ingreso_productos.create'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                             <ItemMenu

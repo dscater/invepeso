@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("sucursal_id")->nullable();
             $table->unsignedBigInteger("almacen_id")->nullable();
+            $table->string("tipo")->nullable();
             $table->string("modulo")->nullable();
             $table->unsignedBigInteger("registro_id")->nullable();
             $table->decimal("monto", 24, 2);
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->date("fecha");
             $table->time("hora");
             $table->unsignedBigInteger("user_id");
+            $table->integer("status")->default(1); // 1: activo, 0: inactivo
             $table->timestamps();
 
             $table->foreign("sucursal_id")->on("sucursals")->references("id");

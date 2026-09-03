@@ -2,7 +2,7 @@
 import Content from "@/Components/Content.vue";
 import MiTable from "@/Components/MiTable.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
-import { useSalidaProductos } from "@/composables/salida_productos/useSalidaProductos";
+import { useMovimientoCajas } from "@/composables/movimiento_cajas/useMovimientoCajas";
 import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
@@ -20,7 +20,7 @@ onMounted(() => {
     appStore.stopLoading();
 });
 
-const { setSalidaProducto, limpiarSalidaProducto, form } = useSalidaProductos();
+const { setMovimientoCaja, limpiarMovimientoCaja, form } = useMovimientoCajas();
 const { axiosDelete } = useAxios();
 
 const miTable = ref(null);
@@ -37,13 +37,33 @@ const headers = [
         sortable: true,
     },
     {
-        label: "CANTIDAD PRODUCTOS",
-        key: "cantidad",
+        label: "MOVIMIENTO POR",
+        key: "tipo",
         sortable: true,
     },
     {
-        label: "FECHA REGISTRO",
-        key: "fecha_registro",
+        label: "MONTO",
+        key: "monto",
+        sortable: true,
+    },
+    {
+        label: "TIPO DE PAGO",
+        key: "tipo_pago",
+        sortable: true,
+    },
+    {
+        label: "DESCRIPCIÓN",
+        key: "descripcion",
+        sortable: true,
+    },
+    {
+        label: "FECHA",
+        key: "fecha_hora_t",
+        sortable: true,
+    },
+    {
+        label: "RESPONSABLE",
+        key: "user",
         sortable: true,
     },
     {
@@ -62,22 +82,22 @@ const multiSearch = ref({
 const muestra_formulario = ref(false);
 
 const agregarRegistro = () => {
-    limpiarSalidaProducto();
+    limpiarMovimientoCaja();
     muestra_formulario.value = true;
 };
 
 const updateDatatable = async () => {
     if (miTable.value) {
         await miTable.value.cargarDatos();
-        limpiarSalidaProducto();
+        limpiarMovimientoCaja();
         muestra_formulario.value = false;
     }
 };
 
-const eliminarSalidaProducto = (item) => {
+const eliminarMovimientoCaja = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
-        html: `<strong>${item.nombre}</strong>`,
+        html: `<strong class="text-primary">Bs. ${item.monto}</strong><br/>Fecha: <strong>${item.fecha_hora_t}</strong><br/>Tipo de Movimiento: <strong>${item.tipo}</strong><br/>Tipo de Pago: <strong>${item.tipo_pago}</strong><br/>Ingreso/Egreso: <strong>${item.tipo_movimiento}</strong>`,
         showCancelButton: true,
         confirmButtonText: "Si, eliminar",
         cancelButtonText: "No, cancelar",
@@ -89,7 +109,7 @@ const eliminarSalidaProducto = (item) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
             let respuesta = await axiosDelete(
-                route("salida_productos.destroy", item.id),
+                route("movimiento_cajas.destroy", item.id),
             );
             if (respuesta && respuesta.sw) {
                 updateDatatable();
@@ -99,13 +119,13 @@ const eliminarSalidaProducto = (item) => {
 };
 </script>
 <template>
-    <Head title="Historial de Salidas"></Head>
+    <Head title="Lista de Movimientos"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-boxes"></i> Historial de Salidas
+                        <i class="fa fa-cash-register"></i> Lista de Movimientos
                     </h3>
                 </div>
                 <!-- /.col -->
@@ -115,7 +135,7 @@ const eliminarSalidaProducto = (item) => {
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
                         <li class="breadcrumb-item active">
-                            Historial de Salidas
+                            Lista de Movimientos
                         </li>
                     </ol>
                 </div>
@@ -131,13 +151,13 @@ const eliminarSalidaProducto = (item) => {
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
                                 props_page.auth?.user.permisos.includes(
-                                    'salida_productos.create',
+                                    'movimiento_cajas.create',
                                 )
                             "
-                            :href="route('salida_productos.create')"
+                            :href="route('movimiento_cajas.create')"
                             class="btn btn-primary text-sm"
                         >
-                            <i class="fa fa-plus"></i> Nueva Salida
+                            <i class="fa fa-plus"></i> Nuevo Movimiento
                         </Link>
                     </div>
                     <div class="col-md-8 my-1">
@@ -170,7 +190,7 @@ const eliminarSalidaProducto = (item) => {
                             ref="miTable"
                             :cols="headers"
                             :api="true"
-                            :url="route('salida_productos.paginado')"
+                            :url="route('movimiento_cajas.paginado')"
                             :numPages="5"
                             :multiSearch="multiSearch"
                             :syncOrderBy="'id'"
@@ -188,18 +208,34 @@ const eliminarSalidaProducto = (item) => {
                                     item.sucursal?.nombre
                                 }}</span>
                             </template>
-                            <template #cantidad="{ item }">
-                                <span class="fw-bold fs-6 badge bg-warning">{{
-                                    item.cantidad
-                                }}</span>
+                            <template #monto="{ item }">
+                                <span
+                                    class="badge text-sm"
+                                    :class="{
+                                        'bg-danger':
+                                            item.tipo_movimiento == 'EGRESO',
+                                        'bg-success':
+                                            item.tipo_movimiento == 'INGRESO',
+                                    }"
+                                    >Bs. {{ item.monto }}</span
+                                >
+                            </template>
+                            <template #user="{ item }">
+                                <span class="text-dark text-sm"
+                                    >{{ item.user?.nombre }}
+                                    {{ item.user?.paterno }}
+                                    {{ item.user?.materno }}</span
+                                >
                             </template>
                             <template #accion="{ item }">
                                 <template
                                     v-if="
-                                        props_page.auth?.user.permisos == '*' ||
-                                        props_page.auth?.user.permisos.includes(
-                                            'salida_productos.edit',
-                                        )
+                                        item.tipo == 'MOVIMIENTO DE CAJA' &&
+                                        (props_page.auth?.user.permisos ==
+                                            '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'movimiento_cajas.edit',
+                                            ))
                                     "
                                 >
                                     <el-tooltip
@@ -208,23 +244,27 @@ const eliminarSalidaProducto = (item) => {
                                         content="Editar"
                                         placement="left-start"
                                     >
-                                        <button
+                                        <Link
                                             class="btn btn-warning"
-                                            @click="
-                                                setSalidaProducto(item);
-                                                muestra_formulario = true;
+                                            :href="
+                                                route(
+                                                    'movimiento_cajas.edit',
+                                                    item.id,
+                                                )
                                             "
                                         >
-                                            <i class="fa fa-pen"></i></button
+                                            <i class="fa fa-pen"></i></Link
                                     ></el-tooltip>
                                 </template>
 
                                 <template
                                     v-if="
-                                        props_page.auth?.user.permisos == '*' ||
-                                        props_page.auth?.user.permisos.includes(
-                                            'salida_productos.destroy',
-                                        )
+                                        item.tipo == 'MOVIMIENTO DE CAJA' &&
+                                        (props_page.auth?.user.permisos ==
+                                            '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'movimiento_cajas.destroy',
+                                            ))
                                     "
                                 >
                                     <el-tooltip
@@ -236,7 +276,7 @@ const eliminarSalidaProducto = (item) => {
                                         <button
                                             class="btn btn-danger"
                                             @click="
-                                                eliminarSalidaProducto(item)
+                                                eliminarMovimientoCaja(item)
                                             "
                                         >
                                             <i

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 02-09-2026 a las 14:27:39
+-- Tiempo de generación: 03-09-2026 a las 15:33:50
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -159,7 +159,9 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (8, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 6, \"saldo\": \"3000.00\", \"total\": \"3000.00\", \"codigo\": \"L-00006\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-08-30T16:01:02.000000Z\", \"updated_at\": \"2026-08-30T16:01:02.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"proveedor_id\": \"2\", \"fecha_registro\": \"2026-08-30\", \"tipo_ingreso_id\": \"2\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-08-30', '12:01:02', '2026-08-30 16:01:02', '2026-08-30 16:01:02'),
 (9, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 7, \"saldo\": \"1200.00\", \"total\": \"1200.00\", \"codigo\": \"L-00007\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-08-30T16:05:07.000000Z\", \"updated_at\": \"2026-08-30T16:05:07.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-08-30\", \"tipo_ingreso_id\": \"1\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-08-30', '12:05:07', '2026-08-30 16:05:07', '2026-08-30 16:05:07'),
 (10, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 8, \"saldo\": \"480.00\", \"total\": \"480.00\", \"codigo\": \"L-00008\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-08-30T16:13:09.000000Z\", \"updated_at\": \"2026-08-30T16:13:09.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-08-30\", \"tipo_ingreso_id\": \"1\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-08-30', '12:13:09', '2026-08-30 16:13:09', '2026-08-30 16:13:09'),
-(11, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA SALIDA DE PRODUCTOS', '{\"id\": 6, \"user_id\": 1, \"cantidad\": \"2\", \"almacen_id\": 1, \"created_at\": \"2026-09-02T14:23:39.000000Z\", \"updated_at\": \"2026-09-02T14:23:39.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-02\", \"tipo_salida_id\": null, \"salida_detalles\": [{\"id\": 7, \"cantidad\": 1, \"created_at\": \"2026-09-02T14:23:39.000000Z\", \"updated_at\": \"2026-09-02T14:23:39.000000Z\", \"observacion\": null, \"producto_id\": 2, \"tipo_salida_id\": 1, \"salida_producto_id\": 6}, {\"id\": 8, \"cantidad\": 1, \"created_at\": \"2026-09-02T14:23:39.000000Z\", \"updated_at\": \"2026-09-02T14:23:39.000000Z\", \"observacion\": null, \"producto_id\": 3, \"tipo_salida_id\": 2, \"salida_producto_id\": 6}]}', NULL, 'SALIDA DE PRODUCTOS', '2026-09-02', '10:23:39', '2026-09-02 14:23:39', '2026-09-02 14:23:39');
+(11, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA SALIDA DE PRODUCTOS', '{\"id\": 6, \"user_id\": 1, \"cantidad\": \"2\", \"almacen_id\": 1, \"created_at\": \"2026-09-02T14:23:39.000000Z\", \"updated_at\": \"2026-09-02T14:23:39.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-02\", \"tipo_salida_id\": null, \"salida_detalles\": [{\"id\": 7, \"cantidad\": 1, \"created_at\": \"2026-09-02T14:23:39.000000Z\", \"updated_at\": \"2026-09-02T14:23:39.000000Z\", \"observacion\": null, \"producto_id\": 2, \"tipo_salida_id\": 1, \"salida_producto_id\": 6}, {\"id\": 8, \"cantidad\": 1, \"created_at\": \"2026-09-02T14:23:39.000000Z\", \"updated_at\": \"2026-09-02T14:23:39.000000Z\", \"observacion\": null, \"producto_id\": 3, \"tipo_salida_id\": 2, \"salida_producto_id\": 6}]}', NULL, 'SALIDA DE PRODUCTOS', '2026-09-02', '10:23:39', '2026-09-02 14:23:39', '2026-09-02 14:23:39'),
+(12, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 1000 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 2, \"hora\": \"11:16:34\", \"tipo\": \"MOVIMIENTO DE CAJA\", \"fecha\": \"2026-09-03\", \"monto\": \"1000\", \"modulo\": \"MovimientoCaja\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-03T15:18:33.000000Z\", \"updated_at\": \"2026-09-03T15:18:33.000000Z\", \"descripcion\": \"ingreso de efectivo\", \"registro_id\": 2, \"sucursal_id\": 1, \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-03', '11:18:33', '2026-09-03 15:18:33', '2026-09-03 15:18:33'),
+(13, 1, 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ UN MOVIMIENTO DE CAJA', '{\"id\": 2, \"hora\": \"11:16:34\", \"tipo\": \"MOVIMIENTO DE CAJA\", \"fecha\": \"2026-09-03\", \"monto\": \"2000.00\", \"modulo\": \"MovimientoCaja\", \"status\": 1, \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-03T15:18:33.000000Z\", \"updated_at\": \"2026-09-03T15:29:39.000000Z\", \"descripcion\": \"ingreso de efectivo\", \"registro_id\": 2, \"sucursal_id\": 1, \"tipo_movimiento\": \"INGRESO\"}', '{\"id\": 2, \"hora\": \"11:16:34\", \"tipo\": \"MOVIMIENTO DE CAJA\", \"fecha\": \"2026-09-03\", \"monto\": \"2000.00\", \"modulo\": \"MovimientoCaja\", \"status\": 0, \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-03T15:18:33.000000Z\", \"updated_at\": \"2026-09-03T15:31:35.000000Z\", \"descripcion\": \"ingreso de efectivo\", \"registro_id\": 2, \"sucursal_id\": 1, \"tipo_movimiento\": \"INGRESO\"}', 'MOVIMIENTO DE CAJAS', '2026-09-03', '11:31:35', '2026-09-03 15:31:35', '2026-09-03 15:31:35');
 
 -- --------------------------------------------------------
 
@@ -380,6 +382,7 @@ CREATE TABLE `movimiento_cajas` (
   `id` bigint UNSIGNED NOT NULL,
   `sucursal_id` bigint UNSIGNED DEFAULT NULL,
   `almacen_id` bigint UNSIGNED DEFAULT NULL,
+  `tipo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `modulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `registro_id` bigint UNSIGNED DEFAULT NULL,
   `monto` decimal(24,2) NOT NULL,
@@ -389,6 +392,7 @@ CREATE TABLE `movimiento_cajas` (
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
+  `status` int NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -397,8 +401,9 @@ CREATE TABLE `movimiento_cajas` (
 -- Volcado de datos para la tabla `movimiento_cajas`
 --
 
-INSERT INTO `movimiento_cajas` (`id`, `sucursal_id`, `almacen_id`, `modulo`, `registro_id`, `monto`, `tipo_movimiento`, `tipo_pago`, `descripcion`, `fecha`, `hora`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'IngresoProducto', 4, 300.00, 'EGRESO', 'EFECTIVO', 'COMPRA DE PRODUCTOS', '2026-08-24', '21:35:28', 1, '2026-08-25 01:35:28', '2026-08-25 01:35:28');
+INSERT INTO `movimiento_cajas` (`id`, `sucursal_id`, `almacen_id`, `tipo`, `modulo`, `registro_id`, `monto`, `tipo_movimiento`, `tipo_pago`, `descripcion`, `fecha`, `hora`, `user_id`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'COMPRA DE PRODUCTOS', 'IngresoProducto', 4, 300.00, 'EGRESO', 'EFECTIVO', 'COMPRA DE PRODUCTOS', '2026-08-24', '21:35:28', 1, 1, '2026-08-25 01:35:28', '2026-08-25 01:35:28'),
+(2, 1, 1, 'MOVIMIENTO DE CAJA', 'MovimientoCaja', 2, 2000.00, 'INGRESO', 'EFECTIVO', 'ingreso de efectivo', '2026-09-03', '11:16:34', 1, 1, '2026-09-03 15:18:33', '2026-09-03 15:31:35');
 
 -- --------------------------------------------------------
 
@@ -1050,7 +1055,7 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
@@ -1092,7 +1097,7 @@ ALTER TABLE `modulos`
 -- AUTO_INCREMENT de la tabla `movimiento_cajas`
 --
 ALTER TABLE `movimiento_cajas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`

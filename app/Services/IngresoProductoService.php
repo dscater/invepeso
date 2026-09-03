@@ -153,6 +153,7 @@ class IngresoProductoService
             $movimiento_caja = [
                 "sucursal_id" => $ingreso_producto->sucursal_id,
                 "almacen_id" => $ingreso_producto->almacen_id,
+                "tipo" => "COMPRA DE PRODUCTOS",
                 "modulo" => "IngresoProducto",
                 "registro_id" => $ingreso_producto->id,
                 "monto" => $ingreso_producto->cancelado,
