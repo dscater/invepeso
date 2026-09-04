@@ -54,7 +54,10 @@ const sincronizarMenus = () => {
         route_current.value == "ingreso_productos.verificacion_ingresos" ||
         route_current.value == "ingreso_productos.faltantes_ingresos" ||
         route_current.value == "salida_productos.create" ||
-        route_current.value == "salida_productos.edit"
+        route_current.value == "salida_productos.edit" ||
+        route_current.value == "traspasos.index" ||
+        route_current.value == "traspasos.create" ||
+        route_current.value == "traspasos.edit"
     ) {
         openMenus.producto_sucursals = true;
     }
@@ -296,7 +299,8 @@ onUnmounted(() => {});
                                 'ingreso_productos.verificacion_ingresos',
                             ) ||
                             permisos.includes('salida_productos.index') ||
-                            permisos.includes('salida_productos.create')
+                            permisos.includes('salida_productos.create') ||
+                            permisos.includes('traspasos.index')
                         "
                         :class="{ 'menu-open': openMenus.producto_sucursals }"
                     >
@@ -310,7 +314,10 @@ onUnmounted(() => {});
                                 route_current ==
                                     'ingreso_productos.verificacion_ingresos' ||
                                 route_current == 'salida_productos.index' ||
-                                route_current == 'salida_productos.create'
+                                route_current == 'salida_productos.create' ||
+                                route_current == 'traspasos.index' ||
+                                route_current == 'traspasos.create' ||
+                                route_current == 'traspasos.edit'
                                     ? 'active menu-is-opening menu-open'
                                     : '',
                             ]"
@@ -337,7 +344,7 @@ onUnmounted(() => {});
                                     permisos == '*' ||
                                     permisos.includes('ingresos.create')
                                 "
-                                :label="'Nueva Orden de Compra'"
+                                :label="'Orden de Compra'"
                                 :ruta="'ingreso_productos.create'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
@@ -346,7 +353,7 @@ onUnmounted(() => {});
                                     permisos == '*' ||
                                     permisos.includes('ingresos.create')
                                 "
-                                :label="'Verificar Compras'"
+                                :label="'Recepción de Compras'"
                                 :ruta="'ingreso_productos.verificacion_ingresos'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
@@ -359,6 +366,20 @@ onUnmounted(() => {});
                                 "
                                 :label="'Recepción de Faltantes'"
                                 :ruta="'ingreso_productos.faltantes_ingresos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('traspasos.index')
+                                "
+                                :array-ruta-class-active="[
+                                    'traspasos.index',
+                                    'traspasos.create',
+                                    'traspasos.edit',
+                                ]"
+                                :label="'Traspasos de Productos'"
+                                :ruta="'traspasos.index'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                             <ItemMenu

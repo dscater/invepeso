@@ -17,18 +17,19 @@ const textBtn = computed(() => {
         return `<i class="fa fa-spin fa-spinner"></i> Enviando...`;
     }
     if (form.id == 0) {
-        return `<i class="fa fa-save"></i> Registrar Salida`;
+        return `<i class="fa fa-save"></i> Registrar Traspaso`;
     }
     return `<i class="fa fa-edit"></i> Actualizar`;
 });
 
 const enviarFormulario = () => {
     enviando.value = true;
-    form.almacen_id = almacen_id.value;
+    form.almacen_origen_id = almacen_origen_id.value;
+    form.almacen_destino_id = almacen_destino_id.value;
     let url =
         form.id == 0
-            ? route("salida_productos.store")
-            : route("salida_productos.update", form.id);
+            ? route("traspasos.store")
+            : route("traspasos.update", form.id);
 
     form.post(url, {
         preserveScroll: true,
@@ -92,14 +93,21 @@ const enviarFormulario = () => {
 const emits = defineEmits(["envio-formulario"]);
 
 const listAlmacens = ref([]);
-const listTipoSalidas = ref([]);
-const tipo_salida_id_default = ref("");
+const listAlmacensDestino = computed(() => {
+    almacen_destino_id.value = "";
+    return listAlmacens.value.filter(
+        (item) => item.id != almacen_origen_id.value,
+    );
+});
+const listTipoTraspasos = ref([]);
+const tipo_traspaso_id_default = ref("");
 const listProveedors = ref([]);
 const listCategorias = ref([]);
 const listMarcas = ref([]);
 const listProductoAlmacens = ref([]);
 const loadingLista = ref(true);
-const almacen_id = ref("");
+const almacen_origen_id = ref("");
+const almacen_destino_id = ref("");
 const categoria_id = ref("todos");
 const marca_id = ref("todos");
 const nombreProducto = ref("");
@@ -108,7 +116,7 @@ const cargarProductos = async () => {
     try {
         const res = await axios.get(route("producto_sucursals.listado"), {
             params: {
-                almacen_id: almacen_id.value,
+                almacen_id: almacen_origen_id.value,
                 categoria_id: categoria_id.value,
                 marca_id: marca_id.value,
                 nombreProducto: nombreProducto.value,
@@ -119,7 +127,7 @@ const cargarProductos = async () => {
                 ...item,
                 cantidad: 1,
                 costo: item.precio_compra,
-                tipo_salida_id: tipo_salida_id_default,
+                tipo_traspaso_id: tipo_traspaso_id_default,
             }),
         );
     } catch (e) {
@@ -184,12 +192,12 @@ const cargarMarcas = async () => {
     }
 };
 
-const cargarTipoSalidas = async () => {
+const cargarTipoTraspasos = async () => {
     try {
-        const res = await axios.get(route("tipo_salidas.listado"));
-        listTipoSalidas.value = res.data.tipo_salidas;
-        // tipo_salida_id_default.value = listTipoSalidas.value[0]
-        //     ? listTipoSalidas.value[0].id
+        const res = await axios.get(route("tipo_traspasos.listado"));
+        listTipoTraspasos.value = res.data.tipo_traspasos;
+        // tipo_traspaso_id_default.value = listTipoTraspasos.value[0]
+        //     ? listTipoTraspasos.value[0].id
         //     : "";
     } catch (e) {
         console.log(e);
@@ -198,7 +206,7 @@ const cargarTipoSalidas = async () => {
 };
 
 const cargarListas = () => {
-    cargarTipoSalidas();
+    cargarTipoTraspasos();
     cargarProductos();
     cargarAlmacens();
     cargarProveedors();
@@ -206,10 +214,9 @@ const cargarListas = () => {
     cargarMarcas();
 };
 
-const agregarProductoSalida = async (item) => {
+const agregarProductoTraspaso = async (item) => {
     const stock_total = Number(item.stock_total);
     const cantidad = Number(item.cantidad);
-    const tipo_salida_id = item.tipo_salida_id;
     if (!stock_total || stock_total < cantidad) {
         toast.error("Stock insuficiente para agregar el producto");
         return;
@@ -220,40 +227,35 @@ const agregarProductoSalida = async (item) => {
         return;
     }
 
-    if (!tipo_salida_id || tipo_salida_id == "") {
-        toast.error("Debe seleccionar un tipo de salida");
-        return;
-    }
-
     try {
         const resp = await axios.get(route("productos.show", item.id));
         const producto = resp.data;
 
-        const indexExiste = form.salida_detalles.findIndex(
+        const indexExiste = form.traspaso_detalles.findIndex(
             (elem) => elem.producto_id == producto.id,
         );
         // console.log(indexExiste);
         if (indexExiste < 0) {
             // no existe
-            form.salida_detalles.push({
+            form.traspaso_detalles.push({
                 id: 0,
-                salida_producto_id: "",
-                tipo_salida_id: tipo_salida_id,
+                traspaso_id: "",
                 producto: producto,
                 producto_id: producto.id,
                 cantidad: cantidad,
             });
         } else {
             // existe
-            const cantidadFila = form.salida_detalles[indexExiste].cantidad;
+            const cantidadFila = form.traspaso_detalles[indexExiste].cantidad;
             const nuevaCantidad =
                 parseFloat(cantidad) + parseFloat(cantidadFila);
 
-            form.salida_detalles[indexExiste].cantidad = nuevaCantidad;
+            form.traspaso_detalles[indexExiste].cantidad = nuevaCantidad;
         }
         // console.log(item);
         item.cantidad = 1;
         toast.success("Producto Agregado!!!");
+
         item.stock_total = stock_total - cantidad;
     } catch (e) {
         console.log(e);
@@ -271,7 +273,7 @@ const detectarCambioFila = (item, index) => {
     }
 
     // const subtotal = cant * costo;
-    // form.salida_detalles[index].subtotal = subtotal.toFixed(2);
+    // form.traspaso_detalles[index].subtotal = subtotal.toFixed(2);
 };
 
 const quitarFila = (item, index) => {
@@ -279,25 +281,26 @@ const quitarFila = (item, index) => {
     if (id != 0) {
         form.eliminados.push(id);
     }
+
     const item_almacen_origen = listProductoAlmacens.value.find(
         (elem) => elem.id == item.producto_id,
     );
     item_almacen_origen.stock_total =
         Number(item_almacen_origen.stock_total) +
-        Number(form.salida_detalles[index].cantidad);
-    form.salida_detalles.splice(index, 1);
+        Number(form.traspaso_detalles[index].cantidad);
+    form.traspaso_detalles.splice(index, 1);
     toast.success("Se quitó el producto!!!");
 };
 
-const totalSalida = computed(() => {
-    if (!form?.salida_detalles) return 0;
-    return form.salida_detalles.reduce((acc, item) => {
+const totalTraspaso = computed(() => {
+    if (!form?.traspaso_detalles) return 0;
+    return form.traspaso_detalles.reduce((acc, item) => {
         return acc + parseFloat(item.cantidad || 0);
     }, 0);
 });
 
-watch([totalSalida], () => {
-    form.cantidad = totalSalida.value;
+watch([totalTraspaso], () => {
+    form.cantidad = totalTraspaso.value;
 });
 
 onMounted(() => {
@@ -319,7 +322,7 @@ onMounted(() => {
                                     </span>
                                     <div class="form-control border-0 p-0">
                                         <el-select
-                                            v-model="almacen_id"
+                                            v-model="almacen_origen_id"
                                             class="el-select-input-group-right"
                                             no-data-text="Sin datos"
                                             no-match-text="Sin resultados"
@@ -337,11 +340,11 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <ul
-                                    v-if="form.errors?.almacen_id"
+                                    v-if="form.errors?.almacen_origen_id"
                                     class="d-block text-danger list-unstyled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors?.almacen_id }}
+                                        {{ form.errors?.almacen_origen_id }}
                                     </li>
                                 </ul>
                             </div>
@@ -402,7 +405,7 @@ onMounted(() => {
                         class="card-body bgGrayLight"
                         style="max-height: 63vh; overflow: auto"
                     >
-                        <div class="row" v-if="almacen_id">
+                        <div class="row" v-if="almacen_origen_id">
                             <div class="col-12">
                                 <div class="vacio_info" v-if="loadingLista">
                                     <i
@@ -502,54 +505,6 @@ onMounted(() => {
                                                                     :min="1"
                                                                 />
                                                             </div>
-                                                            <div
-                                                                class="col-12 mt-1"
-                                                            >
-                                                                <label
-                                                                    class="mb-0"
-                                                                    >Motivo
-                                                                    Salida</label
-                                                                >
-                                                                <div
-                                                                    class="input-group"
-                                                                >
-                                                                    <span
-                                                                        class="input-group-text text-xs"
-                                                                    >
-                                                                        <i
-                                                                            class="fa fa-list"
-                                                                        ></i
-                                                                    ></span>
-                                                                    <div
-                                                                        class="form-control p-0 border-0"
-                                                                    >
-                                                                        <el-select
-                                                                            type="number"
-                                                                            class="el-select-input-group-right"
-                                                                            v-model="
-                                                                                item.tipo_salida_id
-                                                                            "
-                                                                            no-data-text="Sin datos"
-                                                                            no-match-text="Sin resultados"
-                                                                            filterable
-                                                                            placeholder="Tipo de Salida"
-                                                                        >
-                                                                            <el-option
-                                                                                v-for="tipo in listTipoSalidas"
-                                                                                :key="
-                                                                                    tipo.id
-                                                                                "
-                                                                                :label="
-                                                                                    tipo.nombre
-                                                                                "
-                                                                                :value="
-                                                                                    tipo.id
-                                                                                "
-                                                                            ></el-option>
-                                                                        </el-select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-12 mt-2">
@@ -558,7 +513,7 @@ onMounted(() => {
                                                             class="btn btn-warning btn-sm fs-8 w-100"
                                                             title="Agregar"
                                                             @click.prevent="
-                                                                agregarProductoSalida(
+                                                                agregarProductoTraspaso(
                                                                     item,
                                                                 )
                                                             "
@@ -585,50 +540,58 @@ onMounted(() => {
             </div>
             <div class="col-md-5">
                 <div class="card">
-                    <div class="card-header bg-warning">
+                    <div class="card-header bg-info">
                         <div class="row">
                             <div class="col-12">
                                 <h4 class="card-title pt-1">
                                     <i class="fa fa-clipboard-check"></i> Datos
-                                    de salida
+                                    del traspaso
                                 </h4>
                                 <div
-                                    class="float-end badge bg-danger rounded-circle fs-6"
+                                    class="float-end badge bg-primary rounded-circle fs-6"
                                 >
-                                    {{ form.salida_detalles.length }}
+                                    {{ form.traspaso_detalles.length }}
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <!-- <div class="col-md-12 mt-2">
-                                <label class="required">Tipo de Salida</label>
-                                <el-select
-                                    placeholder="Tipo de Salida"
-                                    no-data-text="Sin datos"
-                                    no-match-text="Sin resultados"
-                                    filterable
-                                    v-model="form.tipo_salida_id"
-                                >
-                                    <el-option
-                                        v-for="item in listTipoSalidas"
-                                        :key="item.id"
-                                        :value="item.id"
-                                        :label="item.nombre"
-                                    ></el-option>
-                                </el-select>
+                            <div class="col-12 mt-2">
+                                <label class="required">Almacén Destino</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-warehouse"></i>
+                                    </span>
+                                    <div class="form-control border-0 p-0">
+                                        <el-select
+                                            v-model="almacen_destino_id"
+                                            class="el-select-input-group-right"
+                                            no-data-text="Sin datos"
+                                            no-match-text="Sin resultados"
+                                            placeholder="Seleccionar Almacén Destino"
+                                            filterable
+                                        >
+                                            <el-option
+                                                v-for="item in listAlmacensDestino"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="`${item.nombre} - ${item.sucursal.nombre}`"
+                                            ></el-option>
+                                        </el-select>
+                                    </div>
+                                </div>
                                 <ul
-                                    v-if="form.errors?.proveedor_id"
+                                    v-if="form.errors?.almacen_origen_id"
                                     class="d-block text-danger list-unstyled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors?.proveedor_id }}
+                                        {{ form.errors?.almacen_origen_id }}
                                     </li>
                                 </ul>
-                            </div> -->
+                            </div>
                             <div class="col-12 mt-2">
-                                <label class="">Descripción</label>
+                                <label class="required">Descripción</label>
                                 <el-input
-                                    type="text"
+                                    type="textarea"
                                     :class="{
                                         'parsley-error':
                                             form.errors?.descripcion,
@@ -653,11 +616,11 @@ onMounted(() => {
                     >
                         <div
                             class="content-listado-productos bgGrayLight"
-                            v-if="form.salida_detalles.length > 0"
+                            v-if="form.traspaso_detalles.length > 0"
                         >
                             <div
                                 class="item-producto"
-                                v-for="(item, index) in form.salida_detalles"
+                                v-for="(item, index) in form.traspaso_detalles"
                             >
                                 <h4 class="fw-bold fs-7">
                                     {{ item.producto.nombre }}
@@ -670,30 +633,9 @@ onMounted(() => {
                                         <i class="fa fa-trash-alt"></i> Quitar
                                     </a>
                                 </h4>
-
                                 <div class="container-fluid">
                                     <div class="row">
-                                        <div class="col-8 text-end">
-                                            <el-select
-                                                v-model="item.tipo_salida_id"
-                                                filterable
-                                                placeholder="Motivo Salida"
-                                                no-data-text="Sin datos"
-                                                no-match-text="Sin resultados"
-                                                size="small"
-                                            >
-                                                <el-option
-                                                    v-for="tipo in listTipoSalidas"
-                                                    :key="tipo.id"
-                                                    :label="tipo.nombre"
-                                                    :value="tipo.id"
-                                                ></el-option>
-                                            </el-select>
-                                            <div class="text-xxs">
-                                                Motivo Salida
-                                            </div>
-                                        </div>
-                                        <div class="col-4 text-center">
+                                        <div class="col-4 offset-8">
                                             <input
                                                 type="number"
                                                 class="p-1 py-0 form-control text-xs text-center"
@@ -724,10 +666,10 @@ onMounted(() => {
                     </div>
                     <div class="card-body bg6">
                         <div class="row">
-                            <div class="col-12 fw-bolder text-warning fs-5">
+                            <div class="col-12 fw-bolder text-primary fs-5">
                                 Total Productos
                                 <div class="float-end fw-bold fs-4">
-                                    {{ totalSalida }}
+                                    {{ totalTraspaso }}
                                 </div>
                             </div>
                         </div>
@@ -746,7 +688,8 @@ onMounted(() => {
                                     type="button"
                                     class="btn btn-default btn-sm w-100 mt-2 border"
                                 >
-                                    <i class="fa fa-times"></i> Cancelar Salida
+                                    <i class="fa fa-times"></i> Cancelar
+                                    Traspaso
                                 </button>
                             </div>
                         </div>

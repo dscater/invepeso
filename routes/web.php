@@ -23,6 +23,7 @@ use App\Http\Controllers\TipoPagoController;
 use App\Http\Controllers\TipoSalidaController;
 use App\Http\Controllers\TipoUsuarioController;
 use App\Http\Controllers\TipoVentaController;
+use App\Http\Controllers\TraspasoController;
 use App\Http\Controllers\UnidadMedidaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsuarioController;
@@ -210,6 +211,13 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("movimiento_cajas/paginado", [MovimientoCajaController::class, 'paginado'])->name("movimiento_cajas.paginado");
     Route::get("movimiento_cajas/listado", [MovimientoCajaController::class, 'listado'])->name("movimiento_cajas.listado");
     Route::resource("movimiento_cajas", MovimientoCajaController::class)->only(
+        ["index", "create", "store", "edit", "show", "update", "destroy"]
+    );
+
+    // TRASPASOS
+    Route::get("traspasos/paginado", [TraspasoController::class, 'paginado'])->name("traspasos.paginado");
+    Route::get("traspasos/listado", [TraspasoController::class, 'listado'])->name("traspasos.listado");
+    Route::resource("traspasos", TraspasoController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );
 

@@ -47,7 +47,8 @@ class SalidaProductoService
         $salida_productos = SalidaProducto::with([
             "sucursal:id,nombre",
             "almacen:id,nombre",
-            "tipo_salida:id,nombre"
+            "tipo_salida:id,nombre",
+            "user:id,nombre,paterno,materno",
         ])
             ->select("salida_productos.*");
 

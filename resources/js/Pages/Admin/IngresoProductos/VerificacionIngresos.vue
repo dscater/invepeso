@@ -82,13 +82,13 @@ const updateIngresos = () => {
 const muestra_formulario = ref(false);
 </script>
 <template>
-    <Head title="Verificar Compras"></Head>
+    <Head title="Recepción de Compras"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-boxes"></i> Verificar Compras
+                        <i class="fa fa-boxes"></i> Recepción de Compras
                     </h3>
                 </div>
                 <!-- /.col -->
@@ -98,7 +98,7 @@ const muestra_formulario = ref(false);
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
                         <li class="breadcrumb-item active">
-                            Verificar Compras
+                            Recepción de Compras
                         </li>
                     </ol>
                 </div>

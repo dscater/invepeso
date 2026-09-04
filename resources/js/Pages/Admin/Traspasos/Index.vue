@@ -2,7 +2,7 @@
 import Content from "@/Components/Content.vue";
 import MiTable from "@/Components/MiTable.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
-import { useSalidaProductos } from "@/composables/salida_productos/useSalidaProductos";
+import { useTraspasos } from "@/composables/traspasos/useTraspasos";
 import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
@@ -20,7 +20,7 @@ onMounted(() => {
     appStore.stopLoading();
 });
 
-const { setSalidaProducto, limpiarSalidaProducto, form } = useSalidaProductos();
+const { setTraspaso, limpiarTraspaso, form } = useTraspasos();
 const { axiosDelete } = useAxios();
 
 const miTable = ref(null);
@@ -32,8 +32,13 @@ const headers = [
         width: "4%",
     },
     {
-        label: "ALMACÉN-SUCURSAL",
-        key: "ubicacion",
+        label: "ORIGEN ALMACÉN-SUCURSAL",
+        key: "ubicacion_origen",
+        sortable: true,
+    },
+    {
+        label: "DESTINO ALMACÉN-SUCURSAL",
+        key: "ubicacion_destino",
         sortable: true,
     },
     {
@@ -67,19 +72,19 @@ const multiSearch = ref({
 const muestra_formulario = ref(false);
 
 const agregarRegistro = () => {
-    limpiarSalidaProducto();
+    limpiarTraspaso();
     muestra_formulario.value = true;
 };
 
 const updateDatatable = async () => {
     if (miTable.value) {
         await miTable.value.cargarDatos();
-        limpiarSalidaProducto();
+        limpiarTraspaso();
         muestra_formulario.value = false;
     }
 };
 
-const eliminarSalidaProducto = (item) => {
+const eliminarTraspaso = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
         html: `<strong>${item.nombre}</strong>`,
@@ -94,7 +99,7 @@ const eliminarSalidaProducto = (item) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
             let respuesta = await axiosDelete(
-                route("salida_productos.destroy", item.id),
+                route("traspasos.destroy", item.id),
             );
             if (respuesta && respuesta.sw) {
                 updateDatatable();
@@ -104,13 +109,13 @@ const eliminarSalidaProducto = (item) => {
 };
 </script>
 <template>
-    <Head title="Historial de Salidas"></Head>
+    <Head title="Traspaso de Productos"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-boxes"></i> Historial de Salidas
+                        <i class="fa fa-boxes"></i> Traspaso de Productos
                     </h3>
                 </div>
                 <!-- /.col -->
@@ -120,7 +125,7 @@ const eliminarSalidaProducto = (item) => {
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
                         <li class="breadcrumb-item active">
-                            Historial de Salidas
+                            Traspaso de Productos
                         </li>
                     </ol>
                 </div>
@@ -136,13 +141,13 @@ const eliminarSalidaProducto = (item) => {
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
                                 props_page.auth?.user.permisos.includes(
-                                    'salida_productos.create',
+                                    'traspasos.create',
                                 )
                             "
-                            :href="route('salida_productos.create')"
+                            :href="route('traspasos.create')"
                             class="btn btn-primary text-sm"
                         >
-                            <i class="fa fa-plus"></i> Nueva Salida
+                            <i class="fa fa-plus"></i> Nuevo Traspaso
                         </Link>
                     </div>
                     <div class="col-md-8 my-1">
@@ -175,7 +180,7 @@ const eliminarSalidaProducto = (item) => {
                             ref="miTable"
                             :cols="headers"
                             :api="true"
-                            :url="route('salida_productos.paginado')"
+                            :url="route('traspasos.paginado')"
                             :numPages="5"
                             :multiSearch="multiSearch"
                             :syncOrderBy="'id'"
@@ -184,18 +189,22 @@ const eliminarSalidaProducto = (item) => {
                             :header-class="'bg__primary'"
                             fixed-header
                         >
-                            <template #ubicacion="{ item }">
+                            <template #ubicacion_origen="{ item }">
                                 <span class="text-dark text-sm">{{
-                                    item.almacen?.nombre
+                                    item.almacen_origen?.nombre
                                 }}</span>
                                 -
                                 <span class="text-dark text-sm">{{
-                                    item.sucursal?.nombre
+                                    item.sucursal_origen?.nombre
                                 }}</span>
                             </template>
-                            <template #cantidad="{ item }">
-                                <span class="fw-bold fs-6 badge bg-warning">{{
-                                    item.cantidad
+                            <template #ubicacion_destino="{ item }">
+                                <span class="text-dark text-sm">{{
+                                    item.almacen_destino?.nombre
+                                }}</span>
+                                -
+                                <span class="text-dark text-sm">{{
+                                    item.sucursal_destino?.nombre
                                 }}</span>
                             </template>
                             <template #user="{ item }">
@@ -205,12 +214,17 @@ const eliminarSalidaProducto = (item) => {
                                     {{ item.user?.materno }}</span
                                 >
                             </template>
+                            <template #cantidad="{ item }">
+                                <span class="fw-bold fs-6 badge bg-info">{{
+                                    item.cantidad
+                                }}</span>
+                            </template>
                             <template #accion="{ item }">
                                 <template
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
-                                            'salida_productos.edit',
+                                            'traspasos.edit',
                                         )
                                     "
                                 >
@@ -223,7 +237,7 @@ const eliminarSalidaProducto = (item) => {
                                         <button
                                             class="btn btn-warning"
                                             @click="
-                                                setSalidaProducto(item);
+                                                setTraspaso(item);
                                                 muestra_formulario = true;
                                             "
                                         >
@@ -235,7 +249,7 @@ const eliminarSalidaProducto = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
-                                            'salida_productos.destroy',
+                                            'traspasos.destroy',
                                         )
                                     "
                                 >
@@ -247,9 +261,7 @@ const eliminarSalidaProducto = (item) => {
                                     >
                                         <button
                                             class="btn btn-danger"
-                                            @click="
-                                                eliminarSalidaProducto(item)
-                                            "
+                                            @click="eliminarTraspaso(item)"
                                         >
                                             <i
                                                 class="fa fa-trash-alt"

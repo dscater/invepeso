@@ -1,7 +1,7 @@
 <script setup>
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
-import { useIngresoProductos } from "@/composables/ingreso_productos/useIngresoProductos";
+import { useTraspasos } from "@/composables/traspasos/useTraspasos";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 import Formulario from "./Formulario.vue";
@@ -15,17 +15,16 @@ onMounted(() => {
     appStore.stopLoading();
 });
 
-const { setIngresoProducto, limpiarIngresoProducto, form } =
-    useIngresoProductos();
+const { setTraspaso, limpiarTraspaso, form } = useTraspasos();
 </script>
 <template>
-    <Head title="Orden de Compra"></Head>
+    <Head title="Traspaso de Productos"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-boxes"></i> Orden de Compra
+                        <i class="fa fa-boxes"></i> Traspaso de Productos
                     </h3>
                 </div>
                 <!-- /.col -->
@@ -34,7 +33,9 @@ const { setIngresoProducto, limpiarIngresoProducto, form } =
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
-                        <li class="breadcrumb-item active">Orden de Compra</li>
+                        <li class="breadcrumb-item active">
+                            Traspaso de Productos
+                        </li>
                     </ol>
                 </div>
                 <!-- /.col -->
@@ -45,7 +46,7 @@ const { setIngresoProducto, limpiarIngresoProducto, form } =
             <div class="col-md-12">
                 <Formulario
                     :form="form"
-                    @envio-formulario="limpiarIngresoProducto"
+                    @envio-formulario="limpiarTraspaso"
                 ></Formulario>
             </div>
         </div>

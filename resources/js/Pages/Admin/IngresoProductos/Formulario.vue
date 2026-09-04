@@ -138,7 +138,11 @@ const filtrarNombres = () => {
 
 const cargarAlmacens = async () => {
     try {
-        const res = await axios.get(route("almacens.listado"));
+        const res = await axios.get(route("almacens.listado"), {
+            params: {
+                activo: 1,
+            },
+        });
         listAlmacens.value = res.data.almacens;
     } catch (e) {
         console.log(e);
