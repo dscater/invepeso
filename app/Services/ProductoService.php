@@ -15,6 +15,7 @@ use Exception;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ProductoService
@@ -260,6 +261,11 @@ class ProductoService
             ->where("almacen_id", $almacen_id)
             ->get()
             ->first();
+
+
+        Log::debug("producto:");
+        Log::debug($producto);
+
         $disponible = false;
         if ($producto->stock_actual >= $cantidad) {
             $disponible = true;

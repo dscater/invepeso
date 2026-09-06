@@ -20,8 +20,11 @@ class ClienteService
 
     public function listado(): Collection
     {
-        $clientes = Cliente::select("clientes.*")
-            ->where("status", 1)->get();
+        $clientes = Cliente::with(["tipo_documento:id,nombre"])
+            ->select("clientes.*");
+
+
+        $clientes = $clientes->where("status", 1)->get();
         return $clientes;
     }
     /**

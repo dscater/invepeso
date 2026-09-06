@@ -40,7 +40,7 @@ class ProductoSucursalService
             });
 
         if (!empty($categoria_id) && $categoria_id != 'todos') {
-            Log::debug("categoria");
+            // Log::debug("categoria");
             $productos->where('productos.categoria_id', $categoria_id);
         }
 

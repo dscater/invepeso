@@ -38,10 +38,10 @@ class VentaController extends Controller
      *
      * @return JsonResponse
      */
-    public function listado(): JsonResponse
+    public function listado(Request $request): JsonResponse
     {
         return response()->JSON([
-            "ventas" => $this->ventaService->listado()
+            "ventas" => $this->ventaService->listado($request->input("fecha_ini", null), $request->input("fecha_fin", null))
         ]);
     }
 
@@ -74,6 +74,11 @@ class VentaController extends Controller
         ]);
     }
 
+    public function create(): ResponseInertia
+    {
+        return Inertia::render("Admin/Ventas/Create");
+    }
+
     /**
      * Registrar un nuevo venta
      *
@@ -104,7 +109,14 @@ class VentaController extends Controller
      */
     public function show(Venta $venta): JsonResponse
     {
+        $venta = $venta->load(["venta_detalles.producto", "cliente", "sucursal:id,nombre", "almacen:id,nombre", "tipo_documento:id,nombre"]);
         return response()->JSON($venta);
+    }
+
+    public function edit(Venta $venta): ResponseInertia
+    {
+        $venta = $venta->load(["venta_detalles.producto", "cliente", "sucursal:id,nombre", "almacen:id,nombre", "tipo_documento:id,nombre"]);
+        return Inertia::render("Admin/Ventas/Edit", compact("venta"));
     }
 
     public function update(Venta $venta, VentaUpdateRequest $request)

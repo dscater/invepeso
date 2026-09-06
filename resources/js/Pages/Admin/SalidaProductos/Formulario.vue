@@ -119,6 +119,7 @@ const cargarProductos = async () => {
                 ...item,
                 cantidad: 1,
                 costo: item.precio_compra,
+                stock_aux: item.stock_total,
                 tipo_salida_id: tipo_salida_id_default,
             }),
         );
@@ -210,6 +211,12 @@ const agregarProductoSalida = async (item) => {
     const stock_total = Number(item.stock_total);
     const cantidad = Number(item.cantidad);
     const tipo_salida_id = item.tipo_salida_id;
+
+    if (!stock_total || stock_total < cantidad) {
+        toast.error("Stock insuficiente para agregar el producto");
+        return;
+    }
+
     if (!stock_total || stock_total < cantidad) {
         toast.error("Stock insuficiente para agregar el producto");
         return;
@@ -270,6 +277,7 @@ const detectarCambioFila = (item, index) => {
         return;
     }
 
+    recalcularStockActualCambioDetalle(item.producto_id, cant, index);
     // const subtotal = cant * costo;
     // form.salida_detalles[index].subtotal = subtotal.toFixed(2);
 };
@@ -279,14 +287,41 @@ const quitarFila = (item, index) => {
     if (id != 0) {
         form.eliminados.push(id);
     }
-    const item_almacen_origen = listProductoAlmacens.value.find(
-        (elem) => elem.id == item.producto_id,
+    sumarDetalleEliminado(
+        item.producto_id,
+        Number(form.salida_detalles[index].cantidad),
     );
-    item_almacen_origen.stock_total =
-        Number(item_almacen_origen.stock_total) +
-        Number(form.salida_detalles[index].cantidad);
     form.salida_detalles.splice(index, 1);
     toast.success("Se quitó el producto!!!");
+};
+
+const sumarDetalleEliminado = (producto_id, cantidad) => {
+    const item_almacen_origen = listProductoAlmacens.value.find(
+        (elem) => elem.id == producto_id,
+    );
+    item_almacen_origen.stock_total =
+        Number(item_almacen_origen.stock_total) + Number(cantidad);
+};
+
+const recalcularStockActualCambioDetalle = (
+    producto_id,
+    cantidad,
+    index = null,
+) => {
+    const item_almacen_origen = listProductoAlmacens.value.find(
+        (elem) => elem.id == producto_id,
+    );
+
+    if (index !== null) {
+        if (cantidad > item_almacen_origen.stock_aux) {
+            toast.error("Stock insuficiente para la cantidad ingresada");
+            form.salida_detalles[index].cantidad =
+                item_almacen_origen.stock_aux;
+            return;
+        }
+    }
+    item_almacen_origen.stock_total =
+        Number(item_almacen_origen.stock_aux) - Number(cantidad);
 };
 
 const totalSalida = computed(() => {

@@ -2,25 +2,46 @@
 
 namespace App\Services;
 
+use App\Models\Almacen;
+use App\Models\Cliente;
+use App\Models\Producto;
 use App\Services\HistorialAccionService;
 use App\Models\Venta;
 use App\Models\User;
+use App\Models\VentaDetalle;
 use Illuminate\Http\UploadedFile;
 use Exception;
-use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class VentaService
 {
-    private $modulo = "SUCURSALES";
+    private $modulo = "VENTAS";
 
-    public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
+    public function __construct(
+        private  CargarArchivoService $cargarArchivoService,
+        private HistorialAccionService $historialAccionService,
+        private KardexProductoService $kardex_producto_service,
+        private ProductoService $producto_service,
+    ) {}
 
-    public function listado(): Collection
+    public function listado($fecha_ini = null, $fecha_fin = null): Collection
     {
-        $ventas = Venta::select("ventas.*")->get();
+        $ventas = Venta::with([
+            "sucursal:id,nombre",
+            "almacen:id,nombre",
+            "cliente.tipo_documento",
+            "user:id,nombre,paterno,materno",
+        ])
+            ->select("ventas.*")
+            ->where("status", 1);
+        if ($fecha_ini && $fecha_fin) {
+            $ventas->whereBetween("fecha_registro", [$fecha_ini, $fecha_fin]);
+        }
+        $ventas = $ventas->get();
         return $ventas;
     }
     /**
@@ -35,7 +56,14 @@ class VentaService
      */
     public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
-        $ventas = Venta::select("ventas.*");
+        $ventas = Venta::with([
+                "sucursal:id,nombre",
+                "almacen:id,nombre",
+                "cliente.tipo_documento",
+                "user:id,nombre,paterno,materno",
+            ])
+            ->select("ventas.*")
+            ->where("status", 1);
 
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {
@@ -80,16 +108,72 @@ class VentaService
      */
     public function crear(array $datos): Venta
     {
+        $almacen = Almacen::findOrFail($datos["almacen_id"]);
+        $cliente = Cliente::findOrFail($datos["cliente_id"]);
         $venta = Venta::create([
-            "nombre" => mb_strtoupper($datos["nombre"]),
-            "ventas" => $datos["ventas"],
-            "activo" => $datos["activo"],
-            "descripcion" => mb_strtoupper($datos["descripcion"]) ?? null,
-            "fecha_registro" => date("Y-m-d")
+            "sucursal_id" => $almacen->sucursal_id,
+            "almacen_id" => $almacen->id,
+            "cliente_id" => $cliente->id,
+            "tipo_documento_id" => $cliente->tipo_documento_id,
+            "nit_ci" => $cliente->full_ci,
+            "tipo_venta" => mb_strtoupper($datos["tipo_venta"]),
+            "tipo_pago" => $datos["tipo_pago"] ?? NULL,
+            "subtotal" => $datos["subtotal"],
+            "descuento" => $datos["descuento"] ?? 0,
+            "porcentaje_descuento" => $datos["porcentaje_descuento"] ?? 0,
+            "total" => $datos["total"],
+            "cancelado" => $datos["cancelado"],
+            "saldo" => $datos["saldo"],
+            "fecha" => date("Y-m-d"),
+            "hora" => date("H:i:s"),
+            "fecha_registro" => date("Y-m-d"),
+            "user_id" => Auth::user()->id
         ]);
 
+        $venta->codigo_venta = "V" . $venta->id;
+
+        foreach ($datos["venta_detalles"] as $item) {
+            $dato_venta_detalle = [
+                "venta_id" => $venta->id,
+                "producto_id" => $item["producto_id"],
+                "cantidad" => $item["cantidad"],
+                "precio" => $item["precio"],
+                "precio_descuento" => $item["precio"],
+                "descuento" => 0,
+                "porcentaje_descuento" => 0,
+                "subtotal" => $item["subtotal"],
+                "total" => $item["subtotal"],
+            ];
+
+            $venta_detalle = VentaDetalle::create($dato_venta_detalle);
+            $producto = Producto::findOrFail($venta_detalle->producto_id);
+
+
+            // VERIFICAR STOCK
+            $verifica_stock = $this->producto_service->verificaStockCantidad($venta->sucursal_id, $venta->almacen_id, $producto->id, $item["cantidad"]);
+
+            if (!$verifica_stock[0]) {
+                throw new Exception("Stock insuficiente para el producto $producto->nombre. Disponible: $verifica_stock[1]");
+            }
+
+            // REGISTRAR EGRESO STOCK
+            $this->kardex_producto_service->registrarMovimiento(
+                $venta->sucursal_id,
+                $venta->almacen_id,
+                "VENTA DE PRODUCTO",
+                "EGRESO",
+                NULL,
+                $producto,
+                $venta_detalle->cantidad,
+                $venta_detalle->precio_descuento,
+                "SALIDA POR VENTA",
+                "VentaDetalle",
+                $venta_detalle->id
+            );
+        }
+
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA SUCURSAL", $venta);
+        $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA VENTA", $venta, null, ["venta_detalles"]);
 
         return $venta;
     }
@@ -113,7 +197,7 @@ class VentaService
         ]);
 
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UNA SUCURSAL", $old_venta, $venta->withoutRelations());
+        $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UNA VENTA", $old_venta, $venta->withoutRelations(), ["venta_detalles"]);
 
         return $venta;
     }
@@ -127,10 +211,12 @@ class VentaService
     public function eliminar(Venta $venta): bool|Exception
     {
         $old_venta = clone $venta;
-        $venta->delete();
+
+        $venta->status = 0;
+        $venta->save();
 
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UNA SUCURSAL", $old_venta, $venta);
+        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UNA VENTA", $old_venta, $venta, ["venta_detalles"]);
 
         return true;
     }

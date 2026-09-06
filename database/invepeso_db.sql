@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 04-09-2026 a las 15:22:06
+-- Tiempo de generación: 06-09-2026 a las 22:34:47
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -169,7 +169,10 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (15, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN ALMACÉN', '{\"id\": 3, \"activo\": \"1\", \"nombre\": \"ALMACEN 2\", \"created_at\": \"2026-09-04T14:35:49.000000Z\", \"updated_at\": \"2026-09-04T14:35:49.000000Z\", \"descripcion\": \"\", \"sucursal_id\": \"3\", \"fecha_registro\": \"2026-09-04\"}', NULL, 'ALMACENES', '2026-09-04', '10:35:49', '2026-09-04 14:35:49', '2026-09-04 14:35:49'),
 (16, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN ALMACÉN', '{\"id\": 4, \"activo\": \"1\", \"nombre\": \"ALMACEN 2 CENTRAL\", \"created_at\": \"2026-09-04T14:36:00.000000Z\", \"updated_at\": \"2026-09-04T14:36:00.000000Z\", \"descripcion\": \"\", \"sucursal_id\": \"1\", \"fecha_registro\": \"2026-09-04\"}', NULL, 'ALMACENES', '2026-09-04', '10:36:00', '2026-09-04 14:36:00', '2026-09-04 14:36:00'),
 (17, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN ALMACÉN', '{\"id\": 4, \"activo\": 1, \"nombre\": \"ALMACEN 2 CENTRAL\", \"created_at\": \"2026-09-04T14:36:00.000000Z\", \"updated_at\": \"2026-09-04T14:36:00.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-04\"}', '{\"id\": 4, \"activo\": \"0\", \"nombre\": \"ALMACEN 2 CENTRAL\", \"created_at\": \"2026-09-04T14:36:00.000000Z\", \"updated_at\": \"2026-09-04T14:36:25.000000Z\", \"descripcion\": \"\", \"sucursal_id\": \"1\", \"fecha_registro\": \"2026-09-04\"}', 'ALMACENES', '2026-09-04', '10:36:25', '2026-09-04 14:36:25', '2026-09-04 14:36:25'),
-(18, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN TRASPASO DE PRODUCTOS DE ALMACEN CENTRAL A ALMACEN 1', '{\"id\": 3, \"user_id\": 1, \"cantidad\": \"3\", \"created_at\": \"2026-09-04T15:07:52.000000Z\", \"updated_at\": \"2026-09-04T15:07:52.000000Z\", \"descripcion\": \"TRASPASO DE ALMACEN CENTRAL A ALMACEN 1\", \"fecha_registro\": \"2026-09-04\", \"almacen_origen_id\": 1, \"traspaso_detalles\": [{\"id\": 2, \"cantidad\": 3, \"created_at\": \"2026-09-04T15:07:52.000000Z\", \"updated_at\": \"2026-09-04T15:07:52.000000Z\", \"observacion\": null, \"producto_id\": 2, \"traspaso_id\": 3}], \"almacen_destino_id\": 2, \"sucursal_origen_id\": 1, \"sucursal_destino_id\": 2}', NULL, 'TRASPASOS DE PRODUCTOS', '2026-09-04', '11:07:52', '2026-09-04 15:07:52', '2026-09-04 15:07:52');
+(18, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN TRASPASO DE PRODUCTOS DE ALMACEN CENTRAL A ALMACEN 1', '{\"id\": 3, \"user_id\": 1, \"cantidad\": \"3\", \"created_at\": \"2026-09-04T15:07:52.000000Z\", \"updated_at\": \"2026-09-04T15:07:52.000000Z\", \"descripcion\": \"TRASPASO DE ALMACEN CENTRAL A ALMACEN 1\", \"fecha_registro\": \"2026-09-04\", \"almacen_origen_id\": 1, \"traspaso_detalles\": [{\"id\": 2, \"cantidad\": 3, \"created_at\": \"2026-09-04T15:07:52.000000Z\", \"updated_at\": \"2026-09-04T15:07:52.000000Z\", \"observacion\": null, \"producto_id\": 2, \"traspaso_id\": 3}], \"almacen_destino_id\": 2, \"sucursal_origen_id\": 1, \"sucursal_destino_id\": 2}', NULL, 'TRASPASOS DE PRODUCTOS', '2026-09-04', '11:07:52', '2026-09-04 15:07:52', '2026-09-04 15:07:52'),
+(19, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA PRODUCTO', '{\"id\": 2, \"activo\": 1, \"codigo\": \"P001\", \"imagen\": \"21783799752.jpeg\", \"nombre\": \"PRODUCTO 1\", \"precio\": \"200.00\", \"precio2\": null, \"precio3\": null, \"precio4\": null, \"marca_id\": 1, \"stock_min\": 3, \"created_at\": \"2026-07-11T19:55:52.000000Z\", \"updated_at\": \"2026-07-15T20:03:36.000000Z\", \"categoria_id\": 1, \"precio_compra\": \"120.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": 1}', '{\"id\": 2, \"activo\": \"1\", \"codigo\": \"P001\", \"imagen\": \"21783799752.jpeg\", \"nombre\": \"PRODUCTO 1\", \"precio\": \"200.00\", \"precio2\": \"290\", \"precio3\": \"300\", \"precio4\": null, \"marca_id\": \"1\", \"stock_min\": \"3\", \"created_at\": \"2026-07-11T19:55:52.000000Z\", \"updated_at\": \"2026-09-06T21:17:59.000000Z\", \"categoria_id\": \"1\", \"precio_compra\": \"120.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": \"1\"}', 'PRODUCTOS', '2026-09-06', '17:17:59', '2026-09-06 21:17:59', '2026-09-06 21:17:59'),
+(20, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA PRODUCTO', '{\"id\": 3, \"activo\": 1, \"codigo\": \"P002\", \"imagen\": null, \"nombre\": \"PRODUCTO 2\", \"precio\": \"350.00\", \"precio2\": null, \"precio3\": null, \"precio4\": null, \"marca_id\": 1, \"stock_min\": 3, \"created_at\": \"2026-07-11T20:00:05.000000Z\", \"updated_at\": \"2026-07-15T20:03:30.000000Z\", \"categoria_id\": 1, \"precio_compra\": \"300.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": 1}', '{\"id\": 3, \"activo\": \"1\", \"codigo\": \"P002\", \"imagen\": null, \"nombre\": \"PRODUCTO 2\", \"precio\": \"350.00\", \"precio2\": \"400\", \"precio3\": \"420\", \"precio4\": \"450\", \"marca_id\": \"1\", \"stock_min\": \"3\", \"created_at\": \"2026-07-11T20:00:05.000000Z\", \"updated_at\": \"2026-09-06T21:18:15.000000Z\", \"categoria_id\": \"1\", \"precio_compra\": \"300.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": \"1\"}', 'PRODUCTOS', '2026-09-06', '17:18:15', '2026-09-06 21:18:15', '2026-09-06 21:18:15'),
+(21, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 8, \"hora\": \"18:24:22\", \"fecha\": \"2026-09-06\", \"saldo\": \"0.00\", \"total\": \"400.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"400.00\", \"cancelado\": \"400\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-06T22:24:22.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-06T22:24:22.000000Z\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-06\", \"venta_detalles\": [{\"id\": 8, \"total\": \"400.00\", \"precio\": \"200.00\", \"cantidad\": 2, \"subtotal\": \"400.00\", \"venta_id\": 8, \"descuento\": \"0.00\", \"created_at\": \"2026-09-06T22:24:22.000000Z\", \"updated_at\": \"2026-09-06T22:24:22.000000Z\", \"producto_id\": 2, \"precio_descuento\": \"200.00\", \"porcentaje_descuento\": 0}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-06', '18:24:22', '2026-09-06 22:24:22', '2026-09-06 22:24:22');
 
 -- --------------------------------------------------------
 
@@ -298,7 +301,8 @@ INSERT INTO `kardex_productos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_deta
 (17, 1, 1, 7, 'SALIDA DE PRODUCTO', 7, 'SalidaDetalle', 2, 'SALIDA 1', 120.00, 'EGRESO', NULL, 1, 7, 120.00, NULL, 120.00, 840.00, '2026-09-02', 1, '2026-09-02 14:23:39', '2026-09-02 14:23:39'),
 (18, 1, 1, 8, 'SALIDA DE PRODUCTO', 8, 'SalidaDetalle', 3, 'SALIDA 2', 300.00, 'EGRESO', NULL, 1, 11, 300.00, NULL, 300.00, 3300.00, '2026-09-02', 1, '2026-09-02 14:23:39', '2026-09-02 14:23:39'),
 (21, 1, 1, 2, 'TRASPASO DE PRODUCTOS', 2, 'TraspasoDetalle', 2, 'TRASPASO DE ALMACEN CENTRAL A ALMACEN 1', 120.00, 'EGRESO', NULL, 3, 4, 120.00, NULL, 360.00, 480.00, '2026-09-04', 1, '2026-09-04 15:07:52', '2026-09-04 15:07:52'),
-(22, 2, 2, 2, 'TRASPASO DE PRODUCTOS', 2, 'TraspasoDetalle', 2, 'TRASPASO DE ALMACEN CENTRAL A ALMACEN 1', 120.00, 'INGRESO', 3, NULL, 3, 120.00, 360.00, NULL, 360.00, '2026-09-04', 1, '2026-09-04 15:07:52', '2026-09-04 15:07:52');
+(22, 2, 2, 2, 'TRASPASO DE PRODUCTOS', 2, 'TraspasoDetalle', 2, 'TRASPASO DE ALMACEN CENTRAL A ALMACEN 1', 120.00, 'INGRESO', 3, NULL, 3, 120.00, 360.00, NULL, 360.00, '2026-09-04', 1, '2026-09-04 15:07:52', '2026-09-04 15:07:52'),
+(24, 1, 1, NULL, 'VENTA DE PRODUCTO', 8, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 2, 2, 200.00, NULL, 400.00, 80.00, '2026-09-06', 1, '2026-09-06 22:24:22', '2026-09-06 22:24:22');
 
 -- --------------------------------------------------------
 
@@ -462,8 +466,8 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id`, `codigo`, `nombre`, `categoria_id`, `marca_id`, `unidad_medida_id`, `precio`, `precio2`, `precio3`, `precio4`, `precio_compra`, `stock_min`, `imagen`, `activo`, `fecha_registro`, `created_at`, `updated_at`) VALUES
-(2, 'P001', 'PRODUCTO 1', 1, 1, 1, 200.00, NULL, NULL, NULL, 120.00, 3, '21783799752.jpeg', 1, '2026-07-11', '2026-07-11 19:55:52', '2026-07-15 20:03:36'),
-(3, 'P002', 'PRODUCTO 2', 1, 1, 1, 350.00, NULL, NULL, NULL, 300.00, 3, NULL, 1, '2026-07-11', '2026-07-11 20:00:05', '2026-07-15 20:03:30'),
+(2, 'P001', 'PRODUCTO 1', 1, 1, 1, 200.00, 290.00, 300.00, NULL, 120.00, 3, '21783799752.jpeg', 1, '2026-07-11', '2026-07-11 19:55:52', '2026-09-06 21:17:59'),
+(3, 'P002', 'PRODUCTO 2', 1, 1, 1, 350.00, 400.00, 420.00, 450.00, 300.00, 3, NULL, 1, '2026-07-11', '2026-07-11 20:00:05', '2026-09-06 21:18:15'),
 (4, 'P003', 'PRODUCTO 3', 2, 2, 1, 390.00, NULL, NULL, NULL, 300.00, 5, NULL, 1, '2026-07-13', '2026-07-13 20:15:16', '2026-07-15 20:02:46');
 
 -- --------------------------------------------------------
@@ -487,7 +491,7 @@ CREATE TABLE `producto_sucursals` (
 --
 
 INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `almacen_id`, `producto_id`, `stock_actual`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 2, 4, '2026-08-26 00:56:23', '2026-09-04 15:07:52'),
+(1, 1, 1, 2, 2, '2026-08-26 00:56:23', '2026-09-06 22:24:22'),
 (2, 1, 1, 3, 11, '2026-08-26 00:56:23', '2026-09-02 14:23:39'),
 (3, 1, 1, 4, 16, '2026-08-26 00:56:23', '2026-08-30 16:02:46'),
 (5, 2, 2, 2, 3, '2026-09-04 15:07:52', '2026-09-04 15:07:52');
@@ -801,13 +805,13 @@ INSERT INTO `users` (`id`, `usuario`, `nombre`, `paterno`, `materno`, `ci`, `ci_
 
 CREATE TABLE `ventas` (
   `id` bigint UNSIGNED NOT NULL,
-  `codigo_venta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codigo_venta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `sucursal_id` bigint UNSIGNED NOT NULL,
   `almacen_id` bigint UNSIGNED NOT NULL,
-  `caja_id` bigint UNSIGNED NOT NULL,
   `cliente_id` bigint UNSIGNED NOT NULL,
   `tipo_documento_id` bigint UNSIGNED DEFAULT NULL,
   `nit_ci` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tipo_venta` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tipo_pago` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `subtotal` decimal(24,2) NOT NULL,
   `descuento` decimal(24,2) NOT NULL,
@@ -815,11 +819,21 @@ CREATE TABLE `ventas` (
   `total` decimal(24,2) NOT NULL,
   `cancelado` decimal(24,2) NOT NULL,
   `saldo` decimal(24,2) NOT NULL,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
   `fecha_registro` date DEFAULT NULL,
   `status` int NOT NULL DEFAULT '1',
+  `user_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `ventas`
+--
+
+INSERT INTO `ventas` (`id`, `codigo_venta`, `sucursal_id`, `almacen_id`, `cliente_id`, `tipo_documento_id`, `nit_ci`, `tipo_venta`, `tipo_pago`, `subtotal`, `descuento`, `porcentaje_descuento`, `total`, `cancelado`, `saldo`, `fecha`, `hora`, `fecha_registro`, `status`, `user_id`, `created_at`, `updated_at`) VALUES
+(8, NULL, 1, 1, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 400.00, 0.00, 0.00, 400.00, 400.00, 0.00, '2026-09-06', '18:24:22', '2026-09-06', 1, 1, '2026-09-06 22:24:22', '2026-09-06 22:24:22');
 
 -- --------------------------------------------------------
 
@@ -841,6 +855,13 @@ CREATE TABLE `venta_detalles` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `venta_detalles`
+--
+
+INSERT INTO `venta_detalles` (`id`, `venta_id`, `producto_id`, `cantidad`, `precio`, `precio_descuento`, `descuento`, `porcentaje_descuento`, `subtotal`, `total`, `created_at`, `updated_at`) VALUES
+(8, 8, 2, 2, 200.00, 200.00, 0.00, 0.00, 400.00, 400.00, '2026-09-06 22:24:22', '2026-09-06 22:24:22');
 
 -- --------------------------------------------------------
 
@@ -1081,11 +1102,11 @@ ALTER TABLE `users`
 --
 ALTER TABLE `ventas`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `ventas_sucursal_id_foreign` (`sucursal_id`),
-  ADD KEY `ventas_caja_id_foreign` (`caja_id`),
-  ADD KEY `ventas_cliente_id_foreign` (`cliente_id`),
-  ADD KEY `ventas_tipo_documento_id_foreign` (`tipo_documento_id`),
-  ADD KEY `ventas_almacen_id` (`almacen_id`);
+  ADD KEY `ventas_almacen_id` (`almacen_id`),
+  ADD KEY `ventas_user_id` (`user_id`),
+  ADD KEY `ventas_sucursal_id` (`sucursal_id`),
+  ADD KEY `ventas_cliente_id` (`cliente_id`),
+  ADD KEY `ventas_tipo_documento_id` (`tipo_documento_id`);
 
 --
 -- Indices de la tabla `venta_detalles`
@@ -1137,7 +1158,7 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
@@ -1155,7 +1176,7 @@ ALTER TABLE `ingreso_productos`
 -- AUTO_INCREMENT de la tabla `kardex_productos`
 --
 ALTER TABLE `kardex_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -1275,13 +1296,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `venta_detalles`
 --
 ALTER TABLE `venta_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `venta_detalle_lotes`
@@ -1407,7 +1428,11 @@ ALTER TABLE `users`
 -- Filtros para la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  ADD CONSTRAINT `ventas_almacen_id` FOREIGN KEY (`almacen_id`) REFERENCES `almacens` (`id`);
+  ADD CONSTRAINT `ventas_almacen_id` FOREIGN KEY (`almacen_id`) REFERENCES `almacens` (`id`),
+  ADD CONSTRAINT `ventas_cliente_id` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`),
+  ADD CONSTRAINT `ventas_sucursal_id` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`),
+  ADD CONSTRAINT `ventas_tipo_documento_id` FOREIGN KEY (`tipo_documento_id`) REFERENCES `tipo_documentos` (`id`),
+  ADD CONSTRAINT `ventas_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Filtros para la tabla `venta_detalles`

@@ -22,7 +22,7 @@ class KardexProductoService
      *
      * @param integer $sucursal_id
      * @param string $tipo_registro
-     * @param string $ingreso_salida (INGRESO/SALIDA)
+     * @param string $ingreso_salida (INGRESO/EGRESO)
      * @param integer $ingreso_detalle_id
      * @param Producto $producto
      * @param float $cantidad
@@ -37,7 +37,7 @@ class KardexProductoService
         int $almacen_id,
         string $tipo_registro,
         string $ingreso_salida,
-        int $ingreso_detalle_id,
+        int $ingreso_detalle_id = NULL,
         Producto $producto,
         float $cantidad,
         float $precio,

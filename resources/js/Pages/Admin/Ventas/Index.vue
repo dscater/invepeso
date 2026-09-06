@@ -2,7 +2,7 @@
 import Content from "@/Components/Content.vue";
 import MiTable from "@/Components/MiTable.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
-import { useSucursals } from "@/composables/sucursals/useSucursals";
+import { useVentas } from "@/composables/ventas/useVentas";
 import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
@@ -20,40 +20,50 @@ onMounted(() => {
     appStore.stopLoading();
 });
 
-const { setSucursal, limpiarSucursal, form } = useSucursals();
+const { setVenta, limpiarVenta, form } = useVentas();
 const { axiosDelete } = useAxios();
 
 const miTable = ref(null);
 const headers = [
     {
-        label: "NRO.",
+        label: "Nro.",
         key: "id",
         sortable: true,
         width: "4%",
     },
     {
-        label: "NOMBRE",
-        key: "nombre",
+        label: "ALMACÉN-SUCURSAL",
+        key: "ubicacion",
         sortable: true,
     },
     {
-        label: "VENTAS",
-        key: "ventas",
+        label: "CLIENTE",
+        key: "cliente",
         sortable: true,
     },
     {
-        label: "ACTIVO",
-        key: "activo",
+        label: "TOTAL BS.",
+        key: "total",
         sortable: true,
     },
     {
-        label: "DESCRIPCIÓN",
-        key: "descripcion",
+        label: "TIPO DE VENTA",
+        key: "tipo_venta",
+        sortable: true,
+    },
+    {
+        label: "SALDO BS.",
+        key: "saldo",
         sortable: true,
     },
     {
         label: "FECHA REGISTRO",
         key: "fecha_registro",
+        sortable: true,
+    },
+    {
+        label: "RESPONSABLE",
+        key: "user",
         sortable: true,
     },
     {
@@ -72,19 +82,19 @@ const multiSearch = ref({
 const muestra_formulario = ref(false);
 
 const agregarRegistro = () => {
-    limpiarSucursal();
+    limpiarVenta();
     muestra_formulario.value = true;
 };
 
 const updateDatatable = async () => {
     if (miTable.value) {
         await miTable.value.cargarDatos();
-        limpiarSucursal();
+        limpiarVenta();
         muestra_formulario.value = false;
     }
 };
 
-const eliminarSucursal = (item) => {
+const eliminarVenta = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
         html: `<strong>${item.nombre}</strong>`,
@@ -98,9 +108,7 @@ const eliminarSucursal = (item) => {
     }).then(async (result) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
-            let respuesta = await axiosDelete(
-                route("sucursals.destroy", item.id),
-            );
+            let respuesta = await axiosDelete(route("ventas.destroy", item.id));
             if (respuesta && respuesta.sw) {
                 updateDatatable();
             }
@@ -109,14 +117,12 @@ const eliminarSucursal = (item) => {
 };
 </script>
 <template>
-    <Head title="Sucursales"></Head>
+    <Head title="Ventas"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="m-0">
-                        <i class="fa fa-building"></i> Sucursales
-                    </h3>
+                    <h3 class="m-0"><i class="fa fa-list-alt"></i> Ventas</h3>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
@@ -124,7 +130,7 @@ const eliminarSucursal = (item) => {
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
-                        <li class="breadcrumb-item active">Sucursales</li>
+                        <li class="breadcrumb-item active">Ventas</li>
                     </ol>
                 </div>
                 <!-- /.col -->
@@ -135,19 +141,18 @@ const eliminarSucursal = (item) => {
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-4">
-                        <button
+                        <Link
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
                                 props_page.auth?.user.permisos.includes(
-                                    'sucursals.create',
+                                    'ventas.create',
                                 )
                             "
-                            type="button"
+                            :href="route('ventas.create')"
                             class="btn btn-primary text-sm"
-                            @click="agregarRegistro"
                         >
-                            <i class="fa fa-plus"></i> Nueva Sucursal
-                        </button>
+                            <i class="fa fa-plus"></i> Nueva Venta
+                        </Link>
                     </div>
                     <div class="col-md-8 my-1">
                         <div class="row justify-content-end">
@@ -179,7 +184,7 @@ const eliminarSucursal = (item) => {
                             ref="miTable"
                             :cols="headers"
                             :api="true"
-                            :url="route('sucursals.paginado')"
+                            :url="route('ventas.paginado')"
                             :numPages="5"
                             :multiSearch="multiSearch"
                             :syncOrderBy="'id'"
@@ -188,30 +193,36 @@ const eliminarSucursal = (item) => {
                             :header-class="'bg__primary'"
                             fixed-header
                         >
-                            <template #ventas="{ item }">
-                                <span
-                                    class="badge text-xs"
-                                    :class="[
-                                        item.ventas == 1
-                                            ? 'bgActivo'
-                                            : 'bgPrecargado',
-                                    ]"
-                                    >{{
-                                        item.ventas == 1 ? "VENTAS" : "ALMACÉN"
-                                    }}</span
+                            <template #ubicacion="{ item }">
+                                <span class="text-dark text-sm">{{
+                                    item.almacen?.nombre
+                                }}</span>
+                                -
+                                <span class="text-dark text-sm">{{
+                                    item.sucursal?.nombre
+                                }}</span>
+                            </template>
+
+                            <template #cliente="{ item }">
+                                <span class="text-dark text-sm">{{
+                                    item.cliente?.nombre
+                                }}</span
+                                ><br />
+                                <span class="text-dark text-sm"
+                                    >{{ item.cliente?.tipo_documento?.nombre }}
+                                    {{ item.nit_ci }}</span
                                 >
                             </template>
-                            <template #activo="{ item }">
-                                <span
-                                    class="badge text-xs"
-                                    :class="[
-                                        item.activo == 1
-                                            ? 'bgActivo'
-                                            : 'bgInactivo',
-                                    ]"
-                                    >{{
-                                        item.activo == 1 ? "ACTIVO" : "INACTIVO"
-                                    }}</span
+                            <template #total="{ item }">
+                                <span class="fw-bold fs-6 badge bg-success">{{
+                                    item.total
+                                }}</span>
+                            </template>
+                            <template #user="{ item }">
+                                <span class=""
+                                    >{{ item.user?.nombre }}
+                                    {{ item.user?.paterno }}
+                                    {{ item.user?.materno }}</span
                                 >
                             </template>
                             <template #accion="{ item }">
@@ -219,7 +230,7 @@ const eliminarSucursal = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
-                                            'sucursals.edit',
+                                            'ventas.edit',
                                         )
                                     "
                                 >
@@ -232,7 +243,7 @@ const eliminarSucursal = (item) => {
                                         <button
                                             class="btn btn-warning"
                                             @click="
-                                                setSucursal(item);
+                                                setVenta(item);
                                                 muestra_formulario = true;
                                             "
                                         >
@@ -244,7 +255,7 @@ const eliminarSucursal = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
-                                            'sucursals.destroy',
+                                            'ventas.destroy',
                                         )
                                     "
                                 >
@@ -256,7 +267,7 @@ const eliminarSucursal = (item) => {
                                     >
                                         <button
                                             class="btn btn-danger"
-                                            @click="eliminarSucursal(item)"
+                                            @click="eliminarVenta(item)"
                                         >
                                             <i
                                                 class="fa fa-trash-alt"

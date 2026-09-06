@@ -302,7 +302,7 @@ class IngresoProductoService
                 "costo" => $item["costo"],
                 "subtotal" => $item["subtotal"],
                 "disponible" => $item["cantidad"],
-                "fecha_vencimiento" => $item["fecha_vencimiento"] ?? NULL,
+                // "fecha_vencimiento" => $item["fecha_vencimiento"] ?? NULL,
             ];
 
             $producto = Producto::findOrFail($ingreso_detalle->producto_id);

@@ -33,7 +33,7 @@ class Cliente extends Model
     }
     public function getFullCiAttribute()
     {
-        return $this->ci . ($this->complemento ? '-' . $this->complemento : '') . ' ' . $this->ci_exp;
+        return $this->nro_documento . ($this->complemento ? '-' . $this->complemento : '');
     }
 
     public function getFechaRegistroTAttribute()

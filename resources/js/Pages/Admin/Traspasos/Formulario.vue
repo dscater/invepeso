@@ -127,6 +127,7 @@ const cargarProductos = async () => {
                 ...item,
                 cantidad: 1,
                 costo: item.precio_compra,
+                stock_aux: item.stock_total,
                 tipo_traspaso_id: tipo_traspaso_id_default,
             }),
         );
@@ -272,6 +273,7 @@ const detectarCambioFila = (item, index) => {
         return;
     }
 
+    recalcularStockActualCambioDetalle(item.producto_id, cant, index);
     // const subtotal = cant * costo;
     // form.traspaso_detalles[index].subtotal = subtotal.toFixed(2);
 };
@@ -282,14 +284,42 @@ const quitarFila = (item, index) => {
         form.eliminados.push(id);
     }
 
-    const item_almacen_origen = listProductoAlmacens.value.find(
-        (elem) => elem.id == item.producto_id,
+    sumarDetalleEliminado(
+        item.producto_id,
+        Number(form.traspaso_detalles[index].cantidad),
     );
-    item_almacen_origen.stock_total =
-        Number(item_almacen_origen.stock_total) +
-        Number(form.traspaso_detalles[index].cantidad);
+
     form.traspaso_detalles.splice(index, 1);
     toast.success("Se quitó el producto!!!");
+};
+
+const sumarDetalleEliminado = (producto_id, cantidad) => {
+    const item_almacen_origen = listProductoAlmacens.value.find(
+        (elem) => elem.id == producto_id,
+    );
+    item_almacen_origen.stock_total =
+        Number(item_almacen_origen.stock_total) + Number(cantidad);
+};
+
+const recalcularStockActualCambioDetalle = (
+    producto_id,
+    cantidad,
+    index = null,
+) => {
+    const item_almacen_origen = listProductoAlmacens.value.find(
+        (elem) => elem.id == producto_id,
+    );
+
+    if (index !== null) {
+        if (cantidad > item_almacen_origen.stock_aux) {
+            toast.error("Stock insuficiente para la cantidad ingresada");
+            form.traspaso_detalles[index].cantidad =
+                item_almacen_origen.stock_aux;
+            return;
+        }
+    }
+    item_almacen_origen.stock_total =
+        Number(item_almacen_origen.stock_aux) - Number(cantidad);
 };
 
 const totalTraspaso = computed(() => {

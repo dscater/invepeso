@@ -9,10 +9,11 @@ class Venta extends Model
     protected $fillable = [
         "codigo_venta",
         "sucursal_id",
-        "caja_id",
+        "almacen_id",
         "cliente_id",
         "tipo_documento_id",
         "nit_ci",
+        "tipo_venta",
         "tipo_pago",
         "subtotal",
         "descuento",
@@ -20,7 +21,52 @@ class Venta extends Model
         "total",
         "cancelado",
         "saldo",
+        "fecha",
+        "hora",
         "fecha_registro",
         "status",
+        "user_id",
     ];
+
+    protected $appends = ["fecha_registro_t", "fecha_hora_t"];
+
+    public function getFechaHoraTAttribute()
+    {
+        return date("d/m/Y H:i:s", strtotime($this->fecha . ' ' . $this->hora));
+    }
+
+    public function getFechaRegistroTAttribute()
+    {
+        return date("d/m/Y", strtotime($this->fecha_registro));
+    }
+
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, "sucursal_id");
+    }
+
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class, "almacen_id");
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, "cliente_id");
+    }
+
+    public function tipo_documento()
+    {
+        return $this->belongsTo(TipoDocumento::class, "tipo_documento_id");
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, "user_id");
+    }
+
+    public function venta_detalles()
+    {
+        return $this->hasMany(VentaDetalle::class, "venta_id");
+    }
 }
