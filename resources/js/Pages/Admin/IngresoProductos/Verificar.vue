@@ -174,15 +174,18 @@ onMounted(() => {});
             <form @submit.prevent="enviarFormulario()">
                 <div class="row">
                     <div class="col-12">
-                        <span class="float-end text-sm">{{
-                            form.fecha_registro_t
-                        }}</span>
+                        <span class="float-end text-sm"
+                            ><i class="fa fa-calendar-alt"></i>
+                            {{ form.fecha_registro_t }}</span
+                        >
                     </div>
                     <div class="col-12">
-                        <span class="float-end text-sm">{{
-                            form.proveedor.nombre
-                        }}</span>
+                        <span class="float-end text-sm"
+                            ><i class="fa fa-truck"></i>
+                            {{ form.proveedor.nombre }}</span
+                        >
                         <h4 class="text-primary fw-bold fs-5">
+                            <i class="fa fa-barcode"></i>
                             {{ form.codigo }}
                         </h4>
                     </div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 06-09-2026 a las 22:34:47
+-- Tiempo de generación: 07-09-2026 a las 16:34:10
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -172,7 +172,12 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (18, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN TRASPASO DE PRODUCTOS DE ALMACEN CENTRAL A ALMACEN 1', '{\"id\": 3, \"user_id\": 1, \"cantidad\": \"3\", \"created_at\": \"2026-09-04T15:07:52.000000Z\", \"updated_at\": \"2026-09-04T15:07:52.000000Z\", \"descripcion\": \"TRASPASO DE ALMACEN CENTRAL A ALMACEN 1\", \"fecha_registro\": \"2026-09-04\", \"almacen_origen_id\": 1, \"traspaso_detalles\": [{\"id\": 2, \"cantidad\": 3, \"created_at\": \"2026-09-04T15:07:52.000000Z\", \"updated_at\": \"2026-09-04T15:07:52.000000Z\", \"observacion\": null, \"producto_id\": 2, \"traspaso_id\": 3}], \"almacen_destino_id\": 2, \"sucursal_origen_id\": 1, \"sucursal_destino_id\": 2}', NULL, 'TRASPASOS DE PRODUCTOS', '2026-09-04', '11:07:52', '2026-09-04 15:07:52', '2026-09-04 15:07:52'),
 (19, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA PRODUCTO', '{\"id\": 2, \"activo\": 1, \"codigo\": \"P001\", \"imagen\": \"21783799752.jpeg\", \"nombre\": \"PRODUCTO 1\", \"precio\": \"200.00\", \"precio2\": null, \"precio3\": null, \"precio4\": null, \"marca_id\": 1, \"stock_min\": 3, \"created_at\": \"2026-07-11T19:55:52.000000Z\", \"updated_at\": \"2026-07-15T20:03:36.000000Z\", \"categoria_id\": 1, \"precio_compra\": \"120.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": 1}', '{\"id\": 2, \"activo\": \"1\", \"codigo\": \"P001\", \"imagen\": \"21783799752.jpeg\", \"nombre\": \"PRODUCTO 1\", \"precio\": \"200.00\", \"precio2\": \"290\", \"precio3\": \"300\", \"precio4\": null, \"marca_id\": \"1\", \"stock_min\": \"3\", \"created_at\": \"2026-07-11T19:55:52.000000Z\", \"updated_at\": \"2026-09-06T21:17:59.000000Z\", \"categoria_id\": \"1\", \"precio_compra\": \"120.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": \"1\"}', 'PRODUCTOS', '2026-09-06', '17:17:59', '2026-09-06 21:17:59', '2026-09-06 21:17:59'),
 (20, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA PRODUCTO', '{\"id\": 3, \"activo\": 1, \"codigo\": \"P002\", \"imagen\": null, \"nombre\": \"PRODUCTO 2\", \"precio\": \"350.00\", \"precio2\": null, \"precio3\": null, \"precio4\": null, \"marca_id\": 1, \"stock_min\": 3, \"created_at\": \"2026-07-11T20:00:05.000000Z\", \"updated_at\": \"2026-07-15T20:03:30.000000Z\", \"categoria_id\": 1, \"precio_compra\": \"300.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": 1}', '{\"id\": 3, \"activo\": \"1\", \"codigo\": \"P002\", \"imagen\": null, \"nombre\": \"PRODUCTO 2\", \"precio\": \"350.00\", \"precio2\": \"400\", \"precio3\": \"420\", \"precio4\": \"450\", \"marca_id\": \"1\", \"stock_min\": \"3\", \"created_at\": \"2026-07-11T20:00:05.000000Z\", \"updated_at\": \"2026-09-06T21:18:15.000000Z\", \"categoria_id\": \"1\", \"precio_compra\": \"300.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": \"1\"}', 'PRODUCTOS', '2026-09-06', '17:18:15', '2026-09-06 21:18:15', '2026-09-06 21:18:15'),
-(21, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 8, \"hora\": \"18:24:22\", \"fecha\": \"2026-09-06\", \"saldo\": \"0.00\", \"total\": \"400.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"400.00\", \"cancelado\": \"400\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-06T22:24:22.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-06T22:24:22.000000Z\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-06\", \"venta_detalles\": [{\"id\": 8, \"total\": \"400.00\", \"precio\": \"200.00\", \"cantidad\": 2, \"subtotal\": \"400.00\", \"venta_id\": 8, \"descuento\": \"0.00\", \"created_at\": \"2026-09-06T22:24:22.000000Z\", \"updated_at\": \"2026-09-06T22:24:22.000000Z\", \"producto_id\": 2, \"precio_descuento\": \"200.00\", \"porcentaje_descuento\": 0}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-06', '18:24:22', '2026-09-06 22:24:22', '2026-09-06 22:24:22');
+(21, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 8, \"hora\": \"18:24:22\", \"fecha\": \"2026-09-06\", \"saldo\": \"0.00\", \"total\": \"400.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"400.00\", \"cancelado\": \"400\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-06T22:24:22.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-06T22:24:22.000000Z\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-06\", \"venta_detalles\": [{\"id\": 8, \"total\": \"400.00\", \"precio\": \"200.00\", \"cantidad\": 2, \"subtotal\": \"400.00\", \"venta_id\": 8, \"descuento\": \"0.00\", \"created_at\": \"2026-09-06T22:24:22.000000Z\", \"updated_at\": \"2026-09-06T22:24:22.000000Z\", \"producto_id\": 2, \"precio_descuento\": \"200.00\", \"porcentaje_descuento\": 0}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-06', '18:24:22', '2026-09-06 22:24:22', '2026-09-06 22:24:22'),
+(22, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 350.00 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 3, \"hora\": \"10:32:13\", \"tipo\": \"VENTA\", \"fecha\": \"2026-09-07\", \"monto\": \"350.00\", \"modulo\": \"Venta\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-07T14:32:14.000000Z\", \"updated_at\": \"2026-09-07T14:32:14.000000Z\", \"descripcion\": \"INGRES POR VENTA\", \"registro_id\": 9, \"sucursal_id\": 1, \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-07', '10:32:14', '2026-09-07 14:32:14', '2026-09-07 14:32:14'),
+(23, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 9, \"hora\": \"10:32:13\", \"fecha\": \"2026-09-07\", \"saldo\": \"0.00\", \"total\": \"350.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"350.00\", \"cancelado\": \"350.00\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-07T14:32:13.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-07T14:32:13.000000Z\", \"sucursal_id\": 1, \"codigo_venta\": \"V9\", \"fecha_registro\": \"2026-09-07\", \"venta_detalles\": [{\"id\": 9, \"total\": \"350.00\", \"precio\": \"350.00\", \"cantidad\": 1, \"subtotal\": \"350.00\", \"venta_id\": 9, \"descuento\": \"0.00\", \"created_at\": \"2026-09-07T14:32:13.000000Z\", \"updated_at\": \"2026-09-07T14:32:13.000000Z\", \"producto_id\": 3, \"precio_descuento\": \"350.00\", \"porcentaje_descuento\": 0}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-07', '10:32:14', '2026-09-07 14:32:14', '2026-09-07 14:32:14'),
+(24, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 10, \"hora\": \"10:35:45\", \"fecha\": \"2026-09-07\", \"saldo\": \"1050.00\", \"total\": \"1050.00\", \"nit_ci\": \"345345345\", \"user_id\": 1, \"subtotal\": \"1050.00\", \"cancelado\": \"0\", \"descuento\": \"0\", \"tipo_pago\": null, \"almacen_id\": 1, \"cliente_id\": 3, \"created_at\": \"2026-09-07T14:35:45.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-09-07T14:35:45.000000Z\", \"sucursal_id\": 1, \"codigo_venta\": \"V10\", \"fecha_registro\": \"2026-09-07\", \"venta_detalles\": [{\"id\": 10, \"total\": \"1050.00\", \"precio\": \"350.00\", \"cantidad\": 3, \"subtotal\": \"1050.00\", \"venta_id\": 10, \"descuento\": \"0.00\", \"created_at\": \"2026-09-07T14:35:45.000000Z\", \"updated_at\": \"2026-09-07T14:35:45.000000Z\", \"producto_id\": 3, \"precio_descuento\": \"350.00\", \"porcentaje_descuento\": 0}], \"tipo_documento_id\": 2, \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-07', '10:35:45', '2026-09-07 14:35:45', '2026-09-07 14:35:45'),
+(25, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 500 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 4, \"hora\": \"12:30:17\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-07\", \"monto\": \"500\", \"modulo\": \"IngresoPago\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-07T16:30:17.000000Z\", \"updated_at\": \"2026-09-07T16:30:17.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"registro_id\": 3, \"sucursal_id\": 1, \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-07', '12:30:17', '2026-09-07 16:30:17', '2026-09-07 16:30:17'),
+(26, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 3, \"hora\": \"12:30:17\", \"fecha\": \"2026-09-07\", \"monto\": \"500\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-09-07T16:30:17.000000Z\", \"updated_at\": \"2026-09-07T16:30:17.000000Z\", \"sucursal_id\": 1, \"proveedor_id\": 1, \"ingreso_producto_id\": 3}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-07', '12:30:17', '2026-09-07 16:30:17', '2026-09-07 16:30:17');
 
 -- --------------------------------------------------------
 
@@ -214,6 +219,33 @@ INSERT INTO `ingreso_detalles` (`id`, `ingreso_producto_id`, `tipo_ingreso_id`, 
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `ingreso_pagos`
+--
+
+CREATE TABLE `ingreso_pagos` (
+  `id` bigint UNSIGNED NOT NULL,
+  `sucursal_id` bigint UNSIGNED NOT NULL,
+  `almacen_id` bigint UNSIGNED NOT NULL,
+  `ingreso_producto_id` bigint UNSIGNED NOT NULL,
+  `proveedor_id` bigint UNSIGNED NOT NULL,
+  `monto` decimal(24,2) NOT NULL,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `ingreso_pagos`
+--
+
+INSERT INTO `ingreso_pagos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_producto_id`, `proveedor_id`, `monto`, `fecha`, `hora`, `user_id`, `created_at`, `updated_at`) VALUES
+(3, 1, 1, 3, 1, 500.00, '2026-09-07', '12:30:17', 1, '2026-09-07 16:30:17', '2026-09-07 16:30:17');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `ingreso_productos`
 --
 
@@ -228,6 +260,7 @@ CREATE TABLE `ingreso_productos` (
   `total` decimal(24,2) NOT NULL,
   `cancelado` decimal(24,2) NOT NULL,
   `saldo` decimal(24,2) NOT NULL,
+  `tipo_compra` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `fecha_registro` date DEFAULT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
   `estado_ingreso` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PENDIENTE',
@@ -241,13 +274,13 @@ CREATE TABLE `ingreso_productos` (
 -- Volcado de datos para la tabla `ingreso_productos`
 --
 
-INSERT INTO `ingreso_productos` (`id`, `codigo`, `sucursal_id`, `almacen_id`, `tipo_ingreso_id`, `proveedor_id`, `descripcion`, `total`, `cancelado`, `saldo`, `fecha_registro`, `user_id`, `estado_ingreso`, `estado_faltantes`, `status`, `created_at`, `updated_at`) VALUES
-(3, 'L-00003', 1, 1, 1, 1, '', 1080.00, 0.00, 1080.00, '2026-08-24', 1, 'VERIFICADO', NULL, 1, '2026-08-25 01:33:33', '2026-08-25 01:33:33'),
-(4, 'L-00004', 1, 1, 1, 1, '', 300.00, 300.00, 0.00, '2026-08-24', 1, 'VERIFICADO', NULL, 1, '2026-08-25 01:35:28', '2026-08-30 15:28:12'),
-(5, 'L-00005', 1, 1, 1, 1, 'DESC', 1500.00, 0.00, 1500.00, '2026-08-29', 1, 'VERIFICADO', 'PENDIENTE', 1, '2026-08-29 15:44:23', '2026-08-30 15:26:54'),
-(6, 'L-00006', 1, 1, 2, 2, '', 3000.00, 0.00, 3000.00, '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:01:02', '2026-08-30 16:02:46'),
-(7, 'L-00007', 1, 1, 1, 1, '', 1200.00, 0.00, 1200.00, '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:05:07', '2026-08-30 16:12:35'),
-(8, 'L-00008', 1, 1, 1, 1, '', 480.00, 0.00, 480.00, '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:13:09', '2026-08-30 16:16:35');
+INSERT INTO `ingreso_productos` (`id`, `codigo`, `sucursal_id`, `almacen_id`, `tipo_ingreso_id`, `proveedor_id`, `descripcion`, `total`, `cancelado`, `saldo`, `tipo_compra`, `fecha_registro`, `user_id`, `estado_ingreso`, `estado_faltantes`, `status`, `created_at`, `updated_at`) VALUES
+(3, 'L-00003', 1, 1, 1, 1, '', 1080.00, 0.00, 580.00, 'CRÉDITO', '2026-08-24', 1, 'VERIFICADO', NULL, 1, '2026-08-25 01:33:33', '2026-09-07 16:30:17'),
+(4, 'L-00004', 1, 1, 1, 1, '', 300.00, 300.00, 0.00, 'CONTADO', '2026-08-24', 1, 'VERIFICADO', NULL, 1, '2026-08-25 01:35:28', '2026-08-30 15:28:12'),
+(5, 'L-00005', 1, 1, 1, 1, 'DESC', 1500.00, 0.00, 1500.00, 'CRÉDITO', '2026-08-29', 1, 'VERIFICADO', 'PENDIENTE', 1, '2026-08-29 15:44:23', '2026-08-30 15:26:54'),
+(6, 'L-00006', 1, 1, 2, 2, '', 3000.00, 0.00, 3000.00, 'CRÉDITO', '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:01:02', '2026-08-30 16:02:46'),
+(7, 'L-00007', 1, 1, 1, 1, '', 1200.00, 0.00, 1200.00, 'CRÉDITO', '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:05:07', '2026-08-30 16:12:35'),
+(8, 'L-00008', 1, 1, 1, 1, '', 480.00, 0.00, 480.00, 'CRÉDITO', '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:13:09', '2026-08-30 16:16:35');
 
 -- --------------------------------------------------------
 
@@ -302,7 +335,9 @@ INSERT INTO `kardex_productos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_deta
 (18, 1, 1, 8, 'SALIDA DE PRODUCTO', 8, 'SalidaDetalle', 3, 'SALIDA 2', 300.00, 'EGRESO', NULL, 1, 11, 300.00, NULL, 300.00, 3300.00, '2026-09-02', 1, '2026-09-02 14:23:39', '2026-09-02 14:23:39'),
 (21, 1, 1, 2, 'TRASPASO DE PRODUCTOS', 2, 'TraspasoDetalle', 2, 'TRASPASO DE ALMACEN CENTRAL A ALMACEN 1', 120.00, 'EGRESO', NULL, 3, 4, 120.00, NULL, 360.00, 480.00, '2026-09-04', 1, '2026-09-04 15:07:52', '2026-09-04 15:07:52'),
 (22, 2, 2, 2, 'TRASPASO DE PRODUCTOS', 2, 'TraspasoDetalle', 2, 'TRASPASO DE ALMACEN CENTRAL A ALMACEN 1', 120.00, 'INGRESO', 3, NULL, 3, 120.00, 360.00, NULL, 360.00, '2026-09-04', 1, '2026-09-04 15:07:52', '2026-09-04 15:07:52'),
-(24, 1, 1, NULL, 'VENTA DE PRODUCTO', 8, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 2, 2, 200.00, NULL, 400.00, 80.00, '2026-09-06', 1, '2026-09-06 22:24:22', '2026-09-06 22:24:22');
+(24, 1, 1, NULL, 'VENTA DE PRODUCTO', 8, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 2, 2, 200.00, NULL, 400.00, 80.00, '2026-09-06', 1, '2026-09-06 22:24:22', '2026-09-06 22:24:22'),
+(25, 1, 1, NULL, 'VENTA DE PRODUCTO', 9, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 10, 350.00, NULL, 350.00, 2950.00, '2026-09-07', 1, '2026-09-07 14:32:13', '2026-09-07 14:32:13'),
+(26, 1, 1, NULL, 'VENTA DE PRODUCTO', 10, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 3, 7, 350.00, NULL, 1050.00, 1900.00, '2026-09-07', 1, '2026-09-07 14:35:45', '2026-09-07 14:35:45');
 
 -- --------------------------------------------------------
 
@@ -370,7 +405,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (28, '2026_07_11_124937_create_almacens_table', 5),
 (29, '2026_08_30_111049_create_salida_detalles_table', 6),
 (30, '2026_09_04_095816_create_traspasos_table', 7),
-(31, '2026_09_04_095819_create_traspaso_detalles_table', 7);
+(31, '2026_09_04_095819_create_traspaso_detalles_table', 7),
+(32, '2026_09_07_112006_create_ingreso_pagos_table', 8);
 
 -- --------------------------------------------------------
 
@@ -419,7 +455,9 @@ CREATE TABLE `movimiento_cajas` (
 
 INSERT INTO `movimiento_cajas` (`id`, `sucursal_id`, `almacen_id`, `tipo`, `modulo`, `registro_id`, `monto`, `tipo_movimiento`, `tipo_pago`, `descripcion`, `fecha`, `hora`, `user_id`, `status`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, 'COMPRA DE PRODUCTOS', 'IngresoProducto', 4, 300.00, 'EGRESO', 'EFECTIVO', 'COMPRA DE PRODUCTOS', '2026-08-24', '21:35:28', 1, 1, '2026-08-25 01:35:28', '2026-08-25 01:35:28'),
-(2, 1, 1, 'MOVIMIENTO DE CAJA', 'MovimientoCaja', 2, 2000.00, 'INGRESO', 'EFECTIVO', 'ingreso de efectivo', '2026-09-03', '11:16:34', 1, 1, '2026-09-03 15:18:33', '2026-09-03 15:31:35');
+(2, 1, 1, 'MOVIMIENTO DE CAJA', 'MovimientoCaja', 2, 2000.00, 'INGRESO', 'EFECTIVO', 'ingreso de efectivo', '2026-09-03', '11:16:34', 1, 1, '2026-09-03 15:18:33', '2026-09-03 15:31:35'),
+(3, 1, 1, 'VENTA', 'Venta', 9, 350.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-09-07', '10:32:13', 1, 1, '2026-09-07 14:32:14', '2026-09-07 14:32:14'),
+(4, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 3, 500.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-07', '12:30:17', 1, 1, '2026-09-07 16:30:17', '2026-09-07 16:30:17');
 
 -- --------------------------------------------------------
 
@@ -492,7 +530,7 @@ CREATE TABLE `producto_sucursals` (
 
 INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `almacen_id`, `producto_id`, `stock_actual`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, 2, 2, '2026-08-26 00:56:23', '2026-09-06 22:24:22'),
-(2, 1, 1, 3, 11, '2026-08-26 00:56:23', '2026-09-02 14:23:39'),
+(2, 1, 1, 3, 7, '2026-08-26 00:56:23', '2026-09-07 14:35:45'),
 (3, 1, 1, 4, 16, '2026-08-26 00:56:23', '2026-08-30 16:02:46'),
 (5, 2, 2, 2, 3, '2026-09-04 15:07:52', '2026-09-04 15:07:52');
 
@@ -812,7 +850,7 @@ CREATE TABLE `ventas` (
   `tipo_documento_id` bigint UNSIGNED DEFAULT NULL,
   `nit_ci` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `tipo_venta` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tipo_pago` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo_pago` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `subtotal` decimal(24,2) NOT NULL,
   `descuento` decimal(24,2) NOT NULL,
   `porcentaje_descuento` double(8,2) NOT NULL,
@@ -833,7 +871,9 @@ CREATE TABLE `ventas` (
 --
 
 INSERT INTO `ventas` (`id`, `codigo_venta`, `sucursal_id`, `almacen_id`, `cliente_id`, `tipo_documento_id`, `nit_ci`, `tipo_venta`, `tipo_pago`, `subtotal`, `descuento`, `porcentaje_descuento`, `total`, `cancelado`, `saldo`, `fecha`, `hora`, `fecha_registro`, `status`, `user_id`, `created_at`, `updated_at`) VALUES
-(8, NULL, 1, 1, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 400.00, 0.00, 0.00, 400.00, 400.00, 0.00, '2026-09-06', '18:24:22', '2026-09-06', 1, 1, '2026-09-06 22:24:22', '2026-09-06 22:24:22');
+(8, NULL, 1, 1, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 400.00, 0.00, 0.00, 400.00, 400.00, 0.00, '2026-09-06', '18:24:22', '2026-09-06', 1, 1, '2026-09-06 22:24:22', '2026-09-06 22:24:22'),
+(9, NULL, 1, 1, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 350.00, 0.00, 0.00, 350.00, 350.00, 0.00, '2026-09-07', '10:32:13', '2026-09-07', 1, 1, '2026-09-07 14:32:13', '2026-09-07 14:32:13'),
+(10, NULL, 1, 1, 3, 2, '345345345', 'CRÉDITO', NULL, 1050.00, 0.00, 0.00, 1050.00, 0.00, 1050.00, '2026-09-07', '10:35:45', '2026-09-07', 1, 1, '2026-09-07 14:35:45', '2026-09-07 14:35:45');
 
 -- --------------------------------------------------------
 
@@ -861,7 +901,9 @@ CREATE TABLE `venta_detalles` (
 --
 
 INSERT INTO `venta_detalles` (`id`, `venta_id`, `producto_id`, `cantidad`, `precio`, `precio_descuento`, `descuento`, `porcentaje_descuento`, `subtotal`, `total`, `created_at`, `updated_at`) VALUES
-(8, 8, 2, 2, 200.00, 200.00, 0.00, 0.00, 400.00, 400.00, '2026-09-06 22:24:22', '2026-09-06 22:24:22');
+(8, 8, 2, 2, 200.00, 200.00, 0.00, 0.00, 400.00, 400.00, '2026-09-06 22:24:22', '2026-09-06 22:24:22'),
+(9, 9, 3, 1, 350.00, 350.00, 0.00, 0.00, 350.00, 350.00, '2026-09-07 14:32:13', '2026-09-07 14:32:13'),
+(10, 10, 3, 3, 350.00, 350.00, 0.00, 0.00, 1050.00, 1050.00, '2026-09-07 14:35:45', '2026-09-07 14:35:45');
 
 -- --------------------------------------------------------
 
@@ -930,6 +972,17 @@ ALTER TABLE `ingreso_detalles`
   ADD KEY `ingreso_detalles_ingreso_producto_id_foreign` (`ingreso_producto_id`),
   ADD KEY `ingreso_detalles_producto_id_foreign` (`producto_id`),
   ADD KEY `ingreso_detalles_tipo_ingreso_id` (`tipo_ingreso_id`);
+
+--
+-- Indices de la tabla `ingreso_pagos`
+--
+ALTER TABLE `ingreso_pagos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ingreso_pagos_sucursal_id_foreign` (`sucursal_id`),
+  ADD KEY `ingreso_pagos_almacen_id_foreign` (`almacen_id`),
+  ADD KEY `ingreso_pagos_ingreso_producto_id_foreign` (`ingreso_producto_id`),
+  ADD KEY `ingreso_pagos_proveedor_id_foreign` (`proveedor_id`),
+  ADD KEY `ingreso_pagos_user_id_foreign` (`user_id`);
 
 --
 -- Indices de la tabla `ingreso_productos`
@@ -1158,13 +1211,19 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
 --
 ALTER TABLE `ingreso_detalles`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT de la tabla `ingreso_pagos`
+--
+ALTER TABLE `ingreso_pagos`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_productos`
@@ -1176,7 +1235,7 @@ ALTER TABLE `ingreso_productos`
 -- AUTO_INCREMENT de la tabla `kardex_productos`
 --
 ALTER TABLE `kardex_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -1188,7 +1247,7 @@ ALTER TABLE `marcas`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `modulos`
@@ -1200,7 +1259,7 @@ ALTER TABLE `modulos`
 -- AUTO_INCREMENT de la tabla `movimiento_cajas`
 --
 ALTER TABLE `movimiento_cajas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
@@ -1296,13 +1355,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `venta_detalles`
 --
 ALTER TABLE `venta_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `venta_detalle_lotes`
@@ -1333,6 +1392,16 @@ ALTER TABLE `ingreso_detalles`
   ADD CONSTRAINT `ingreso_detalles_ingreso_producto_id_foreign` FOREIGN KEY (`ingreso_producto_id`) REFERENCES `ingreso_productos` (`id`),
   ADD CONSTRAINT `ingreso_detalles_producto_id_foreign` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`),
   ADD CONSTRAINT `ingreso_detalles_tipo_ingreso_id` FOREIGN KEY (`tipo_ingreso_id`) REFERENCES `tipo_ingresos` (`id`);
+
+--
+-- Filtros para la tabla `ingreso_pagos`
+--
+ALTER TABLE `ingreso_pagos`
+  ADD CONSTRAINT `ingreso_pagos_almacen_id_foreign` FOREIGN KEY (`almacen_id`) REFERENCES `almacens` (`id`),
+  ADD CONSTRAINT `ingreso_pagos_ingreso_producto_id_foreign` FOREIGN KEY (`ingreso_producto_id`) REFERENCES `ingreso_productos` (`id`),
+  ADD CONSTRAINT `ingreso_pagos_proveedor_id_foreign` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedors` (`id`),
+  ADD CONSTRAINT `ingreso_pagos_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`),
+  ADD CONSTRAINT `ingreso_pagos_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Filtros para la tabla `ingreso_productos`

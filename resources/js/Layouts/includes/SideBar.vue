@@ -31,7 +31,8 @@ const sincronizarMenus = () => {
 
     if (
         route_current.value == "movimiento_cajas.index" ||
-        route_current.value == "movimiento_cajas.create"
+        route_current.value == "movimiento_cajas.create" ||
+        route_current.value == "ingreso_productos.pagos"
     ) {
         openMenus.movimiento_cajas = true;
     }
@@ -215,7 +216,8 @@ onUnmounted(() => {});
                         v-if="
                             permisos == '*' ||
                             permisos.includes('movimiento_cajas.index') ||
-                            permisos.includes('movimiento_cajas.create')
+                            permisos.includes('movimiento_cajas.create') ||
+                            permisos.includes('ingreso_productos.pagos')
                         "
                         :class="{ 'menu-open': openMenus.movimiento_cajas }"
                     >
@@ -224,7 +226,8 @@ onUnmounted(() => {});
                             class="nav-link"
                             :class="[
                                 route_current == 'movimiento_cajas.index' ||
-                                route_current == 'movimiento_cajas.create'
+                                route_current == 'movimiento_cajas.create' ||
+                                route_current == 'ingreso_productos.pagos'
                                     ? 'active menu-is-opening menu-open'
                                     : '',
                             ]"
@@ -278,12 +281,10 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes(
-                                        'ingresos.faltantes_ingresos',
-                                    )
+                                    permisos.includes('ingresos.pagos')
                                 "
                                 :label="'Pago de Compras'"
-                                :ruta="'ingreso_productos.faltantes_ingresos'"
+                                :ruta="'ingreso_productos.pagos'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                         </ul>

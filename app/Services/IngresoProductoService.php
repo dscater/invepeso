@@ -107,6 +107,7 @@ class IngresoProductoService
             "total" => $datos["total"],
             "cancelado" => $datos["cancelado"],
             "saldo" => $datos["saldo"],
+            "tipo_compra" => (float)$datos["saldo"] > 0 ? 'CRÉDITO' : 'CONTADO,',
             "fecha_registro" => date("Y-m-d"),
             "user_id" => Auth::user()->id,
         ]);

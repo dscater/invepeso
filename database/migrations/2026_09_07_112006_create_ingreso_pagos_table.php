@@ -11,29 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ingreso_productos', function (Blueprint $table) {
+        Schema::create('ingreso_pagos', function (Blueprint $table) {
             $table->id();
-            $table->string("codigo");
             $table->unsignedBigInteger("sucursal_id");
             $table->unsignedBigInteger("almacen_id");
-            $table->unsignedBigInteger("tipo_ingreso_id");
+            $table->unsignedBigInteger("ingreso_producto_id");
             $table->unsignedBigInteger("proveedor_id");
-            $table->string("descripcion");
-            $table->decimal("total", 24, 2);
-            $table->decimal("cancelado", 24, 2);
-            $table->decimal("saldo", 24, 2);
-            $table->string("tipo_compra"); //CONTADO, CRÉDITO
-            $table->date("fecha_registro")->nullable();
+            $table->decimal("monto", 24, 2);
+            $table->date("fecha");
+            $table->time("hora");
             $table->unsignedBigInteger("user_id");
-            $table->string("estado_ingreso")->default("PENDIENTE"); //PENDIENTE, VERIFICADO
-            $table->string("estado_faltantes")->nullable()->default(NULL); //NULL, SIN FALTANTES, PENDIENTE, COMPLETO 
-            $table->integer("status")->default(1);
             $table->timestamps();
 
             $table->foreign("sucursal_id")->on("sucursals")->references("id");
             $table->foreign("almacen_id")->on("almacens")->references("id");
-            $table->foreign("tipo_ingreso_id")->on("tipo_ingresos")->references("id");
+            $table->foreign("ingreso_producto_id")->on("ingreso_productos")->references("id");
             $table->foreign("proveedor_id")->on("proveedors")->references("id");
+            $table->foreign("user_id")->on("users")->references("id");
         });
     }
 
@@ -42,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ingreso_productos');
+        Schema::dropIfExists('ingreso_pagos');
     }
 };

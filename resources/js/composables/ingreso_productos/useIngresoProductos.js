@@ -13,6 +13,7 @@ export const useIngresoProductos = () => {
         total: "",
         cancelado: 0,
         saldo: "",
+        tipo_compra: "",
         fecha_registro: "",
         user_id: "",
         status: "",

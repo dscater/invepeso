@@ -26,6 +26,7 @@ class VentaService
         private HistorialAccionService $historialAccionService,
         private KardexProductoService $kardex_producto_service,
         private ProductoService $producto_service,
+        private MovimientoCajaService $movimiento_caja_service
     ) {}
 
     public function listado($fecha_ini = null, $fecha_fin = null): Collection
@@ -57,11 +58,11 @@ class VentaService
     public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
         $ventas = Venta::with([
-                "sucursal:id,nombre",
-                "almacen:id,nombre",
-                "cliente.tipo_documento",
-                "user:id,nombre,paterno,materno",
-            ])
+            "sucursal:id,nombre",
+            "almacen:id,nombre",
+            "cliente.tipo_documento",
+            "user:id,nombre,paterno,materno",
+        ])
             ->select("ventas.*")
             ->where("status", 1);
 
@@ -170,6 +171,24 @@ class VentaService
                 "VentaDetalle",
                 $venta_detalle->id
             );
+        }
+
+        // MOVIMIENTO CAJA
+        if ($venta->cancelado > 0) {
+            $movimiento_caja = [
+                "sucursal_id" => $venta->sucursal_id,
+                "almacen_id" => $venta->almacen_id,
+                "tipo" => "VENTA",
+                "modulo" => "Venta",
+                "registro_id" => $venta->id,
+                "monto" => $venta->cancelado,
+                "tipo_movimiento" => "INGRESO",
+                "tipo_pago" => $venta->tipo_pago,
+                "descripcion" => "INGRESO POR VENTA",
+                "fecha" => $venta->fecha,
+                "hora" => $venta->hora,
+            ];
+            $this->movimiento_caja_service->crear($movimiento_caja);
         }
 
         // registrar accion

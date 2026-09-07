@@ -16,6 +16,7 @@ class IngresoProducto extends Model
         "total",
         "cancelado",
         "saldo",
+        "tipo_compra", //CONTADO, CRÉDITO
         "fecha_registro",
         "user_id",
         "estado_ingreso", //PENDIENTE, VERIFICADO
@@ -55,6 +56,10 @@ class IngresoProducto extends Model
         return $this->hasMany(IngresoDetalle::class, 'ingreso_producto_id');
     }
 
+    public function ingreso_pagos()
+    {
+        return $this->hasMany(IngresoPago::class, 'ingreso_producto_id');
+    }
 
     public function user()
     {

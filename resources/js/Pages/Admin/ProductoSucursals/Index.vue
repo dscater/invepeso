@@ -1,16 +1,12 @@
 <script setup>
 import Content from "@/Components/Content.vue";
-import MiTable from "@/Components/MiTable.vue";
-import { Head, Link, router, usePage } from "@inertiajs/vue3";
+import { Head, Link, usePage } from "@inertiajs/vue3";
 import { useAxios } from "@/composables/axios/useAxios";
-import { ref, onMounted, onBeforeMount } from "vue";
+import { ref, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
 const { props: props_page } = usePage();
 const appStore = useAppStore();
-onBeforeMount(() => {
-    appStore.startLoading();
-});
 
 const listAlmacens = ref([]);
 const listCategorias = ref([]);
@@ -42,7 +38,7 @@ const cargarProductos = async () => {
 
 const intervalNombre = ref(null);
 const filtrarNombres = () => {
-    clearInterval(intervalNombre.value);
+    intervalNombre.value ?? clearTimeout(intervalNombre.value);
     intervalNombre.value = setTimeout(() => {
         cargarProductos();
     }, 370);
@@ -91,14 +87,26 @@ const cargarMarcas = async () => {
 };
 
 onBeforeMount(async () => {
-    cargarProductos();
-    cargarSucursals();
-    cargarCategorias();
-    cargarMarcas();
+    appStore.startLoading();
+
+    try {
+        await Promise.all([
+            cargarProductos(),
+            cargarSucursals(),
+            cargarCategorias(),
+            cargarMarcas(),
+        ]);
+    } finally {
+        appStore.stopLoading();
+    }
+});
+
+onBeforeUnmount(() => {
+    intervalNombre.value ?? clearTimeout(intervalNombre.value);
 });
 
 onMounted(() => {
-    appStore.stopLoading();
+    // appStore.stopLoading();
 });
 const { axiosDelete } = useAxios();
 </script>

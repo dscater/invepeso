@@ -52,6 +52,11 @@ const headers = [
         sortable: true,
     },
     {
+        label: "TIPO DE PAGO",
+        key: "tipo_pago",
+        sortable: true,
+    },
+    {
         label: "SALDO BS.",
         key: "saldo",
         sortable: true,

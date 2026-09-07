@@ -5,6 +5,7 @@ use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\IngresoPagoController;
 use App\Http\Controllers\IngresoProductoController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\MarcaController;
@@ -196,9 +197,17 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::put("ingreso_productos/verificar/{ingreso_producto}", [IngresoProductoController::class, 'verificar'])->name("ingreso_productos.verificar");
     Route::get("ingreso_productos/faltantes_ingresos", [IngresoProductoController::class, 'faltantes_ingresos'])->name("ingreso_productos.faltantes_ingresos");
     Route::put("ingreso_productos/faltante/{ingreso_producto}", [IngresoProductoController::class, 'faltante'])->name("ingreso_productos.faltante");
+    Route::get("ingreso_productos/pagos", [IngresoProductoController::class, 'pagos'])->name("ingreso_productos.pagos");
+    Route::get("ingreso_productos/pagos/lista_pagos_pendientes", [IngresoProductoController::class, 'lista_pagos_pendientes'])->name("ingreso_productos.lista_pagos_pendientes");
+    Route::post("ingreso_productos/registrar_pago/{ingreso_producto}", [IngresoProductoController::class, 'registrar_pago'])->name("ingreso_productos.registrar_pago");
+    Route::put("ingreso_productos/actualizar_pago/{ingreso_pago}", [IngresoProductoController::class, 'actualizar_pago'])->name("ingreso_productos.actualizar_pago");
     Route::resource("ingreso_productos", IngresoProductoController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );
+
+    // INGRESO PAGOS
+    Route::get("ingreso_pagos/listaByIngreso/{ingreso_producto}", [IngresoPagoController::class, 'listaByIngreso
+listaByIngreso'])->name("ingreso_pagos.listaByIngreso");
 
     // SALIDAS
     Route::get("salida_productos/paginado", [SalidaProductoController::class, 'paginado'])->name("salida_productos.paginado");

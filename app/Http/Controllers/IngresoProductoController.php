@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IngresoPagoStoreRequest;
 use App\Http\Requests\IngresoProductoFaltantesRequest;
 use App\Http\Requests\IngresoProductoStoreRequest;
 use App\Http\Requests\IngresoProductoUpdateRequest;
 use App\Http\Requests\IngresoProductoVerificarRequest;
+use App\Models\Almacen;
 use App\Models\IngresoProducto;
 use App\Models\User;
+use App\Services\IngresoPagoService;
 use App\Services\IngresoProductoService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -23,7 +26,10 @@ use Inertia\Response as ResponseInertia;
 
 class IngresoProductoController extends Controller
 {
-    public function __construct(private IngresoProductoService $ingreso_productoService) {}
+    public function __construct(
+        private IngresoProductoService $ingreso_productoService,
+        private IngresoPagoService $ingreso_pago_service
+    ) {}
 
     /**
      * Página index
@@ -33,6 +39,70 @@ class IngresoProductoController extends Controller
     public function index(): ResponseInertia
     {
         return Inertia::render("Admin/IngresoProductos/Index");
+    }
+
+    public function pagos(): ResponseInertia
+    {
+        return Inertia::render("Admin/IngresoProductos/Pagos");
+    }
+
+    public function lista_pagos_pendientes(Request $request): JsonResponse
+    {
+        $almacen_id = $request->input("almacen_id", null);
+        $fecha_ini = $request->input("fecha_ini", null);
+        $fecha_fin = $request->input("fecha_fin", null);
+        $ingreso_productos = IngresoProducto::with([
+            "sucursal:id,nombre",
+            "almacen:id,nombre",
+            "proveedor:id,nombre",
+            "tipo_ingreso:id,nombre",
+            "user:id,nombre,paterno,materno",
+            "ingreso_detalles",
+            "ingreso_pagos.user",
+            "ingreso_pagos.sucursal",
+            "ingreso_pagos.almacen",
+        ]);
+
+        $ingreso_productos->where("saldo", ">", 0);
+        $ingreso_productos->where("tipo_compra", "CRÉDITO");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $ingreso_productos->where("almacen_id", $almacen_id);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $ingreso_productos->whereBetween("fecha_registro", [$fecha_ini, $fecha_fin]);
+        }
+        $ingreso_productos = $ingreso_productos->get();
+
+        return response()->JSON([
+            "ingreso_productos" => $ingreso_productos
+        ]);
+    }
+
+    public function registrar_pago(IngresoPagoStoreRequest $request, IngresoProducto $ingreso_producto)
+    {
+        DB::beginTransaction();
+        try {
+            // crear el IngresoProducto
+            $datos = $request->validated();
+            $almacen = Almacen::findOrFail($datos["almacen_id"]);
+            $datos["ingreso_producto_id"] = $ingreso_producto->id;
+            $datos["sucursal_id"] = $almacen->sucursal_id;
+            $datos["proveedor_id"] = $ingreso_producto->proveedor_id;
+            $this->ingreso_pago_service->crear($datos);
+            DB::commit();
+
+            return response()->JSON([
+                "sw" => true,
+                "message" => "Registro realizado"
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -109,8 +179,11 @@ class IngresoProductoController extends Controller
         $almacen_id = $request->input("almacen_id", null);
 
         $ingreso_productos = IngresoProducto::with(["sucursal", "almacen", "tipo_ingreso", "proveedor", "ingreso_detalles.producto"])
-            ->where("estado_ingreso", "PENDIENTE")
-            ->where("almacen_id", $almacen_id);
+            ->where("estado_ingreso", "PENDIENTE");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $ingreso_productos->where("almacen_id", $almacen_id);
+        }
 
         if ($fecha_ini && $fecha_fin) {
             $ingreso_productos->whereBetween("fecha_registro", [$fecha_ini, $fecha_fin]);
@@ -128,8 +201,11 @@ class IngresoProductoController extends Controller
         $almacen_id = $request->input("almacen_id", null);
 
         $ingreso_productos = IngresoProducto::with(["sucursal", "almacen", "tipo_ingreso", "proveedor", "ingreso_detalles.producto"])
-            ->where("estado_faltantes", "PENDIENTE")
-            ->where("almacen_id", $almacen_id);
+            ->where("estado_faltantes", "PENDIENTE");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $ingreso_productos->where("almacen_id", $almacen_id);
+        }
 
         if ($fecha_ini && $fecha_fin) {
             $ingreso_productos->whereBetween("fecha_registro", [$fecha_ini, $fecha_fin]);

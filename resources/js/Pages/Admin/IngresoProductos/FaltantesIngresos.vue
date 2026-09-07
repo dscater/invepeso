@@ -21,7 +21,7 @@ const { setIngresoProducto, limpiarIngresoProducto, form } =
     useIngresoProductos();
 
 const listAlmacens = ref([]);
-const almacen_id = ref(null);
+const almacen_id = ref("todos");
 const fecha_ini = ref(getFechaActual());
 const fecha_fin = ref(getFechaActual());
 const ingreso_productos = ref([]);
@@ -30,6 +30,10 @@ const cargarAlmacens = async () => {
     try {
         const res = await axios.get(route("almacens.listado"));
         listAlmacens.value = res.data.almacens;
+        listAlmacens.value.unshift({
+            id: "todos",
+            nombre: "Todos los almacenes",
+        });
     } catch (e) {
         console.log(e);
     } finally {
@@ -52,7 +56,7 @@ const cargarIngresosFaltantes = () => {
 
 const intervalTimeOutListado = ref(null);
 const cargaListado = () => {
-    clearInterval(intervalTimeOutListado.value);
+    intervalTimeOutListado.value ?? clearInterval(intervalTimeOutListado.value);
     setTimeout(() => {
         cargarIngresosFaltantes();
     }, 700);
@@ -122,7 +126,7 @@ const muestra_formulario = ref(false);
                         v-for="item in listAlmacens"
                         :key="item.id"
                         :value="item.id"
-                        :label="`${item.nombre} - ${item.sucursal.nombre}`"
+                        :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
                     ></el-option>
                 </el-select>
             </div>
@@ -149,7 +153,7 @@ const muestra_formulario = ref(false);
         </div>
         <div class="row" v-if="ingreso_productos.length > 0">
             <div
-                class="col-md-6 col-lg-4"
+                class="col-md-6 col-lg-4 mt-2"
                 v-for="item in ingreso_productos"
                 :key="item.id"
             >
@@ -173,7 +177,7 @@ const muestra_formulario = ref(false);
                                         class="col-12 text-xs text-muted text-center"
                                     >
                                         <i
-                                            class="fa fa-user-tag"
+                                            class="fa fa-truck"
                                             title="Proveedor"
                                         ></i>
                                     </div>

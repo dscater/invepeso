@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger("tipo_documento_id")->nullable();
             $table->string("nit_ci")->nullable();
             $table->string("tipo_venta"); //CRÉDITO, AL CONTADO
-            $table->string("tipo_pago"); // EFECTIVO, QR
+            $table->string("tipo_pago")->nullable(); // EFECTIVO, QR
             $table->decimal("subtotal", 24, 2);
             $table->decimal("descuento", 24, 2);
             $table->double("porcentaje_descuento", 8, 2);
