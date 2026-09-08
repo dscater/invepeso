@@ -16,12 +16,14 @@ return new class extends Migration
             $table->unsignedBigInteger("venta_id");
             $table->unsignedBigInteger("producto_id");
             $table->double("cantidad", 8, 2);
-            $table->decimal("precio", 24, 2); // precio para el subtotal sin descuento
-            $table->decimal("precio_descuento", 24, 2); // este precio se usara para el total
-            $table->decimal("descuento", 24, 2); // monto descontado al precio (precio - precio_descuento)
-            $table->double("porcentaje_descuento", 8, 2); // (descuento * 100) / precio
-            $table->decimal("subtotal", 24, 2); // sin descuento
-            $table->decimal("total", 24, 2); // con descuento
+            $table->decimal("precio", 24, 2); // precio original(ingresado)
+            $table->decimal("descuento_uni", 24, 2); // descuento unitario
+            $table->double("porcen_du", 8, 2); // porcentaje descuento unitario
+            $table->decimal("descuento_total", 24, 2); // descuento obtenido desde el descuento TOTAL de la venta
+            $table->double("porcen_dt", 8, 2); // porcentaje descuento total
+            $table->decimal("precio_final", 24, 2); // precio final obtenido despues de los descuentos
+            $table->decimal("total", 24, 2); // total registrado = cantidad * precio_final | para calcular ingreso bruto
+            $table->decimal("total_uni", 24, 2); // total por fila sin tomar en cuenta descuento del total para mostrar = cantidad * (precio - descuento_uni)
             $table->timestamps();
 
             $table->foreign("venta_id")->on("ventas")->references("id");

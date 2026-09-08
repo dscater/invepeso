@@ -139,11 +139,13 @@ class VentaService
                 "producto_id" => $item["producto_id"],
                 "cantidad" => $item["cantidad"],
                 "precio" => $item["precio"],
-                "precio_descuento" => $item["precio"],
-                "descuento" => 0,
-                "porcentaje_descuento" => 0,
-                "subtotal" => $item["subtotal"],
-                "total" => $item["subtotal"],
+                "descuento_uni" => $item["descuento_uni"],
+                "porcen_du" => $item["porcen_du"],
+                "descuento_total" => $item["descuento_total"],
+                "porcen_dt" => $item["porcen_dt"],
+                "precio_final" => $item["precio_final"],
+                "total" => $item["total"],
+                "total_uni" => $item["total_uni"],
             ];
 
             $venta_detalle = VentaDetalle::create($dato_venta_detalle);
@@ -166,7 +168,7 @@ class VentaService
                 NULL,
                 $producto,
                 $venta_detalle->cantidad,
-                $venta_detalle->precio_descuento,
+                $venta_detalle->precio_final,
                 "SALIDA POR VENTA",
                 "VentaDetalle",
                 $venta_detalle->id

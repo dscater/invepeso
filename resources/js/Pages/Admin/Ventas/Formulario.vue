@@ -259,17 +259,36 @@ const agregarProductoVenta = async (item) => {
                 producto_id: producto.id,
                 cantidad: cantidad,
                 precio: precio,
-                subtotal: subtotal.toFixed(2),
+                descuento_uni: 0,
+                porcen_du: 0,
+                descuento_total: 0,
+                porcen_dt: 0,
+                precio_final: precio,
+                total: subtotal.toFixed(2),
+                total_uni: subtotal.toFixed(2),
             });
         } else {
             // existe
             const cantidadFila = form.venta_detalles[indexExiste].cantidad;
             const nuevaCantidad =
                 parseFloat(cantidad) + parseFloat(cantidadFila);
-            const subtotal = nuevaCantidad * precio;
+            const total_uni =
+                nuevaCantidad *
+                (precio -
+                    parseFloat(form.venta_detalles[indexExiste].descuento_uni));
+            const total =
+                nuevaCantidad *
+                (precio -
+                    (parseFloat(
+                        form.venta_detalles[indexExiste].descuento_uni,
+                    ) +
+                        parseFloat(
+                            form.venta_detalles[indexExiste].descuento_total,
+                        )));
 
             form.venta_detalles[indexExiste].cantidad = nuevaCantidad;
-            form.venta_detalles[indexExiste].subtotal = subtotal.toFixed(2);
+            form.venta_detalles[indexExiste].total = total.toFixed(2);
+            form.venta_detalles[indexExiste].total_uni = total_uni.toFixed(2);
         }
         // console.log(item);
         item.cantidad = 1;
@@ -283,15 +302,47 @@ const agregarProductoVenta = async (item) => {
     }
 };
 
+const aplicarDescuentosTotal = () => {
+    const descuento = Number(form.descuento ?? 0);
+    form.venta_detalles.map((elem) => {
+        elem.descuento_total = 0;
+        elem.porcen_dt = 0;
+    });
+    if (descuento > 0) {
+        let porcentaje = (form.total * 100) / form.subtotal;
+        porcentaje = 100 - porcentaje;
+        porcentaje = porcentaje.toFixed(2);
+        porcentaje = parseFloat(porcentaje);
+        form.porcentaje_descuento = porcentaje;
+        form.venta_detalles.map((elem) => {
+            const con_descuento = elem.precio - elem.descuento_uni;
+            elem.porcen_dt = porcentaje;
+            elem.descuento_total = con_descuento * (porcentaje / 100);
+            elem.total_uni = elem.cantidad * con_descuento;
+            elem.total_uni = parseFloat(elem.total_uni).toFixed(2);
+
+            // TOTAL PARA CALCULAR GANANCIA BRUTA
+            elem.precio_final = con_descuento - elem.descuento_total;
+            console.log(elem.precio_final);
+            elem.total = elem.cantidad * elem.precio_final;
+        });
+    }
+};
+
 const detectarCambioFila = (item, index) => {
     const cant = Number(item.cantidad);
     const precio = Number(item.precio);
+    const descuento_uni = Number(item.descuento_uni ?? 0);
+    const descuento_total = Number(item.descuento_total ?? 0);
     if (!cant || !precio) {
         return;
     }
-    const subtotal = cant * precio;
-    form.venta_detalles[index].subtotal = subtotal.toFixed(2);
-
+    const total_uni = cant * (precio - parseFloat(descuento_uni));
+    const total =
+        cant *
+        (precio - (parseFloat(descuento_uni) + parseFloat(descuento_total)));
+    form.venta_detalles[index].total_uni = total_uni.toFixed(2);
+    form.venta_detalles[index].total = total.toFixed(2);
     recalcularStockActualCambioDetalle(item.producto_id, cant, index);
 };
 
@@ -340,14 +391,14 @@ const recalcularStockActualCambioDetalle = (
 const subTotalVenta = computed(() => {
     if (!form?.venta_detalles) return 0;
     return form.venta_detalles.reduce((acc, item) => {
-        return acc + parseFloat(item.subtotal || 0);
+        return acc + parseFloat(item.total_uni || 0);
     }, 0);
 });
 
 const totalVenta = computed(() => {
     if (!form?.venta_detalles) return 0;
     const subtotal = form.venta_detalles.reduce((acc, item) => {
-        return acc + parseFloat(item.subtotal || 0);
+        return acc + parseFloat(item.total_uni || 0);
     }, 0);
 
     const descuento = parseFloat(form.descuento) || 0;
@@ -822,7 +873,7 @@ onMounted(() => {
                                             <div
                                                 class="p-1 py-0 fw-bold form-control text-xs text-sm text-end"
                                             >
-                                                {{ item.subtotal }}
+                                                {{ item.total_uni }}
                                             </div>
                                             <div class="text-xxs">
                                                 Subtotal Bs.
@@ -874,6 +925,7 @@ onMounted(() => {
                                             type="number"
                                             class="form-control text-end fs-6"
                                             v-model="form.descuento"
+                                            @keyup="aplicarDescuentosTotal"
                                         />
                                     </div>
                                 </div>
