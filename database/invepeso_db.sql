@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 09-09-2026 a las 14:40:49
+-- Tiempo de generación: 09-09-2026 a las 19:53:30
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -186,7 +186,8 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (32, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 50 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 7, \"hora\": \"10:26:40\", \"tipo\": \"COBRO POR VENTA DE PRODUCTOS\", \"fecha\": \"2026-09-09\", \"monto\": \"50\", \"modulo\": \"VentaCobro\", \"user_id\": 1, \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-09T14:26:40.000000Z\", \"updated_at\": \"2026-09-09T14:26:40.000000Z\", \"descripcion\": \"COBRO POR VENTA DE PRODUCTOS\", \"registro_id\": 3, \"sucursal_id\": 1, \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-09', '10:26:40', '2026-09-09 14:26:40', '2026-09-09 14:26:40'),
 (33, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 3, \"hora\": \"10:26:40\", \"fecha\": \"2026-09-09\", \"monto\": \"50\", \"saldo\": 0, \"user_id\": 1, \"venta_id\": 10, \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"cliente_id\": 3, \"created_at\": \"2026-09-09T14:26:40.000000Z\", \"updated_at\": \"2026-09-09T14:26:40.000000Z\", \"sucursal_id\": 1}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-09', '10:26:40', '2026-09-09 14:26:40', '2026-09-09 14:26:40'),
 (34, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 50 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 8, \"hora\": \"10:29:45\", \"tipo\": \"COBRO POR VENTA DE PRODUCTOS\", \"fecha\": \"2026-09-09\", \"monto\": \"50\", \"modulo\": \"VentaCobro\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-09T14:29:45.000000Z\", \"updated_at\": \"2026-09-09T14:29:45.000000Z\", \"descripcion\": \"COBRO POR VENTA DE PRODUCTOS\", \"registro_id\": 4, \"sucursal_id\": 1, \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-09', '10:29:45', '2026-09-09 14:29:45', '2026-09-09 14:29:45'),
-(35, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 4, \"hora\": \"10:29:45\", \"fecha\": \"2026-09-09\", \"monto\": \"50\", \"saldo\": 0, \"user_id\": 1, \"venta_id\": 10, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 3, \"created_at\": \"2026-09-09T14:29:45.000000Z\", \"updated_at\": \"2026-09-09T14:29:45.000000Z\", \"sucursal_id\": 1}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-09', '10:29:45', '2026-09-09 14:29:45', '2026-09-09 14:29:45');
+(35, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 4, \"hora\": \"10:29:45\", \"fecha\": \"2026-09-09\", \"monto\": \"50\", \"saldo\": 0, \"user_id\": 1, \"venta_id\": 10, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 3, \"created_at\": \"2026-09-09T14:29:45.000000Z\", \"updated_at\": \"2026-09-09T14:29:45.000000Z\", \"sucursal_id\": 1}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-09', '10:29:45', '2026-09-09 14:29:45', '2026-09-09 14:29:45'),
+(36, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA PROFORMA', '{\"id\": 1, \"hora\": \"15:50:36\", \"fecha\": \"2026-09-09\", \"saldo\": \"18800.00\", \"total\": \"18800.00\", \"nit_ci\": \"123456\", \"user_id\": 1, \"subtotal\": \"18800.00\", \"cancelado\": \"0\", \"descuento\": \"0\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-09T19:50:36.000000Z\", \"updated_at\": \"2026-09-09T19:50:36.000000Z\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-09\", \"codigo_proforma\": \"P1\", \"proforma_detalles\": [{\"id\": 1, \"total\": \"4000.00\", \"precio\": \"200.00\", \"cantidad\": 20, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"4000.00\", \"created_at\": \"2026-09-09T19:50:36.000000Z\", \"updated_at\": \"2026-09-09T19:50:36.000000Z\", \"producto_id\": 2, \"proforma_id\": 1, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 2, \"total\": \"7000.00\", \"precio\": \"350.00\", \"cantidad\": 20, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"7000.00\", \"created_at\": \"2026-09-09T19:50:36.000000Z\", \"updated_at\": \"2026-09-09T19:50:36.000000Z\", \"producto_id\": 3, \"proforma_id\": 1, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 3, \"total\": \"7800.00\", \"precio\": \"390.00\", \"cantidad\": 20, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"7800.00\", \"created_at\": \"2026-09-09T19:50:36.000000Z\", \"updated_at\": \"2026-09-09T19:50:36.000000Z\", \"producto_id\": 4, \"proforma_id\": 1, \"precio_final\": \"390.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', NULL, 'PROFORMAS', '2026-09-09', '15:50:36', '2026-09-09 19:50:36', '2026-09-09 19:50:36');
 
 -- --------------------------------------------------------
 
@@ -418,7 +419,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (30, '2026_09_04_095816_create_traspasos_table', 7),
 (31, '2026_09_04_095819_create_traspaso_detalles_table', 7),
 (32, '2026_09_07_112006_create_ingreso_pagos_table', 8),
-(33, '2026_09_09_093956_create_venta_cobros_table', 9);
+(33, '2026_09_09_093956_create_venta_cobros_table', 9),
+(34, '2026_09_09_152725_create_proformas_table', 10),
+(35, '2026_09_09_152745_create_proforma_detalles_table', 10);
 
 -- --------------------------------------------------------
 
@@ -549,6 +552,74 @@ INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `almacen_id`, `producto_i
 (2, 1, 1, 3, 5, '2026-08-26 00:56:23', '2026-09-08 14:55:31'),
 (3, 1, 1, 4, 14, '2026-08-26 00:56:23', '2026-09-08 15:01:11'),
 (5, 2, 2, 2, 3, '2026-09-04 15:07:52', '2026-09-04 15:07:52');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `proformas`
+--
+
+CREATE TABLE `proformas` (
+  `id` bigint UNSIGNED NOT NULL,
+  `codigo_proforma` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sucursal_id` bigint UNSIGNED NOT NULL,
+  `almacen_id` bigint UNSIGNED NOT NULL,
+  `cliente_id` bigint UNSIGNED NOT NULL,
+  `tipo_documento_id` bigint UNSIGNED DEFAULT NULL,
+  `nit_ci` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subtotal` decimal(24,2) NOT NULL,
+  `descuento` decimal(24,2) NOT NULL,
+  `porcentaje_descuento` double NOT NULL,
+  `total` decimal(24,2) NOT NULL,
+  `cancelado` decimal(24,2) NOT NULL,
+  `saldo` decimal(24,2) NOT NULL,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
+  `fecha_registro` date DEFAULT NULL,
+  `status` int NOT NULL DEFAULT '1',
+  `user_id` bigint UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `proformas`
+--
+
+INSERT INTO `proformas` (`id`, `codigo_proforma`, `sucursal_id`, `almacen_id`, `cliente_id`, `tipo_documento_id`, `nit_ci`, `subtotal`, `descuento`, `porcentaje_descuento`, `total`, `cancelado`, `saldo`, `fecha`, `hora`, `fecha_registro`, `status`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 'P1', 1, 1, 2, 1, '123456', 18800.00, 0.00, 0, 18800.00, 18800.00, 0.00, '2026-09-09', '15:50:36', '2026-09-09', 1, 1, '2026-09-09 19:50:36', '2026-09-09 19:50:36');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `proforma_detalles`
+--
+
+CREATE TABLE `proforma_detalles` (
+  `id` bigint UNSIGNED NOT NULL,
+  `proforma_id` bigint UNSIGNED NOT NULL,
+  `producto_id` bigint UNSIGNED NOT NULL,
+  `cantidad` double NOT NULL,
+  `precio` decimal(24,2) NOT NULL,
+  `descuento_uni` decimal(24,2) NOT NULL,
+  `porcen_du` double NOT NULL,
+  `descuento_total` decimal(24,2) NOT NULL,
+  `porcen_dt` double NOT NULL,
+  `precio_final` decimal(24,2) NOT NULL,
+  `total` decimal(24,2) NOT NULL,
+  `total_uni` decimal(24,2) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `proforma_detalles`
+--
+
+INSERT INTO `proforma_detalles` (`id`, `proforma_id`, `producto_id`, `cantidad`, `precio`, `descuento_uni`, `porcen_du`, `descuento_total`, `porcen_dt`, `precio_final`, `total`, `total_uni`, `created_at`, `updated_at`) VALUES
+(1, 1, 2, 20, 200.00, 0.00, 0, 0.00, 0, 200.00, 4000.00, 4000.00, '2026-09-09 19:50:36', '2026-09-09 19:50:36'),
+(2, 1, 3, 20, 350.00, 0.00, 0, 0.00, 0, 350.00, 7000.00, 7000.00, '2026-09-09 19:50:36', '2026-09-09 19:50:36'),
+(3, 1, 4, 20, 390.00, 0.00, 0, 0.00, 0, 390.00, 7800.00, 7800.00, '2026-09-09 19:50:36', '2026-09-09 19:50:36');
 
 -- --------------------------------------------------------
 
@@ -1093,6 +1164,25 @@ ALTER TABLE `producto_sucursals`
   ADD KEY `producto_sucursals_almacen_id` (`almacen_id`);
 
 --
+-- Indices de la tabla `proformas`
+--
+ALTER TABLE `proformas`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `proformas_sucursal_id_foreign` (`sucursal_id`),
+  ADD KEY `proformas_almacen_id_foreign` (`almacen_id`),
+  ADD KEY `proformas_cliente_id_foreign` (`cliente_id`),
+  ADD KEY `proformas_tipo_documento_id_foreign` (`tipo_documento_id`),
+  ADD KEY `proformas_user_id_foreign` (`user_id`);
+
+--
+-- Indices de la tabla `proforma_detalles`
+--
+ALTER TABLE `proforma_detalles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `proforma_detalles_proforma_id_foreign` (`proforma_id`),
+  ADD KEY `proforma_detalles_producto_id_foreign` (`producto_id`);
+
+--
 -- Indices de la tabla `proveedors`
 --
 ALTER TABLE `proveedors`
@@ -1244,7 +1334,7 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
@@ -1280,7 +1370,7 @@ ALTER TABLE `marcas`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT de la tabla `modulos`
@@ -1311,6 +1401,18 @@ ALTER TABLE `productos`
 --
 ALTER TABLE `producto_sucursals`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `proformas`
+--
+ALTER TABLE `proformas`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `proforma_detalles`
+--
+ALTER TABLE `proforma_detalles`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedors`
@@ -1484,6 +1586,23 @@ ALTER TABLE `producto_sucursals`
   ADD CONSTRAINT `producto_sucursals_almacen_id` FOREIGN KEY (`almacen_id`) REFERENCES `almacens` (`id`),
   ADD CONSTRAINT `producto_sucursals_producto_id_foreign` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`),
   ADD CONSTRAINT `producto_sucursals_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`);
+
+--
+-- Filtros para la tabla `proformas`
+--
+ALTER TABLE `proformas`
+  ADD CONSTRAINT `proformas_almacen_id_foreign` FOREIGN KEY (`almacen_id`) REFERENCES `almacens` (`id`),
+  ADD CONSTRAINT `proformas_cliente_id_foreign` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`),
+  ADD CONSTRAINT `proformas_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`),
+  ADD CONSTRAINT `proformas_tipo_documento_id_foreign` FOREIGN KEY (`tipo_documento_id`) REFERENCES `tipo_documentos` (`id`),
+  ADD CONSTRAINT `proformas_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Filtros para la tabla `proforma_detalles`
+--
+ALTER TABLE `proforma_detalles`
+  ADD CONSTRAINT `proforma_detalles_producto_id_foreign` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`),
+  ADD CONSTRAINT `proforma_detalles_proforma_id_foreign` FOREIGN KEY (`proforma_id`) REFERENCES `proformas` (`id`);
 
 --
 -- Filtros para la tabla `salida_detalles`

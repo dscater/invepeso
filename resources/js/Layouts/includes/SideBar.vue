@@ -30,6 +30,13 @@ const sincronizarMenus = () => {
     }
 
     if (
+        route_current.value == "proformas.index" ||
+        route_current.value == "proformas.create"
+    ) {
+        openMenus.proformas = true;
+    }
+
+    if (
         route_current.value == "movimiento_cajas.index" ||
         route_current.value == "movimiento_cajas.create" ||
         route_current.value == "ingreso_productos.pagos"
@@ -215,6 +222,62 @@ onUnmounted(() => {});
                         class="nav-item"
                         v-if="
                             permisos == '*' ||
+                            permisos.includes('proformas.index') ||
+                            permisos.includes('proformas.create')
+                        "
+                        :class="{ 'menu-open': openMenus.proformas }"
+                    >
+                        <a
+                            href="#"
+                            class="nav-link"
+                            :class="[
+                                route_current == 'proformas.index' ||
+                                route_current == 'proformas.create'
+                                    ? 'active menu-is-opening menu-open'
+                                    : '',
+                            ]"
+                            @click.prevent="toggleSubMenu('proformas')"
+                        >
+                            <i class="nav-icon fa fa-clipboard-list"></i>
+                            <p>
+                                Proformas
+                                <i class="nav-arrow fa fa-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul
+                            class="nav nav-treeview"
+                            role="navigation"
+                            aria-label="Navigation 4"
+                            :style="{
+                                maxHeight: openMenus.proformas
+                                    ? '500px'
+                                    : '0px',
+                            }"
+                        >
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('proformas.index')
+                                "
+                                :label="'Lista de Proformas'"
+                                :ruta="'proformas.index'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('proformas.create')
+                                "
+                                :label="'Nueva Proforma'"
+                                :ruta="'proformas.create'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                        </ul>
+                    </li>
+                    <li
+                        class="nav-item"
+                        v-if="
+                            permisos == '*' ||
                             permisos.includes('movimiento_cajas.index') ||
                             permisos.includes('movimiento_cajas.create') ||
                             permisos.includes('ingreso_productos.pagos') ||
@@ -254,7 +317,7 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('ingresos.create')
+                                    permisos.includes('movimiento_cajas.index')
                                 "
                                 :label="'Lista de Movimientos'"
                                 :ruta="'movimiento_cajas.index'"
@@ -263,7 +326,7 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('ingresos.create')
+                                    permisos.includes('movimiento_cajas.create')
                                 "
                                 :label="'Registrar Movimiento'"
                                 :ruta="'movimiento_cajas.create'"

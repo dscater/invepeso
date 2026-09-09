@@ -4,16 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VentaDetalle extends Model
+class ProformaDetalle extends Model
 {
     protected $fillable = [
-        "venta_id",
+        "proforma_id",
         "producto_id",
         "cantidad",
         "precio", // precio original(ingresado)
         "descuento_uni", // descuento unitario
         "porcen_du", // porcentaje descuento unitario
-        "descuento_total", // descuento obtenido desde el descuento TOTAL de la venta
+        "descuento_total", // descuento obtenido desde el descuento TOTAL de la proforma
         "porcen_dt", // porcentaje descuento total
         "precio_final",  // precio final obtenido despues de los descuentos
         "total", // total registrado = cantidad * precio_final | para calcular ingreso bruto
@@ -21,9 +21,9 @@ class VentaDetalle extends Model
 
     ];
 
-    public function venta()
+    public function proforma()
     {
-        return $this->belongsTo(Venta::class, 'venta_id');
+        return $this->belongsTo(Proforma::class, 'proforma_id');
     }
 
     public function producto()

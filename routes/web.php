@@ -13,6 +13,7 @@ use App\Http\Controllers\MovimientoCajaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoSucursalController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProformaController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
@@ -243,6 +244,13 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     // VENTA COBROS
     Route::get("venta_cobros/listaByVenta/{venta}", [VentaCobroController::class, 'listaByVenta'])->name("venta_cobros.listaByVenta");
+
+    // PROFORMAS
+    Route::get("proformas/paginado", [ProformaController::class, 'paginado'])->name("proformas.paginado");
+    Route::get("proformas/listado", [ProformaController::class, 'listado'])->name("proformas.listado");
+    Route::resource("proformas", ProformaController::class)->only(
+        ["index", "create", "store", "edit", "show", "update", "destroy"]
+    );
 
     // PRODUCTOS SUCURSAL
     Route::get("producto_sucursals/paginado", [ProductoSucursalController::class, 'paginado'])->name("producto_sucursals.paginado");
