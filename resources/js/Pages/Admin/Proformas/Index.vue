@@ -234,14 +234,13 @@ const eliminarProforma = (item) => {
                                         content="Editar"
                                         placement="left-start"
                                     >
-                                        <button
+                                        <Link
                                             class="btn btn-warning"
-                                            @click="
-                                                setProforma(item);
-                                                muestra_formulario = true;
+                                            :href="
+                                                route('proformas.edit', item.id)
                                             "
                                         >
-                                            <i class="fa fa-pen"></i></button
+                                            <i class="fa fa-pen"></i></Link
                                     ></el-tooltip>
                                 </template>
 

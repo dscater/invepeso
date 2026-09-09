@@ -3,6 +3,9 @@
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { watch, ref, computed, onMounted, nextTick } from "vue";
+import FormularioCliente from "../Clientes/FormularioCliente.vue";
+import { useClientes } from "@/composables/clientes/useClientes";
+
 const props = defineProps({
     form: {
         type: Object,
@@ -19,7 +22,7 @@ const textBtn = computed(() => {
     if (form.id == 0) {
         return `<i class="fa fa-save"></i> Registrar Venta`;
     }
-    return `<i class="fa fa-edit"></i> Actualizar`;
+    return `<i class="fa fa-edit"></i> Actualizar Venta`;
 });
 
 const enviarFormulario = () => {
@@ -122,6 +125,16 @@ const cargarProductos = async () => {
                 tipo_venta_id: tipo_venta_id_default,
             }),
         );
+
+        if (form.id != 0 && almacen_id.value != form.almacen_id) {
+            const ids = form.venta_detalles
+                .filter((detalle) => detalle.id)
+                .map((detalle) => detalle.id);
+
+            form.eliminados = [...form.eliminados, ...ids];
+
+            form.venta_detalles = [];
+        }
     } catch (e) {
         console.log(e);
     } finally {
@@ -425,13 +438,44 @@ const cambiarTipoVenta = () => {
     }
 };
 
+// CLIENTE
+const muestra_form_cliente = ref(false);
+const { setCliente, limpiarCliente, form: formCliente } = useClientes();
+const cerrarFormCliente = () => {
+    limpiarCliente();
+    muestra_form_cliente.value = false;
+};
+
+const actualizarClientes = (cliente) => {
+    listClientes.value.push(cliente);
+    form.cliente_id = cliente.id;
+    muestra_form_cliente.value = false;
+    limpiarCliente();
+};
+
+const nuevoCliente = () => {
+    limpiarCliente();
+    muestra_form_cliente.value = true;
+};
+
 onMounted(() => {
     cargarListas();
+    // edit
+    if (form.id != 0) {
+        almacen_id.value = form.almacen_id;
+    }
 });
 </script>
 
 <template>
     <form @submit.prevent="enviarFormulario()">
+        <FormularioCliente
+            v-if="muestra_form_cliente"
+            :form="formCliente"
+            :muestra_formulario="muestra_form_cliente"
+            @envio-formulario="actualizarClientes"
+            @cerrar-formulario="cerrarFormCliente"
+        ></FormularioCliente>
         <div class="row">
             <div class="col-md-7">
                 <div class="card">
@@ -779,20 +823,37 @@ onMounted(() => {
                         <div class="row">
                             <div class="col-12 mt-2">
                                 <label class="required">Cliente</label>
-                                <el-select
-                                    v-model="form.cliente_id"
-                                    no-data-text="Sin datos"
-                                    no-match-text="Sin resultados"
-                                    placeholder="Cliente"
-                                    filterable
-                                >
-                                    <el-option
-                                        v-for="item in listClientes"
-                                        :key="item.id"
-                                        :value="item.id"
-                                        :label="`${item.nombre} - ${item.tipo_documento.nombre}: ${item.nro_documento}`"
-                                    ></el-option>
-                                </el-select>
+                                <div class="input-group">
+                                    <div class="form-control border-0 p-0">
+                                        <el-select
+                                            v-model="form.cliente_id"
+                                            class="el-select-input-group-left"
+                                            no-data-text="Sin datos"
+                                            no-match-text="Sin resultados"
+                                            placeholder="Cliente"
+                                            size="large"
+                                            filterable
+                                        >
+                                            <el-option
+                                                v-for="item in listClientes"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="`${item.nombre} - ${item.tipo_documento.nombre}: ${item.nro_documento}`"
+                                            ></el-option>
+                                        </el-select>
+                                    </div>
+                                    <span class="input-button">
+                                        <button
+                                            type="button"
+                                            class="btn btn-primary rounded-0 h-100"
+                                            title="Nuevo Cliente"
+                                            @click.prevent="nuevoCliente"
+                                        >
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </span>
+                                </div>
+
                                 <ul
                                     v-if="form.errors?.cliente_id"
                                     class="d-block text-danger list-unstyled"

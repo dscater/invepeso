@@ -4,10 +4,12 @@ namespace App\Services;
 
 use App\Models\Almacen;
 use App\Models\Cliente;
+use App\Models\MovimientoCaja;
 use App\Models\Producto;
 use App\Services\HistorialAccionService;
 use App\Models\Venta;
 use App\Models\User;
+use App\Models\VentaCobro;
 use App\Models\VentaDetalle;
 use Illuminate\Http\UploadedFile;
 use Exception;
@@ -141,7 +143,7 @@ class VentaService
         $venta->codigo_venta = "V" . $venta->id;
         $venta->save();
         foreach ($datos["venta_detalles"] as $item) {
-            $dato_venta_detalle = [
+            $datos_venta_detalle = [
                 "venta_id" => $venta->id,
                 "producto_id" => $item["producto_id"],
                 "cantidad" => $item["cantidad"],
@@ -155,7 +157,7 @@ class VentaService
                 "total_uni" => $item["total_uni"],
             ];
 
-            $venta_detalle = VentaDetalle::create($dato_venta_detalle);
+            $venta_detalle = VentaDetalle::create($datos_venta_detalle);
             $producto = Producto::findOrFail($venta_detalle->producto_id);
 
 
@@ -216,13 +218,169 @@ class VentaService
     public function actualizar(array $datos, Venta $venta): Venta
     {
         $old_venta = clone $venta;
+        $old_venta = $old_venta->loadMissing(["venta_detalles"]);
+
+        $almacen = Almacen::findOrFail($datos["almacen_id"]);
+        $cliente = Cliente::findOrFail($datos["cliente_id"]);
+
+        // verificar cobros por venta
+        if ($old_venta->tipo_venta == 'CRÉDITO') {
+            $cobros = VentaCobro::where("venta_id", $venta->id)->count();
+            if ($cobros > 0) {
+                throw new Exception("No se puede eliminar la venta $venta->codigo_venta; porque tiene $cobros registrados");
+            }
+        }
+
+        if ($datos["tipo_venta"] == 'AL CONTADO') {
+            if ((float)$datos["total"] != (float)$datos["cancelado"] || $datos["saldo"] > 0) {
+                throw new Exception("El monto cancelado debe ser igual al total y el saldo debe ser 0");
+            }
+        }
 
         $venta->update([
-            "nombre" => mb_strtoupper($datos["nombre"]),
-            "ventas" => $datos["ventas"],
-            "activo" => $datos["activo"],
-            "descripcion" => mb_strtoupper($datos["descripcion"]) ?? null,
+            "sucursal_id" => $almacen->sucursal_id,
+            "almacen_id" => $almacen->id,
+            "cliente_id" => $cliente->id,
+            "tipo_documento_id" => $cliente->tipo_documento_id,
+            "nit_ci" => $cliente->full_ci,
+            "tipo_venta" => mb_strtoupper($datos["tipo_venta"]),
+            "tipo_pago" => $datos["tipo_pago"] ?? NULL,
+            "subtotal" => $datos["subtotal"],
+            "descuento" => $datos["descuento"] ?? 0,
+            "porcentaje_descuento" => $datos["porcentaje_descuento"] ?? 0,
+            "total" => $datos["total"],
+            "cancelado" => $datos["cancelado"],
+            "saldo" => $datos["saldo"],
         ]);
+
+        foreach ($datos["venta_detalles"] as $item) {
+            $datos_venta_detalle = [
+                "venta_id" => $venta->id,
+                "producto_id" => $item["producto_id"],
+                "cantidad" => $item["cantidad"],
+                "precio" => $item["precio"],
+                "descuento_uni" => $item["descuento_uni"],
+                "porcen_du" => $item["porcen_du"],
+                "descuento_total" => $item["descuento_total"],
+                "porcen_dt" => $item["porcen_dt"],
+                "precio_final" => $item["precio_final"],
+                "total" => $item["total"],
+                "total_uni" => $item["total_uni"],
+            ];
+
+            $producto = Producto::findOrFail($item["producto_id"]);
+            if ($item["id"] == 0) {
+                // CREAR
+                $venta_detalle = VentaDetalle::create($datos_venta_detalle);
+                // VERIFICAR STOCK
+                $verifica_stock = $this->producto_service->verificaStockCantidad($venta->sucursal_id, $venta->almacen_id, $producto->id, $item["cantidad"]);
+
+                if (!$verifica_stock[0]) {
+                    throw new Exception("Stock insuficiente para el producto $producto->nombre. Disponible: $verifica_stock[1]");
+                }
+
+                // REGISTRAR EGRESO STOCK
+                $this->kardex_producto_service->registrarMovimiento(
+                    $venta->sucursal_id,
+                    $venta->almacen_id,
+                    "VENTA DE PRODUCTO",
+                    "EGRESO",
+                    NULL,
+                    $producto,
+                    $venta_detalle->cantidad,
+                    $venta_detalle->precio_final,
+                    "SALIDA POR VENTA",
+                    "VentaDetalle",
+                    $venta_detalle->id
+                );
+            } else {
+                $venta_detalle = VentaDetalle::findOrFail($item["id"]);
+                // REGISTRAR INGRESO STOCK POR MODIFICACIÓN $old_venta
+                $this->kardex_producto_service->registrarMovimiento(
+                    $old_venta->sucursal_id,
+                    $old_venta->almacen_id,
+                    "VENTA DE PRODUCTO",
+                    "INGRESO",
+                    NULL,
+                    $producto,
+                    $venta_detalle->cantidad,
+                    $venta_detalle->precio_final,
+                    "INGRESO POR MODIFICACIÓN DE VENTA",
+                    "VentaDetalle",
+                    $venta_detalle->id,
+                );
+
+                $venta_detalle->update($datos_venta_detalle);
+
+                // REGISTRAR EGRESO STOCK
+                $this->kardex_producto_service->registrarMovimiento(
+                    $venta->sucursal_id,
+                    $venta->almacen_id,
+                    "VENTA DE PRODUCTO",
+                    "EGRESO",
+                    NULL,
+                    $producto,
+                    $venta_detalle->cantidad,
+                    $venta_detalle->precio_final,
+                    "SALIDA POR VENTA",
+                    "VentaDetalle",
+                    $venta_detalle->id
+                );
+            }
+        }
+
+        // ELIMINADOS
+        if (isset($datos["eliminados"])) {
+            foreach ($datos["eliminados"] as $id) {
+                $venta_detalle = VentaDetalle::findOrFail($id);
+                // REGISTRAR INGRESO STOCK POR ELIMINACIÓN
+                $this->kardex_producto_service->registrarMovimiento(
+                    $old_venta->sucursal_id,
+                    $old_venta->almacen_id,
+                    "VENTA DE PRODUCTO",
+                    "INGRESO",
+                    NULL,
+                    $producto,
+                    $venta_detalle->cantidad,
+                    $venta_detalle->precio_final,
+                    "INGRESO POR ELIMINACIÓN DE VENTA",
+                    "VentaDetalle",
+                    $venta_detalle->id,
+                );
+                $venta_detalle->delete();
+            }
+        }
+
+        // SI TIENE MOVIMIENTO DE CAJA ELIMINARLO Y REGISTRAR CON LOS NUEVOS DATOS
+        $movimiento_caja = MovimientoCaja::where("sucursal_id", $old_venta->sucursal_id)
+            ->where("almacen_id", $old_venta->almacen_id)
+            ->where("tipo", "VENTA")
+            ->where("modulo", "Venta")
+            ->where("registro_id", $venta->id)
+            ->get()->first();
+
+        if ($movimiento_caja) {
+            $movimiento_caja->status = 0;
+            $movimiento_caja->save();
+        }
+
+        // MOVIMIENTO CAJA
+        if ($venta->cancelado > 0) {
+            $movimiento_caja = [
+                "sucursal_id" => $venta->sucursal_id,
+                "almacen_id" => $venta->almacen_id,
+                "tipo" => "VENTA",
+                "modulo" => "Venta",
+                "registro_id" => $venta->id,
+                "monto" => $venta->cancelado,
+                "tipo_movimiento" => "INGRESO",
+                "tipo_pago" => $venta->tipo_pago,
+                "descripcion" => "INGRESO POR VENTA",
+                "fecha" => $venta->fecha,
+                "hora" => $venta->hora,
+            ];
+            $this->movimiento_caja_service->crear($movimiento_caja);
+        }
 
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UNA VENTA", $old_venta, $venta->withoutRelations(), ["venta_detalles"]);

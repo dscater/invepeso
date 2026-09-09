@@ -5,17 +5,23 @@ import { useVentas } from "@/composables/ventas/useVentas";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 import Formulario from "./Formulario.vue";
+const props = defineProps({
+    venta: {
+        type: Object,
+        required: true,
+    },
+});
 const { props: props_page } = usePage();
 const appStore = useAppStore();
+const { setVenta, limpiarVenta, form } = useVentas();
 onBeforeMount(() => {
+    setVenta(props.venta);
     appStore.startLoading();
 });
 
 onMounted(() => {
     appStore.stopLoading();
 });
-
-const { setVenta, limpiarVenta, form } = useVentas();
 </script>
 <template>
     <Head title="Editar Venta"></Head>

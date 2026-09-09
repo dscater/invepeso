@@ -35,6 +35,7 @@ class ClienteStoreRequest extends FormRequest
             "complemento" => "nullable",
             "fono" => "nullable",
             "correo" => "nullable",
+            "tipo_envio" => "nullable"
         ];
 
         return $rule;

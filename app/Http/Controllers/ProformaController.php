@@ -113,13 +113,13 @@ class ProformaController extends Controller
      */
     public function show(Proforma $proforma): JsonResponse
     {
-        $proforma = $proforma->load(["proforma_detalles.producto", "cliente", "sucursal:id,nombre", "almacen:id,nombre", "tipo_documento:id,nombre"]);
+        $proforma = $proforma->load(["proforma_detalles.producto", "cliente", "sucursal:id,nombre", "almacen:id,nombre"]);
         return response()->JSON($proforma);
     }
 
     public function edit(Proforma $proforma): ResponseInertia
     {
-        $proforma = $proforma->load(["proforma_detalles.producto", "cliente", "sucursal:id,nombre", "almacen:id,nombre", "tipo_documento:id,nombre"]);
+        $proforma = $proforma->load(["proforma_detalles.producto", "cliente", "sucursal:id,nombre", "almacen:id,nombre"]);
         return Inertia::render("Admin/Proformas/Edit", compact("proforma"));
     }
 

@@ -86,13 +86,23 @@ class ClienteController extends Controller
      * @param ClienteStoreRequest $request
      * @return RedirectResponse|Response
      */
-    public function store(ClienteStoreRequest $request): RedirectResponse|Response
+    public function store(ClienteStoreRequest $request): RedirectResponse|Response|JsonResponse
     {
         DB::beginTransaction();
         try {
             // crear el Cliente
-            $this->clienteService->crear($request->validated());
+            $data = $request->validated();
+            $cliente = $this->clienteService->crear($data);
             DB::commit();
+
+            if (isset($data["tipo_envio"]) && $data["tipo_envio"] == "ajax") {
+                return response()->JSON([
+                    "sw" => true,
+                    "message" => "Registro realizado",
+                    "cliente" => $cliente->load(["tipo_documento:id,nombre"])
+                ]);
+            }
+
             return redirect()->route("clientes.index")->with("bien", "Registro realizado");
         } catch (\Exception $e) {
             DB::rollBack();

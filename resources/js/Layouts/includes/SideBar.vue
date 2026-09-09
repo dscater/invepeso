@@ -31,7 +31,8 @@ const sincronizarMenus = () => {
 
     if (
         route_current.value == "proformas.index" ||
-        route_current.value == "proformas.create"
+        route_current.value == "proformas.create" ||
+        route_current.value == "proformas.edit"
     ) {
         openMenus.proformas = true;
     }
@@ -232,7 +233,8 @@ onUnmounted(() => {});
                             class="nav-link"
                             :class="[
                                 route_current == 'proformas.index' ||
-                                route_current == 'proformas.create'
+                                route_current == 'proformas.create' ||
+                                route_current == 'proformas.edit'
                                     ? 'active menu-is-opening menu-open'
                                     : '',
                             ]"
