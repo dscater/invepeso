@@ -111,6 +111,13 @@ class VentaService
     {
         $almacen = Almacen::findOrFail($datos["almacen_id"]);
         $cliente = Cliente::findOrFail($datos["cliente_id"]);
+
+        if ($datos["tipo_venta"] == 'AL CONTADO') {
+            if ((float)$datos["total"] != (float)$datos["cancelado"] || $datos["saldo"] > 0) {
+                throw new Exception("El monto cancelado debe ser igual al total y el saldo debe ser 0");
+            }
+        }
+
         $venta = Venta::create([
             "sucursal_id" => $almacen->sucursal_id,
             "almacen_id" => $almacen->id,
@@ -132,7 +139,7 @@ class VentaService
         ]);
 
         $venta->codigo_venta = "V" . $venta->id;
-
+        $venta->save();
         foreach ($datos["venta_detalles"] as $item) {
             $dato_venta_detalle = [
                 "venta_id" => $venta->id,

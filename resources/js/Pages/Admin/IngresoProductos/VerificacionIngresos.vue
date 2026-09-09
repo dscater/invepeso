@@ -278,7 +278,7 @@ const muestra_formulario = ref(false);
             <div class="col-12">
                 <h4 class="text-center text-muted fs-3">
                     <i class="fa fa-info-circle"></i> No hay compras para
-                    verificar
+                    verificar/recepcionar
                 </h4>
             </div>
         </div>

@@ -217,7 +217,8 @@ onUnmounted(() => {});
                             permisos == '*' ||
                             permisos.includes('movimiento_cajas.index') ||
                             permisos.includes('movimiento_cajas.create') ||
-                            permisos.includes('ingreso_productos.pagos')
+                            permisos.includes('ingreso_productos.pagos') ||
+                            permisos.includes('ventas.cobros')
                         "
                         :class="{ 'menu-open': openMenus.movimiento_cajas }"
                     >
@@ -227,7 +228,8 @@ onUnmounted(() => {});
                             :class="[
                                 route_current == 'movimiento_cajas.index' ||
                                 route_current == 'movimiento_cajas.create' ||
-                                route_current == 'ingreso_productos.pagos'
+                                route_current == 'ingreso_productos.pagos' ||
+                                route_current == 'ventas.cobros'
                                     ? 'active menu-is-opening menu-open'
                                     : '',
                             ]"
@@ -270,12 +272,10 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes(
-                                        'producto_sucursals.index',
-                                    )
+                                    permisos.includes('ventas.cobros')
                                 "
                                 :label="'Cobro de Créditos'"
-                                :ruta="'producto_sucursals.index'"
+                                :ruta="'ventas.cobros'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                             <ItemMenu

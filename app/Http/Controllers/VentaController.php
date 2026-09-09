@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VentaCobroStoreRequest;
 use App\Http\Requests\VentaStoreRequest;
 use App\Http\Requests\VentaUpdateRequest;
+use App\Models\Almacen;
 use App\Models\Venta;
 use App\Models\User;
+use App\Services\VentaCobroService;
 use App\Services\VentaService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +24,10 @@ use Inertia\Response as ResponseInertia;
 
 class VentaController extends Controller
 {
-    public function __construct(private VentaService $ventaService) {}
+    public function __construct(
+        private VentaService $ventaService,
+        private VentaCobroService $venta_cobro_service
+    ) {}
 
     /**
      * Página index
@@ -31,6 +37,70 @@ class VentaController extends Controller
     public function index(): ResponseInertia
     {
         return Inertia::render("Admin/Ventas/Index");
+    }
+
+    public function cobros(): ResponseInertia
+    {
+        return Inertia::render("Admin/Ventas/Cobros");
+    }
+
+    public function lista_cobros_pendientes(Request $request): JsonResponse
+    {
+        $almacen_id = $request->input("almacen_id", null);
+        $fecha_ini = $request->input("fecha_ini", null);
+        $fecha_fin = $request->input("fecha_fin", null);
+        $ventas = Venta::with([
+            "sucursal:id,nombre",
+            "almacen:id,nombre",
+            "cliente:id,nombre",
+            "tipo_documento:id,nombre",
+            "user:id,nombre,paterno,materno",
+            "venta_detalles",
+            "venta_cobros.user",
+            "venta_cobros.sucursal",
+            "venta_cobros.almacen",
+        ]);
+
+        $ventas->where("saldo", ">", 0);
+        $ventas->where("tipo_venta", "CRÉDITO");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $ventas->where("almacen_id", $almacen_id);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $ventas->whereBetween("fecha_registro", [$fecha_ini, $fecha_fin]);
+        }
+        $ventas = $ventas->get();
+
+        return response()->JSON([
+            "ventas" => $ventas
+        ]);
+    }
+
+    public function registrar_cobro(VentaCobroStoreRequest $request, Venta $venta)
+    {
+        DB::beginTransaction();
+        try {
+            // crear el Venta
+            $datos = $request->validated();
+            $almacen = Almacen::findOrFail($datos["almacen_id"]);
+            $datos["venta_id"] = $venta->id;
+            $datos["sucursal_id"] = $almacen->sucursal_id;
+            $datos["cliente_id"] = $venta->cliente_id;
+            $this->venta_cobro_service->crear($datos);
+            DB::commit();
+
+            return response()->JSON([
+                "sw" => true,
+                "message" => "Registro realizado"
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
     }
 
     /**

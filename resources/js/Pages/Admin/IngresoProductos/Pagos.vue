@@ -275,8 +275,8 @@ const muestra_formulario = ref(false);
         <div class="row" v-else>
             <div class="col-12">
                 <h4 class="text-center text-muted fs-3">
-                    <i class="fa fa-info-circle"></i> No hay registros para
-                    recepción de faltantes recepcionar
+                    <i class="fa fa-info-circle"></i> No hay pagos pendientes
+                    para realizar
                 </h4>
             </div>
         </div>

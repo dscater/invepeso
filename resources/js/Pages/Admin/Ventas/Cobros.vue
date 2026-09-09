@@ -1,12 +1,13 @@
+2
 <script setup>
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
-import { useIngresoProductos } from "@/composables/ingreso_productos/useIngresoProductos";
+import { useVentas } from "@/composables/ventas/useVentas";
 import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
-import Faltante from "./Faltante.vue";
+import FormularioCobro from "./FormularioCobro.vue";
 import { buttonProps } from "element-plus";
 import { useDate } from "@/composables/useDate.js";
 import axios from "axios";
@@ -17,14 +18,13 @@ const { props: props_page } = usePage();
 
 const appStore = useAppStore();
 
-const { setIngresoProducto, limpiarIngresoProducto, form } =
-    useIngresoProductos();
+const { setVenta, limpiarVenta, form } = useVentas();
 
 const listAlmacens = ref([]);
 const almacen_id = ref("todos");
 const fecha_ini = ref(getFechaActual());
 const fecha_fin = ref(getFechaActual());
-const ingreso_productos = ref([]);
+const ventas = ref([]);
 
 const cargarAlmacens = async () => {
     try {
@@ -40,9 +40,9 @@ const cargarAlmacens = async () => {
     }
 };
 
-const cargarIngresosFaltantes = () => {
+const cargarVentasFormularioCobros = () => {
     axios
-        .get(route("ingreso_productos.lista_faltantes"), {
+        .get(route("ventas.lista_cobros_pendientes"), {
             params: {
                 fecha_ini: fecha_ini.value,
                 fecha_fin: fecha_fin.value,
@@ -50,21 +50,21 @@ const cargarIngresosFaltantes = () => {
             },
         })
         .then((response) => {
-            ingreso_productos.value = response.data;
+            ventas.value = response.data.ventas;
         });
 };
 
 const intervalTimeOutListado = ref(null);
 const cargaListado = () => {
-    intervalTimeOutListado.value ?? clearInterval(intervalTimeOutListado.value);
+    clearInterval(intervalTimeOutListado.value);
     setTimeout(() => {
-        cargarIngresosFaltantes();
+        cargarVentasFormularioCobros();
     }, 700);
 };
 
 onBeforeMount(() => {
     cargarAlmacens();
-    cargarIngresosFaltantes();
+    cargarVentasFormularioCobros();
     appStore.startLoading();
 });
 
@@ -73,26 +73,26 @@ onMounted(() => {
 });
 
 const recepcionar = (item) => {
-    setIngresoProducto(item);
+    setVenta(item);
     muestra_formulario.value = true;
 };
 
-const updateIngresos = () => {
+const updateVentas = () => {
     muestra_formulario.value = false;
-    limpiarIngresoProducto();
-    cargarIngresosFaltantes();
+    limpiarVenta();
+    cargarVentasFormularioCobros();
 };
 
 const muestra_formulario = ref(false);
 </script>
 <template>
-    <Head title="Recepción de Faltantes"></Head>
+    <Head title="Cobro de Créditos"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-boxes"></i> Recepción de Faltantes
+                        <i class="fa fa-cash-register"></i> Cobro de Créditos
                     </h3>
                 </div>
                 <!-- /.col -->
@@ -102,7 +102,7 @@ const muestra_formulario = ref(false);
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
                         <li class="breadcrumb-item active">
-                            Recepción de Faltantes
+                            Cobro de Créditos
                         </li>
                     </ol>
                 </div>
@@ -120,7 +120,7 @@ const muestra_formulario = ref(false);
                     no-match-text="Sin resultados"
                     placeholder="Seleccionar Almacén"
                     filterable
-                    @change="cargarIngresosFaltantes"
+                    @change="cargarVentasFormularioCobros"
                 >
                     <el-option
                         v-for="item in listAlmacens"
@@ -137,7 +137,7 @@ const muestra_formulario = ref(false);
                     v-model="fecha_ini"
                     class="form-control"
                     @keyup="cargaListado"
-                    @change="cargarIngresosFaltantes"
+                    @change="cargarVentasFormularioCobros"
                 />
             </div>
             <div class="col-md-4 col-sm-6">
@@ -147,14 +147,14 @@ const muestra_formulario = ref(false);
                     v-model="fecha_fin"
                     class="form-control"
                     @keyup="cargaListado"
-                    @change="cargarIngresosFaltantes"
+                    @change="cargarVentasFormularioCobros"
                 />
             </div>
         </div>
-        <div class="row" v-if="ingreso_productos.length > 0">
+        <div class="row" v-if="ventas.length > 0">
             <div
                 class="col-md-6 col-lg-4 mt-2"
-                v-for="item in ingreso_productos"
+                v-for="item in ventas"
                 :key="item.id"
             >
                 <div class="card">
@@ -163,7 +163,7 @@ const muestra_formulario = ref(false);
                             {{ item.fecha_registro_t }}
                         </span>
                         <h4 class="text-primary fw-bold fs-6 mb-0">
-                            {{ item.codigo }}
+                            {{ item.codigo_venta }}
                         </h4>
                     </div>
                     <div class="card-body">
@@ -171,14 +171,14 @@ const muestra_formulario = ref(false);
                             <div class="col-6 text-end border-end">
                                 <div class="row">
                                     <div class="col-12 text-sm text-center">
-                                        {{ item.proveedor.nombre }}
+                                        {{ item.cliente.nombre }}
                                     </div>
                                     <div
                                         class="col-12 text-xs text-muted text-center"
                                     >
                                         <i
-                                            class="fa fa-truck"
-                                            title="Proveedor"
+                                            class="fa fa-user-tag"
+                                            title="Cliente"
                                         ></i>
                                     </div>
                                 </div>
@@ -186,14 +186,15 @@ const muestra_formulario = ref(false);
                             <div class="col-6 text-end">
                                 <div class="row">
                                     <div class="col-12 text-sm text-center">
-                                        {{ item.tipo_ingreso.nombre }}
+                                        {{ item.tipo_documento?.nombre }}:
+                                        {{ item.nit_ci }}
                                     </div>
                                     <div
                                         class="col-12 text-xs text-muted text-center"
                                     >
                                         <i
-                                            class="fa fa-clipboard-list"
-                                            title="Tipo"
+                                            class="fa fa-id-card"
+                                            title="Documento"
                                         ></i>
                                     </div>
                                 </div>
@@ -232,27 +233,27 @@ const muestra_formulario = ref(false);
                             </div>
                         </div>
                         <div class="row border-top mt-1">
-                            <div class="col-6 pt-1 border-end">
-                                <div class="row">
-                                    <div class="col-12 text-md text-center">
-                                        {{ item.ingreso_detalles.length }}
-                                    </div>
-                                    <div
-                                        class="col-12 text-xs text-muted text-center"
-                                    >
-                                        <i class="fa fa-boxes"></i> Productos
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 pt-1">
+                            <div class="col-6 pt-1 fw-bold text-success">
                                 <div class="row">
                                     <div class="col-12 text-md text-center">
                                         {{ item.total }}
                                     </div>
                                     <div
-                                        class="col-12 text-xs text-muted text-center"
+                                        class="col-12 text-xs text-success text-center"
                                     >
                                         Total Bs.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 pt-1 fw-bold text-danger">
+                                <div class="row">
+                                    <div class="col-12 text-md text-center">
+                                        {{ item.saldo }}
+                                    </div>
+                                    <div
+                                        class="col-12 text-xs text-danger text-center"
+                                    >
+                                        Saldo Bs.
                                     </div>
                                 </div>
                             </div>
@@ -266,7 +267,7 @@ const muestra_formulario = ref(false);
                                     @click="recepcionar(item)"
                                 >
                                     <i class="fa fa-external-link-alt"></i>
-                                    Recepcionar
+                                    Registros
                                 </button>
                             </div>
                         </div>
@@ -277,17 +278,17 @@ const muestra_formulario = ref(false);
         <div class="row" v-else>
             <div class="col-12">
                 <h4 class="text-center text-muted fs-3">
-                    <i class="fa fa-info-circle"></i> No hay registros para
-                    recepción de Faltantes
+                    <i class="fa fa-info-circle"></i> No hay créditos pendientes
+                    para cobrar
                 </h4>
             </div>
         </div>
-        <Faltante
+        <FormularioCobro
             v-if="muestra_formulario"
             :muestra_formulario="muestra_formulario"
             :form="form"
-            @envio-formulario="updateIngresos"
+            @envio-formulario="updateVentas"
             @cerrar-formulario="muestra_formulario = false"
-        ></Faltante>
+        ></FormularioCobro>
     </Content>
 </template>

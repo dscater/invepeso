@@ -28,6 +28,7 @@ use App\Http\Controllers\TraspasoController;
 use App\Http\Controllers\UnidadMedidaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\VentaCobroController;
 use App\Http\Controllers\VentaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -206,8 +207,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     );
 
     // INGRESO PAGOS
-    Route::get("ingreso_pagos/listaByIngreso/{ingreso_producto}", [IngresoPagoController::class, 'listaByIngreso
-listaByIngreso'])->name("ingreso_pagos.listaByIngreso");
+    Route::get("ingreso_pagos/listaByIngreso/{ingreso_producto}", [IngresoPagoController::class, 'listaByIngreso'])->name("ingreso_pagos.listaByIngreso");
 
     // SALIDAS
     Route::get("salida_productos/paginado", [SalidaProductoController::class, 'paginado'])->name("salida_productos.paginado");
@@ -233,9 +233,16 @@ listaByIngreso'])->name("ingreso_pagos.listaByIngreso");
     // VENTAS
     Route::get("ventas/paginado", [VentaController::class, 'paginado'])->name("ventas.paginado");
     Route::get("ventas/listado", [VentaController::class, 'listado'])->name("ventas.listado");
+    Route::get("ventas/cobros", [VentaController::class, 'cobros'])->name("ventas.cobros");
+    Route::get("ventas/cobros/lista_cobros_pendientes", [VentaController::class, 'lista_cobros_pendientes'])->name("ventas.lista_cobros_pendientes");
+    Route::post("ventas/registrar_cobro/{venta}", [VentaController::class, 'registrar_cobro'])->name("ventas.registrar_cobro");
+    Route::put("ventas/actualizar_cobro/{venta_cobro}", [VentaController::class, 'actualizar_cobro'])->name("ventas.actualizar_cobro");
     Route::resource("ventas", VentaController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );
+
+    // VENTA COBROS
+    Route::get("venta_cobros/listaByVenta/{venta}", [VentaCobroController::class, 'listaByVenta'])->name("venta_cobros.listaByVenta");
 
     // PRODUCTOS SUCURSAL
     Route::get("producto_sucursals/paginado", [ProductoSucursalController::class, 'paginado'])->name("producto_sucursals.paginado");
