@@ -18,6 +18,7 @@ class VentaDetalle extends Model
         "precio_final",  // precio final obtenido despues de los descuentos
         "total", // total registrado = cantidad * precio_final | para calcular ingreso bruto
         "total_uni", // total por fila sin tomar en cuenta descuento del total para mostrar = cantidad * (precio - descuento_uni)
+        "status",
     ];
 
     public function venta()

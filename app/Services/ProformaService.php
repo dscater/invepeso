@@ -234,8 +234,12 @@ class ProformaService
     {
         $old_proforma = clone $proforma;
 
-        $proforma->status = 0;
-        $proforma->save();
+        // ELIMINADOS
+        foreach ($proforma->proforma_detalles as $item) {
+            $proforma_detalle = ProformaDetalle::findOrFail($item->id);
+            $proforma_detalle->delete();
+        }
+        $proforma->delete();
 
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UNA PROFORMA", $old_proforma, $proforma, ["proforma_detalles"]);

@@ -103,6 +103,52 @@ class VentaService
         return $ventas;
     }
 
+    public function listadoPaginadoEliminados(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
+    {
+        $ventas = Venta::with([
+            "sucursal:id,nombre",
+            "almacen:id,nombre",
+            "cliente.tipo_documento",
+            "user:id,nombre,paterno,materno",
+        ])
+            ->select("ventas.*")
+            ->where("status", 0);
+
+        // Filtros exactos
+        foreach ($columnsFilter as $key => $value) {
+            if (!is_null($value)) {
+                $ventas->where("ventas.$key", $value);
+            }
+        }
+
+        // Filtros por rango
+        foreach ($columnsBetweenFilter as $key => $value) {
+            if (isset($value[0], $value[1])) {
+                $ventas->whereBetween("ventas.$key", $value);
+            }
+        }
+
+        // Búsqueda en múltiples columnas con LIKE
+        if (!empty($search) && !empty($columnsSerachLike)) {
+            $ventas->where(function ($query) use ($search, $columnsSerachLike) {
+                foreach ($columnsSerachLike as $col) {
+                    $query->orWhere("$col", "LIKE", "%$search%");
+                }
+            });
+        }
+
+        // Ordenamiento
+        foreach ($orderBy as $value) {
+            if (isset($value[0], $value[1])) {
+                $ventas->orderBy($value[0], $value[1]);
+            }
+        }
+
+
+        $ventas = $ventas->paginate($length, ['*'], 'page', $page);
+        return $ventas;
+    }
+
     /**
      * Crear venta
      *
@@ -343,10 +389,11 @@ class VentaService
                     $producto,
                     $venta_detalle->cantidad,
                     $venta_detalle->precio_final,
-                    "INGRESO POR ELIMINACIÓN DE VENTA",
+                    "INGRESO POR MODIFICACIÓN DE VENTA",
                     "VentaDetalle",
                     $venta_detalle->id,
                 );
+                // $venta_detalle->status = 0;
                 $venta_detalle->delete();
             }
         }
@@ -388,6 +435,69 @@ class VentaService
         return $venta;
     }
 
+    public function restaurar(Venta $venta): bool|Exception
+    {
+        $old_venta = clone $venta;
+        // verificar cobros por venta
+        $cobros = VentaCobro::where("venta_id", $venta->id)->count();
+        $cobros = VentaCobro::where("venta_id", $venta->id)->count();
+        if ($cobros > 0) {
+            foreach ($cobros as $item) {
+                // SI TIENE MOVIMIENTO DE CAJA ELIMINARLO Y REGISTRAR CON LOS NUEVOS DATOS
+                $movimiento_caja = MovimientoCaja::where("sucursal_id", $old_venta->sucursal_id)
+                    ->where("almacen_id", $old_venta->almacen_id)
+                    ->where("tipo", "COBRO POR VENTA DE PRODUCTOS")
+                    ->where("modulo", "VentaCobro")
+                    ->where("registro_id", $item->id)
+                    ->get()->first();
+
+                $movimiento_caja->status = 1;
+                $movimiento_caja->save();
+            }
+        }
+        foreach ($venta->venta_detalles as $venta_detalle) {
+            $venta_detalle = VentaDetalle::findOrFail($venta_detalle->id);
+            $producto = Producto::findOrFail($venta_detalle->producto_id);
+            // REGISTRAR EGRESO STOCK POR ELIMINACIÓN
+            $this->kardex_producto_service->registrarMovimiento(
+                $old_venta->sucursal_id,
+                $old_venta->almacen_id,
+                "VENTA DE PRODUCTO",
+                "EGRESO",
+                NULL,
+                $producto,
+                $venta_detalle->cantidad,
+                $venta_detalle->precio_final,
+                "EGRESO POR RESTAURACIÓN DE VENTA",
+                "VentaDetalle",
+                $venta_detalle->id,
+            );
+            $venta_detalle->status = 1;
+            $venta_detalle->save();
+        }
+
+        // SI TIENE MOVIMIENTO DE CAJA ELIMINARLO Y REGISTRAR CON LOS NUEVOS DATOS
+        $movimiento_caja = MovimientoCaja::where("sucursal_id", $old_venta->sucursal_id)
+            ->where("almacen_id", $old_venta->almacen_id)
+            ->where("tipo", "VENTA")
+            ->where("modulo", "Venta")
+            ->where("registro_id", $venta->id)
+            ->get()->first();
+
+        if ($movimiento_caja) {
+            $movimiento_caja->status = 1;
+            $movimiento_caja->save();
+        }
+
+        $venta->status = 1;
+        $venta->save();
+
+        // registrar accion
+        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "RESTAURÓ UNA VENTA", $old_venta, $venta, ["venta_detalles"]);
+
+        return true;
+    }
+
     /**
      * Eliminar venta
      *
@@ -397,12 +507,96 @@ class VentaService
     public function eliminar(Venta $venta): bool|Exception
     {
         $old_venta = clone $venta;
+        // verificar cobros por venta
+        $cobros = VentaCobro::where("venta_id", $venta->id)->count();
+        if ($cobros > 0) {
+            throw new Exception("No se puede eliminar la venta $venta->codigo_venta; porque tiene $cobros registrados");
+        }
+        foreach ($venta->venta_detalles as $venta_detalle) {
+            $venta_detalle = VentaDetalle::findOrFail($venta_detalle->id);
+            $producto = Producto::findOrFail($venta_detalle->producto_id);
+            // REGISTRAR INGRESO STOCK POR ELIMINACIÓN
+            $this->kardex_producto_service->registrarMovimiento(
+                $old_venta->sucursal_id,
+                $old_venta->almacen_id,
+                "VENTA DE PRODUCTO",
+                "INGRESO",
+                NULL,
+                $producto,
+                $venta_detalle->cantidad,
+                $venta_detalle->precio_final,
+                "INGRESO POR ELIMINACIÓN DE VENTA",
+                "VentaDetalle",
+                $venta_detalle->id,
+            );
+            $venta_detalle->status = 0;
+            $venta_detalle->save();
+        }
+
+        // SI TIENE MOVIMIENTO DE CAJA ELIMINARLO Y REGISTRAR CON LOS NUEVOS DATOS
+        $movimiento_caja = MovimientoCaja::where("sucursal_id", $old_venta->sucursal_id)
+            ->where("almacen_id", $old_venta->almacen_id)
+            ->where("tipo", "VENTA")
+            ->where("modulo", "Venta")
+            ->where("registro_id", $venta->id)
+            ->get()->first();
+
+        if ($movimiento_caja) {
+            $movimiento_caja->status = 0;
+            $movimiento_caja->save();
+        }
 
         $venta->status = 0;
         $venta->save();
 
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UNA VENTA", $old_venta, $venta, ["venta_detalles"]);
+
+        return true;
+    }
+
+    public function eliminar_permanente(Venta $venta): bool|Exception
+    {
+        $old_venta = clone $venta;
+        $old_venta = $old_venta->loadMissing(["venta_detalles"]);
+        // verificar cobros por venta
+        $cobros = VentaCobro::where("venta_id", $venta->id)->count();
+        if ($cobros > 0) {
+            foreach ($cobros as $item) {
+                // SI TIENE MOVIMIENTO DE CAJA ELIMINARLO Y REGISTRAR CON LOS NUEVOS DATOS
+                $movimiento_caja = MovimientoCaja::where("sucursal_id", $old_venta->sucursal_id)
+                    ->where("almacen_id", $old_venta->almacen_id)
+                    ->where("tipo", "COBRO POR VENTA DE PRODUCTOS")
+                    ->where("modulo", "VentaCobro")
+                    ->where("registro_id", $item->id)
+                    ->get()->first();
+
+                $movimiento_caja->delete();
+                $item->delete();
+            }
+        }
+
+        foreach ($venta->venta_detalles_todos as $venta_detalle) {
+            $venta_detalle = VentaDetalle::findOrFail($venta_detalle->id);
+            $venta_detalle->delete();
+        }
+
+        // SI TIENE MOVIMIENTO DE CAJA ELIMINARLO Y REGISTRAR CON LOS NUEVOS DATOS
+        $movimiento_caja = MovimientoCaja::where("sucursal_id", $old_venta->sucursal_id)
+            ->where("almacen_id", $old_venta->almacen_id)
+            ->where("tipo", "VENTA")
+            ->where("modulo", "Venta")
+            ->where("registro_id", $venta->id)
+            ->get()->first();
+
+        if ($movimiento_caja) {
+            $movimiento_caja->delete();
+        }
+
+        $venta->delete();
+
+        // registrar accion
+        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ PERMANENTEMENTE UNA VENTA", $old_venta, null, ["venta_detalles"]);
 
         return true;
     }

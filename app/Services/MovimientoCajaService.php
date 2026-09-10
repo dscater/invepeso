@@ -151,8 +151,8 @@ class MovimientoCajaService
             "tipo_movimiento" => $datos["tipo_movimiento"],
             "tipo_pago" => $datos["tipo_pago"],
             "descripcion" => isset($datos["descripcion"]) && $datos["descripcion"] ? $datos["descripcion"] : $datos["tipo_movimiento"],
-            "fecha" => $datos["fecha"] ?? $fecha_actual,
-            "hora" => $datos["hora"] ?? $hora_actual,
+            // "fecha" => $datos["fecha"] ?? $fecha_actual,
+            // "hora" => $datos["hora"] ?? $hora_actual,
             // "user_id" => Auth::user()->id,
         ]);
 

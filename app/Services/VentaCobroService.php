@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\MovimientoCaja;
 use App\Services\HistorialAccionService;
 use App\Models\VentaCobro;
 use App\Models\Venta;
@@ -12,6 +13,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class VentaCobroService
@@ -152,10 +154,55 @@ class VentaCobroService
     public function actualizar(array $datos, VentaCobro $venta_cobro): VentaCobro
     {
         $old_venta_cobro = clone $venta_cobro;
-
         $venta_cobro->update([
-            "nombre" => mb_strtoupper($datos["nombre"]),
+            "sucursal_id" => $datos["sucursal_id"],
+            "almacen_id" => $datos["almacen_id"],
+            "venta_id" => $datos["venta_id"],
+            "cliente_id" => $datos["cliente_id"],
+            "tipo_pago" => $datos["tipo_pago"],
+            "monto" => $datos["monto"],
+            "saldo" => 0,
+            "fecha" => date("Y-m-d"),
+            "hora" => date("H:i:s"),
+            "user_id" => Auth::user()->id,
         ]);
+
+        $cancelado = $venta_cobro->venta->cancelado;
+        $monto_total_cancelado = VentaCobro::where("id", "!=", $venta_cobro->id)
+            ->where("venta_id", $venta_cobro->venta_id)
+            ->sum("monto");
+
+        $monto_total_cancelado = (float)$monto_total_cancelado + (float)$venta_cobro->monto + $cancelado;
+        if ((float)$monto_total_cancelado > (float)$venta_cobro->venta->total) {
+            throw new Exception("El monto cancelado no puede ser mayor al total de la venta " . $venta_cobro->venta->total);
+        }
+
+        // DATOS CAJA
+        $datos_movimiento_caja = [
+            "sucursal_id" => $venta_cobro->sucursal_id,
+            "almacen_id" => $venta_cobro->almacen_id,
+            "tipo" => "COBRO POR VENTA DE PRODUCTOS",
+            "modulo" => "VentaCobro",
+            "registro_id" => $venta_cobro->id,
+            "monto" => $venta_cobro->monto,
+            "tipo_movimiento" => "INGRESO",
+            "tipo_pago" => $venta_cobro->tipo_pago,
+            "descripcion" => "COBRO POR VENTA DE PRODUCTOS",
+        ];
+
+        // SALDO
+        $venta = $venta_cobro->venta;
+        $venta->saldo = (float)$venta->total - (float)$monto_total_cancelado;
+        $venta->save();
+        if ($venta->saldo < 0) {
+            throw new Exception("No se pudo realizar el registro por que el saldo calculado es menor a 0");
+        }
+
+        $movimiento_caja = MovimientoCaja::where("registro_id", $venta_cobro->id)
+            ->where("modulo", "VentaCobro")
+            ->where("tipo", "COBRO POR VENTA DE PRODUCTOS")
+            ->get()->first();
+        $this->movimiento_caja_service->actualizar($datos_movimiento_caja, $movimiento_caja);
 
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN PAGO POR COMPRA DE PRODUCTOS", $old_venta_cobro, $venta_cobro->withoutRelations());

@@ -8,6 +8,7 @@ use App\Http\Requests\IngresoProductoStoreRequest;
 use App\Http\Requests\IngresoProductoUpdateRequest;
 use App\Http\Requests\IngresoProductoVerificarRequest;
 use App\Models\Almacen;
+use App\Models\IngresoPago;
 use App\Models\IngresoProducto;
 use App\Models\User;
 use App\Services\IngresoPagoService;
@@ -96,6 +97,33 @@ class IngresoProductoController extends Controller
             return response()->JSON([
                 "sw" => true,
                 "message" => "Registro realizado"
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function actualizar_pago(IngresoPagoStoreRequest $request, IngresoPago $ingreso_pago)
+    {
+        DB::beginTransaction();
+        try {
+            // crear el IngresoProducto
+            $datos = $request->validated();
+            $almacen = Almacen::findOrFail($datos["almacen_id"]);
+            $datos["ingreso_producto_id"] = $ingreso_pago->ingreso_producto_id;
+            $datos["sucursal_id"] = $almacen->sucursal_id;
+            $datos["proveedor_id"] = $ingreso_pago->proveedor_id;
+            $ingreso_pago = $this->ingreso_pago_service->actualizar($datos, $ingreso_pago);
+            DB::commit();
+
+            return response()->JSON([
+                "sw" => true,
+                "message" => "Registro realizado",
+                "ingreso_pago" => $ingreso_pago,
+                "ingreso_producto" => $ingreso_pago->ingreso_producto,
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

@@ -26,8 +26,8 @@ const { axiosDelete } = useAxios();
 const miTable = ref(null);
 const headers = [
     {
-        label: "Nro.",
-        key: "id",
+        label: "Código",
+        key: "codigo_proforma",
         sortable: true,
         width: "4%",
     },
@@ -87,7 +87,7 @@ const updateDatatable = async () => {
 const eliminarProforma = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
-        html: `<strong>${item.nombre}</strong>`,
+        html: `<strong>${item.codigo_proforma}</strong>`,
         showCancelButton: true,
         confirmButtonText: "Si, eliminar",
         cancelButtonText: "No, cancelar",

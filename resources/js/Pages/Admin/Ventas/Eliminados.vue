@@ -21,7 +21,7 @@ onMounted(() => {
 });
 
 const { setVenta, limpiarVenta, form } = useVentas();
-const { axiosDelete } = useAxios();
+const { axiosDelete, axiosPost } = useAxios();
 
 const miTable = ref(null);
 const headers = [
@@ -99,11 +99,32 @@ const updateDatatable = async () => {
     }
 };
 
+const restaurarVenta = (item) => {
+    Swal.fire({
+        title: "¿Quierés restaurar este registro?",
+        html: `<strong>${item.codigo_venta}</strong>`,
+        showCancelButton: true,
+        confirmButtonText: "Si, restaurar",
+        cancelButtonText: "No, cancelar",
+        denyButtonText: `No, cancelar`,
+        customClass: {
+            confirmButton: "btn-alert-success",
+        },
+    }).then(async (result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            let respuesta = await axiosPost(route("ventas.restaurar", item.id));
+            if (respuesta && respuesta.sw) {
+                updateDatatable();
+            }
+        }
+    });
+};
+
 const eliminarVenta = (item) => {
     Swal.fire({
-        // icon: "question",
-        title: "¿Quierés eliminar/anular este registro?",
-        html: `<strong>${item.codigo_venta}</strong>`,
+        title: "¿Quierés eliminar este registro de forma PERMANENTE?",
+        html: `<h4>Esta acción no se podrá deshacer</h4><strong>${item.codigo_venta}</strong>`,
         showCancelButton: true,
         confirmButtonText: "Si, eliminar",
         cancelButtonText: "No, cancelar",
@@ -114,7 +135,9 @@ const eliminarVenta = (item) => {
     }).then(async (result) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
-            let respuesta = await axiosDelete(route("ventas.destroy", item.id));
+            let respuesta = await axiosDelete(
+                route("ventas.eliminar_permanente", item.id),
+            );
             if (respuesta && respuesta.sw) {
                 updateDatatable();
             }
@@ -123,12 +146,15 @@ const eliminarVenta = (item) => {
 };
 </script>
 <template>
-    <Head title="Ventas"></Head>
+    <Head title="Ventas Eliminadas/Anuladas"></Head>
     <Content>
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="m-0"><i class="fa fa-list-alt"></i> Ventas</h3>
+                    <h3 class="m-0">
+                        <i class="fa fa-list-alt"></i> Ventas
+                        Eliminadas/Anuladas
+                    </h3>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
@@ -136,7 +162,9 @@ const eliminarVenta = (item) => {
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
-                        <li class="breadcrumb-item active">Ventas</li>
+                        <li class="breadcrumb-item active">
+                            Ventas Eliminadas/Anuladas
+                        </li>
                     </ol>
                 </div>
                 <!-- /.col -->
@@ -151,25 +179,25 @@ const eliminarVenta = (item) => {
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
                                 props_page.auth?.user.permisos.includes(
-                                    'ventas.create',
+                                    'ventas.index',
                                 )
                             "
-                            :href="route('ventas.create')"
-                            class="btn btn-primary text-sm"
+                            :href="route('ventas.index')"
+                            class="btn btn-white border text-sm"
                         >
-                            <i class="fa fa-plus"></i> Nueva Venta
+                            <i class="fa fa-arrow-left"></i> Volver
                         </Link>
                         <Link
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
                                 props_page.auth?.user.permisos.includes(
-                                    'ventas.eliminados',
+                                    'ventas.create',
                                 )
                             "
-                            :href="route('ventas.eliminados')"
-                            class="btn btn-danger text-sm ms-1"
+                            :href="route('ventas.create')"
+                            class="btn btn-primary text-sm ms-1"
                         >
-                            <i class="fa fa-trash-alt"></i> Eliminados/Anulados
+                            <i class="fa fa-plus"></i> Nueva Venta
                         </Link>
                     </div>
                     <div class="col-md-8 my-1">
@@ -202,13 +230,13 @@ const eliminarVenta = (item) => {
                             ref="miTable"
                             :cols="headers"
                             :api="true"
-                            :url="route('ventas.paginado')"
+                            :url="route('ventas.paginado_eliminados')"
                             :numPages="5"
                             :multiSearch="multiSearch"
                             :syncOrderBy="'id'"
                             :syncOrderAsc="'DESC'"
                             table-responsive
-                            :header-class="'bg__primary'"
+                            :header-class="'bg__danger'"
                             fixed-header
                         >
                             <template #ubicacion="{ item }">
@@ -255,16 +283,14 @@ const eliminarVenta = (item) => {
                                     <el-tooltip
                                         class="box-item"
                                         effect="dark"
-                                        content="Editar"
+                                        content="Restaurar"
                                         placement="left-start"
                                     >
-                                        <Link
-                                            class="btn btn-warning"
-                                            :href="
-                                                route('ventas.edit', item.id)
-                                            "
+                                        <button
+                                            class="btn btn-success"
+                                            @click="restaurarVenta(item)"
                                         >
-                                            <i class="fa fa-pen"></i></Link
+                                            <i class="fa fa-sync"></i></button
                                     ></el-tooltip>
                                 </template>
 
@@ -286,7 +312,9 @@ const eliminarVenta = (item) => {
                                             class="btn btn-danger"
                                             @click="eliminarVenta(item)"
                                         >
-                                            <i class="fa fa-ban"></i></button
+                                            <i
+                                                class="fa fa-trash-alt"
+                                            ></i></button
                                     ></el-tooltip>
                                 </template>
                             </template>

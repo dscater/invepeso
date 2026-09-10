@@ -78,8 +78,8 @@ const recepcionar = (item) => {
 };
 
 const updateVentas = () => {
-    muestra_formulario.value = false;
-    limpiarVenta();
+    // muestra_formulario.value = false;
+    // limpiarVenta();
     cargarVentasFormularioCobros();
 };
 

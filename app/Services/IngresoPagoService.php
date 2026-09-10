@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Services\HistorialAccionService;
 use App\Models\IngresoPago;
 use App\Models\IngresoProducto;
+use App\Models\MovimientoCaja;
 use App\Models\Producto;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -96,8 +97,6 @@ class IngresoPagoService
      */
     public function crear(array $datos): IngresoPago
     {
-
-
         $ingreso_pago = IngresoPago::create([
             "sucursal_id" => $datos["sucursal_id"],
             "almacen_id" => $datos["almacen_id"],
@@ -113,7 +112,6 @@ class IngresoPagoService
         if ((float)$ingreso_pago->monto > (float)$ingreso_producto->saldo) {
             throw new Exception("El monto cancelado no puede ser mayor al saldo actual de $ingreso_producto->saldo");
         }
-
 
         // EGRESO CAJA
         $movimiento_caja = [
@@ -155,8 +153,53 @@ class IngresoPagoService
         $old_ingreso_pago = clone $ingreso_pago;
 
         $ingreso_pago->update([
-            "nombre" => mb_strtoupper($datos["nombre"]),
+            "sucursal_id" => $datos["sucursal_id"],
+            "almacen_id" => $datos["almacen_id"],
+            "ingreso_producto_id" => $datos["ingreso_producto_id"],
+            "proveedor_id" => $datos["proveedor_id"],
+            "monto" => $datos["monto"],
+            // "fecha" => date("Y-m-d"),
+            // "hora" => date("H:i:s"),
+            // "user_id" => Auth::user()->id,
         ]);
+        $cancelado = $ingreso_pago->ingreso_producto->cancelado;
+        $monto_total_cancelado = IngresoPago::where("id", "!=", $ingreso_pago->id)
+            ->where("ingreso_producto_id", $ingreso_pago->ingreso_producto_id)
+            ->sum("monto");
+        $monto_total_cancelado = (float)$monto_total_cancelado + (float)$ingreso_pago->monto + $cancelado;
+
+        $ingreso_producto = IngresoProducto::findOrFail($ingreso_pago->ingreso_producto_id);
+        if ((float)$monto_total_cancelado > (float)$ingreso_pago->ingreso_producto->total) {
+            throw new Exception("El monto cancelado no puede ser mayor al total de la compra " . $ingreso_pago->ingreso_producto->total);
+        }
+
+        // DATOS CAJA
+        $datos_movimiento_caja = [
+            "sucursal_id" => $ingreso_pago->sucursal_id,
+            "almacen_id" => $ingreso_pago->almacen_id,
+            "tipo" => "PAGO POR COMPRA DE PRODUCTOS",
+            "modulo" => "IngresoPago",
+            "registro_id" => $ingreso_pago->id,
+            "monto" => $ingreso_pago->monto,
+            "tipo_movimiento" => "EGRESO",
+            "tipo_pago" => "EFECTIVO",
+            "descripcion" => "PAGO POR COMPRA DE PRODUCTOS",
+        ];
+
+        // SALDO
+        $ingreso_producto = $ingreso_pago->ingreso_producto;
+        $ingreso_producto->saldo = (float)$ingreso_producto->total - (float)$monto_total_cancelado;
+        $ingreso_producto->save();
+        if ($ingreso_producto->saldo < 0) {
+            throw new Exception("No se pudo realizar el registro por que el saldo calculado es menor a 0");
+        }
+
+        $movimiento_caja = MovimientoCaja::where("registro_id", $ingreso_pago->id)
+            ->where("modulo", "IngresoPago")
+            ->where("tipo", "PAGO POR COMPRA DE PRODUCTOS")
+            ->get()->first();
+
+        $this->movimiento_caja_service->actualizar($datos_movimiento_caja, $movimiento_caja);
 
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN PAGO POR COMPRA DE PRODUCTOS", $old_ingreso_pago, $ingreso_pago->withoutRelations());

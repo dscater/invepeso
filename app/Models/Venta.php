@@ -67,6 +67,11 @@ class Venta extends Model
 
     public function venta_detalles()
     {
+        return $this->hasMany(VentaDetalle::class, "venta_id")->where("status", 1);
+    }
+
+    public function venta_detalles_todos()
+    {
         return $this->hasMany(VentaDetalle::class, "venta_id");
     }
 

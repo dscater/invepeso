@@ -62,9 +62,17 @@ const enviarFormulario = async () => {
 
             await actualizarListaPagos();
 
-            form.saldo = parseFloat(form.saldo) - parseFloat(formPago.monto);
+            if (formPago.id == 0) {
+                form.saldo =
+                    parseFloat(form.saldo) - parseFloat(formPago.monto);
+                form.saldo = form.saldo.toFixed(2);
+            } else {
+                form.saldo = response.data.ingreso_producto.saldo;
+                form.saldo = parseFloat(form.saldo).toFixed(2);
+            }
 
-            form.saldo = form.saldo.toFixed(2);
+            emits("envio-formulario");
+            cancelarRegistro();
         }
     } catch (error) {
         console.log(error);
@@ -168,8 +176,14 @@ const initialState = {
     fecha: "",
     hora: "",
     user_id: "",
+    _method: "POST",
 };
 const mostrarFormulario = ref(false);
+
+const nuevoPago = () => {
+    cancelarRegistro();
+    toggleFormulario(true);
+};
 
 const toggleFormulario = (sw = true) => {
     mostrarFormulario.value = sw;
@@ -196,6 +210,16 @@ const setIngresoPago = (item = null) => {
     Object.assign(formPago, item);
     formPago._method = "PUT";
 };
+const editarPago = (item) => {
+    setIngresoPago(item);
+    toggleFormulario(true);
+};
+
+const totalCancelado = computed(() => {
+    return form.ingreso_pagos.reduce((acc, item) => {
+        return acc + parseFloat(item.monto || 0);
+    }, 0);
+});
 
 onMounted(() => {
     cargarAlmacens();
@@ -251,7 +275,7 @@ onMounted(() => {
                         <div class="col-12">
                             <button
                                 class="btn btn-sm btn-primary fs-7"
-                                @click="toggleFormulario"
+                                @click="nuevoPago"
                                 v-if="!mostrarFormulario"
                             >
                                 <i class="fa fa-plus"></i> Nuevo Pago
@@ -266,6 +290,18 @@ onMounted(() => {
                         </div>
                         <div class="col-12 my-1" v-if="mostrarFormulario">
                             <form @submit.prevent="enviarFormulario()">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5 class="fs-7">
+                                            {{
+                                                formPago.id == 0
+                                                    ? "Nuevo"
+                                                    : "Editar"
+                                            }}
+                                            Pago
+                                        </h5>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-5">
                                         <label>Almacén</label>
@@ -379,6 +415,7 @@ onMounted(() => {
                                     <td>
                                         <button
                                             class="btn btn-warning btn-sm fs-7"
+                                            @click="editarPago(item)"
                                         >
                                             <i class="fa fa-edit"></i>
                                         </button>
@@ -388,6 +425,21 @@ onMounted(() => {
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td
+                                        class="bg-principal fw-bold"
+                                        colspan="2"
+                                    >
+                                        TOTAL
+                                    </td>
+                                    <td class="bg-principal fw-bold">
+                                        {{ totalCancelado.toFixed(2) }}
+                                    </td>
+                                    <td
+                                        class="bg-principal fw-bold"
+                                        colspan="3"
+                                    ></td>
                                 </tr>
                             </template>
                             <template v-else>

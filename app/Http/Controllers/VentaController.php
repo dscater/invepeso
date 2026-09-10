@@ -8,6 +8,7 @@ use App\Http\Requests\VentaUpdateRequest;
 use App\Models\Almacen;
 use App\Models\Venta;
 use App\Models\User;
+use App\Models\VentaCobro;
 use App\Services\VentaCobroService;
 use App\Services\VentaService;
 use Exception;
@@ -37,6 +38,11 @@ class VentaController extends Controller
     public function index(): ResponseInertia
     {
         return Inertia::render("Admin/Ventas/Index");
+    }
+
+    public function eliminados(): ResponseInertia
+    {
+        return Inertia::render("Admin/Ventas/Eliminados");
     }
 
     public function cobros(): ResponseInertia
@@ -103,6 +109,33 @@ class VentaController extends Controller
         }
     }
 
+    public function actualizar_cobro(VentaCobroStoreRequest $request, VentaCobro $venta_cobro)
+    {
+        DB::beginTransaction();
+        try {
+            // crear el Venta
+            $datos = $request->validated();
+            $almacen = Almacen::findOrFail($datos["almacen_id"]);
+            $datos["venta_id"] = $venta_cobro->venta_id;
+            $datos["sucursal_id"] = $almacen->sucursal_id;
+            $datos["cliente_id"] = $venta_cobro->cliente_id;
+            $venta_cobro = $this->venta_cobro_service->actualizar($datos, $venta_cobro);
+            DB::commit();
+
+            return response()->JSON([
+                "sw" => true,
+                "message" => "Registro realizado",
+                "venta_cobro" => $venta_cobro,
+                "venta" => $venta_cobro->venta,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
     /**
      * Listado de ventas sin ids: 1 y 2
      *
@@ -137,6 +170,35 @@ class VentaController extends Controller
         }
 
         $ventas = $this->ventaService->listadoPaginado($perPage, $page, $search, $columnsSerachLike, $columnsFilter, $columnsBetweenFilter, $arrayOrderBy);
+        return response()->JSON([
+            "data" => $ventas->items(),
+            "total" => $ventas->total(),
+            "lastPage" => $ventas->lastPage()
+        ]);
+    }
+
+    public function paginado_eliminados(Request $request)
+    {
+        $perPage = $request->perPage;
+        $page = (int)($request->input("page", 1));
+        $search = (string)$request->input("search", "");
+        $orderBy = $request->orderBy;
+        $orderAsc = $request->orderAsc;
+
+        $columnsSerachLike = [
+            "nombre",
+            "descripcion",
+        ];
+        $columnsFilter = [];
+        $columnsBetweenFilter = [];
+        $arrayOrderBy = [];
+        if ($orderBy && $orderAsc) {
+            $arrayOrderBy = [
+                [$orderBy, $orderAsc]
+            ];
+        }
+
+        $ventas = $this->ventaService->listadoPaginadoEliminados($perPage, $page, $search, $columnsSerachLike, $columnsFilter, $columnsBetweenFilter, $arrayOrderBy);
         return response()->JSON([
             "data" => $ventas->items(),
             "total" => $ventas->total(),
@@ -217,6 +279,42 @@ class VentaController extends Controller
         DB::beginTransaction();
         try {
             $this->ventaService->eliminar($venta);
+            DB::commit();
+            return response()->JSON([
+                'sw' => true,
+                'message' => 'El registro se eliminó correctamente'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function restaurar(Venta $venta): JsonResponse|Response
+    {
+        DB::beginTransaction();
+        try {
+            $this->ventaService->restaurar($venta);
+            DB::commit();
+            return response()->JSON([
+                'sw' => true,
+                'message' => 'El registro se restauró correctamente'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function eliminar_permanente(Venta $venta): JsonResponse|Response
+    {
+        DB::beginTransaction();
+        try {
+            $this->ventaService->eliminar_permanente($venta);
             DB::commit();
             return response()->JSON([
                 'sw' => true,

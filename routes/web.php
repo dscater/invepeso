@@ -233,6 +233,10 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     // VENTAS
     Route::get("ventas/paginado", [VentaController::class, 'paginado'])->name("ventas.paginado");
+    Route::get("ventas/eliminados", [VentaController::class, 'eliminados'])->name("ventas.eliminados");
+    Route::get("ventas/paginado_eliminados", [VentaController::class, 'paginado_eliminados'])->name("ventas.paginado_eliminados");
+    Route::post("ventas/restaurar/{venta}", [VentaController::class, 'restaurar'])->name("ventas.restaurar");
+    Route::delete("ventas/eliminar_permanente/{venta}", [VentaController::class, 'eliminar_permanente'])->name("ventas.eliminar_permanente");
     Route::get("ventas/listado", [VentaController::class, 'listado'])->name("ventas.listado");
     Route::get("ventas/cobros", [VentaController::class, 'cobros'])->name("ventas.cobros");
     Route::get("ventas/cobros/lista_cobros_pendientes", [VentaController::class, 'lista_cobros_pendientes'])->name("ventas.lista_cobros_pendientes");

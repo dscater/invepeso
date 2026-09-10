@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal("precio_final", 24, 2); // precio final obtenido despues de los descuentos
             $table->decimal("total", 24, 2); // total registrado = cantidad * precio_final | para calcular ingreso bruto
             $table->decimal("total_uni", 24, 2); // total por fila sin tomar en cuenta descuento del total para mostrar = cantidad * (precio - descuento_uni)
+            $table->integer("status")->default(1);
             $table->timestamps();
 
             $table->foreign("venta_id")->on("ventas")->references("id");
