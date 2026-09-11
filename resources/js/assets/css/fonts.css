@@ -22,6 +22,10 @@ body {
     color: var(--bgDarkGray) !important;
 }
 
+.text-bgDarkGrayP {
+    color: var(--bgDarkGrayP) !important;
+}
+
 .font-weight-600 {
     font-weight: 600;
 }

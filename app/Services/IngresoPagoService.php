@@ -216,15 +216,25 @@ class IngresoPagoService
     public function eliminar(IngresoPago $ingreso_pago): bool|Exception
     {
         $old_ingreso_pago = clone $ingreso_pago;
-        $usos = Producto::where("ingreso_pago_id", $ingreso_pago->id)->count();
-        if ($usos > 0) {
-            throw new Exception("No se puede eliminar este tipo de documento porque está siendo utilizado por $usos productos.");
-        }
+        $ingreso_producto = $ingreso_pago->ingreso_producto;
 
+        $cancelado = $ingreso_pago->ingreso_producto->cancelado;
+        $monto_total_cancelado = IngresoPago::where("id", "!=", $ingreso_pago->id)
+            ->where("ingreso_producto_id", $ingreso_pago->ingreso_producto_id)
+            ->sum("monto");
+        $monto_total_cancelado = (float)$monto_total_cancelado + $cancelado;
+        $ingreso_producto->saldo = (float)$ingreso_producto->total - (float)$monto_total_cancelado;
+        $ingreso_producto->save();
+
+        $movimiento_caja = MovimientoCaja::where("registro_id", $ingreso_pago->id)
+            ->where("modulo", "IngresoPago")
+            ->where("tipo", "PAGO POR COMPRA DE PRODUCTOS")
+            ->get()->first();
+        $this->movimiento_caja_service->eliminar($movimiento_caja, false);
         $ingreso_pago->delete();
 
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN PAGO POR COMPRA DE PRODUCTOS", $old_ingreso_pago, $ingreso_pago);
+        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN PAGO POR COMPRA DE PRODUCTOS", $old_ingreso_pago, null);
 
         return true;
     }

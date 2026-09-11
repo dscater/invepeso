@@ -18,7 +18,7 @@ use Illuminate\Validation\ValidationException;
 
 class VentaCobroService
 {
-    private $modulo = "PAGOS DE INGRESO DE PRODUCTOS";
+    private $modulo = "COBROS DE CRÉDITOS POR VENTAS";
 
     public function __construct(
         private  CargarArchivoService $cargarArchivoService,
@@ -171,7 +171,6 @@ class VentaCobroService
         $monto_total_cancelado = VentaCobro::where("id", "!=", $venta_cobro->id)
             ->where("venta_id", $venta_cobro->venta_id)
             ->sum("monto");
-
         $monto_total_cancelado = (float)$monto_total_cancelado + (float)$venta_cobro->monto + $cancelado;
         if ((float)$monto_total_cancelado > (float)$venta_cobro->venta->total) {
             throw new Exception("El monto cancelado no puede ser mayor al total de la venta " . $venta_cobro->venta->total);
@@ -205,7 +204,7 @@ class VentaCobroService
         $this->movimiento_caja_service->actualizar($datos_movimiento_caja, $movimiento_caja);
 
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN PAGO POR COMPRA DE PRODUCTOS", $old_venta_cobro, $venta_cobro->withoutRelations());
+        $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN PAGO POR VENTA DE PRODUCTOS", $old_venta_cobro, $venta_cobro->withoutRelations());
 
         return $venta_cobro;
     }
@@ -219,15 +218,27 @@ class VentaCobroService
     public function eliminar(VentaCobro $venta_cobro): bool|Exception
     {
         $old_venta_cobro = clone $venta_cobro;
-        $usos = Producto::where("venta_cobro_id", $venta_cobro->id)->count();
-        if ($usos > 0) {
-            throw new Exception("No se puede eliminar este tipo de documento porque está siendo utilizado por $usos productos.");
-        }
+        $venta = $venta_cobro->venta;
+
+        $cancelado = $venta_cobro->venta->cancelado;
+        $monto_total_cancelado = VentaCobro::where("id", "!=", $venta_cobro->id)
+            ->where("venta_id", $venta_cobro->venta_id)
+            ->sum("monto");
+        $monto_total_cancelado = (float)$monto_total_cancelado + $cancelado;
+        $venta->saldo = (float)$venta->total - (float)$monto_total_cancelado;
+        $venta->save();
+
+
+        $movimiento_caja = MovimientoCaja::where("registro_id", $venta_cobro->id)
+            ->where("modulo", "VentaCobro")
+            ->where("tipo", "COBRO POR VENTA DE PRODUCTOS")
+            ->get()->first();
+        $this->movimiento_caja_service->eliminar($movimiento_caja, false);
 
         $venta_cobro->delete();
 
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN PAGO POR COMPRA DE PRODUCTOS", $old_venta_cobro, $venta_cobro);
+        $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN PAGO POR VENTA DE PRODUCTOS", $old_venta_cobro, null);
 
         return true;
     }

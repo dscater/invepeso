@@ -1,7 +1,9 @@
 <script setup>
 import MiModal from "@/Components/MiModal.vue";
 import { useForm, usePage } from "@inertiajs/vue3";
+import { useAxios } from "@/composables/axios/useAxios";
 import { watch, ref, computed, onMounted, nextTick } from "vue";
+const { axiosDelete } = useAxios();
 // TOAST
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -215,6 +217,34 @@ const editarPago = (item) => {
     toggleFormulario(true);
 };
 
+const eliminarPago = (item) => {
+    Swal.fire({
+        // icon: "question",
+        title: "¿Quierés eliminar este registro?",
+        html: `<strong>${item.fecha_hora_t}</strong><br/><b>Monto: </b>${item.monto}<br/>`,
+        showCancelButton: true,
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "No, cancelar",
+        denyButtonText: `No, cancelar`,
+        customClass: {
+            confirmButton: "btn-danger",
+        },
+    }).then(async (result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            let respuesta = await axiosDelete(
+                route("ingreso_productos.eliminar_pago", item.id),
+            );
+            if (respuesta && respuesta.sw) {
+                await actualizarListaPagos();
+                form.saldo = respuesta.ingreso_producto.saldo;
+                form.saldo = parseFloat(form.saldo).toFixed(2);
+                emits("envio-formulario");
+            }
+        }
+    });
+};
+
 const totalCancelado = computed(() => {
     return form.ingreso_pagos.reduce((acc, item) => {
         return acc + parseFloat(item.monto || 0);
@@ -264,6 +294,9 @@ onMounted(() => {
                     </h4>
                     <h4 class="float-end fw-bold fs-5 text-danger">
                         Saldo Bs.: {{ form.saldo }}
+                    </h4>
+                    <h4 class="float-end fw-bold fs-5 text-bgDarkGrayP me-3">
+                        Adelanto Bs.: {{ form.cancelado }}
                     </h4>
                     <h4 class="fw-bold fs-5 text-success">
                         Total Bs.: {{ form.total }}
@@ -414,13 +447,16 @@ onMounted(() => {
                                     </td>
                                     <td>
                                         <button
+                                            type="button"
                                             class="btn btn-warning btn-sm fs-7"
-                                            @click="editarPago(item)"
+                                            @click.prevent="editarPago(item)"
                                         >
                                             <i class="fa fa-edit"></i>
                                         </button>
                                         <button
+                                            type="button"
                                             class="btn btn-danger btn-sm fs-7"
+                                            @click.prevent="eliminarPago(item)"
                                         >
                                             <i class="fa fa-trash"></i>
                                         </button>

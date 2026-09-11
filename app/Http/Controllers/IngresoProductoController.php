@@ -133,6 +133,26 @@ class IngresoProductoController extends Controller
         }
     }
 
+    public function eliminar_pago(IngresoPago $ingreso_pago): JsonResponse|Response
+    {
+        DB::beginTransaction();
+        try {
+            $ingreso_producto = $ingreso_pago->ingreso_producto;
+            $this->ingreso_pago_service->eliminar($ingreso_pago);
+            DB::commit();
+            return response()->JSON([
+                'sw' => true,
+                'message' => 'El registro se eliminó correctamente',
+                "ingreso_producto" => $ingreso_producto,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
     /**
      * Listado de ingreso_productos sin ids: 1 y 2
      *

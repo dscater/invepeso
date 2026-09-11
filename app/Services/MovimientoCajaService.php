@@ -177,11 +177,11 @@ class MovimientoCajaService
         return $movimiento_caja;
     }
 
-    public function eliminar(MovimientoCaja $movimiento_caja): bool|Exception
+    public function eliminar(MovimientoCaja $movimiento_caja, $valida_movimiento = true): bool|Exception
     {
         $old_movimiento_caja = clone $movimiento_caja;
 
-        if ($movimiento_caja->tipo != 'MOVIMIENTO DE CAJA') {
+        if ($movimiento_caja->tipo != 'MOVIMIENTO DE CAJA' && $valida_movimiento) {
             throw new Exception("No se puede eliminar este registro porque se registro desde un módulo diferente a MOVIMIENTO DE CAJA");
         }
         $movimiento_caja->status = 0;

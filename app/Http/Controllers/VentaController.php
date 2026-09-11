@@ -136,6 +136,26 @@ class VentaController extends Controller
         }
     }
 
+    public function eliminar_cobro(VentaCobro $venta_cobro): JsonResponse|Response
+    {
+        DB::beginTransaction();
+        try {
+            $venta = $venta_cobro->venta;
+            $this->venta_cobro_service->eliminar($venta_cobro);
+            DB::commit();
+            return response()->JSON([
+                'sw' => true,
+                'message' => 'El registro se eliminó correctamente',
+                "venta" => $venta,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
     /**
      * Listado de ventas sin ids: 1 y 2
      *

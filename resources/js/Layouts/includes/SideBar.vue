@@ -40,7 +40,8 @@ const sincronizarMenus = () => {
     if (
         route_current.value == "movimiento_cajas.index" ||
         route_current.value == "movimiento_cajas.create" ||
-        route_current.value == "ingreso_productos.pagos"
+        route_current.value == "ingreso_productos.pagos" ||
+        route_current.value == "ventas.cobros"
     ) {
         openMenus.movimiento_cajas = true;
     }

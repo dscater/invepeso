@@ -203,6 +203,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("ingreso_productos/pagos/lista_pagos_pendientes", [IngresoProductoController::class, 'lista_pagos_pendientes'])->name("ingreso_productos.lista_pagos_pendientes");
     Route::post("ingreso_productos/registrar_pago/{ingreso_producto}", [IngresoProductoController::class, 'registrar_pago'])->name("ingreso_productos.registrar_pago");
     Route::put("ingreso_productos/actualizar_pago/{ingreso_pago}", [IngresoProductoController::class, 'actualizar_pago'])->name("ingreso_productos.actualizar_pago");
+    Route::delete("ingreso_productos/eliminar_pago/{ingreso_pago}", [IngresoProductoController::class, 'eliminar_pago'])->name("ingreso_productos.eliminar_pago");
     Route::resource("ingreso_productos", IngresoProductoController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );
@@ -242,6 +243,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("ventas/cobros/lista_cobros_pendientes", [VentaController::class, 'lista_cobros_pendientes'])->name("ventas.lista_cobros_pendientes");
     Route::post("ventas/registrar_cobro/{venta}", [VentaController::class, 'registrar_cobro'])->name("ventas.registrar_cobro");
     Route::put("ventas/actualizar_cobro/{venta_cobro}", [VentaController::class, 'actualizar_cobro'])->name("ventas.actualizar_cobro");
+    Route::delete("ventas/eliminar_cobro/{venta_cobro}", [VentaController::class, 'eliminar_cobro'])->name("ventas.eliminar_cobro");
     Route::resource("ventas", VentaController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );
