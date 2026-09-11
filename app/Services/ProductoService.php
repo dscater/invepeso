@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Categoria;
 use App\Models\IngresoDetalle;
+use App\Models\Marca;
 use App\Services\HistorialAccionService;
 use App\Models\Producto;
 use App\Models\ProductoSucursal;
 use App\Models\SalidaProducto;
+use App\Models\UnidadMedida;
 use App\Models\User;
 use App\Models\VentaDetalle;
 use App\Models\VentaDetalleLote;
@@ -17,6 +20,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ProductoService
 {
@@ -262,10 +266,6 @@ class ProductoService
             ->get()
             ->first();
 
-
-        Log::debug("producto:");
-        Log::debug($producto);
-
         $disponible = false;
         if ($producto->stock_actual >= $cantidad) {
             $disponible = true;
@@ -308,6 +308,336 @@ class ProductoService
         return true;
     }
 
+
+    public function cargarProductos($datos)
+    {
+        $archivo = $datos["archivo"];
+        $extension = '.' . $archivo->getClientOriginalExtension();
+        if ($extension == '.xlsx') {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        } else {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+        }
+        $spreadsheet = $reader->load($archivo);
+
+        $hoja = $spreadsheet->getActiveSheet();
+
+        $filas = $hoja->toArray(null, true, true, true);
+
+        if (empty($filas)) {
+            throw new \Exception("El archivo Excel está vacío.");
+        }
+
+        /*
+     * ============================================================
+     * 1. VALIDAR ENCABEZADOS
+     * ============================================================
+     */
+
+        $encabezadosEsperados = [
+            "A" => "CÓDIGO*",
+            "B" => "NOMBRE*",
+            "C" => "CATEGORÍA*",
+            "D" => "MARCA*",
+            "E" => "UNIDAD MEDIDA*",
+            "F" => "PRECIO 1*",
+            "G" => "PRECIO 2",
+            "H" => "PRECIO 3",
+            "I" => "PRECIO 4",
+            "J" => "STOCK MÍNIMO*",
+            "K" => "PRECIO COMPRA*",
+        ];
+
+        $encabezados = array_shift($filas);
+
+        foreach ($encabezadosEsperados as $columna => $encabezadoEsperado) {
+
+            $encabezadoActual = trim(
+                strtoupper($encabezados[$columna] ?? "")
+            );
+
+            if ($encabezadoActual !== $encabezadoEsperado) {
+                throw new \Exception(
+                    "El encabezado de la columna {$columna} debe ser '{$encabezadoEsperado}'."
+                );
+            }
+        }
+
+        /*
+     * ============================================================
+     * 2. CARGAR RELACIONES UNA SOLA VEZ
+     * ============================================================
+     *
+     * Evitamos hacer una consulta a BD por cada producto.
+     */
+
+        $categorias = Categoria::get()
+            ->keyBy(fn($item) => mb_strtoupper(trim($item->nombre)));
+
+        $marcas = Marca::get()
+            ->keyBy(fn($item) => mb_strtoupper(trim($item->nombre)));
+
+        $unidades = UnidadMedida::get()
+            ->keyBy(fn($item) => mb_strtoupper(trim($item->nombre)));
+
+        /*
+     * ============================================================
+     * 3. CÓDIGOS EXISTENTES EN BD
+     * ============================================================
+     */
+
+        $codigosExcel = [];
+
+        foreach ($filas as $numero => $fila) {
+
+            $codigo = trim($fila["A"] ?? "");
+
+            if ($codigo !== "") {
+                $codigosExcel[] = $codigo;
+            }
+        }
+
+        $codigosExcel = array_unique($codigosExcel);
+
+        $codigosExistentes = Producto::whereIn("codigo", $codigosExcel)
+            ->pluck("codigo")
+            ->toArray();
+
+        $codigosExistentes = array_flip($codigosExistentes);
+
+        /*
+     * ============================================================
+     * 4. PROCESAR PRODUCTOS
+     * ============================================================
+     */
+
+        $productos = [];
+
+        $codigosProcesados = [];
+
+        foreach ($filas as $indice => $fila) {
+
+            // Excel empieza en fila 1.
+            // Como quitamos el encabezado, sumamos 2.
+            $filaExcel = $indice + 2;
+
+            /*
+         * Ignorar filas completamente vacías
+         */
+            if (empty(array_filter($fila, fn($valor) => trim((string) $valor) !== ""))) {
+                continue;
+            }
+
+            /*
+         * ========================================================
+         * DATOS
+         * ========================================================
+         */
+
+            $codigo = trim((string) ($fila["A"] ?? ""));
+            $nombre = trim((string) ($fila["B"] ?? ""));
+            $categoria = trim((string) ($fila["C"] ?? ""));
+            $marca = trim((string) ($fila["D"] ?? ""));
+            $unidadMedida = trim((string) ($fila["E"] ?? ""));
+
+            $precio1 = $fila["F"] ?? null;
+            $precio2 = $fila["G"] ?? null;
+            $precio3 = $fila["H"] ?? null;
+            $precio4 = $fila["I"] ?? null;
+
+            $stockMin = $fila["J"] ?? null;
+            $precioCompra = $fila["K"] ?? null;
+
+            /*
+         * ========================================================
+         * CAMPOS OBLIGATORIOS
+         * ========================================================
+         */
+
+            if ($codigo === "") {
+                throw new \Exception(
+                    "La columna CÓDIGO es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($nombre === "") {
+                throw new \Exception(
+                    "La columna NOMBRE es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($categoria === "") {
+                throw new \Exception(
+                    "La columna CATEGORÍA es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($marca === "") {
+                throw new \Exception(
+                    "La columna MARCA es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($unidadMedida === "") {
+                throw new \Exception(
+                    "La columna UNIDAD MEDIDA es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($precio1 === null || $precio1 === "") {
+                throw new \Exception(
+                    "La columna PRECIO 1 es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($stockMin === null || $stockMin === "") {
+                throw new \Exception(
+                    "La columna STOCK MÍNIMO es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($precioCompra === null || $precioCompra === "") {
+                throw new \Exception(
+                    "La columna PRECIO COMPRA es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            /*
+         * ========================================================
+         * VALIDAR NÚMEROS
+         * ========================================================
+         */
+
+            $camposNumericos = [
+                "PRECIO 1" => $precio1,
+                "PRECIO 2" => $precio2,
+                "PRECIO 3" => $precio3,
+                "PRECIO 4" => $precio4,
+                "STOCK MÍNIMO" => $stockMin,
+                "PRECIO COMPRA" => $precioCompra,
+            ];
+
+            foreach ($camposNumericos as $campo => $valor) {
+
+                if (
+                    $valor !== null &&
+                    $valor !== "" &&
+                    !is_numeric($valor)
+                ) {
+                    throw new \Exception(
+                        "El campo {$campo} debe ser numérico. Fila: {$filaExcel}"
+                    );
+                }
+            }
+
+            /*
+         * ========================================================
+         * VALIDAR CÓDIGO DUPLICADO EN EL EXCEL
+         * ========================================================
+         */
+
+            if (isset($codigosProcesados[$codigo])) {
+                throw new \Exception(
+                    "El código '{$codigo}' está repetido en el Excel. " .
+                        "Filas: {$codigosProcesados[$codigo]} y {$filaExcel}"
+                );
+            }
+
+            $codigosProcesados[$codigo] = $filaExcel;
+
+            /*
+         * ========================================================
+         * VALIDAR CÓDIGO EXISTENTE EN BD
+         * ========================================================
+         */
+
+            if (isset($codigosExistentes[$codigo])) {
+                throw new \Exception(
+                    "El código '{$codigo}' ya existe en la base de datos. " .
+                        "Fila: {$filaExcel}"
+                );
+            }
+
+            /*
+         * ========================================================
+         * BUSCAR CATEGORÍA
+         * ========================================================
+         */
+
+            $categoriaKey = mb_strtoupper(trim($categoria));
+            if (!isset($categorias[$categoriaKey])) {
+                $categorias[$categoriaKey] = Categoria::create([
+                    "nombre" => $categoria,
+                ]);
+            }
+
+            /*
+         * ========================================================
+         * BUSCAR MARCA
+         * ========================================================
+         */
+
+            $marcaKey = mb_strtoupper(trim($marca));
+
+            if (!isset($marcas[$marcaKey])) {
+                $marcas[$marcaKey] = Marca::create([
+                    "nombre" => $marca,
+                ]);
+            }
+
+            /*
+         * ========================================================
+         * BUSCAR UNIDAD DE MEDIDA
+         * ========================================================
+         */
+
+            $unidadKey = mb_strtoupper(trim($unidadMedida));
+
+            if (!isset($unidades[$unidadKey])) {
+                $unidades[$unidadKey] = UnidadMedida::create([
+                    "nombre" => $unidadMedida,
+                ]);
+            }
+
+            /*
+         * ========================================================
+         * PREPARAR PRODUCTO
+         * ========================================================
+         */
+
+            $productos[] = [
+                "codigo" => $codigo,
+                "nombre" => $nombre,
+
+                "categoria_id" => $categorias[$categoriaKey]->id,
+                "marca_id" => $marcas[$marcaKey]->id,
+                "unidad_medida_id" => $unidades[$unidadKey]->id,
+
+                "precio" => $precio1,
+                "precio2" => $precio2 ?: null,
+                "precio3" => $precio3 ?: null,
+                "precio4" => $precio4 ?: null,
+
+                "precio_compra" => $precioCompra,
+                "stock_min" => $stockMin,
+
+                "activo" => 1,
+                "fecha_registro" => now(),
+            ];
+        }
+
+        /*
+     * ============================================================
+     * 5. INSERTAR PRODUCTOS
+     * ============================================================
+     */
+
+        if (!empty($productos)) {
+            Producto::insert($productos);
+        }
+
+        return count($productos);
+    }
     // // cantidad disponible
     // // VERIFICAR EN UNA TABLA DONDE SE GUARDAN MOVIMIENTOS ACTUALES COMO VENTAS
     // // TODO: modificar y aplicar

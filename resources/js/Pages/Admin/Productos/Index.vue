@@ -8,6 +8,7 @@ import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
 import Formulario from "./Formulario.vue";
+import FormularioCarga from "./FormularioCarga.vue";
 import { buttonProps } from "element-plus";
 // const { mobile, identificaDispositivo } = useMenu();
 const { props: props_page } = usePage();
@@ -94,6 +95,7 @@ const multiSearch = ref({
 });
 
 const muestra_formulario = ref(false);
+const muestra_formulario_carga = ref(false);
 
 const agregarRegistro = () => {
     limpiarProducto();
@@ -105,6 +107,7 @@ const updateDatatable = async () => {
         await miTable.value.cargarDatos();
         limpiarProducto();
         muestra_formulario.value = false;
+        muestra_formulario_carga.value = false;
     }
 };
 
@@ -173,6 +176,19 @@ const eliminarProducto = (item) => {
                             @click="agregarRegistro"
                         >
                             <i class="fa fa-plus"></i> Nuevo Producto
+                        </button>
+                        <button
+                            v-if="
+                                props_page.auth?.user.permisos == '*' ||
+                                props_page.auth?.user.permisos.includes(
+                                    'productos.cargarProductos',
+                                )
+                            "
+                            type="button"
+                            class="btn btn-success text-sm ms-1"
+                            @click="muestra_formulario_carga = true"
+                        >
+                            <i class="fa fa-upload"></i> Cargar Productos
                         </button>
                     </div>
                     <div class="col-md-8 my-1">
@@ -309,5 +325,11 @@ const eliminarProducto = (item) => {
             @envio-formulario="updateDatatable"
             @cerrar-formulario="muestra_formulario = false"
         ></Formulario>
+        <FormularioCarga
+            v-if="muestra_formulario_carga"
+            :muestra_formulario="muestra_formulario_carga"
+            @envio-formulario="updateDatatable"
+            @cerrar-formulario="muestra_formulario_carga = false"
+        ></FormularioCarga>
     </Content>
 </template>

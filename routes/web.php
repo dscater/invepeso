@@ -164,6 +164,8 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // PRODUCTOS
     Route::get("productos/paginado", [ProductoController::class, 'paginado'])->name("productos.paginado");
     Route::get("productos/listado", [ProductoController::class, 'listado'])->name("productos.listado");
+    Route::get("productos/formato", [ProductoController::class, 'formato'])->name("productos.formato");
+    Route::post("productos/cargaProductos", [ProductoController::class, 'cargaProductos'])->name("productos.cargaProductos");
     Route::resource("productos", ProductoController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );

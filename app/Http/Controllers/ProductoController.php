@@ -147,4 +147,42 @@ class ProductoController extends Controller
             ]);
         }
     }
+
+    public function formato()
+    {
+        return response()->download(
+            public_path("files/formato_productos.xlsx"),
+            "formato_productos" . time() . ".xlsx"
+        );
+    }
+
+    public function cargaProductos(Request $request)
+    {
+        $request->validate([
+            "archivo" => [
+                "required",
+                "file",
+                "mimes:xlsx,xls",
+                "max:8192",
+            ],
+        ], [
+            "archivo.required" => "Debe seleccionar un archivo.",
+            "archivo.file" => "El archivo seleccionado no es válido.",
+            "archivo.mimes" => "El archivo debe ser de tipo Excel (.xlsx o .xls).",
+            "archivo.max" => "El archivo no debe superar los 8 MB.",
+        ]);
+        DB::beginTransaction();
+        try {
+            // crear el Producto
+            $datos["archivo"] = $request->file("archivo");
+            $this->productoService->cargarProductos($datos);
+            DB::commit();
+            return redirect()->route("productos.index")->with("bien", "Registro realizado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
 }
