@@ -147,4 +147,42 @@ class ProveedorController extends Controller
             ]);
         }
     }
+
+    public function formato()
+    {
+        return response()->download(
+            public_path("files/formato_proveedors.xlsx"),
+            "formato_proveedors" . time() . ".xlsx"
+        );
+    }
+
+    public function cargaProveedors(Request $request)
+    {
+        $request->validate([
+            "archivo" => [
+                "required",
+                "file",
+                "mimes:xlsx,xls",
+                "max:8192",
+            ],
+        ], [
+            "archivo.required" => "Debe seleccionar un archivo.",
+            "archivo.file" => "El archivo seleccionado no es válido.",
+            "archivo.mimes" => "El archivo debe ser de tipo Excel (.xlsx o .xls).",
+            "archivo.max" => "El archivo no debe superar los 8 MB.",
+        ]);
+        DB::beginTransaction();
+        try {
+            // crear proveedors
+            $datos["archivo"] = $request->file("archivo");
+            $this->proveedorService->cargarProveedors($datos);
+            DB::commit();
+            return redirect()->route("proveedors.index")->with("bien", "Registro realizado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
 }

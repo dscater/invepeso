@@ -184,4 +184,42 @@ class ClienteController extends Controller
             ]);
         }
     }
+
+    public function formato()
+    {
+        return response()->download(
+            public_path("files/formato_clientes.xlsx"),
+            "formato_clientes" . time() . ".xlsx"
+        );
+    }
+
+    public function cargaClientes(Request $request)
+    {
+        $request->validate([
+            "archivo" => [
+                "required",
+                "file",
+                "mimes:xlsx,xls",
+                "max:8192",
+            ],
+        ], [
+            "archivo.required" => "Debe seleccionar un archivo.",
+            "archivo.file" => "El archivo seleccionado no es válido.",
+            "archivo.mimes" => "El archivo debe ser de tipo Excel (.xlsx o .xls).",
+            "archivo.max" => "El archivo no debe superar los 8 MB.",
+        ]);
+        DB::beginTransaction();
+        try {
+            // crear productos
+            $datos["archivo"] = $request->file("archivo");
+            $this->clienteService->cargarClientes($datos);
+            DB::commit();
+            return redirect()->route("clientes.index")->with("bien", "Registro realizado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
 }

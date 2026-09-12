@@ -100,7 +100,7 @@ const eliminarTipoDocumento = (item) => {
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-building"></i> Tipo de Documentos
+                        <i class="fa fa-list"></i> Tipo de Documentos
                     </h3>
                 </div>
                 <!-- /.col -->

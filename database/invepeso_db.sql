@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 11-09-2026 a las 16:18:49
+-- Tiempo de generación: 12-09-2026 a las 22:59:17
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -103,7 +103,10 @@ INSERT INTO `clientes` (`id`, `nombre`, `tipo_documento_id`, `nro_documento`, `c
 (6, 'CONDORI', 1, '32233', NULL, NULL, NULL, '2026-09-09', 1, '2026-09-09 20:23:27', '2026-09-09 20:23:27'),
 (7, 'MAMANI', 1, '223332', NULL, NULL, NULL, '2026-09-09', 1, '2026-09-09 20:24:03', '2026-09-09 20:24:03'),
 (8, 'CASTRO', 2, '43344343', NULL, NULL, NULL, '2026-09-09', 1, '2026-09-09 20:25:10', '2026-09-09 20:25:10'),
-(9, 'SOLIZ', 1, '32323', NULL, NULL, NULL, '2026-09-09', 1, '2026-09-09 20:28:18', '2026-09-09 20:28:18');
+(9, 'SOLIZ', 1, '32323', NULL, NULL, NULL, '2026-09-09', 1, '2026-09-09 20:28:18', '2026-09-09 20:28:18'),
+(10, 'JUAN PERES', 1, '1234566', '', '77777777', 'juan@gmail.com', '2026-09-12', 1, NULL, NULL),
+(11, 'condori', 2, '8888888888', '', '', '', '2026-09-12', 1, NULL, NULL),
+(12, 'mamani', 1, '34343443', '', '', '', '2026-09-12', 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -747,7 +750,9 @@ CREATE TABLE `proveedors` (
 
 INSERT INTO `proveedors` (`id`, `nombre`, `contacto`, `created_at`, `updated_at`) VALUES
 (1, 'PROVEEDOR 1', '787878787 - proveedor@gmail.com', '2026-07-13 19:46:12', '2026-07-13 19:46:12'),
-(2, 'PROVEEDOR 2', NULL, '2026-07-13 19:47:02', '2026-07-13 19:47:02');
+(2, 'PROVEEDOR 2', NULL, '2026-07-13 19:47:02', '2026-07-13 19:47:02'),
+(3, 'PROVEEDOR 3', '', NULL, NULL),
+(4, 'PROVEEDOR 4', '6666898', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1420,7 +1425,7 @@ ALTER TABLE `categorias`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `configuracions`
@@ -1516,7 +1521,7 @@ ALTER TABLE `proforma_detalles`
 -- AUTO_INCREMENT de la tabla `proveedors`
 --
 ALTER TABLE `proveedors`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `roles`

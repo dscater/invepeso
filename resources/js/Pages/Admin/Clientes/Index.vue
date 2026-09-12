@@ -7,6 +7,7 @@ import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 import Formulario from "./Formulario.vue";
+import FormularioCarga from "./FormularioCarga.vue";
 const { props: props_page } = usePage();
 const appStore = useAppStore();
 onBeforeMount(() => {
@@ -72,6 +73,7 @@ const multiSearch = ref({
 });
 
 const muestra_formulario = ref(false);
+const muestra_formulario_carga = ref(false);
 
 const agregarRegistro = () => {
     limpiarCliente();
@@ -83,6 +85,7 @@ const updateDatatable = async () => {
         await miTable.value.cargarDatos();
         limpiarCliente();
         muestra_formulario.value = false;
+        muestra_formulario_carga.value = false;
     }
 };
 
@@ -149,6 +152,19 @@ const eliminarCliente = (item) => {
                             @click="agregarRegistro"
                         >
                             <i class="fa fa-plus"></i> Nuevo Cliente
+                        </button>
+                        <button
+                            v-if="
+                                props_page.auth?.user.permisos == '*' ||
+                                props_page.auth?.user.permisos.includes(
+                                    'clientes.cargarClientes',
+                                )
+                            "
+                            type="button"
+                            class="btn btn-success text-sm ms-1"
+                            @click="muestra_formulario_carga = true"
+                        >
+                            <i class="fa fa-upload"></i> Cargar Clientes
                         </button>
                     </div>
                     <div class="col-md-8 my-1">
@@ -263,5 +279,11 @@ const eliminarCliente = (item) => {
             @envio-formulario="updateDatatable"
             @cerrar-formulario="muestra_formulario = false"
         ></Formulario>
+        <FormularioCarga
+            v-if="muestra_formulario_carga"
+            :muestra_formulario="muestra_formulario_carga"
+            @envio-formulario="updateDatatable"
+            @cerrar-formulario="muestra_formulario_carga = false"
+        ></FormularioCarga>
     </Content>
 </template>

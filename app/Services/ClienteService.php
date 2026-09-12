@@ -4,12 +4,14 @@ namespace App\Services;
 
 use App\Services\HistorialAccionService;
 use App\Models\Cliente;
+use App\Models\TipoDocumento;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Exception;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ClienteService
@@ -143,5 +145,173 @@ class ClienteService
         $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN CLIENTE", $old_cliente, $cliente);
 
         return true;
+    }
+
+    public function cargarClientes($datos)
+    {
+        $archivo = $datos["archivo"];
+        $extension = '.' . $archivo->getClientOriginalExtension();
+        if ($extension == '.xlsx') {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        } else {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+        }
+        $spreadsheet = $reader->load($archivo);
+
+        $hoja = $spreadsheet->getActiveSheet();
+
+        $filas = $hoja->toArray(null, true, true, true);
+
+        if (empty($filas)) {
+            throw new \Exception("El archivo Excel está vacío.");
+        }
+
+        /*
+     * ============================================================
+     * 1. VALIDAR ENCABEZADOS
+     * ============================================================
+     */
+
+        $encabezadosEsperados = [
+            "A" => "NOMBRE*",
+            "B" => "TIPO DOCUMENTO*",
+            "C" => "NRO DOCUMENTO*",
+            "D" => "COMPLEMENTO",
+            "E" => "CONTACTO",
+            "F" => "CORREO",
+        ];
+
+        $encabezados = array_shift($filas);
+
+        foreach ($encabezadosEsperados as $columna => $encabezadoEsperado) {
+
+            $encabezadoActual = trim(
+                strtoupper($encabezados[$columna] ?? "")
+            );
+
+            if ($encabezadoActual !== $encabezadoEsperado) {
+                throw new \Exception(
+                    "El encabezado de la columna {$columna} debe ser '{$encabezadoEsperado}'."
+                );
+            }
+        }
+
+        /*
+     * ============================================================
+     * 2. CARGAR RELACIONES UNA SOLA VEZ
+     * ============================================================
+     *
+     * Evitamos hacer una consulta a BD por cada cliente.
+     */
+
+        $tipo_documentos = TipoDocumento::get()
+            ->keyBy(fn($item) => mb_strtoupper(trim($item->nombre)));
+
+        $codigosProcesados = [];
+        $clientes = [];
+        $fecha_actual = date("Y-m-d");
+
+        foreach ($filas as $indice => $fila) {
+
+            // Excel empieza en fila 1.
+            // Como quitamos el encabezado, sumamos 2.
+            $filaExcel = $indice + 2;
+
+            /*
+         */
+            if (empty(array_filter($fila, fn($valor) => trim((string) $valor) !== ""))) {
+                continue;
+            }
+
+            /*
+         * ========================================================
+         * DATOS
+         * ========================================================
+         */
+            $nombre = trim((string) ($fila["A"] ?? ""));
+            $tipo_documento = trim((string) ($fila["B"] ?? ""));
+            $nro_documento = trim((string) ($fila["C"] ?? ""));
+            $complemento = trim((string) ($fila["D"] ?? ""));
+            $contacto = trim((string) ($fila["E"] ?? ""));
+            $correo = trim((string) ($fila["F"] ?? ""));
+
+            /*
+         * ========================================================
+         * CAMPOS OBLIGATORIOS
+         * ========================================================
+         */
+
+            if ($nombre === "") {
+                throw new \Exception(
+                    "La columna NOMBRE* es obligatorio. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($tipo_documento === "") {
+                throw new \Exception(
+                    "La columna TIPO DOCUMENTO* es obligatorio. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($nro_documento === "") {
+                throw new \Exception(
+                    "La columna NRO DOCUMENTO* es obligatorio. Fila: {$filaExcel}"
+                );
+            }
+
+            /*
+         * ========================================================
+         * VALIDAR DATOS DUPLICADOS
+         * ========================================================
+         */
+            $tipoDocumentoKey = mb_strtoupper(trim($tipo_documento));
+            if (!isset($tipo_documentos[$tipoDocumentoKey])) {
+                $tipo_documentos[$tipoDocumentoKey] = TipoDocumento::create([
+                    "nombre" => $tipo_documento,
+                ]);
+            }
+            $existe = Cliente::where("tipo_documento_id", $tipo_documentos[$tipoDocumentoKey]->id)
+                ->where("nro_documento", $nro_documento);
+
+            if ($tipo_documentos[$tipoDocumentoKey]->id == 1 && $complemento != '' && $complemento != NULL) {
+                $existe->where('complemento', $complemento);
+            }
+            $existe = $existe->get()->first();
+
+            $codigosProcesados[$tipoDocumentoKey . $nro_documento . $complemento] = $filaExcel;
+            if ($existe) {
+                throw new \Exception(
+                    "El nro. de documento {$nro_documento} del tipo '{$tipoDocumentoKey}' está repetido o ya éxiste en la base de datos. " .
+                        "Filas: {$codigosProcesados[$tipoDocumentoKey .$nro_documento .$complemento]} y {$filaExcel}"
+                );
+            }
+
+            /*
+         * ========================================================
+         * PREPARAR CLIENTE
+         * ========================================================
+         */
+
+            $clientes[] = [
+                "nombre" => $nombre,
+                "tipo_documento_id" => $tipo_documentos[$tipoDocumentoKey]->id,
+                "nro_documento" => $nro_documento,
+                "complemento" => $complemento,
+                "fono" => $contacto,
+                "correo" => $correo,
+                "fecha_registro" => $fecha_actual,
+            ];
+        }
+
+        /*
+     * ============================================================
+     * INSERTAR CLIENTES
+     * ============================================================
+     */
+
+        if (!empty($clientes)) {
+            Cliente::insert($clientes);
+        }
+        return count($clientes);
     }
 }

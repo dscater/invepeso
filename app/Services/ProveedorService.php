@@ -136,4 +136,125 @@ class ProveedorService
 
         return true;
     }
+
+    public function cargarProveedors($datos)
+    {
+        $archivo = $datos["archivo"];
+        $extension = '.' . $archivo->getClientOriginalExtension();
+        if ($extension == '.xlsx') {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        } else {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+        }
+        $spreadsheet = $reader->load($archivo);
+
+        $hoja = $spreadsheet->getActiveSheet();
+
+        $filas = $hoja->toArray(null, true, true, true);
+
+        if (empty($filas)) {
+            throw new \Exception("El archivo Excel está vacío.");
+        }
+
+        /*
+     * ============================================================
+     * 1. VALIDAR ENCABEZADOS
+     * ============================================================
+     */
+
+        $encabezadosEsperados = [
+            "A" => "NOMBRE*",
+            "B" => "CONTACTO",
+        ];
+
+        $encabezados = array_shift($filas);
+
+        foreach ($encabezadosEsperados as $columna => $encabezadoEsperado) {
+
+            $encabezadoActual = trim(
+                strtoupper($encabezados[$columna] ?? "")
+            );
+
+            if ($encabezadoActual !== $encabezadoEsperado) {
+                throw new \Exception(
+                    "El encabezado de la columna {$columna} debe ser '{$encabezadoEsperado}'."
+                );
+            }
+        }
+
+        $codigosProcesados = [];
+        $proveedors = [];
+        $fecha_actual = date("Y-m-d");
+
+        foreach ($filas as $indice => $fila) {
+
+            // Excel empieza en fila 1.
+            // Como quitamos el encabezado, sumamos 2.
+            $filaExcel = $indice + 2;
+
+            /*
+         */
+            if (empty(array_filter($fila, fn($valor) => trim((string) $valor) !== ""))) {
+                continue;
+            }
+
+            /*
+         * ========================================================
+         * DATOS
+         * ========================================================
+         */
+            $nombre = trim((string) ($fila["A"] ?? ""));
+            $contacto = trim((string) ($fila["B"] ?? ""));
+
+            /*
+         * ========================================================
+         * CAMPOS OBLIGATORIOS
+         * ========================================================
+         */
+
+            if ($nombre === "") {
+                throw new \Exception(
+                    "La columna NOMBRE* es obligatorio. Fila: {$filaExcel}"
+                );
+            }
+
+            /*
+         * ========================================================
+         * VALIDAR DATOS DUPLICADOS
+         * ========================================================
+         */
+            $existe = Proveedor::where("nombre", $nombre);
+            $existe = $existe->get()->first();
+
+            $codigosProcesados[$nombre] = $filaExcel;
+            if ($existe) {
+                throw new \Exception(
+                    "El proveedor con el nombre {$nombre} está repetido o ya existe en la base de datos. " .
+                        "Filas: {$codigosProcesados[$nombre]} y {$filaExcel}"
+                );
+            }
+
+            /*
+         * ========================================================
+         * PREPARAR CLIENTE
+         * ========================================================
+         */
+
+            $proveedors[] = [
+                "nombre" => $nombre,
+                "contacto" => $contacto,
+            ];
+        }
+
+        /*
+     * ============================================================
+     * INSERTAR CLIENTES
+     * ============================================================
+     */
+
+        if (!empty($proveedors)) {
+            Proveedor::insert($proveedors);
+        }
+        return count($proveedors);
+    }
 }

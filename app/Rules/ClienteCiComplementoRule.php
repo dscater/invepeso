@@ -30,7 +30,8 @@ class ClienteCiComplementoRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $query = DB::table('clientes')
-            ->where('nro_documento', $value);
+            ->where('nro_documento', $value)
+            ->where('tipo_documento_id', $this->tipo_documento_id);
 
         // SOLO PARA CI
         if ($this->tipo_documento_id == 1) {

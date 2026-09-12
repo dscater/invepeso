@@ -136,6 +136,8 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("clientes/paginado", [ClienteController::class, 'paginado'])->name("clientes.paginado");
     Route::get("clientes/listado", [ClienteController::class, 'listado'])->name("clientes.listado");
     Route::get("clientes/byCi", [ClienteController::class, 'byCi'])->name("clientes.byCi");
+    Route::get("clientes/formato", [ClienteController::class, 'formato'])->name("clientes.formato");
+    Route::post("clientes/cargaClientes", [ClienteController::class, 'cargaClientes'])->name("clientes.cargaClientes");
     Route::resource("clientes", ClienteController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );
@@ -187,6 +189,8 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // PROVEEDORES
     Route::get("proveedors/paginado", [ProveedorController::class, 'paginado'])->name("proveedors.paginado");
     Route::get("proveedors/listado", [ProveedorController::class, 'listado'])->name("proveedors.listado");
+    Route::get("proveedors/formato", [ProveedorController::class, 'formato'])->name("proveedors.formato");
+    Route::post("proveedors/cargaProveedors", [ProveedorController::class, 'cargaProveedors'])->name("proveedors.cargaProveedors");
     Route::resource("proveedors", ProveedorController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );
@@ -263,6 +267,8 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // PRODUCTOS SUCURSAL
     Route::get("producto_sucursals/paginado", [ProductoSucursalController::class, 'paginado'])->name("producto_sucursals.paginado");
     Route::get("producto_sucursals/listado", [ProductoSucursalController::class, 'listado'])->name("producto_sucursals.listado");
+    Route::get("producto_sucursals/formato", [ProductoSucursalController::class, 'formato'])->name("producto_sucursals.formato");
+    Route::post("producto_sucursals/cargaProductoSucursals", [ProductoSucursalController::class, 'cargaProductoSucursals'])->name("producto_sucursals.cargaProductoSucursals");
     Route::resource("producto_sucursals", ProductoSucursalController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );
