@@ -20,7 +20,7 @@ const enviando = ref(false);
 const form = props.form;
 
 const tituloDialog = computed(() => {
-    return `<i class="fa fa-list"></i> Verificación de Productos`;
+    return `<i class="fa fa-list"></i> Verificación/Recepción de Productos`;
 });
 
 const textBtn = computed(() => {
@@ -41,6 +41,7 @@ const enviarFormulario = () => {
             console.log("correcto");
             const success =
                 response.props.flash.success ?? "Proceso realizado con éxito";
+            const url_blank = response.props.url_blank ?? null;
             Swal.fire({
                 icon: "success",
                 title: "Correcto",
@@ -50,6 +51,10 @@ const enviarFormulario = () => {
                     confirmButton: "btn-alert-success",
                 },
             });
+
+            if (url_blank) {
+                window.open(url_blank, "_blank");
+            }
 
             document
                 .getElementsByTagName("body")[0]

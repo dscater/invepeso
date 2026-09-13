@@ -217,6 +217,62 @@ const eliminarIngresoProducto = (item) => {
                             <template #accion="{ item }">
                                 <template
                                     v-if="
+                                        item.estado_ingreso == 'VERIFICADO' &&
+                                        (props_page.auth?.user.permisos ==
+                                            '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'ingreso_productos.index',
+                                            ))
+                                    "
+                                >
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="Recepción de Productos"
+                                        placement="left-start"
+                                    >
+                                        <a
+                                            class="btn btn-info"
+                                            :href="
+                                                route(
+                                                    'ingreso_productos.verificar_pdf',
+                                                    item.id,
+                                                )
+                                            "
+                                            target="_blank"
+                                        >
+                                            <i class="fa fa-file-pdf"></i></a
+                                    ></el-tooltip>
+                                </template>
+                                <template
+                                    v-if="
+                                        props_page.auth?.user.permisos == '*' ||
+                                        props_page.auth?.user.permisos.includes(
+                                            'ingreso_productos.index',
+                                        )
+                                    "
+                                >
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="Orden de Pdf"
+                                        placement="left-start"
+                                    >
+                                        <a
+                                            class="btn btn-primary"
+                                            :href="
+                                                route(
+                                                    'ingreso_productos.pdf',
+                                                    item.id,
+                                                )
+                                            "
+                                            target="_blank"
+                                        >
+                                            <i class="fa fa-file-pdf"></i></a
+                                    ></el-tooltip>
+                                </template>
+                                <template
+                                    v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
                                             'ingreso_productos.edit',

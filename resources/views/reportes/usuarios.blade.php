@@ -51,19 +51,17 @@
         }
 
         h2.titulo {
-            width: 450px;
+            width: 650px;
             margin: auto;
             margin-top: 0PX;
-            margin-bottom: 15px;
             text-align: center;
             font-size: 14pt;
         }
 
         .texto {
-            width: 250px;
+            width: 450px;
             text-align: center;
             margin: auto;
-            margin-top: 15px;
             font-weight: bold;
             font-size: 1.1em;
         }
@@ -72,7 +70,6 @@
             width: 250px;
             text-align: center;
             margin: auto;
-            margin-top: 15px;
             font-weight: normal;
             font-size: 0.85em;
         }

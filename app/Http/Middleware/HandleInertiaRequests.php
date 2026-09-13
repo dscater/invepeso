@@ -38,7 +38,8 @@ class HandleInertiaRequests extends Middleware
                 'bien' => fn() => $request->session()->get('bien'),
                 'error' => fn() => $request->session()->get('error'),
             ],
-            'url_app' => url('/')
+            'url_app' => url('/'),
+            'url_blank' => fn() => $request->session()->get('url_blank'),
         ];
     }
 }

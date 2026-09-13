@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
+use PDF;
 use Inertia\Inertia;
 use Inertia\Response as ResponseInertia;
 
@@ -210,9 +211,12 @@ class IngresoProductoController extends Controller
         DB::beginTransaction();
         try {
             // crear el IngresoProducto
-            $this->ingreso_productoService->crear($request->validated());
+            $ingreso_producto = $this->ingreso_productoService->crear($request->validated());
             DB::commit();
-            return redirect()->route("ingreso_productos.create")->with("bien", "Registro realizado");
+
+            return redirect()->route("ingreso_productos.create")
+                ->with("bien", "Registro realizado")
+                ->with("url_blank", route('ingreso_productos.pdf', $ingreso_producto->id));
         } catch (\Exception $e) {
             DB::rollBack();
             throw ValidationException::withMessages([
@@ -276,7 +280,8 @@ class IngresoProductoController extends Controller
             // actualizar ingreso_producto
             $this->ingreso_productoService->verificar($request->validated(), $ingreso_producto);
             DB::commit();
-            return redirect()->route("ingreso_productos.verificacion_ingresos")->with("bien", "Registro actualizado");
+            return redirect()->route("ingreso_productos.verificacion_ingresos")
+                ->with("bien", "Registro actualizado")->with("url_blank", route('ingreso_productos.verificar_pdf', $ingreso_producto->id));
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());
@@ -318,6 +323,32 @@ class IngresoProductoController extends Controller
         return response()->JSON($ingreso_producto);
     }
 
+    public function pdf(IngresoProducto $ingreso_producto)
+    {
+        $pdf = PDF::loadView('reportes.ingreso_producto', compact('ingreso_producto'))->setPaper('letter', 'portrait');
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+        return $pdf->stream('orden_comra' . $ingreso_producto->codigo . '.pdf');
+    }
+
+    public function verificar_pdf(IngresoProducto $ingreso_producto)
+    {
+        $pdf = PDF::loadView('reportes.ingreso_producto_verificar', compact('ingreso_producto'))->setPaper('letter', 'portrait');
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+        return $pdf->stream('orden_comra' . $ingreso_producto->codigo . '.pdf');
+    }
+
     public function edit(IngresoProducto $ingreso_producto): ResponseInertia
     {
         $ingreso_producto = $ingreso_producto->load(["ingreso_detalles.producto", "ingreso_detalles.tipo_ingreso"]);
@@ -331,7 +362,9 @@ class IngresoProductoController extends Controller
             // actualizar ingreso_producto
             $this->ingreso_productoService->actualizar($request->validated(), $ingreso_producto);
             DB::commit();
-            return redirect()->route("ingreso_productos.index")->with("bien", "Registro actualizado");
+            return redirect()->route("ingreso_productos.index")
+                ->with("bien", "Registro actualizado")
+                ->with("url_blank", route('ingreso_productos.pdf', $ingreso_producto->id));;
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());

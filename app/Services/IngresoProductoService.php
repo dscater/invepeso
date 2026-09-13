@@ -223,6 +223,8 @@ class IngresoProductoService
         $ingreso_producto->estado_faltantes = $count_faltantes > 0 ? 'PENDIENTE' : 'SIN FALTANTES';
         $ingreso_producto->estado_ingreso = 'VERIFICADO';
         $ingreso_producto->save();
+
+        return $ingreso_producto;
     }
 
     public function faltante(array $datos, IngresoProducto $ingreso_producto)
