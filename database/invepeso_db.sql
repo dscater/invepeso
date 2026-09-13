@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 12-09-2026 a las 22:59:17
+-- Tiempo de generación: 13-09-2026 a las 20:08:31
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -469,7 +469,8 @@ CREATE TABLE `marcas` (
 INSERT INTO `marcas` (`id`, `nombre`, `created_at`, `updated_at`) VALUES
 (1, 'MARCA 1', '2026-07-11 19:32:44', '2026-07-11 19:32:44'),
 (2, 'MARCA 2', '2026-07-11 19:59:34', '2026-07-11 19:59:34'),
-(3, 'NUEVA MARCA', '2026-09-11 16:17:24', '2026-09-11 16:17:24');
+(3, 'NUEVA MARCA', '2026-09-11 16:17:24', '2026-09-11 16:17:24'),
+(4, 'MARCA 4', '2026-09-13 20:05:01', '2026-09-13 20:05:01');
 
 -- --------------------------------------------------------
 
@@ -635,7 +636,8 @@ INSERT INTO `productos` (`id`, `codigo`, `nombre`, `categoria_id`, `marca_id`, `
 (2, 'P001', 'PRODUCTO 1', 1, 1, 1, 200.00, 290.00, 300.00, NULL, 120.00, 3, '21783799752.jpeg', 1, '2026-07-11', '2026-07-11 19:55:52', '2026-09-06 21:17:59'),
 (3, 'P002', 'PRODUCTO 2', 1, 1, 1, 350.00, 400.00, 420.00, 450.00, 300.00, 3, NULL, 1, '2026-07-11', '2026-07-11 20:00:05', '2026-09-06 21:18:15'),
 (4, 'P003', 'PRODUCTO 3', 2, 2, 1, 390.00, NULL, NULL, NULL, 300.00, 5, NULL, 1, '2026-07-13', '2026-07-13 20:15:16', '2026-07-15 20:02:46'),
-(5, 'CODP', 'PRODUCTO NUEVO', 3, 3, 1, 300.00, 200.00, NULL, NULL, 240.00, 1, NULL, 1, '2026-09-11', NULL, NULL);
+(5, 'CODP', 'PRODUCTO NUEVO', 3, 3, 1, 300.00, 200.00, NULL, NULL, 240.00, 1, NULL, 1, '2026-09-11', NULL, NULL),
+(6, 'P004', 'PRODUCTO 4', 2, 4, 1, 200.00, 190.00, NULL, NULL, 120.00, 1, NULL, 1, '2026-09-13', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -658,10 +660,14 @@ CREATE TABLE `producto_sucursals` (
 --
 
 INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `almacen_id`, `producto_id`, `stock_actual`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 2, 2, '2026-08-26 00:56:23', '2026-09-06 22:24:22'),
-(2, 1, 1, 3, 5, '2026-08-26 00:56:23', '2026-09-10 14:48:00'),
+(1, 1, 1, 2, 12, '2026-08-26 00:56:23', '2026-09-13 20:07:59'),
+(2, 1, 1, 3, 15, '2026-08-26 00:56:23', '2026-09-13 20:07:59'),
 (3, 1, 1, 4, 14, '2026-08-26 00:56:23', '2026-09-10 14:48:00'),
-(5, 2, 2, 2, 3, '2026-09-04 15:07:52', '2026-09-04 15:07:52');
+(5, 2, 2, 2, 3, '2026-09-04 15:07:52', '2026-09-04 15:07:52'),
+(6, 1, 4, 2, 20, '2026-09-13 20:05:01', '2026-09-13 20:07:28'),
+(7, 1, 4, 3, 20, '2026-09-13 20:05:01', '2026-09-13 20:07:28'),
+(8, 1, 4, 6, 20, '2026-09-13 20:05:01', '2026-09-13 20:07:28'),
+(9, 1, 1, 6, 10, '2026-09-13 20:07:59', '2026-09-13 20:07:59');
 
 -- --------------------------------------------------------
 
@@ -1419,7 +1425,7 @@ ALTER TABLE `almacens`
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `clientes`
@@ -1467,7 +1473,7 @@ ALTER TABLE `kardex_productos`
 -- AUTO_INCREMENT de la tabla `marcas`
 --
 ALTER TABLE `marcas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -1497,13 +1503,13 @@ ALTER TABLE `permisos`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `producto_sucursals`
 --
 ALTER TABLE `producto_sucursals`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `proformas`

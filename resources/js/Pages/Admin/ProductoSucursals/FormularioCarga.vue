@@ -7,12 +7,20 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    almacens: {
+        type: Array,
+        default: [],
+        required: true,
+    },
 });
 
 const muestra_form = ref(props.muestra_formulario);
 const enviando = ref(false);
+const listAlmacens = ref(props.almacens.filter((el) => el.id != "todos"));
+
 const form = useForm({
     archivo: null,
+    almacen_id: "",
     _method: "POST",
 });
 const archivo = ref(null);
@@ -22,7 +30,7 @@ function cargaArchivo(e, key) {
 }
 
 const tituloDialog = computed(() => {
-    return `<i class="fa fa-upload"></i> Carga Masiva de Productos`;
+    return `<i class="fa fa-upload"></i> Carga Masiva de Stock de Productos`;
 });
 
 const textBtn = computed(() => {
@@ -34,7 +42,7 @@ const textBtn = computed(() => {
 
 const enviarFormulario = () => {
     enviando.value = true;
-    let url = route("productos.cargaProductos");
+    let url = route("producto_sucursals.cargaProductoSucursals");
     form.post(url, {
         preserveScroll: true,
         forceFormData: true,
@@ -146,7 +154,7 @@ onMounted(() => {
                     <div class="col-12">
                         <div class="alert alert-success text-center">
                             <a
-                                :href="route('productos.formato')"
+                                :href="route('producto_sucursals.formato')"
                                 target="_blank"
                                 ><i class="fa fa-download"></i> Descargar el
                                 formato .xlsx</a
@@ -156,6 +164,36 @@ onMounted(() => {
                 </div>
                 <div class="row">
                     <div class="col-12">
+                        <div class="alert alert-warning pb-0">
+                            <ul class="pb-0">
+                                <li>
+                                    El <b>STOCK*</b> ingresado incrementará el
+                                    stock actual de cada producto en el almacén
+                                    que seleccione.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label>Seleccionar Almacén</label>
+                        <el-select
+                            v-model="form.almacen_id"
+                            placeholder="Almacén"
+                            no-data-text="Sin Datos"
+                            no-match-text="Sin Resultados"
+                            filterable
+                        >
+                            <el-option
+                                v-for="item in listAlmacens"
+                                :key="item.id"
+                                :value="item.id"
+                                :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
+                            ></el-option>
+                        </el-select>
+                    </div>
+                    <div class="col-6">
                         <input
                             type="file"
                             ref="archivo"

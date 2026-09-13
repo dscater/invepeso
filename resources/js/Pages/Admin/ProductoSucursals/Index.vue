@@ -4,10 +4,13 @@ import { Head, Link, usePage } from "@inertiajs/vue3";
 import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
+import FormularioCarga from "./FormularioCarga.vue";
+
 // import { useMenu } from "@/composables/useMenu";
 const { props: props_page } = usePage();
 const appStore = useAppStore();
 
+const muestra_formulario_carga = ref(false);
 const listAlmacens = ref([]);
 const listCategorias = ref([]);
 const listMarcas = ref([]);
@@ -33,6 +36,7 @@ const cargarProductos = async () => {
         console.log(e);
     } finally {
         loadingLista.value = false;
+        muestra_formulario_carga.value = false;
     }
 };
 
@@ -138,12 +142,29 @@ const { axiosDelete } = useAxios();
         <div class="row">
             <div class="col-12">
                 <div class="row">
+                    <div class="col-12">
+                        <button
+                            v-if="
+                                props_page.auth?.user.permisos == '*' ||
+                                props_page.auth?.user.permisos.includes(
+                                    'producto_sucursals.cargaProductoSucursals',
+                                )
+                            "
+                            type="button"
+                            class="btn btn-success text-sm ms-1e"
+                            @click="muestra_formulario_carga = true"
+                        >
+                            <i class="fa fa-upload"></i> Cargar Stock de
+                            Productos
+                        </button>
+                    </div>
                     <div class="col-12 fs-7">Filtrar por:</div>
                     <div class="col-12">
                         <div class="row">
                             <div class="col-lg-3 col-md-4 col-sm-6 mt-1">
                                 <el-select
                                     v-model="almacen_id"
+                                    placeholder="Almacén"
                                     no-data-text="Sin Datos"
                                     no-match-text="Sin Resultados"
                                     filterable
@@ -282,6 +303,14 @@ const { axiosDelete } = useAxios();
                 </div>
             </div>
         </div>
+
+        <FormularioCarga
+            v-if="muestra_formulario_carga"
+            :muestra_formulario="muestra_formulario_carga"
+            :almacens="listAlmacens"
+            @envio-formulario="cargarProductos"
+            @cerrar-formulario="muestra_formulario_carga = false"
+        ></FormularioCarga>
     </Content>
 </template>
 <style scoped></style>

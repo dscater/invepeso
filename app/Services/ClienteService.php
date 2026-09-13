@@ -266,8 +266,8 @@ class ClienteService
          */
             $tipoDocumentoKey = mb_strtoupper(trim($tipo_documento));
             if (!isset($tipo_documentos[$tipoDocumentoKey])) {
-                $tipo_documentos[$tipoDocumentoKey] = TipoDocumento::create([
-                    "nombre" => $tipo_documento,
+                $tipo_documentos[$tipoDocumentoKey] = TipoDocumento::firstOrCreate([
+                    "nombre" => trim($tipo_documento),
                 ]);
             }
             $existe = Cliente::where("tipo_documento_id", $tipo_documentos[$tipoDocumentoKey]->id)

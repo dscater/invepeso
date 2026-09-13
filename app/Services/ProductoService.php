@@ -566,8 +566,8 @@ class ProductoService
 
             $categoriaKey = mb_strtoupper(trim($categoria));
             if (!isset($categorias[$categoriaKey])) {
-                $categorias[$categoriaKey] = Categoria::create([
-                    "nombre" => $categoria,
+                $categorias[$categoriaKey] = Categoria::firstOrCreate([
+                    "nombre" => trim($categoria),
                 ]);
             }
 
@@ -580,8 +580,8 @@ class ProductoService
             $marcaKey = mb_strtoupper(trim($marca));
 
             if (!isset($marcas[$marcaKey])) {
-                $marcas[$marcaKey] = Marca::create([
-                    "nombre" => $marca,
+                $marcas[$marcaKey] = Marca::firstOrCreate([
+                    "nombre" => trim($marca),
                 ]);
             }
 
@@ -594,8 +594,8 @@ class ProductoService
             $unidadKey = mb_strtoupper(trim($unidadMedida));
 
             if (!isset($unidades[$unidadKey])) {
-                $unidades[$unidadKey] = UnidadMedida::create([
-                    "nombre" => $unidadMedida,
+                $unidades[$unidadKey] = UnidadMedida::firstOrCreate([
+                    "nombre" => trim($unidadMedida),
                 ]);
             }
 

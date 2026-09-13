@@ -152,4 +152,45 @@ class ProductoSucursalController extends Controller
             ]);
         }
     }
+
+    public function formato()
+    {
+        return response()->download(
+            public_path("files/formato_producto_sucursals.xlsx"),
+            "formato_producto_sucursals" . time() . ".xlsx"
+        );
+    }
+
+    public function cargaProductoSucursals(Request $request)
+    {
+        $request->validate([
+            "almacen_id" => "required",
+            "archivo" => [
+                "required",
+                "file",
+                "mimes:xlsx,xls",
+                "max:8192",
+            ],
+        ], [
+            "almacen_id.required" => "Debes seleccionar un almacén",
+            "archivo.required" => "Debe seleccionar un archivo.",
+            "archivo.file" => "El archivo seleccionado no es válido.",
+            "archivo.mimes" => "El archivo debe ser de tipo Excel (.xlsx o .xls).",
+            "archivo.max" => "El archivo no debe superar los 8 MB.",
+        ]);
+        DB::beginTransaction();
+        try {
+            // crear el Producto
+            $datos["archivo"] = $request->file("archivo");
+            $datos["almacen_id"] = $request->input("almacen_id", "");
+            $this->producto_sucursalService->cargaProductoSucursals($datos);
+            DB::commit();
+            return redirect()->route("producto_sucursals.index")->with("bien", "Registro realizado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
 }
