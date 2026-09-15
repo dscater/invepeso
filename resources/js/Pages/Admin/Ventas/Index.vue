@@ -248,6 +248,55 @@ const eliminarVenta = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
+                                            'ventas.index',
+                                        )
+                                    "
+                                >
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="Pdf Rollo"
+                                        placement="left-start"
+                                    >
+                                        <a
+                                            class="btn btn-info"
+                                            :href="
+                                                route(
+                                                    'ventas.pdf_rollo',
+                                                    item.id,
+                                                )
+                                            "
+                                            target="_blank"
+                                        >
+                                            <i class="fa fa-file-pdf"></i></a
+                                    ></el-tooltip>
+                                </template>
+                                <template
+                                    v-if="
+                                        props_page.auth?.user.permisos == '*' ||
+                                        props_page.auth?.user.permisos.includes(
+                                            'ventas.index',
+                                        )
+                                    "
+                                >
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="Pdf Carta"
+                                        placement="left-start"
+                                    >
+                                        <a
+                                            class="btn btn-primary"
+                                            :href="route('ventas.pdf', item.id)"
+                                            target="_blank"
+                                        >
+                                            <i class="fa fa-file-pdf"></i></a
+                                    ></el-tooltip>
+                                </template>
+                                <template
+                                    v-if="
+                                        props_page.auth?.user.permisos == '*' ||
+                                        props_page.auth?.user.permisos.includes(
                                             'ventas.edit',
                                         )
                                     "
@@ -267,7 +316,6 @@ const eliminarVenta = (item) => {
                                             <i class="fa fa-pen"></i></Link
                                     ></el-tooltip>
                                 </template>
-
                                 <template
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||

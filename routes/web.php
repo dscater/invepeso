@@ -236,6 +236,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // TRASPASOS
     Route::get("traspasos/paginado", [TraspasoController::class, 'paginado'])->name("traspasos.paginado");
     Route::get("traspasos/listado", [TraspasoController::class, 'listado'])->name("traspasos.listado");
+    Route::get("traspasos/pdf/{traspaso}", [TraspasoController::class, 'pdf'])->name("traspasos.pdf");
     Route::resource("traspasos", TraspasoController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );
@@ -249,9 +250,12 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("ventas/listado", [VentaController::class, 'listado'])->name("ventas.listado");
     Route::get("ventas/cobros", [VentaController::class, 'cobros'])->name("ventas.cobros");
     Route::get("ventas/cobros/lista_cobros_pendientes", [VentaController::class, 'lista_cobros_pendientes'])->name("ventas.lista_cobros_pendientes");
+    Route::get("ventas/pdf_cobros/{venta}", [VentaController::class, 'pdf_cobros'])->name("ventas.pdf_cobros");
     Route::post("ventas/registrar_cobro/{venta}", [VentaController::class, 'registrar_cobro'])->name("ventas.registrar_cobro");
     Route::put("ventas/actualizar_cobro/{venta_cobro}", [VentaController::class, 'actualizar_cobro'])->name("ventas.actualizar_cobro");
     Route::delete("ventas/eliminar_cobro/{venta_cobro}", [VentaController::class, 'eliminar_cobro'])->name("ventas.eliminar_cobro");
+    Route::get("ventas/pdf/{venta}", [VentaController::class, 'pdf'])->name("ventas.pdf");
+    Route::get("ventas/pdf_rollo/{venta}", [VentaController::class, 'pdf_rollo'])->name("ventas.pdf_rollo");
     Route::resource("ventas", VentaController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );
@@ -262,6 +266,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // PROFORMAS
     Route::get("proformas/paginado", [ProformaController::class, 'paginado'])->name("proformas.paginado");
     Route::get("proformas/listado", [ProformaController::class, 'listado'])->name("proformas.listado");
+    Route::get("proformas/pdf/{proforma}", [ProformaController::class, 'pdf'])->name("proformas.pdf");
     Route::resource("proformas", ProformaController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
+use PDF;
 use Inertia\Inertia;
 use Inertia\Response as ResponseInertia;
 
@@ -94,9 +95,11 @@ class ProformaController extends Controller
         DB::beginTransaction();
         try {
             // crear el Proforma
-            $this->proformaService->crear($request->validated());
+            $proforma = $this->proformaService->crear($request->validated());
             DB::commit();
-            return redirect()->route("proformas.index")->with("bien", "Registro realizado");
+            return redirect()->route("proformas.index")
+                ->with("bien", "Registro realizado")
+                ->with("url_blank", route('proformas.pdf', $proforma->id));
         } catch (\Exception $e) {
             DB::rollBack();
             throw ValidationException::withMessages([
@@ -117,6 +120,19 @@ class ProformaController extends Controller
         return response()->JSON($proforma);
     }
 
+    public function pdf(Proforma $proforma)
+    {
+        $pdf = PDF::loadView('reportes.proforma', compact('proforma'))->setPaper('letter', 'portrait');
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+        return $pdf->stream('proforma_' . $proforma->codigo_proforma . '.pdf');
+    }
+
     public function edit(Proforma $proforma): ResponseInertia
     {
         $proforma = $proforma->load(["proforma_detalles.producto", "cliente", "sucursal:id,nombre", "almacen:id,nombre"]);
@@ -130,7 +146,9 @@ class ProformaController extends Controller
             // actualizar proforma
             $this->proformaService->actualizar($request->validated(), $proforma);
             DB::commit();
-            return redirect()->route("proformas.index")->with("bien", "Registro actualizado");
+            return redirect()->route("proformas.index")
+                ->with("bien", "Registro actualizado")
+                ->with("url_blank", route('proformas.pdf', $proforma->id));
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());

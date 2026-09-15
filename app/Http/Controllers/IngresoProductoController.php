@@ -333,7 +333,7 @@ class IngresoProductoController extends Controller
         $alto = $canvas->get_height();
         $ancho = $canvas->get_width();
         $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-        return $pdf->stream('orden_comra' . $ingreso_producto->codigo . '.pdf');
+        return $pdf->stream('orden_compra' . $ingreso_producto->codigo . '.pdf');
     }
 
     public function verificar_pdf(IngresoProducto $ingreso_producto)
@@ -346,7 +346,7 @@ class IngresoProductoController extends Controller
         $alto = $canvas->get_height();
         $ancho = $canvas->get_width();
         $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-        return $pdf->stream('orden_comra' . $ingreso_producto->codigo . '.pdf');
+        return $pdf->stream('orden_compra_verificacion_' . $ingreso_producto->codigo . '.pdf');
     }
 
     public function edit(IngresoProducto $ingreso_producto): ResponseInertia

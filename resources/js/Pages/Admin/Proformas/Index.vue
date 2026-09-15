@@ -224,6 +224,30 @@ const eliminarProforma = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
+                                            'proformas.index',
+                                        )
+                                    "
+                                >
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="Pdf"
+                                        placement="left-start"
+                                    >
+                                        <a
+                                            class="btn btn-primary"
+                                            :href="
+                                                route('proformas.pdf', item.id)
+                                            "
+                                            target="_blank"
+                                        >
+                                            <i class="fa fa-file-pdf"></i></a
+                                    ></el-tooltip>
+                                </template>
+                                <template
+                                    v-if="
+                                        props_page.auth?.user.permisos == '*' ||
+                                        props_page.auth?.user.permisos.includes(
                                             'proformas.edit',
                                         )
                                     "

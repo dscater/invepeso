@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
+use PDF;
 use Inertia\Inertia;
 use Inertia\Response as ResponseInertia;
 
@@ -94,12 +95,13 @@ class VentaController extends Controller
             $datos["venta_id"] = $venta->id;
             $datos["sucursal_id"] = $almacen->sucursal_id;
             $datos["cliente_id"] = $venta->cliente_id;
-            $this->venta_cobro_service->crear($datos);
+            $venta_cobro = $this->venta_cobro_service->crear($datos);
             DB::commit();
 
             return response()->JSON([
                 "sw" => true,
-                "message" => "Registro realizado"
+                "message" => "Registro realizado",
+                "url_blank" => route('ventas.pdf_cobros', $venta_cobro->venta_id)
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -127,6 +129,7 @@ class VentaController extends Controller
                 "message" => "Registro realizado",
                 "venta_cobro" => $venta_cobro,
                 "venta" => $venta_cobro->venta,
+                "url_blank" => route('ventas.pdf_cobros', $venta_cobro->venta_id)
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -134,6 +137,19 @@ class VentaController extends Controller
                 'error' =>  $e->getMessage(),
             ]);
         }
+    }
+
+    public function pdf_cobros(Venta $venta)
+    {
+        $pdf = PDF::loadView('reportes.venta_cobros', compact('venta'))->setPaper('letter', 'portrait');
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+        return $pdf->stream('venta_' . $venta->codigo_venta . '.pdf');
     }
 
     public function eliminar_cobro(VentaCobro $venta_cobro): JsonResponse|Response
@@ -147,6 +163,7 @@ class VentaController extends Controller
                 'sw' => true,
                 'message' => 'El registro se eliminó correctamente',
                 "venta" => $venta,
+                "url_blank" => route('ventas.pdf_cobros', $venta_cobro->venta_id)
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -242,9 +259,11 @@ class VentaController extends Controller
         DB::beginTransaction();
         try {
             // crear el Venta
-            $this->ventaService->crear($request->validated());
+            $venta = $this->ventaService->crear($request->validated());
             DB::commit();
-            return redirect()->route("ventas.index")->with("bien", "Registro realizado");
+            return redirect()->route("ventas.index")
+                ->with("bien", "Registro realizado")
+                ->with("url_blank", route('ventas.pdf', $venta->id));
         } catch (\Exception $e) {
             DB::rollBack();
             throw ValidationException::withMessages([
@@ -265,6 +284,59 @@ class VentaController extends Controller
         return response()->JSON($venta);
     }
 
+
+    public function pdf(Venta $venta)
+    {
+        $pdf = PDF::loadView('reportes.venta', compact('venta'))->setPaper('letter', 'portrait');
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+        return $pdf->stream('venta_' . $venta->codigo_venta . '.pdf');
+    }
+
+    public function pdf_rollo(Venta $venta)
+    {
+        $venta->load([
+            'cliente',
+            'tipo_documento',
+            'user',
+            'venta_detalles.producto',
+        ]);
+
+        // 80 mm = 226.771 puntos
+        // Dejamos un ancho ligeramente menor para evitar desbordamientos.
+        $ancho = 226.77;
+
+        // Altura base del ticket
+        $alto_base = 300;
+        $cantidad_productos = $venta->venta_detalles->count();
+        // Altura aproximada por producto
+        $alto_por_producto = 35;
+
+        // Altura adicional
+        $alto_extra = 100;
+        $alto = $alto_base
+            + ($cantidad_productos * $alto_por_producto)
+            + $alto_extra;
+        // Evitar que sea demasiado pequeño
+        $alto = max($alto, 400);
+
+        $pdf = PDF::loadView(
+            'reportes.venta_rollo',
+            compact('venta')
+        );
+
+        $pdf->setPaper([0, 0, $ancho, $alto], 'portrait');
+
+        return $pdf->stream(
+            'venta_rollo_' . $venta->codigo_venta . '.pdf'
+        );
+    }
+
     public function edit(Venta $venta): ResponseInertia
     {
         $venta = $venta->load(["venta_detalles.producto", "cliente", "sucursal:id,nombre", "almacen:id,nombre", "tipo_documento:id,nombre"]);
@@ -278,7 +350,9 @@ class VentaController extends Controller
             // actualizar venta
             $this->ventaService->actualizar($request->validated(), $venta);
             DB::commit();
-            return redirect()->route("ventas.index")->with("bien", "Registro actualizado");
+            return redirect()->route("ventas.index")
+                ->with("bien", "Registro actualizado")
+                ->with("url_blank", route('ventas.pdf', $venta->id));
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());

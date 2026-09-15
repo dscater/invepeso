@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
+use PDF;
 use Inertia\Inertia;
 use Inertia\Response as ResponseInertia;
 
@@ -90,9 +91,11 @@ class TraspasoController extends Controller
         DB::beginTransaction();
         try {
             // crear el Traspaso
-            $this->traspasoService->crear($request->validated());
+            $traspaso = $this->traspasoService->crear($request->validated());
             DB::commit();
-            return redirect()->route("traspasos.index")->with("bien", "Registro realizado");
+            return redirect()->route("traspasos.index")
+                ->with("bien", "Registro realizado")
+                ->with("url_blank", route('traspasos.pdf', $traspaso->id));
         } catch (\Exception $e) {
             DB::rollBack();
             throw ValidationException::withMessages([
@@ -112,6 +115,19 @@ class TraspasoController extends Controller
         return response()->JSON($traspaso);
     }
 
+    public function pdf(Traspaso $traspaso)
+    {
+        $pdf = PDF::loadView('reportes.traspaso', compact('traspaso'))->setPaper('letter', 'portrait');
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+        return $pdf->stream('traspaso' . $traspaso->id . '.pdf');
+    }
+
     public function edit(Traspaso $traspaso): ResponseInertia
     {
         $traspaso = $traspaso->load(["salida_detalles.producto", "salida_detalles.tipo_salida"]);
@@ -125,7 +141,9 @@ class TraspasoController extends Controller
             // actualizar traspaso
             $this->traspasoService->actualizar($request->validated(), $traspaso);
             DB::commit();
-            return redirect()->route("traspasos.index")->with("bien", "Registro actualizado");
+            return redirect()->route("traspasos.index")
+                ->with("bien", "Registro actualizado")
+                ->with("url_blank", route('traspasos.pdf', $traspaso->id));
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());

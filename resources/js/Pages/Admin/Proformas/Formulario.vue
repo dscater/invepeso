@@ -40,6 +40,7 @@ const enviarFormulario = () => {
             console.log("correcto");
             const success =
                 response.props.flash.success ?? "Proceso realizado con éxito";
+            const url_blank = response.props.url_blank ?? null;
             Swal.fire({
                 icon: "success",
                 title: "Correcto",
@@ -49,6 +50,9 @@ const enviarFormulario = () => {
                     confirmButton: "btn-alert-success",
                 },
             });
+            if (url_blank) {
+                window.open(url_blank, "_blank");
+            }
 
             cargarProductos();
             emits("envio-formulario");

@@ -58,6 +58,11 @@ const headers = [
         sortable: true,
     },
     {
+        label: "ESTADO",
+        key: "estado",
+        sortable: true,
+    },
+    {
         label: "FECHA REGISTRO",
         key: "fecha_registro",
         sortable: true,
@@ -212,6 +217,11 @@ const eliminarIngresoProducto = (item) => {
                             <template #saldo="{ item }">
                                 <span class="badge text-sm bg-danger">{{
                                     item.saldo
+                                }}</span>
+                            </template>
+                            <template #estado="{ item }">
+                                <span class="text-sm">{{
+                                    item.estado_ingreso
                                 }}</span>
                             </template>
                             <template #accion="{ item }">

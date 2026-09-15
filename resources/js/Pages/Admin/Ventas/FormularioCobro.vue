@@ -73,6 +73,10 @@ const enviarFormulario = async () => {
                 form.saldo = parseFloat(form.saldo).toFixed(2);
             }
 
+            if (response.data.url_blank) {
+                window.open(response.data.url_blank, "_blank");
+            }
+
             emits("envio-formulario");
             cancelarRegistro();
         }
@@ -319,8 +323,8 @@ onMounted(() => {
                         Total Bs.: {{ form.total }}
                     </h4>
                 </div>
-                <div class="col-12">
-                    <h5 class="fs-5 w-100 text-center">Cobros realizados</h5>
+                <div class="col-12 border-top pt-2">
+                    <h5 class="fs-5 w-100 text-center">Pagos realizados</h5>
                     <div class="row">
                         <div class="col-12">
                             <button

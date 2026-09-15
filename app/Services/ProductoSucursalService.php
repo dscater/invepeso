@@ -24,7 +24,11 @@ class ProductoSucursalService
 {
     private $modulo = "CATEGORIAS";
 
-    public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
+    public function __construct(
+        private  CargarArchivoService $cargarArchivoService,
+        private HistorialAccionService $historialAccionService,
+        private KardexProductoService $kardex_producto_service
+    ) {}
 
     public function listado(
         $almacen_id = "",
@@ -631,46 +635,11 @@ class ProductoSucursalService
                 );
             }
 
-            /*
-         * Buscar registro ProductoSucursal
-         */
 
-            if ($productoSucursal->has($producto->id)) {
+            $registro_producto = Producto::findOrFail($producto->id);
+            $registro = $this->kardex_producto_service->registrarMovimiento($almacen->sucursal_id, $almacen->id, "CARGA MASIVA", "INGRESO", NULL, $registro_producto, $stock, $registro_producto->precio_compra, "INCREMENTO DE STOCK", "", 0);
 
-                /*
-             * YA EXISTE
-             *
-             * Incrementamos el stock actual.
-             */
-
-                $registro = $productoSucursal[$producto->id];
-
-                $registro->stock_actual =
-                    ($registro->stock_actual ?? 0) + $stock;
-
-                $registro->save();
-            } else {
-
-                /*
-             * NO EXISTE
-             *
-             * Creamos el registro con el stock importado.
-             */
-
-                $registro = ProductoSucursal::create([
-                    "sucursal_id" => $sucursal->id,
-                    "almacen_id" => $almacen_id,
-                    "producto_id" => $producto->id,
-                    "stock_actual" => $stock,
-                ]);
-
-                /*
-             * Lo agregamos al mapa por si el mismo producto
-             * necesitara ser utilizado posteriormente.
-             */
-
-                $productoSucursal[$producto->id] = $registro;
-            }
+            $productoSucursal[$producto->id] = $registro;
         }
 
         /*

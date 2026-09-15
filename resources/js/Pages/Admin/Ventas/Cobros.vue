@@ -269,6 +269,14 @@ const muestra_formulario = ref(false);
                                     <i class="fa fa-external-link-alt"></i>
                                     Registros
                                 </button>
+                                <a
+                                    class="btn btn-sm btn-info float-end me-1"
+                                    :href="route('ventas.pdf_cobros', item.id)"
+                                    target="_blank"
+                                >
+                                    <i class="fa fa-file-pdf"></i>
+                                    Imprimir
+                                </a>
                             </div>
                         </div>
                     </div>

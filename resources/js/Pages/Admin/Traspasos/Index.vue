@@ -224,6 +224,30 @@ const eliminarTraspaso = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
+                                            'traspasos.index',
+                                        )
+                                    "
+                                >
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="Pdf Traspaso"
+                                        placement="left-start"
+                                    >
+                                        <a
+                                            class="btn btn-primary"
+                                            :href="
+                                                route('traspasos.pdf', item.id)
+                                            "
+                                            target="_blank"
+                                        >
+                                            <i class="fa fa-file-pdf"></i></a
+                                    ></el-tooltip>
+                                </template>
+                                <template
+                                    v-if="
+                                        props_page.auth?.user.permisos == '*' ||
+                                        props_page.auth?.user.permisos.includes(
                                             'traspasos.edit',
                                         )
                                     "
@@ -244,7 +268,6 @@ const eliminarTraspaso = (item) => {
                                             <i class="fa fa-pen"></i></button
                                     ></el-tooltip>
                                 </template>
-
                                 <template
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
