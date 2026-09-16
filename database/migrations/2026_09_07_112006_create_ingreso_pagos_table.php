@@ -17,7 +17,9 @@ return new class extends Migration
             $table->unsignedBigInteger("almacen_id");
             $table->unsignedBigInteger("ingreso_producto_id");
             $table->unsignedBigInteger("proveedor_id");
-            $table->decimal("monto", 24, 2);
+            $table->decimal("monto_efectivo", 24, 2);
+            $table->decimal("monto_qr", 24, 2);
+            $table->decimal("monto_total", 24, 2);
             $table->date("fecha");
             $table->time("hora");
             $table->unsignedBigInteger("user_id");

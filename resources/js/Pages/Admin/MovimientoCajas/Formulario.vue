@@ -46,7 +46,6 @@ const enviarFormulario = () => {
                 },
             });
 
-            cargarProductos();
             emits("envio-formulario");
         },
         onError: (err, code) => {
@@ -97,7 +96,11 @@ const almacen_id = ref("");
 
 const cargarAlmacens = async () => {
     try {
-        const res = await axios.get(route("almacens.listado"));
+        const res = await axios.get(route("almacens.listado"), {
+            params: {
+                activo: 1,
+            },
+        });
         listAlmacens.value = res.data.almacens;
     } catch (e) {
         console.log(e);
@@ -126,7 +129,7 @@ const cargarTipoVentas = async () => {
 };
 
 const cargarListas = () => {
-    cargarTipoPagos();
+    // cargarTipoPagos();
     cargarTipoVentas();
     cargarAlmacens();
 };
@@ -171,20 +174,44 @@ onMounted(() => {
                                 </ul>
                             </div>
                             <div class="col-md-4">
-                                <label class="required">Monto Bs.</label>
+                                <label class="required"
+                                    >Monto Efectivo
+                                    <i class="fa fa-money-bill"></i> Bs.</label
+                                >
                                 <input
                                     type="number"
                                     min="0"
-                                    v-model="form.monto"
+                                    v-model="form.monto_efectivo"
                                     class="form-control"
                                     placeholder="Monto en Bolivianos"
                                 />
                                 <ul
-                                    v-if="form.errors?.monto"
+                                    v-if="form.errors?.monto_efectivo"
                                     class="d-block text-danger list-unstyled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors?.monto }}
+                                        {{ form.errors?.monto_efectivo }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="required"
+                                    >Monto QR
+                                    <i class="fa fa-qrcode"></i> Bs.</label
+                                >
+                                <input
+                                    type="number"
+                                    min="0"
+                                    v-model="form.monto_qr"
+                                    class="form-control"
+                                    placeholder="Monto en Bolivianos"
+                                />
+                                <ul
+                                    v-if="form.errors?.monto_qr"
+                                    class="d-block text-danger list-unstyled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.monto_qr }}
                                     </li>
                                 </ul>
                             </div>
@@ -214,7 +241,7 @@ onMounted(() => {
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                 <label class="required">Tipo de Pago</label>
                                 <el-radio-group
                                     v-model="form.tipo_pago"
@@ -236,7 +263,7 @@ onMounted(() => {
                                         {{ form.errors?.tipo_pago }}
                                     </li>
                                 </ul>
-                            </div>
+                            </div> -->
                             <div class="col-md-4">
                                 <label class="required">Descripción</label>
                                 <el-input

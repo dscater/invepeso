@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-
+    <title>ComprobanteDeVentaRollo</title>
     <style>
         @page {
             margin: 0;
@@ -412,7 +412,7 @@
                     </td>
 
                     <td class="valor-total">
-                        Bs. {{ number_format((float) $venta->cancelado, 2) }}
+                        Bs. {{ number_format((float) $venta->total_cancelado, 2) }}
                     </td>
 
                 </tr>

@@ -7,6 +7,7 @@ use App\Models\Almacen;
 use App\Models\IngresoProducto;
 use App\Models\ProductoSucursal;
 use App\Models\SalidaProducto;
+use App\Models\Traspaso;
 use App\Models\User;
 use App\Models\Venta;
 use Illuminate\Http\UploadedFile;
@@ -170,8 +171,15 @@ class AlmacenService
             throw new Exception("No es posible eliminar el registro " . $almacen->nombre . ", porque fue usado en salida de productos");
         }
 
-        // TODO: PARA TRANSFERENCIAS
+        $usos = Traspaso::where("almacen_origen_id", $almacen->id)->count();
+        if ($usos > 0) {
+            throw new Exception("No es posible eliminar el registro " . $almacen->nombre . ", porque fue usado en traspasos/transferencias");
+        }
 
+        $usos = Traspaso::where("almacen_destino_id", $almacen->id)->count();
+        if ($usos > 0) {
+            throw new Exception("No es posible eliminar el registro " . $almacen->nombre . ", porque fue usado en traspasos/transferencias");
+        }
         $almacen->delete();
 
         // registrar accion

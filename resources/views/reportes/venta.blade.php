@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>OrdenDeCompra</title>
+    <title>ComprobanteDeVenta</title>
     <style type="text/css">
         * {
             font-family: sans-serif;
@@ -234,7 +234,7 @@
             @if ($venta->tipo_venta == 'CRÉDITO')
                 <tr>
                     <td class="bold derecha" colspan="5">CANCELADO BS.</td>
-                    <td class="bold derecha">{{ $venta->cancelado }}</td>
+                    <td class="bold derecha">{{ $venta->total_cancelado }}</td>
                 </tr>
                 <tr>
                     <td class="bold derecha" colspan="5">SALDO BS.</td>

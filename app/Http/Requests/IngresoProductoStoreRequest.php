@@ -29,7 +29,8 @@ class IngresoProductoStoreRequest extends FormRequest
             "proveedor_id" => "required",
             "descripcion" => "nullable",
             "total" => "required",
-            "cancelado" => "required",
+            "cancelado_efectivo" => "required|decimal:0,2|min:0",
+            "cancelado_qr" => "required|decimal:0,2|min:0",
             "saldo" => "required",
             "ingreso_detalles" => ["required", new IngresoDetalleRule()],
         ];
@@ -43,7 +44,12 @@ class IngresoProductoStoreRequest extends FormRequest
             "proveedor_id.required" => "Debes seleccionar un proveedor",
             "descripcion.required" => "Debes completar este campo",
             "total.required" => "No se encontró el total de la compra",
-            "cancelado.required" => "Debes ingresar el valor cancelado",
+            "cancelado_efectivo.required" => "Debes completar el campo de cancelado en efectivo.",
+            "cancelado_efectivo.decimal" => "Debes ingresar un valor númerico de hasta 2 decimales",
+            "cancelado_efectivo.min" => "Debes ingresar un valor númerico no puede ser menor :min",
+            "cancelado_qr.required" => "Debes completar el campo de cancelado en qr.",
+            "cancelado_qr.decimal" => "Debes ingresar un valor númerico de hasta 2 decimales",
+            "cancelado_qr.min" => "Debes ingresar un valor númerico no puede ser menor :min",
             "saldo.required" => "No se encontró el saldo de la compra",
         ];
     }

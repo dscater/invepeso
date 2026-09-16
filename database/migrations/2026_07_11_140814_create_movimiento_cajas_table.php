@@ -18,14 +18,16 @@ return new class extends Migration
             $table->string("tipo")->nullable();
             $table->string("modulo")->nullable();
             $table->unsignedBigInteger("registro_id")->nullable();
-            $table->decimal("monto", 24, 2);
+            $table->decimal("monto_efectivo", 24, 2);
+            $table->decimal("monto_qr", 24, 2);
+            $table->decimal("monto_total", 24, 2);
             $table->string("tipo_movimiento"); //INGRESO-EGRESO
-            $table->string("tipo_pago"); //EFECTIVO-QR
+            $table->string("tipo_pago"); //EFECTIVO-QR | EFECTIVO | QR
             $table->string("descripcion", 900);
             $table->date("fecha");
             $table->time("hora");
             $table->unsignedBigInteger("user_id");
-            $table->integer("status")->default(1); // 1: activo, 0: inactivo
+            $table->integer("status")->default(1); // 1: activo, 0: eliminado
             $table->timestamps();
 
             $table->foreign("sucursal_id")->on("sucursals")->references("id");

@@ -5,6 +5,7 @@ import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 import FormularioCarga from "./FormularioCarga.vue";
+import MiPaginacion from "@/Components/MiPaginacion.vue";
 
 // import { useMenu } from "@/composables/useMenu";
 const { props: props_page } = usePage();
@@ -20,24 +21,42 @@ const almacen_id = ref("todos");
 const categoria_id = ref("todos");
 const marca_id = ref("todos");
 const nombreProducto = ref("");
+const currentPage = ref(1);
+const perPage = ref(24);
+const total_registros = ref(0);
+const cambioDePagina = async (value) => {
+    loadingLista.value = true;
+    currentPage.value = value;
+    cargarProductos();
+};
+
 const cargarProductos = async () => {
     loadingLista.value = true;
     try {
-        const res = await axios.get(route("producto_sucursals.listado"), {
+        const res = await axios.get(route("producto_sucursals.paginado"), {
             params: {
+                perPage: perPage.value,
+                page: currentPage.value,
                 almacen_id: almacen_id.value,
                 categoria_id: categoria_id.value,
                 marca_id: marca_id.value,
                 nombreProducto: nombreProducto.value,
+                activo: 1,
             },
         });
-        listProductoSucursals.value = res.data.producto_sucursals;
+        listProductoSucursals.value = res.data.data;
+        total_registros.value = res.data.total;
     } catch (e) {
         console.log(e);
     } finally {
         loadingLista.value = false;
         muestra_formulario_carga.value = false;
     }
+};
+
+const detectarCambioSelect = () => {
+    currentPage.value = 1;
+    cargarProductos();
 };
 
 const intervalNombre = ref(null);
@@ -162,21 +181,35 @@ const { axiosDelete } = useAxios();
                     <div class="col-12">
                         <div class="row">
                             <div class="col-lg-3 col-md-4 col-sm-6 mt-1">
-                                <el-select
-                                    v-model="almacen_id"
-                                    placeholder="Almacén"
-                                    no-data-text="Sin Datos"
-                                    no-match-text="Sin Resultados"
-                                    filterable
-                                    @change="cargarProductos"
-                                >
-                                    <el-option
-                                        v-for="item in listAlmacens"
-                                        :key="item.id"
-                                        :value="item.id"
-                                        :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
-                                    ></el-option>
-                                </el-select>
+                                <div class="input-group">
+                                    <button
+                                        class="btn btn-light border"
+                                        type="button"
+                                        @click="cargarProductos"
+                                        title="Actualizar"
+                                    >
+                                        <i class="fa fa-sync"></i>
+                                    </button>
+                                    <div class="form-control border-0 p-0">
+                                        <el-select
+                                            v-model="almacen_id"
+                                            size="large"
+                                            class="el-select-input-group-right"
+                                            placeholder="Almacén"
+                                            no-data-text="Sin Datos"
+                                            no-match-text="Sin Resultados"
+                                            filterable
+                                            @change="detectarCambioSelect"
+                                        >
+                                            <el-option
+                                                v-for="item in listAlmacens"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
+                                            ></el-option>
+                                        </el-select>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-lg-2 col-md-4 col-sm-6 mt-1">
                                 <el-select
@@ -184,7 +217,7 @@ const { axiosDelete } = useAxios();
                                     no-data-text="Sin Datos"
                                     no-match-text="Sin Resultados"
                                     filterable
-                                    @change="cargarProductos"
+                                    @change="detectarCambioSelect"
                                 >
                                     <el-option
                                         v-for="item in listCategorias"
@@ -200,7 +233,7 @@ const { axiosDelete } = useAxios();
                                     no-data-text="Sin Datos"
                                     no-match-text="Sin Resultados"
                                     filterable
-                                    @change="cargarProductos"
+                                    @change="detectarCambioSelect"
                                 >
                                     <el-option
                                         v-for="item in listMarcas"
@@ -223,6 +256,16 @@ const { axiosDelete } = useAxios();
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-12 mt-3">
+                        Total registros: {{ total_registros }}
+                        <MiPaginacion
+                            :pagination-class="'float-end mb-0'"
+                            :total-data="total_registros"
+                            :current-page="currentPage"
+                            :per-page="perPage"
+                            @updatePage="cambioDePagina"
+                        ></MiPaginacion>
+                    </div>
                     <div class="col-12 text-center" v-if="loadingLista">
                         <div class="text-muted fw-bold fs-3">Cargando...</div>
                     </div>
@@ -250,6 +293,10 @@ const { axiosDelete } = useAxios();
                                         <span class="fw-bold h6">
                                             {{ item.nombre }}
                                         </span>
+                                        <span
+                                            class="text-muted text-xs d-block"
+                                            >{{ item.codigo }}</span
+                                        >
                                     </div>
                                     <div class="col-12 border-top">
                                         <div class="row">
@@ -299,6 +346,16 @@ const { axiosDelete } = useAxios();
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-12 mt-3">
+                        Total registros: {{ total_registros }}
+                        <MiPaginacion
+                            :pagination-class="'float-end'"
+                            :total-data="total_registros"
+                            :current-page="currentPage"
+                            :per-page="perPage"
+                            @updatePage="cambioDePagina"
+                        ></MiPaginacion>
                     </div>
                 </div>
             </div>

@@ -12,13 +12,63 @@ import { buttonProps } from "element-plus";
 // const { mobile, identificaDispositivo } = useMenu();
 const { props: props_page } = usePage();
 const appStore = useAppStore();
-onBeforeMount(() => {
-    appStore.startLoading();
+
+const listAlmacens = ref([]);
+const cargarAlmacens = async () => {
+    try {
+        const res = await axios.get(route("almacens.listado"), {
+            params: {
+                activo: 1,
+            },
+        });
+        listAlmacens.value = res.data.almacens;
+    } catch (e) {
+        console.log(e);
+    } finally {
+    }
+};
+
+const listUsers = ref([]);
+const cargarUsers = async () => {
+    try {
+        const res = await axios.get(route("usuarios.listado"));
+        listUsers.value = res.data.usuarios;
+    } catch (e) {
+        console.log(e);
+    } finally {
+    }
+};
+const resumen = ref({
+    ingresos: 0,
+    egresos: 0,
+    total_caja: 0,
 });
 
+const cargarResumen = async () => {
+    try {
+        const res = await axios.get(route("movimiento_cajas.resumen"), {
+            params: multiSearch.value,
+        });
+        resumen.value = res.data.resumen;
+    } catch (e) {
+        console.log(e);
+    } finally {
+    }
+};
+
+onBeforeMount(() => {
+    cargarResumen();
+    cargarAlmacens();
+    cargarUsers();
+    appStore.startLoading();
+});
 onMounted(() => {
     appStore.stopLoading();
 });
+
+const actualizarResumen = () => {
+    cargarResumen();
+};
 
 const { setMovimientoCaja, limpiarMovimientoCaja, form } = useMovimientoCajas();
 const { axiosDelete } = useAxios();
@@ -43,7 +93,7 @@ const headers = [
     },
     {
         label: "MONTO",
-        key: "monto",
+        key: "monto_total",
         sortable: true,
     },
     {
@@ -76,6 +126,10 @@ const headers = [
 
 const multiSearch = ref({
     search: "",
+    almacen_id: "",
+    fecha_ini: "",
+    fecha_fin: "",
+    user_id: "",
     filtro: [],
 });
 
@@ -97,7 +151,7 @@ const updateDatatable = async () => {
 const eliminarMovimientoCaja = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
-        html: `<strong class="text-primary">Bs. ${item.monto}</strong><br/>Fecha: <strong>${item.fecha_hora_t}</strong><br/>Tipo de Movimiento: <strong>${item.tipo}</strong><br/>Tipo de Pago: <strong>${item.tipo_pago}</strong><br/>Ingreso/Egreso: <strong>${item.tipo_movimiento}</strong>`,
+        html: `<strong class="text-primary">Bs. ${item.monto_total}</strong><br/>Fecha: <strong>${item.fecha_hora_t}</strong><br/>Tipo de Movimiento: <strong>${item.tipo}</strong><br/>Tipo de Pago: <strong>${item.tipo_pago}</strong><br/>Ingreso/Egreso: <strong>${item.tipo_movimiento}</strong>`,
         showCancelButton: true,
         confirmButtonText: "Si, eliminar",
         cancelButtonText: "No, cancelar",
@@ -146,7 +200,7 @@ const eliminarMovimientoCaja = (item) => {
         <div class="row">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <Link
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
@@ -160,23 +214,87 @@ const eliminarMovimientoCaja = (item) => {
                             <i class="fa fa-plus"></i> Nuevo Movimiento
                         </Link>
                     </div>
-                    <div class="col-md-8 my-1">
+                    <div class="col-md-12 my-1">
                         <div class="row justify-content-end">
-                            <div class="col-md-5">
-                                <div class="input-group">
-                                    <input
-                                        type="search"
-                                        v-model="multiSearch.search"
-                                        placeholder="Buscar"
-                                        class="form-control border-1 border-right-0"
-                                    />
-                                    <div class="input-append">
-                                        <button
-                                            class="btn btn-default bg-white rounded-0"
-                                            @click="updateDatos"
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="text-muted text-xs"
+                                            >Desde</span
                                         >
-                                            <i class="fa fa-search"></i>
-                                        </button>
+                                        <input
+                                            type="date"
+                                            class="form-control"
+                                            v-model="multiSearch.fecha_ini"
+                                            @keyup="actualizarResumen"
+                                            @change="actualizarResumen"
+                                        />
+                                    </div>
+                                    <div class="col-6">
+                                        <span class="text-muted text-xs"
+                                            >Hasta</span
+                                        >
+                                        <input
+                                            type="date"
+                                            class="form-control"
+                                            v-model="multiSearch.fecha_fin"
+                                            @keyup="actualizarResumen"
+                                            @change="actualizarResumen"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <span class="text-muted text-xs">Usuario</span>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-users"></i>
+                                    </span>
+                                    <div class="form-control border-0 p-0">
+                                        <el-select
+                                            v-model="multiSearch.user_id"
+                                            class="el-select-input-group-right"
+                                            no-data-text="Sin datos"
+                                            no-match-text="Sin resultados"
+                                            placeholder="Seleccionar Usuario"
+                                            filterable
+                                            clearable
+                                            @change="actualizarResumen"
+                                        >
+                                            <el-option
+                                                v-for="item in listUsers"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="`${item.full_name}`"
+                                            ></el-option>
+                                        </el-select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <span class="text-muted text-xs">Almacén</span>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-warehouse"></i>
+                                    </span>
+                                    <div class="form-control border-0 p-0">
+                                        <el-select
+                                            v-model="multiSearch.almacen_id"
+                                            class="el-select-input-group-right"
+                                            no-data-text="Sin datos"
+                                            no-match-text="Sin resultados"
+                                            placeholder="Seleccionar Almacén"
+                                            filterable
+                                            clearable
+                                            @change="actualizarResumen"
+                                        >
+                                            <el-option
+                                                v-for="item in listAlmacens"
+                                                :key="item.id"
+                                                :value="item.id"
+                                                :label="`${item.nombre} - ${item.sucursal.nombre}`"
+                                            ></el-option>
+                                        </el-select>
                                     </div>
                                 </div>
                             </div>
@@ -185,12 +303,71 @@ const eliminarMovimientoCaja = (item) => {
                 </div>
                 <div class="row">
                     <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <div class="card">
+                                    <div class="card-header bgActivo">
+                                        <h4
+                                            class="card-title fs-7 fw-bold text-white"
+                                        >
+                                            Ingresos
+                                        </h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4
+                                            class="fw-bold fs-6 w-100 text-center text-success"
+                                        >
+                                            Bs. {{ resumen.ingresos }}
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="card card-danger">
+                                    <div class="card-header">
+                                        <h4
+                                            class="card-title fs-7 fw-bold text-white"
+                                        >
+                                            Egresos
+                                        </h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4
+                                            class="fw-bold fs-6 w-100 text-center text-danger"
+                                        >
+                                            Bs. {{ resumen.egresos }}
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h4
+                                            class="card-title fs-7 fw-bold text-white"
+                                        >
+                                            Total Caja
+                                        </h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4
+                                            class="fw-bold fs-6 w-100 text-center text-primary"
+                                        >
+                                            Bs. {{ resumen.total_caja }}
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
                         <MiTable
                             :tableClass="'bg-white mitabla'"
                             ref="miTable"
                             :cols="headers"
                             :api="true"
                             :url="route('movimiento_cajas.paginado')"
+                            :per-page="10"
                             :numPages="5"
                             :multiSearch="multiSearch"
                             :syncOrderBy="'id'"
@@ -208,7 +385,7 @@ const eliminarMovimientoCaja = (item) => {
                                     item.sucursal?.nombre
                                 }}</span>
                             </template>
-                            <template #monto="{ item }">
+                            <template #monto_total="{ item }">
                                 <span
                                     class="badge text-sm"
                                     :class="{
@@ -217,7 +394,7 @@ const eliminarMovimientoCaja = (item) => {
                                         'bg-success':
                                             item.tipo_movimiento == 'INGRESO',
                                     }"
-                                    >Bs. {{ item.monto }}</span
+                                    >Bs. {{ item.monto_total }}</span
                                 >
                             </template>
                             <template #user="{ item }">

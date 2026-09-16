@@ -18,7 +18,9 @@ return new class extends Migration
             $table->unsignedBigInteger("venta_id");
             $table->unsignedBigInteger("cliente_id");
             $table->string("tipo_pago");
-            $table->decimal("monto", 24, 2);
+            $table->decimal("monto_efectivo", 24, 2);
+            $table->decimal("monto_qr", 24, 2);
+            $table->decimal("monto_total", 24, 2);
             $table->decimal("saldo", 24, 2);
             $table->date("fecha");
             $table->time("hora");

@@ -221,6 +221,7 @@ const eliminarSalidaProducto = (item) => {
                                         placement="left-start"
                                     >
                                         <button
+                                            :disabled="true"
                                             class="btn btn-warning"
                                             @click="
                                                 setSalidaProducto(item);

@@ -28,7 +28,7 @@ class IngresoProductoFaltantesRequest extends FormRequest
             "almacen_id" => "required",
             "descripcion" => "nullable",
             "total" => "required",
-            "cancelado" => "required",
+            // "total_cancelado" => "required",
             "saldo" => "required",
             "ingreso_detalles" => ["required", new IngresoDetalleFaltantesRule()],
         ];

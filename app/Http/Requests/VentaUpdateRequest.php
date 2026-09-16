@@ -34,14 +34,15 @@ class VentaUpdateRequest extends FormRequest
             "subtotal" => "required|numeric|min:0",
             "total" => "required|numeric|min:0",
             "saldo" => "required|numeric|min:0",
-            "cancelado" => "required|numeric|min:0",
+            "cancelado_efectivo" => "required|decimal:0,2|min:0",
+            "cancelado_qr" => "required|decimal:0,2|min:0",
             "venta_detalles" => ["required", new VentaDetalleRule()],
             "eliminados" => "nullable"
         ];
 
-        if ($this->cancelado > 0) {
-            $rules["tipo_pago"] = "required";
-        }
+        // if ($this->cancelado > 0) {
+        //     $rules["tipo_pago"] = "required";
+        // }
 
         return $rules;
     }
@@ -59,9 +60,15 @@ class VentaUpdateRequest extends FormRequest
             "total.required" => "El total de la venta es obligatorio",
             "saldo.required" => "El total de la venta es obligatorio",
             "saldo.numeric" => "El saldo debe ser un valor númerico",
+            "saldo.min" => "El saldo no puede ser menor a :min",
             "descuento.numeric" => "El descuento debe ser un valor númerico",
-            "cancelado.required" => "El total de la venta es obligatorio",
-            "cancelado.numeric" => "Cancelado debe ser un valor númerico",
+            "venta_detalles.required" => "Debes agregar al menos un producto",
+            "cancelado_efectivo.required" => "Debes completar el campo de cancelado en efectivo.",
+            "cancelado_efectivo.decimal" => "Debes ingresar un valor númerico de hasta 2 decimales",
+            "cancelado_efectivo.min" => "Debes ingresar un valor númerico no puede ser menor :min",
+            "cancelado_qr.required" => "Debes completar el campo de cancelado en qr.",
+            "cancelado_qr.decimal" => "Debes ingresar un valor númerico de hasta 2 decimales",
+            "cancelado_qr.min" => "Debes ingresar un valor númerico no puede ser menor :min",
         ];
     }
 }

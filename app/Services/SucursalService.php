@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\Almacen;
 use App\Models\IngresoProducto;
 use App\Models\SalidaProducto;
 use App\Services\HistorialAccionService;
 use App\Models\Sucursal;
+use App\Models\Traspaso;
 use App\Models\User;
 use App\Models\Venta;
 use Illuminate\Http\UploadedFile;
@@ -113,6 +115,12 @@ class SucursalService
     {
         $old_sucursal = clone $sucursal;
 
+        $almacenes_activos = Almacen::where("sucursal_id", $sucursal->id)
+            ->where("activo", 1)->count();
+        if ($almacenes_activos > 0 && $datos["activo"] == 0) {
+            throw new Exception("No es posible poner INACTIVA la sucursal {$sucursal->nombre}, porque tiene {$almacenes_activos} almacenes activos");
+        }
+
         $sucursal->update([
             "nombre" => mb_strtoupper($datos["nombre"]),
             "activo" => $datos["activo"],
@@ -149,8 +157,21 @@ class SucursalService
             throw new Exception("No es posible eliminar el registro " . $sucursal->nombre . ", porque fue usado en salida de productos");
         }
 
-        // TODO: PARA TRANSFERENCIAS
+        $usos = Traspaso::where("sucursal_origen_id", $sucursal->id)->count();
+        if ($usos > 0) {
+            throw new Exception("No es posible eliminar el registro " . $sucursal->nombre . ", porque fue usado en traspasos/transferencias");
+        }
 
+        $usos = Traspaso::where("sucursal_destino_id", $sucursal->id)->count();
+        if ($usos > 0) {
+            throw new Exception("No es posible eliminar el registro " . $sucursal->nombre . ", porque fue usado en traspasos/transferencias");
+        }
+
+        $almacenes_activos = Almacen::where("sucursal_id", $sucursal->id)
+            ->where("activo", 1)->count();
+        if ($almacenes_activos > 0) {
+            throw new Exception("No es posible eliminar la sucursal {$sucursal->nombre}, porque tiene {$almacenes_activos} almacenes activos");
+        }
         $sucursal->delete();
 
         // registrar accion

@@ -55,15 +55,20 @@ class ProductoSucursalController extends Controller
         $perPage = $request->perPage;
         $page = (int)($request->input("page", 1));
         $search = (string)$request->input("search", "");
+
+        $almacen_id = $request->input("almacen_id", "");
+        $categoria_id = $request->input("categoria_id", "");
+        $marca_id = $request->input("marca_id", "");
+        $nombreProducto = $request->input("nombreProducto", "");
+        $activo = $request->input("activo", NULL);
+
         $orderBy = $request->orderBy;
         $orderAsc = $request->orderAsc;
 
         $columnsSerachLike = [
-            "nombre",
-            "descripcion",
+            "productos.codigo",
+            "productos.nombre",
         ];
-        $columnsFilter = [];
-        $columnsBetweenFilter = [];
         $arrayOrderBy = [];
         if ($orderBy && $orderAsc) {
             $arrayOrderBy = [
@@ -71,7 +76,18 @@ class ProductoSucursalController extends Controller
             ];
         }
 
-        $producto_sucursals = $this->producto_sucursalService->listadoPaginado($perPage, $page, $search, $columnsSerachLike, $columnsFilter, $columnsBetweenFilter, $arrayOrderBy);
+        $producto_sucursals = $this->producto_sucursalService->listadoPaginado(
+            $perPage,
+            $page,
+            $search,
+            $columnsSerachLike,
+            $almacen_id,
+            $categoria_id,
+            $marca_id,
+            $nombreProducto,
+            $activo,
+            $arrayOrderBy
+        );
         return response()->JSON([
             "data" => $producto_sucursals->items(),
             "total" => $producto_sucursals->total(),

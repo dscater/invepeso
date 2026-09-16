@@ -285,6 +285,33 @@ const eliminarIngresoProducto = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
+                                            'ingreso_productos.index',
+                                        )
+                                    "
+                                >
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="Pagos por Compra"
+                                        placement="left-start"
+                                    >
+                                        <a
+                                            class="btn btn-default bgPrecargado"
+                                            :href="
+                                                route(
+                                                    'ingreso_productos.pdf_pagos',
+                                                    item.id,
+                                                )
+                                            "
+                                            target="_blank"
+                                        >
+                                            <i class="fa fa-file-pdf"></i> </a
+                                    ></el-tooltip>
+                                </template>
+                                <template
+                                    v-if="
+                                        props_page.auth?.user.permisos == '*' ||
+                                        props_page.auth?.user.permisos.includes(
                                             'ingreso_productos.edit',
                                         )
                                     "
@@ -296,6 +323,7 @@ const eliminarIngresoProducto = (item) => {
                                         placement="left-start"
                                     >
                                         <button
+                                            :disabled="true"
                                             class="btn btn-warning"
                                             @click="
                                                 setIngresoProducto(item);

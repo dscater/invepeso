@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>OrdenDeCompra</title>
+    <title>TraspasoDeProductos</title>
     <style type="text/css">
         * {
             font-family: sans-serif;

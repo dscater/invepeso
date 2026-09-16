@@ -24,7 +24,8 @@ class MovimientoCajaUpdateRequest extends FormRequest
     {
         return [
             "almacen_id" => "required",
-            "monto" => "required|decimal:0,2|gt:0",
+            "monto_efectivo" => "required|decimal:0,2|min:0",
+            "monto_qr" => "required|decimal:0,2|min:0",
             "tipo_movimiento" => "required",
             "tipo_pago" => "required",
             "descripcion" => "required",
@@ -37,9 +38,12 @@ class MovimientoCajaUpdateRequest extends FormRequest
     {
         return [
             "almacen_id.required" => "El campo Almacén es obligatorio.",
-            "monto.required" => "Debes completar el campo de monto.",
-            "monto.decimal" => "Debes ingresar un valor númerido de hasta 2 decimales",
-            "monto.gt" => "Debes ingresar un valor númerido no puede ser menor o igual a 0",
+            "monto_efectivo.required" => "Debes completar el campo de monto efectivo.",
+            "monto_efectivo.decimal" => "Debes ingresar un valor númerico de hasta 2 decimales",
+            "monto_efectivo.min" => "Debes ingresar un valor númerico no puede ser menor :min",
+            "monto_qr.required" => "Debes completar el campo de monto qr.",
+            "monto_qr.decimal" => "Debes ingresar un valor númerico de hasta 2 decimales",
+            "monto_qr.min" => "Debes ingresar un valor númerico no puede ser menor :min",
             "tipo_movimiento.required" => "El campo Tipo de Movimiento es obligatorio.",
             "tipo_pago.required" => "El campo Tipo de Pago es obligatorio.",
             "descripcion.required" => "El campo Descripción es obligatorio.",

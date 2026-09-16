@@ -126,7 +126,7 @@ class ProveedorService
 
         $usos = IngresoProducto::where("proveedor_id", $proveedor->id)->count();
         if ($usos > 0) {
-            throw new Exception("No se puede eliminar este proveedor porque está siendo utilizado por $usos ingreso de productos.");
+            throw new Exception("No se puede eliminar este proveedor porque está siendo utilizado por $usos compra de productos.");
         }
 
         $proveedor->delete();

@@ -2,9 +2,11 @@
 // TOAST
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { router } from "@inertiajs/vue3";
 import { watch, ref, computed, onMounted, nextTick } from "vue";
 import FormularioCliente from "../Clientes/FormularioCliente.vue";
 import { useClientes } from "@/composables/clientes/useClientes";
+import MiPaginacion from "@/Components/MiPaginacion.vue";
 
 const props = defineProps({
     form: {
@@ -24,6 +26,43 @@ const textBtn = computed(() => {
     }
     return `<i class="fa fa-edit"></i> Actualizar Venta`;
 });
+
+const txtBtnCancelar = computed(() => {
+    if (form.id == 0) {
+        return `<i class="fa fa-times"></i> Cancelar Venta`;
+    }
+    return `<i class="fa fa-times"></i> Cancelar Actualización`;
+});
+
+const cancelarVenta = () => {
+    const message =
+        form.id == 0
+            ? `Se cancelará la NUEVA VENTA`
+            : `Se cancelará la ACTUALIZACIÓN DE LA VENTA ${form.codigo_venta}`;
+
+    Swal.fire({
+        // icon: "question",
+        title: "¿Cancelar regitro?",
+        html: `${message}`,
+        showCancelButton: true,
+        confirmButtonText: "Si, Cancelar",
+        cancelButtonText: "No, cancelar",
+        denyButtonText: `No, cancelar`,
+        customClass: {
+            confirmButton: "btn-danger",
+        },
+    }).then(async (result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            if (form.id != 0) {
+                router.get(route("ventas.index"));
+            } else {
+                form.reset();
+                cargarProductos();
+            }
+        }
+    });
+};
 
 const enviarFormulario = () => {
     enviando.value = true;
@@ -110,26 +149,35 @@ const almacen_id = ref("");
 const categoria_id = ref("todos");
 const marca_id = ref("todos");
 const nombreProducto = ref("");
+const currentPage = ref(1);
+const perPage = ref(24);
+const total_registros = ref(0);
+const cambioDePagina = async (value) => {
+    loadingLista.value = true;
+    currentPage.value = value;
+    cargarProductos();
+};
 const cargarProductos = async () => {
     loadingLista.value = true;
     try {
-        const res = await axios.get(route("producto_sucursals.listado"), {
+        const res = await axios.get(route("producto_sucursals.paginado"), {
             params: {
+                perPage: perPage.value,
+                page: currentPage.value,
                 almacen_id: almacen_id.value,
                 categoria_id: categoria_id.value,
                 marca_id: marca_id.value,
                 nombreProducto: nombreProducto.value,
+                activo: 1,
             },
         });
-        listProductoAlmacens.value = res.data.producto_sucursals.map(
-            (item) => ({
-                ...item,
-                cantidad: 1,
-                precio_venta: item.precio,
-                stock_aux: item.stock_total,
-                tipo_venta_id: tipo_venta_id_default,
-            }),
-        );
+        listProductoAlmacens.value = res.data.data.map((item) => ({
+            ...item,
+            cantidad: 1,
+            precio_venta: item.precio,
+            stock_aux: item.stock_total,
+            tipo_venta_id: tipo_venta_id_default,
+        }));
 
         if (form.id != 0 && almacen_id.value != form.almacen_id) {
             const ids = form.venta_detalles
@@ -140,12 +188,19 @@ const cargarProductos = async () => {
 
             form.venta_detalles = [];
         }
+        total_registros.value = res.data.total;
     } catch (e) {
         console.log(e);
     } finally {
         loadingLista.value = false;
     }
 };
+
+const detectarCambioSelect = () => {
+    currentPage.value = 1;
+    cargarProductos();
+};
+
 const intervalNombre = ref(null);
 const filtrarNombres = () => {
     clearInterval(intervalNombre.value);
@@ -228,7 +283,6 @@ const cargarTipoPagos = async () => {
 const cargarListas = () => {
     cargarTipoVentas();
     cargarTipoPagos();
-    cargarProductos();
     cargarAlmacens();
     cargarClientes();
     cargarCategorias();
@@ -423,7 +477,10 @@ const totalVenta = computed(() => {
     return subtotal - descuento;
 });
 const saldoVenta = computed(() => {
-    return (parseFloat(form.total) || 0) - (parseFloat(form.cancelado) || 0);
+    const cancelado =
+        (parseFloat(form.cancelado_efectivo) || 0) +
+        (parseFloat(form.cancelado_qr) || 0);
+    return (parseFloat(form.total) || 0) - cancelado;
 });
 
 watch([subTotalVenta, totalVenta, saldoVenta], () => {
@@ -437,9 +494,9 @@ watch([subTotalVenta, totalVenta, saldoVenta], () => {
 });
 
 const cambiarTipoVenta = () => {
-    form.cancelado = form.total;
+    form.total_cancelado = form.total;
     if (form.tipo_venta == "CRÉDITO") {
-        form.cancelado = 0;
+        form.total_cancelado = 0;
     }
 };
 
@@ -468,6 +525,7 @@ onMounted(() => {
     // edit
     if (form.id != 0) {
         almacen_id.value = form.almacen_id;
+        cargarProductos();
     }
 });
 </script>
@@ -499,7 +557,7 @@ onMounted(() => {
                                             no-match-text="Sin resultados"
                                             placeholder="Seleccionar Almacén"
                                             filterable
-                                            @change="cargarProductos"
+                                            @change="detectarCambioSelect"
                                         >
                                             <el-option
                                                 v-for="item in listAlmacens"
@@ -527,7 +585,7 @@ onMounted(() => {
                                     no-data-text="Sin Datos"
                                     no-match-text="Sin Resultados"
                                     filterable
-                                    @change="cargarProductos"
+                                    @change="detectarCambioSelect"
                                 >
                                     <el-option
                                         v-for="item in listCategorias"
@@ -543,7 +601,7 @@ onMounted(() => {
                                     no-data-text="Sin Datos"
                                     no-match-text="Sin Resultados"
                                     filterable
-                                    @change="cargarProductos"
+                                    @change="detectarCambioSelect"
                                 >
                                     <el-option
                                         v-for="item in listMarcas"
@@ -594,11 +652,6 @@ onMounted(() => {
                                                 <div class="row">
                                                     <div class="col-12 pb-1">
                                                         <span
-                                                            class="fw-bold h6"
-                                                        >
-                                                            {{ item.nombre }}
-                                                        </span>
-                                                        <span
                                                             class="float-end text-sm"
                                                         >
                                                             Stock:
@@ -621,6 +674,17 @@ onMounted(() => {
                                                                 }}
                                                             </span>
                                                         </span>
+                                                        <span
+                                                            class="fw-bold h6"
+                                                        >
+                                                            {{ item.nombre }}
+                                                        </span>
+                                                        <span
+                                                            class="text-muted text-xs d-block"
+                                                            >{{
+                                                                item.codigo
+                                                            }}</span
+                                                        >
                                                     </div>
                                                     <div
                                                         class="col-12 border-top"
@@ -807,6 +871,18 @@ onMounted(() => {
                             <div>Selecciona una almacén</div>
                         </div>
                     </div>
+                    <div class="card-footer" v-if="almacen_id">
+                        <div class="col-12">
+                            Total registros: {{ total_registros }}
+                            <MiPaginacion
+                                :pagination-class="'float-end mb-0'"
+                                :total-data="total_registros"
+                                :current-page="currentPage"
+                                :per-page="perPage"
+                                @updatePage="cambioDePagina"
+                            ></MiPaginacion>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-5">
@@ -817,6 +893,9 @@ onMounted(() => {
                                 <h4 class="card-title text-white pt-1">
                                     <i class="fa fa-clipboard-check"></i> Datos
                                     de la Venta
+                                    <span v-if="form.id != 0" class="fw-bold"
+                                        >- ACTUALIZACIÓN</span
+                                    >
                                 </h4>
                                 <div
                                     class="float-end badge bgActivo rounded-circle fs-6"
@@ -1006,16 +1085,32 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div class="row fw-bolder fs-5">
-                                    <div class="col-6 h-100">Cancelado Bs.</div>
+                                    <div class="col-6 h-100" title="Efectivo">
+                                        Cancelado
+                                        <i class="fa fa-money-bill"></i> Bs.
+                                    </div>
                                     <div class="col-6">
                                         <input
                                             type="number"
                                             class="form-control text-end fs-6"
-                                            v-model="form.cancelado"
+                                            v-model="form.cancelado_efectivo"
                                         />
                                     </div>
                                 </div>
-                                <div
+                                <div class="row fw-bolder fs-5">
+                                    <div class="col-6 h-100" title="QR">
+                                        Cancelado
+                                        <i class="fa fa-qrcode"></i> Bs.
+                                    </div>
+                                    <div class="col-6">
+                                        <input
+                                            type="number"
+                                            class="form-control text-end fs-6"
+                                            v-model="form.cancelado_qr"
+                                        />
+                                    </div>
+                                </div>
+                                <!-- <div
                                     class="row py-2 my-2"
                                     v-if="parseFloat(form.cancelado) > 0"
                                 >
@@ -1040,7 +1135,7 @@ onMounted(() => {
                                             >
                                         </el-radio-group>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-12 fw-bolder text-danger fs-5">
                                     Saldo Bs.
                                     <div class="float-end">
@@ -1063,9 +1158,9 @@ onMounted(() => {
                                 <button
                                     type="button"
                                     class="btn btn-default btn-sm w-100 mt-2 border"
-                                >
-                                    <i class="fa fa-times"></i> Cancelar Venta
-                                </button>
+                                    @click="cancelarVenta"
+                                    v-html="txtBtnCancelar"
+                                ></button>
                             </div>
                         </div>
                     </div>

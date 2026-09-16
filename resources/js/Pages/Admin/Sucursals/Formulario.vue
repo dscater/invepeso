@@ -62,34 +62,36 @@ const enviarFormulario = () => {
             emits("envio-formulario");
         },
         onError: (err, code) => {
-            console.log(code ?? "");
-            console.log(form.errors);
-            if (form.errors) {
-                const error =
-                    "Existen errores en el formulario, por favor verifique";
+            if (Object.keys(form.errors).length > 0) {
+                const errores = Object.values(form.errors)
+                    .map((error) => `<li>${error}</li>`)
+                    .join("");
+
                 Swal.fire({
-                    icon: "info",
-                    title: "Error",
-                    html: `<strong>${error}</strong>`,
-                    confirmButtonText: `Aceptar`,
+                    icon: "error",
+                    title: "Errores de validación",
+                    html: `
+                <p>Existen errores en el formulario:</p>
+                <ul style="text-align:left;">
+                    ${errores}
+                </ul>
+            `,
+                    confirmButtonText: "Aceptar",
                     customClass: {
                         confirmButton: "btn-error",
                     },
                 });
             } else {
-                const error =
-                    "Ocurrió un error inesperado contactese con el Administrador";
                 Swal.fire({
-                    icon: "info",
+                    icon: "error",
                     title: "Error",
-                    html: `<strong>${error}</strong>`,
-                    confirmButtonText: `Aceptar`,
+                    text: "Ocurrió un error inesperado, contacte con el administrador.",
+                    confirmButtonText: "Aceptar",
                     customClass: {
                         confirmButton: "btn-error",
                     },
                 });
             }
-            console.log("error: " + err.error);
         },
         onFinish: () => {
             enviando.value = false;

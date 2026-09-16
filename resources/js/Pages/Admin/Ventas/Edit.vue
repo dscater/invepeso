@@ -39,6 +39,9 @@ onMounted(() => {
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
+                        <li class="breadcrumb-item">
+                            <Link :href="route('ventas.index')">Ventas</Link>
+                        </li>
                         <li class="breadcrumb-item active">Editar Venta</li>
                     </ol>
                 </div>

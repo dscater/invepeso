@@ -14,7 +14,9 @@ class IngresoProducto extends Model
         "proveedor_id",
         "descripcion",
         "total",
-        "cancelado",
+        "cancelado_efectivo",
+        "cancelado_qr",
+        "total_cancelado",
         "saldo",
         "tipo_compra", //CONTADO, CRÉDITO
         "fecha_registro",

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VentaCobroStoreRequest;
+use App\Http\Requests\VentaCobroUpdateRequest;
 use App\Http\Requests\VentaStoreRequest;
 use App\Http\Requests\VentaUpdateRequest;
 use App\Models\Almacen;
@@ -101,6 +102,8 @@ class VentaController extends Controller
             return response()->JSON([
                 "sw" => true,
                 "message" => "Registro realizado",
+                "venta_cobro" => $venta_cobro,
+                "venta" => $venta_cobro->venta,
                 "url_blank" => route('ventas.pdf_cobros', $venta_cobro->venta_id)
             ]);
         } catch (\Exception $e) {
@@ -111,7 +114,7 @@ class VentaController extends Controller
         }
     }
 
-    public function actualizar_cobro(VentaCobroStoreRequest $request, VentaCobro $venta_cobro)
+    public function actualizar_cobro(VentaCobroUpdateRequest $request, VentaCobro $venta_cobro)
     {
         DB::beginTransaction();
         try {
@@ -149,7 +152,7 @@ class VentaController extends Controller
         $alto = $canvas->get_height();
         $ancho = $canvas->get_width();
         $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-        return $pdf->stream('venta_' . $venta->codigo_venta . '.pdf');
+        return $pdf->stream('venta_cobros_' . $venta->codigo_venta . '.pdf');
     }
 
     public function eliminar_cobro(VentaCobro $venta_cobro): JsonResponse|Response

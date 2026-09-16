@@ -97,19 +97,39 @@ class IngresoPagoService
      */
     public function crear(array $datos): IngresoPago
     {
+        if (!$datos["monto_efectivo"] && !$datos["monto_qr"]) {
+            throw new Exception("No puedes dejar vacíos los campos EFECTIVO y QR");
+        }
+
+        if ((float)$datos["monto_efectivo"] <= 0 && (float)$datos["monto_qr"] <= 0) {
+            throw new Exception("No puedes registrar EFECTIVO y QR con un valor menor o igual a 0");
+        }
+
+        $tipo_pago = 'EFECTIVO';
+        if ((float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'QR';
+        }
+        if ((float)$datos["monto_efectivo"] > 0 && (float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'EFECTIVO-QR';
+        }
+
+        $monto_total = (float)($datos["monto_efectivo"] ?? 0) + (float)($datos["monto_qr"] ?? 0);
+
         $ingreso_pago = IngresoPago::create([
             "sucursal_id" => $datos["sucursal_id"],
             "almacen_id" => $datos["almacen_id"],
             "ingreso_producto_id" => $datos["ingreso_producto_id"],
             "proveedor_id" => $datos["proveedor_id"],
-            "monto" => $datos["monto"],
+            "monto_efectivo" => $datos["monto_efectivo"],
+            "monto_qr" => $datos["monto_qr"],
+            "monto_total" => $monto_total,
             "fecha" => date("Y-m-d"),
             "hora" => date("H:i:s"),
             "user_id" => Auth::user()->id,
         ]);
 
         $ingreso_producto = IngresoProducto::findOrFail($ingreso_pago->ingreso_producto_id);
-        if ((float)$ingreso_pago->monto > (float)$ingreso_producto->saldo) {
+        if ((float)$monto_total > (float)$ingreso_producto->saldo) {
             throw new Exception("El monto cancelado no puede ser mayor al saldo actual de $ingreso_producto->saldo");
         }
 
@@ -120,14 +140,15 @@ class IngresoPagoService
             "tipo" => "PAGO POR COMPRA DE PRODUCTOS",
             "modulo" => "IngresoPago",
             "registro_id" => $ingreso_pago->id,
-            "monto" => $ingreso_pago->monto,
+            "monto_qr" => $ingreso_pago->monto_qr,
+            "monto_efectivo" => $ingreso_pago->monto_efectivo,
             "tipo_movimiento" => "EGRESO",
             "tipo_pago" => "EFECTIVO",
             "descripcion" => "PAGO POR COMPRA DE PRODUCTOS",
         ];
 
         // SALDO
-        $ingreso_producto->saldo = (float)$ingreso_producto->saldo - (float)$ingreso_pago->monto;
+        $ingreso_producto->saldo = (float)$ingreso_producto->saldo - (float)$ingreso_pago->monto_total;
         $ingreso_producto->save();
         if ($ingreso_producto->saldo < 0) {
             throw new Exception("No se pudo realizar el registro por que el saldo calculado es menor a 0");
@@ -152,21 +173,41 @@ class IngresoPagoService
     {
         $old_ingreso_pago = clone $ingreso_pago;
 
+        if (!$datos["monto_efectivo"] && !$datos["monto_qr"]) {
+            throw new Exception("No puedes dejar vacíos los campos EFECTIVO y QR");
+        }
+
+        if ((float)$datos["monto_efectivo"] <= 0 && (float)$datos["monto_qr"] <= 0) {
+            throw new Exception("No puedes registrar EFECTIVO y QR con un valor menor o igual a 0");
+        }
+
+        $tipo_pago = 'EFECTIVO';
+        if ((float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'QR';
+        }
+        if ((float)$datos["monto_efectivo"] > 0 && (float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'EFECTIVO-QR';
+        }
+
+        $monto_total = (float)($datos["monto_efectivo"] ?? 0) + (float)($datos["monto_qr"] ?? 0);
+
         $ingreso_pago->update([
             "sucursal_id" => $datos["sucursal_id"],
             "almacen_id" => $datos["almacen_id"],
             "ingreso_producto_id" => $datos["ingreso_producto_id"],
             "proveedor_id" => $datos["proveedor_id"],
-            "monto" => $datos["monto"],
+            "monto_efectivo" => $datos["monto_efectivo"],
+            "monto_qr" => $datos["monto_qr"],
+            "monto_total" => $monto_total,
             // "fecha" => date("Y-m-d"),
             // "hora" => date("H:i:s"),
             // "user_id" => Auth::user()->id,
         ]);
-        $cancelado = $ingreso_pago->ingreso_producto->cancelado;
+        $cancelado = $ingreso_pago->ingreso_producto->total_cancelado;
         $monto_total_cancelado = IngresoPago::where("id", "!=", $ingreso_pago->id)
             ->where("ingreso_producto_id", $ingreso_pago->ingreso_producto_id)
-            ->sum("monto");
-        $monto_total_cancelado = (float)$monto_total_cancelado + (float)$ingreso_pago->monto + $cancelado;
+            ->sum("monto_total");
+        $monto_total_cancelado = (float)$monto_total_cancelado + (float)$ingreso_pago->monto_total + (float)$cancelado;
 
         $ingreso_producto = IngresoProducto::findOrFail($ingreso_pago->ingreso_producto_id);
         if ((float)$monto_total_cancelado > (float)$ingreso_pago->ingreso_producto->total) {
@@ -180,7 +221,8 @@ class IngresoPagoService
             "tipo" => "PAGO POR COMPRA DE PRODUCTOS",
             "modulo" => "IngresoPago",
             "registro_id" => $ingreso_pago->id,
-            "monto" => $ingreso_pago->monto,
+            "monto_qr" => $ingreso_pago->monto_qr,
+            "monto_efectivo" => $ingreso_pago->monto_efectivo,
             "tipo_movimiento" => "EGRESO",
             "tipo_pago" => "EFECTIVO",
             "descripcion" => "PAGO POR COMPRA DE PRODUCTOS",
@@ -218,10 +260,10 @@ class IngresoPagoService
         $old_ingreso_pago = clone $ingreso_pago;
         $ingreso_producto = $ingreso_pago->ingreso_producto;
 
-        $cancelado = $ingreso_pago->ingreso_producto->cancelado;
+        $cancelado = $ingreso_pago->ingreso_producto->total_cancelado;
         $monto_total_cancelado = IngresoPago::where("id", "!=", $ingreso_pago->id)
             ->where("ingreso_producto_id", $ingreso_pago->ingreso_producto_id)
-            ->sum("monto");
+            ->sum("monto_total");
         $monto_total_cancelado = (float)$monto_total_cancelado + $cancelado;
         $ingreso_producto->saldo = (float)$ingreso_producto->total - (float)$monto_total_cancelado;
         $ingreso_producto->save();

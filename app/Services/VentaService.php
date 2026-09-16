@@ -160,9 +160,30 @@ class VentaService
         $almacen = Almacen::findOrFail($datos["almacen_id"]);
         $cliente = Cliente::findOrFail($datos["cliente_id"]);
 
+        $tipo_pago = '';
+        if ((float)$datos["cancelado_efectivo"] > 0) {
+            $tipo_pago = 'EFECTIVO';
+        }
+        if ((float)$datos["cancelado_qr"] > 0) {
+            $tipo_pago = 'QR';
+        }
+        if ((float)$datos["cancelado_efectivo"] > 0 && (float)$datos["cancelado_qr"] > 0) {
+            $tipo_pago = 'EFECTIVO-QR';
+        }
+
+        $total_cancelado = (float)($datos["cancelado_efectivo"] ?? 0) + (float)($datos["cancelado_qr"] ?? 0);
+
         if ($datos["tipo_venta"] == 'AL CONTADO') {
-            if ((float)$datos["total"] != (float)$datos["cancelado"] || $datos["saldo"] > 0) {
-                throw new Exception("El monto cancelado debe ser igual al total y el saldo debe ser 0");
+            if ((float)$datos["total"] != (float)$total_cancelado || $datos["saldo"] > 0) {
+                throw new Exception("El monto cancelado en venta AL CONTADO debe ser igual al total y el saldo debe ser 0");
+            }
+
+            if (!$datos["cancelado_efectivo"] && !$datos["cancelado_qr"]) {
+                throw new Exception("No puedes dejar vacíos los campos EFECTIVO y QR");
+            }
+
+            if ((float)$datos["cancelado_efectivo"] <= 0 && (float)$datos["cancelado_qr"] <= 0) {
+                throw new Exception("No puedes registrar EFECTIVO y QR con un valor menor o igual a 0");
             }
         }
 
@@ -173,12 +194,14 @@ class VentaService
             "tipo_documento_id" => $cliente->tipo_documento_id,
             "nit_ci" => $cliente->full_ci,
             "tipo_venta" => mb_strtoupper($datos["tipo_venta"]),
-            "tipo_pago" => $datos["tipo_pago"] ?? NULL,
+            "tipo_pago" => $tipo_pago ?? NULL,
             "subtotal" => $datos["subtotal"],
             "descuento" => $datos["descuento"] ?? 0,
             "porcentaje_descuento" => $datos["porcentaje_descuento"] ?? 0,
             "total" => $datos["total"],
-            "cancelado" => $datos["cancelado"],
+            "cancelado_efectivo" => $datos["cancelado_efectivo"],
+            "cancelado_qr" => $datos["cancelado_qr"],
+            "total_cancelado" => $total_cancelado,
             "saldo" => $datos["saldo"],
             "fecha" => date("Y-m-d"),
             "hora" => date("H:i:s"),
@@ -231,14 +254,15 @@ class VentaService
         }
 
         // MOVIMIENTO CAJA
-        if ($venta->cancelado > 0) {
+        if ((float)$total_cancelado > 0) {
             $movimiento_caja = [
                 "sucursal_id" => $venta->sucursal_id,
                 "almacen_id" => $venta->almacen_id,
                 "tipo" => "VENTA",
                 "modulo" => "Venta",
                 "registro_id" => $venta->id,
-                "monto" => $venta->cancelado,
+                "monto_efectivo" => $venta->cancelado_efectivo,
+                "monto_qr" => $venta->cancelado_qr,
                 "tipo_movimiento" => "INGRESO",
                 "tipo_pago" => $venta->tipo_pago,
                 "descripcion" => "INGRESO POR VENTA",
@@ -269,6 +293,19 @@ class VentaService
         $almacen = Almacen::findOrFail($datos["almacen_id"]);
         $cliente = Cliente::findOrFail($datos["cliente_id"]);
 
+        $tipo_pago = '';
+        if ((float)$datos["cancelado_efectivo"] > 0) {
+            $tipo_pago = 'EFECTIVO';
+        }
+        if ((float)$datos["cancelado_qr"] > 0) {
+            $tipo_pago = 'QR';
+        }
+        if ((float)$datos["cancelado_efectivo"] > 0 && (float)$datos["cancelado_qr"] > 0) {
+            $tipo_pago = 'EFECTIVO-QR';
+        }
+
+        $total_cancelado = (float)($datos["cancelado_efectivo"] ?? 0) + (float)($datos["cancelado_qr"] ?? 0);
+
         // verificar cobros por venta
         if ($old_venta->tipo_venta == 'CRÉDITO') {
             $cobros = VentaCobro::where("venta_id", $venta->id)->count();
@@ -278,8 +315,16 @@ class VentaService
         }
 
         if ($datos["tipo_venta"] == 'AL CONTADO') {
-            if ((float)$datos["total"] != (float)$datos["cancelado"] || $datos["saldo"] > 0) {
-                throw new Exception("El monto cancelado debe ser igual al total y el saldo debe ser 0");
+            if ((float)$datos["total"] != (float)$total_cancelado || $datos["saldo"] > 0) {
+                throw new Exception("El monto cancelado en venta AL CONTADO debe ser igual al total y el saldo debe ser 0");
+            }
+
+            if (!$datos["cancelado_efectivo"] && !$datos["cancelado_qr"]) {
+                throw new Exception("No puedes dejar vacíos los campos EFECTIVO y QR");
+            }
+
+            if ((float)$datos["cancelado_efectivo"] <= 0 && (float)$datos["cancelado_qr"] <= 0) {
+                throw new Exception("No puedes registrar EFECTIVO y QR con un valor menor o igual a 0");
             }
         }
 
@@ -290,12 +335,14 @@ class VentaService
             "tipo_documento_id" => $cliente->tipo_documento_id,
             "nit_ci" => $cliente->full_ci,
             "tipo_venta" => mb_strtoupper($datos["tipo_venta"]),
-            "tipo_pago" => $datos["tipo_pago"] ?? NULL,
+            "tipo_pago" => $tipo_pago ?? NULL,
             "subtotal" => $datos["subtotal"],
             "descuento" => $datos["descuento"] ?? 0,
             "porcentaje_descuento" => $datos["porcentaje_descuento"] ?? 0,
             "total" => $datos["total"],
-            "cancelado" => $datos["cancelado"],
+            "cancelado_efectivo" => $datos["cancelado_efectivo"],
+            "cancelado_qr" => $datos["cancelado_qr"],
+            "total_cancelado" => $total_cancelado,
             "saldo" => $datos["saldo"],
         ]);
 
@@ -412,14 +459,15 @@ class VentaService
         }
 
         // MOVIMIENTO CAJA
-        if ($venta->cancelado > 0) {
+        if ((float)$total_cancelado > 0) {
             $movimiento_caja = [
                 "sucursal_id" => $venta->sucursal_id,
                 "almacen_id" => $venta->almacen_id,
                 "tipo" => "VENTA",
                 "modulo" => "Venta",
                 "registro_id" => $venta->id,
-                "monto" => $venta->cancelado,
+                "monto_efectivo" => $venta->cancelado_efectivo,
+                "monto_qr" => $venta->cancelado_qr,
                 "tipo_movimiento" => "INGRESO",
                 "tipo_pago" => $venta->tipo_pago,
                 "descripcion" => "INGRESO POR VENTA",

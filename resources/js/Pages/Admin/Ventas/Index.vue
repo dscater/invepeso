@@ -295,6 +295,35 @@ const eliminarVenta = (item) => {
                                 </template>
                                 <template
                                     v-if="
+                                        item.tipo_venta == 'CRÉDITO' &&
+                                        (props_page.auth?.user.permisos ==
+                                            '*' ||
+                                            props_page.auth?.user.permisos.includes(
+                                                'ventas.cobros',
+                                            ))
+                                    "
+                                >
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="Pdf Cobros"
+                                        placement="left-start"
+                                    >
+                                        <a
+                                            class="btn btn-default bgPrecargado"
+                                            :href="
+                                                route(
+                                                    'ventas.pdf_cobros',
+                                                    item.id,
+                                                )
+                                            "
+                                            target="_blank"
+                                        >
+                                            <i class="fa fa-file-pdf"></i></a
+                                    ></el-tooltip>
+                                </template>
+                                <template
+                                    v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
                                             'ventas.edit',

@@ -12,7 +12,7 @@ class VentaCobroUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,23 @@ class VentaCobroUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "almacen_id" => "required",
+            "tipo_pago" => "required",
+            "monto_efectivo" => "required|decimal:0,2|min:0",
+            "monto_qr" => "required|decimal:0,2|min:0",
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            "almacen_id.required" => "Debes seleccionar un almacén",
+            "monto_efectivo.required" => "Debes completar el campo de monto efectivo.",
+            "monto_efectivo.decimal" => "Debes ingresar un valor númerico de hasta 2 decimales",
+            "monto_efectivo.min" => "Debes ingresar un valor númerico no puede ser menor :min",
+            "monto_qr.required" => "Debes completar el campo de monto qr.",
+            "monto_qr.decimal" => "Debes ingresar un valor númerico de hasta 2 decimales",
+            "monto_qr.min" => "Debes ingresar un valor númerico no puede ser menor :min",
         ];
     }
 }

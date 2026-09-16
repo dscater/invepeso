@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 15-09-2026 a las 15:27:06
+-- Tiempo de generación: 16-09-2026 a las 22:33:20
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -30,8 +30,8 @@ SET time_zone = "+00:00";
 CREATE TABLE `almacens` (
   `id` bigint UNSIGNED NOT NULL,
   `sucursal_id` bigint UNSIGNED NOT NULL,
-  `nombre` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descripcion` varchar(900) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nombre` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descripcion` varchar(900) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `activo` tinyint(1) NOT NULL DEFAULT '1',
   `fecha_registro` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -286,7 +286,79 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (120, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 6, \"hora\": \"11:22:58\", \"fecha\": \"2026-09-15\", \"monto\": \"500\", \"saldo\": 0, \"user_id\": 1, \"venta_id\": 10, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 3, \"created_at\": \"2026-09-15T15:22:58.000000Z\", \"updated_at\": \"2026-09-15T15:22:58.000000Z\", \"sucursal_id\": 1}', NULL, 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-15', '11:22:58', '2026-09-15 15:22:58', '2026-09-15 15:22:58'),
 (121, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 50 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 23, \"hora\": \"11:23:38\", \"tipo\": \"COBRO POR VENTA DE PRODUCTOS\", \"fecha\": \"2026-09-15\", \"monto\": \"50\", \"modulo\": \"VentaCobro\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-15T15:23:38.000000Z\", \"updated_at\": \"2026-09-15T15:23:38.000000Z\", \"descripcion\": \"COBRO POR VENTA DE PRODUCTOS\", \"registro_id\": 7, \"sucursal_id\": 1, \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-15', '11:23:38', '2026-09-15 15:23:38', '2026-09-15 15:23:38'),
 (122, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 7, \"hora\": \"11:23:38\", \"fecha\": \"2026-09-15\", \"monto\": \"50\", \"saldo\": 0, \"user_id\": 1, \"venta_id\": 10, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 3, \"created_at\": \"2026-09-15T15:23:38.000000Z\", \"updated_at\": \"2026-09-15T15:23:38.000000Z\", \"sucursal_id\": 1}', NULL, 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-15', '11:23:38', '2026-09-15 15:23:38', '2026-09-15 15:23:38'),
-(123, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR VENTA DE PRODUCTOS', '{\"id\": 7, \"hora\": \"11:23:38\", \"fecha\": \"2026-09-15\", \"monto\": \"50.00\", \"saldo\": \"0.00\", \"user_id\": 1, \"venta_id\": 10, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 3, \"created_at\": \"2026-09-15T15:23:38.000000Z\", \"updated_at\": \"2026-09-15T15:23:38.000000Z\", \"sucursal_id\": 1}', '{\"id\": 7, \"hora\": \"11:23:49\", \"fecha\": \"2026-09-15\", \"monto\": \"50.00\", \"saldo\": 0, \"user_id\": 1, \"venta_id\": 10, \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"cliente_id\": 3, \"created_at\": \"2026-09-15T15:23:38.000000Z\", \"updated_at\": \"2026-09-15T15:23:49.000000Z\", \"sucursal_id\": 1}', 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-15', '11:23:49', '2026-09-15 15:23:49', '2026-09-15 15:23:49');
+(123, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR VENTA DE PRODUCTOS', '{\"id\": 7, \"hora\": \"11:23:38\", \"fecha\": \"2026-09-15\", \"monto\": \"50.00\", \"saldo\": \"0.00\", \"user_id\": 1, \"venta_id\": 10, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 3, \"created_at\": \"2026-09-15T15:23:38.000000Z\", \"updated_at\": \"2026-09-15T15:23:38.000000Z\", \"sucursal_id\": 1}', '{\"id\": 7, \"hora\": \"11:23:49\", \"fecha\": \"2026-09-15\", \"monto\": \"50.00\", \"saldo\": 0, \"user_id\": 1, \"venta_id\": 10, \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"cliente_id\": 3, \"created_at\": \"2026-09-15T15:23:38.000000Z\", \"updated_at\": \"2026-09-15T15:23:49.000000Z\", \"sucursal_id\": 1}', 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-15', '11:23:49', '2026-09-15 15:23:49', '2026-09-15 15:23:49'),
+(124, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 11, \"saldo\": \"300.00\", \"total\": \"300.00\", \"codigo\": \"L-00011\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:13:28.000000Z\", \"updated_at\": \"2026-09-16T14:13:28.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-09-16\", \"tipo_ingreso_id\": \"1\", \"ingreso_detalles\": [{\"id\": 11, \"costo\": \"300.00\", \"cantidad\": 1, \"repuesto\": 0, \"subtotal\": \"300.00\", \"faltantes\": null, \"created_at\": \"2026-09-16T14:13:28.000000Z\", \"updated_at\": \"2026-09-16T14:13:28.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 3, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 11}]}', NULL, 'INGRESO DE PRODUCTOS', '2026-09-16', '10:13:28', '2026-09-16 14:13:28', '2026-09-16 14:13:28'),
+(125, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN TRASPASO DE PRODUCTOS DE ALMACEN CENTRAL A ALMACEN 1', '{\"id\": 8, \"user_id\": 1, \"cantidad\": \"2\", \"created_at\": \"2026-09-16T14:17:07.000000Z\", \"updated_at\": \"2026-09-16T14:17:07.000000Z\", \"descripcion\": \"TRASPASO A ALMACEN 1\", \"fecha_registro\": \"2026-09-16\", \"almacen_origen_id\": 1, \"traspaso_detalles\": [{\"id\": 18, \"cantidad\": 2, \"created_at\": \"2026-09-16T14:17:07.000000Z\", \"updated_at\": \"2026-09-16T14:17:07.000000Z\", \"observacion\": null, \"producto_id\": 2, \"traspaso_id\": 8}], \"almacen_destino_id\": 2, \"sucursal_origen_id\": 1, \"sucursal_destino_id\": 2}', NULL, 'TRASPASOS DE PRODUCTOS', '2026-09-16', '10:17:07', '2026-09-16 14:17:07', '2026-09-16 14:17:07'),
+(126, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 540 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 24, \"hora\": \"10:22:25\", \"tipo\": \"COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"monto\": \"540\", \"modulo\": \"IngresoProducto\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:22:25.000000Z\", \"updated_at\": \"2026-09-16T14:22:25.000000Z\", \"descripcion\": \"COMPRA DE PRODUCTOS\", \"registro_id\": 12, \"sucursal_id\": 1, \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '10:22:25', '2026-09-16 14:22:25', '2026-09-16 14:22:25'),
+(127, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 12, \"saldo\": \"1020.00\", \"total\": \"1560.00\", \"codigo\": \"L-00012\", \"user_id\": 1, \"cancelado\": \"540\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:22:25.000000Z\", \"updated_at\": \"2026-09-16T14:22:25.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-09-16\", \"tipo_ingreso_id\": \"1\", \"ingreso_detalles\": [{\"id\": 12, \"costo\": \"120.00\", \"cantidad\": 3, \"repuesto\": 0, \"subtotal\": \"360.00\", \"faltantes\": null, \"created_at\": \"2026-09-16T14:22:25.000000Z\", \"updated_at\": \"2026-09-16T14:22:25.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 2, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 12}, {\"id\": 13, \"costo\": \"300.00\", \"cantidad\": 4, \"repuesto\": 0, \"subtotal\": \"1200.00\", \"faltantes\": null, \"created_at\": \"2026-09-16T14:22:25.000000Z\", \"updated_at\": \"2026-09-16T14:22:25.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 3, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 12}]}', NULL, 'INGRESO DE PRODUCTOS', '2026-09-16', '10:22:25', '2026-09-16 14:22:25', '2026-09-16 14:22:25'),
+(128, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 13, \"saldo\": \"480.00\", \"total\": \"480.00\", \"codigo\": \"L-00013\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:25:21.000000Z\", \"updated_at\": \"2026-09-16T14:25:21.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-09-16\", \"tipo_ingreso_id\": \"1\", \"ingreso_detalles\": [{\"id\": 14, \"costo\": \"120.00\", \"cantidad\": 4, \"repuesto\": 0, \"subtotal\": \"480.00\", \"faltantes\": null, \"created_at\": \"2026-09-16T14:25:21.000000Z\", \"updated_at\": \"2026-09-16T14:25:21.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 2, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 13}]}', NULL, 'INGRESO DE PRODUCTOS', '2026-09-16', '10:25:21', '2026-09-16 14:25:21', '2026-09-16 14:25:21'),
+(129, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA PROFORMA', '{\"id\": 4, \"hora\": \"10:29:09\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"total\": \"2300.00\", \"nit_ci\": \"43344343\", \"user_id\": 1, \"subtotal\": \"2300.00\", \"cancelado\": \"2300.00\", \"descuento\": \"0\", \"almacen_id\": 1, \"cliente_id\": 8, \"created_at\": \"2026-09-16T14:29:09.000000Z\", \"updated_at\": \"2026-09-16T14:29:09.000000Z\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-16\", \"codigo_proforma\": \"P4\", \"proforma_detalles\": [{\"id\": 10, \"total\": \"900.00\", \"precio\": \"300.00\", \"cantidad\": 3, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"900.00\", \"created_at\": \"2026-09-16T14:29:09.000000Z\", \"updated_at\": \"2026-09-16T14:29:09.000000Z\", \"producto_id\": 3, \"proforma_id\": 4, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 11, \"total\": \"800.00\", \"precio\": \"200.00\", \"cantidad\": 4, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"800.00\", \"created_at\": \"2026-09-16T14:29:09.000000Z\", \"updated_at\": \"2026-09-16T14:29:09.000000Z\", \"producto_id\": 2, \"proforma_id\": 4, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 12, \"total\": \"600.00\", \"precio\": \"300.00\", \"cantidad\": 2, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"600.00\", \"created_at\": \"2026-09-16T14:29:09.000000Z\", \"updated_at\": \"2026-09-16T14:29:09.000000Z\", \"producto_id\": 5, \"proforma_id\": 4, \"precio_final\": \"300.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 2, \"porcentaje_descuento\": 0}', NULL, 'PROFORMAS', '2026-09-16', '10:29:09', '2026-09-16 14:29:09', '2026-09-16 14:29:09'),
+(130, 1, 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ UNA VENTA', '{\"id\": 14, \"hora\": \"10:41:26\", \"fecha\": \"2026-09-15\", \"saldo\": \"0.00\", \"total\": \"590.00\", \"nit_ci\": \"43343434\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"590.00\", \"cancelado\": \"590.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 3, \"cliente_id\": 5, \"created_at\": \"2026-09-15T14:41:26.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-15T14:41:26.000000Z\", \"sucursal_id\": 3, \"codigo_venta\": \"V14\", \"fecha_registro\": \"2026-09-15\", \"venta_detalles\": [], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', '{\"id\": 14, \"hora\": \"10:41:26\", \"fecha\": \"2026-09-15\", \"saldo\": \"0.00\", \"total\": \"590.00\", \"nit_ci\": \"43343434\", \"status\": 0, \"user_id\": 1, \"subtotal\": \"590.00\", \"cancelado\": \"590.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 3, \"cliente_id\": 5, \"created_at\": \"2026-09-15T14:41:26.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T14:31:17.000000Z\", \"sucursal_id\": 3, \"codigo_venta\": \"V14\", \"fecha_registro\": \"2026-09-15\", \"venta_detalles\": [{\"id\": 15, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 14, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-15T14:41:26.000000Z\", \"updated_at\": \"2026-09-15T14:41:26.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 16, \"total\": \"390.00\", \"precio\": \"390.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 14, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"390.00\", \"created_at\": \"2026-09-15T14:41:26.000000Z\", \"updated_at\": \"2026-09-15T14:41:26.000000Z\", \"producto_id\": 4, \"precio_final\": \"390.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', 'VENTAS', '2026-09-16', '10:31:17', '2026-09-16 14:31:17', '2026-09-16 14:31:17'),
+(131, 1, 'ELIMINACIÓN', 'EL USUARIO admin RESTAURÓ UNA VENTA', '{\"id\": 14, \"hora\": \"10:41:26\", \"fecha\": \"2026-09-15\", \"saldo\": \"0.00\", \"total\": \"590.00\", \"nit_ci\": \"43343434\", \"status\": 0, \"user_id\": 1, \"subtotal\": \"590.00\", \"cancelado\": \"590.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 3, \"cliente_id\": 5, \"created_at\": \"2026-09-15T14:41:26.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T14:31:17.000000Z\", \"sucursal_id\": 3, \"codigo_venta\": \"V14\", \"fecha_registro\": \"2026-09-15\", \"venta_detalles\": [], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', '{\"id\": 14, \"hora\": \"10:41:26\", \"fecha\": \"2026-09-15\", \"saldo\": \"0.00\", \"total\": \"590.00\", \"nit_ci\": \"43343434\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"590.00\", \"cancelado\": \"590.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 3, \"cliente_id\": 5, \"created_at\": \"2026-09-15T14:41:26.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T14:31:22.000000Z\", \"sucursal_id\": 3, \"codigo_venta\": \"V14\", \"fecha_registro\": \"2026-09-15\", \"venta_detalles\": [], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', 'VENTAS', '2026-09-16', '10:31:22', '2026-09-16 14:31:22', '2026-09-16 14:31:22'),
+(132, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 50 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 25, \"hora\": \"10:33:00\", \"tipo\": \"VENTA\", \"fecha\": \"2026-09-16\", \"monto\": \"50\", \"modulo\": \"Venta\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:33:00.000000Z\", \"updated_at\": \"2026-09-16T14:33:00.000000Z\", \"descripcion\": \"INGRESO POR VENTA\", \"registro_id\": 15, \"sucursal_id\": 1, \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '10:33:00', '2026-09-16 14:33:00', '2026-09-16 14:33:00'),
+(133, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 15, \"hora\": \"10:33:00\", \"fecha\": \"2026-09-16\", \"saldo\": \"240.00\", \"total\": \"290.00\", \"nit_ci\": \"123456\", \"user_id\": 1, \"subtotal\": \"290.00\", \"cancelado\": \"50\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T14:33:00.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-09-16T14:33:00.000000Z\", \"sucursal_id\": 1, \"codigo_venta\": \"V15\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 17, \"total\": \"290.00\", \"precio\": \"290.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 15, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"290.00\", \"created_at\": \"2026-09-16T14:33:00.000000Z\", \"updated_at\": \"2026-09-16T14:33:00.000000Z\", \"producto_id\": 2, \"precio_final\": \"290.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-16', '10:33:00', '2026-09-16 14:33:00', '2026-09-16 14:33:00'),
+(134, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 300 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 26, \"hora\": \"10:36:53\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"monto\": \"300\", \"modulo\": \"IngresoPago\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:36:53.000000Z\", \"updated_at\": \"2026-09-16T14:36:53.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"registro_id\": 11, \"sucursal_id\": 1, \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '10:36:53', '2026-09-16 14:36:53', '2026-09-16 14:36:53'),
+(135, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 11, \"hora\": \"10:36:53\", \"fecha\": \"2026-09-16\", \"monto\": \"300\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:36:53.000000Z\", \"updated_at\": \"2026-09-16T14:36:53.000000Z\", \"sucursal_id\": 1, \"proveedor_id\": 1, \"ingreso_producto_id\": 11}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '10:36:53', '2026-09-16 14:36:53', '2026-09-16 14:36:53'),
+(136, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 2000 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 27, \"hora\": \"10:37:02\", \"tipo\": \"MOVIMIENTO DE CAJA\", \"fecha\": \"2026-09-16\", \"monto\": \"2000\", \"modulo\": \"MovimientoCaja\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:38:13.000000Z\", \"updated_at\": \"2026-09-16T14:38:13.000000Z\", \"descripcion\": \"ingreso de prueba\", \"registro_id\": 27, \"sucursal_id\": 1, \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '10:38:13', '2026-09-16 14:38:13', '2026-09-16 14:38:13'),
+(137, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 16, \"hora\": \"14:45:46\", \"fecha\": \"2026-09-16\", \"saldo\": \"550.00\", \"total\": \"550.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"550.00\", \"cancelado\": \"0\", \"descuento\": \"0\", \"tipo_pago\": null, \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-09-16T18:45:46.000000Z\", \"sucursal_id\": 1, \"codigo_venta\": \"V16\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 18, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 16, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"updated_at\": \"2026-09-16T18:45:46.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 19, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 16, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"updated_at\": \"2026-09-16T18:45:46.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-16', '14:45:46', '2026-09-16 18:45:46', '2026-09-16 18:45:46'),
+(138, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA PROFORMA', '{\"id\": 5, \"hora\": \"14:46:11\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"total\": \"2300.00\", \"nit_ci\": \"3433333\", \"user_id\": 1, \"subtotal\": \"2300.00\", \"cancelado\": \"2300.00\", \"descuento\": \"0\", \"almacen_id\": 1, \"cliente_id\": 4, \"created_at\": \"2026-09-16T18:46:11.000000Z\", \"updated_at\": \"2026-09-16T18:46:11.000000Z\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-16\", \"codigo_proforma\": \"P5\", \"proforma_detalles\": [{\"id\": 13, \"total\": \"200.00\", \"precio\": \"200.00\", \"cantidad\": 1, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T18:46:11.000000Z\", \"updated_at\": \"2026-09-16T18:46:11.000000Z\", \"producto_id\": 2, \"proforma_id\": 5, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 14, \"total\": \"2100.00\", \"precio\": \"350.00\", \"cantidad\": 6, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"2100.00\", \"created_at\": \"2026-09-16T18:46:11.000000Z\", \"updated_at\": \"2026-09-16T18:46:11.000000Z\", \"producto_id\": 3, \"proforma_id\": 5, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', NULL, 'PROFORMAS', '2026-09-16', '14:46:11', '2026-09-16 18:46:11', '2026-09-16 18:46:11'),
+(139, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA PROFORMA', '{\"id\": 5, \"hora\": \"14:46:11\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"total\": \"2300.00\", \"nit_ci\": \"3433333\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"2300.00\", \"cancelado\": \"2300.00\", \"descuento\": \"0.00\", \"almacen_id\": 1, \"cliente_id\": 4, \"created_at\": \"2026-09-16T18:46:11.000000Z\", \"updated_at\": \"2026-09-16T18:46:11.000000Z\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-16\", \"codigo_proforma\": \"P5\", \"proforma_detalles\": [{\"id\": 13, \"total\": \"200.00\", \"precio\": \"200.00\", \"cantidad\": 1, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T18:46:11.000000Z\", \"updated_at\": \"2026-09-16T18:46:11.000000Z\", \"producto_id\": 2, \"proforma_id\": 5, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 14, \"total\": \"2100.00\", \"precio\": \"350.00\", \"cantidad\": 6, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"2100.00\", \"created_at\": \"2026-09-16T18:46:11.000000Z\", \"updated_at\": \"2026-09-16T18:46:11.000000Z\", \"producto_id\": 3, \"proforma_id\": 5, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', '{\"id\": 5, \"hora\": \"14:46:11\", \"fecha\": \"2026-09-16\", \"saldo\": \"800.00\", \"total\": \"3100.00\", \"nit_ci\": \"3433333\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"3100.00\", \"cancelado\": \"2300.00\", \"descuento\": \"0.00\", \"almacen_id\": 1, \"cliente_id\": 4, \"created_at\": \"2026-09-16T18:46:11.000000Z\", \"updated_at\": \"2026-09-16T18:46:34.000000Z\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-09-16\", \"codigo_proforma\": \"P5\", \"proforma_detalles\": [{\"id\": 13, \"total\": \"1000.00\", \"precio\": \"200.00\", \"cantidad\": 5, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"1000.00\", \"created_at\": \"2026-09-16T18:46:11.000000Z\", \"updated_at\": \"2026-09-16T18:46:34.000000Z\", \"producto_id\": 2, \"proforma_id\": 5, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 14, \"total\": \"2100.00\", \"precio\": \"350.00\", \"cantidad\": 6, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"2100.00\", \"created_at\": \"2026-09-16T18:46:11.000000Z\", \"updated_at\": \"2026-09-16T18:46:11.000000Z\", \"producto_id\": 3, \"proforma_id\": 5, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": \"0\"}', 'PROFORMAS', '2026-09-16', '14:46:34', '2026-09-16 18:46:34', '2026-09-16 18:46:34'),
+(140, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 14, \"saldo\": \"600.00\", \"total\": \"600.00\", \"codigo\": \"L-00014\", \"user_id\": 1, \"cancelado\": \"0\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T18:47:03.000000Z\", \"updated_at\": \"2026-09-16T18:47:03.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-09-16\", \"tipo_ingreso_id\": \"1\", \"ingreso_detalles\": [{\"id\": 15, \"costo\": \"300.00\", \"cantidad\": 2, \"repuesto\": 0, \"subtotal\": \"600.00\", \"faltantes\": null, \"created_at\": \"2026-09-16T18:47:03.000000Z\", \"updated_at\": \"2026-09-16T18:47:03.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 3, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 14}]}', NULL, 'INGRESO DE PRODUCTOS', '2026-09-16', '14:47:03', '2026-09-16 18:47:03', '2026-09-16 18:47:03'),
+(141, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA VENTA', '{\"id\": 16, \"hora\": \"14:45:46\", \"fecha\": \"2026-09-16\", \"saldo\": \"550.00\", \"total\": \"550.00\", \"nit_ci\": \"123456-CM\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"550.00\", \"cancelado\": \"0.00\", \"descuento\": \"0.00\", \"tipo_pago\": null, \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-09-16T18:45:46.000000Z\", \"sucursal_id\": 1, \"codigo_venta\": \"V16\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 18, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 16, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"updated_at\": \"2026-09-16T18:45:46.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 19, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 16, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"updated_at\": \"2026-09-16T18:45:46.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', '{\"id\": 16, \"hora\": \"14:45:46\", \"fecha\": \"2026-09-16\", \"saldo\": \"750.00\", \"total\": \"750.00\", \"nit_ci\": \"123456-CM\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"750.00\", \"cancelado\": \"0.00\", \"descuento\": \"0.00\", \"tipo_pago\": null, \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-09-16T18:49:44.000000Z\", \"sucursal_id\": 1, \"codigo_venta\": \"V16\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 18, \"total\": \"400.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 2, \"venta_id\": 16, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"400.00\", \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"updated_at\": \"2026-09-16T18:49:44.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 19, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 16, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"updated_at\": \"2026-09-16T18:45:46.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": \"0\"}', 'VENTAS', '2026-09-16', '14:49:44', '2026-09-16 18:49:44', '2026-09-16 18:49:44'),
+(142, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA VENTA', '{\"id\": 16, \"hora\": \"14:45:46\", \"fecha\": \"2026-09-16\", \"saldo\": \"750.00\", \"total\": \"750.00\", \"nit_ci\": \"123456-CM\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"750.00\", \"cancelado\": \"0.00\", \"descuento\": \"0.00\", \"tipo_pago\": null, \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-09-16T18:49:44.000000Z\", \"sucursal_id\": 1, \"codigo_venta\": \"V16\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 18, \"total\": \"400.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 2, \"venta_id\": 16, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"400.00\", \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"updated_at\": \"2026-09-16T18:49:44.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 19, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 16, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"updated_at\": \"2026-09-16T18:45:46.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', '{\"id\": 16, \"hora\": \"14:45:46\", \"fecha\": \"2026-09-16\", \"saldo\": \"950.00\", \"total\": \"950.00\", \"nit_ci\": \"123456-CM\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"950.00\", \"cancelado\": \"0.00\", \"descuento\": \"0.00\", \"tipo_pago\": null, \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-09-16T18:50:00.000000Z\", \"sucursal_id\": 1, \"codigo_venta\": \"V16\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 18, \"total\": \"600.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 3, \"venta_id\": 16, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"600.00\", \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"updated_at\": \"2026-09-16T18:50:00.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 19, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 16, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T18:45:46.000000Z\", \"updated_at\": \"2026-09-16T18:45:46.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": \"0\"}', 'VENTAS', '2026-09-16', '14:50:00', '2026-09-16 18:50:00', '2026-09-16 18:50:00'),
+(143, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 10 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 28, \"hora\": \"14:50:35\", \"tipo\": \"COBRO POR VENTA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"monto\": \"10\", \"modulo\": \"VentaCobro\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T18:50:35.000000Z\", \"updated_at\": \"2026-09-16T18:50:35.000000Z\", \"descripcion\": \"COBRO POR VENTA DE PRODUCTOS\", \"registro_id\": 8, \"sucursal_id\": 1, \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '14:50:35', '2026-09-16 18:50:35', '2026-09-16 18:50:35'),
+(144, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 8, \"hora\": \"14:50:35\", \"fecha\": \"2026-09-16\", \"monto\": \"10\", \"saldo\": 0, \"user_id\": 1, \"venta_id\": 16, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-16T18:50:35.000000Z\", \"updated_at\": \"2026-09-16T18:50:35.000000Z\", \"sucursal_id\": 1}', NULL, 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-16', '14:50:35', '2026-09-16 18:50:35', '2026-09-16 18:50:35'),
+(145, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 550.00 EN LA SUCURSAL SUCURSAL 2; almacén ALMACEN 2', '{\"id\": 29, \"hora\": \"10:41:26\", \"tipo\": \"VENTA\", \"fecha\": \"2026-09-15\", \"monto\": \"550.00\", \"modulo\": \"Venta\", \"user_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 3, \"created_at\": \"2026-09-16T19:05:17.000000Z\", \"updated_at\": \"2026-09-16T19:05:17.000000Z\", \"descripcion\": \"INGRESO POR VENTA\", \"registro_id\": 14, \"sucursal_id\": 3, \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '15:05:17', '2026-09-16 19:05:17', '2026-09-16 19:05:17'),
+(146, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA VENTA', '{\"id\": 14, \"hora\": \"10:41:26\", \"fecha\": \"2026-09-15\", \"saldo\": \"0.00\", \"total\": \"590.00\", \"nit_ci\": \"43343434\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"590.00\", \"cancelado\": \"590.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 3, \"cliente_id\": 5, \"created_at\": \"2026-09-15T14:41:26.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T14:31:22.000000Z\", \"sucursal_id\": 3, \"codigo_venta\": \"V14\", \"fecha_registro\": \"2026-09-15\", \"venta_detalles\": [], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', '{\"id\": 14, \"hora\": \"10:41:26\", \"fecha\": \"2026-09-15\", \"saldo\": \"0.00\", \"total\": \"550.00\", \"nit_ci\": \"43343434\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"550.00\", \"cancelado\": \"550.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 3, \"cliente_id\": 5, \"created_at\": \"2026-09-15T14:41:26.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T19:05:17.000000Z\", \"sucursal_id\": 3, \"codigo_venta\": \"V14\", \"fecha_registro\": \"2026-09-15\", \"venta_detalles\": [{\"id\": 22, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 14, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T19:05:17.000000Z\", \"updated_at\": \"2026-09-16T19:05:17.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 23, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 14, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T19:05:17.000000Z\", \"updated_at\": \"2026-09-16T19:05:17.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": \"0\"}', 'VENTAS', '2026-09-16', '15:05:17', '2026-09-16 19:05:17', '2026-09-16 19:05:17'),
+(147, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN TRASPASO DE PRODUCTOS DE ALMACEN CENTRAL A ALMACEN 2', '{\"id\": 9, \"user_id\": 1, \"cantidad\": \"10\", \"created_at\": \"2026-09-16T19:49:39.000000Z\", \"updated_at\": \"2026-09-16T19:49:39.000000Z\", \"descripcion\": \"TRASPASO 10 PRODUCTOS A ALMACEN 2\", \"fecha_registro\": \"2026-09-16\", \"almacen_origen_id\": 1, \"traspaso_detalles\": [{\"id\": 19, \"cantidad\": 10, \"created_at\": \"2026-09-16T19:49:39.000000Z\", \"updated_at\": \"2026-09-16T19:49:39.000000Z\", \"observacion\": null, \"producto_id\": 3, \"traspaso_id\": 9}], \"almacen_destino_id\": 3, \"sucursal_origen_id\": 1, \"sucursal_destino_id\": 3}', NULL, 'TRASPASOS DE PRODUCTOS', '2026-09-16', '15:49:39', '2026-09-16 19:49:39', '2026-09-16 19:49:39'),
+(148, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA SUCURSAL', '{\"id\": 3, \"activo\": 0, \"nombre\": \"SUCURSAL 2\", \"ventas\": 1, \"created_at\": \"2026-07-11T15:33:42.000000Z\", \"updated_at\": \"2026-08-28T15:40:51.000000Z\", \"descripcion\": \"\", \"fecha_registro\": \"2026-07-11\"}', '{\"id\": 3, \"activo\": \"1\", \"nombre\": \"SUCURSAL 2\", \"ventas\": 1, \"created_at\": \"2026-07-11T15:33:42.000000Z\", \"updated_at\": \"2026-09-16T20:14:41.000000Z\", \"descripcion\": \"\", \"fecha_registro\": \"2026-07-11\"}', 'SUCURSALES', '2026-09-16', '16:14:41', '2026-09-16 20:14:41', '2026-09-16 20:14:41'),
+(149, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA SUCURSAL', '{\"id\": 3, \"activo\": 1, \"nombre\": \"SUCURSAL 2\", \"ventas\": 1, \"created_at\": \"2026-07-11T15:33:42.000000Z\", \"updated_at\": \"2026-09-16T20:14:41.000000Z\", \"descripcion\": \"\", \"fecha_registro\": \"2026-07-11\"}', '{\"id\": 3, \"activo\": \"0\", \"nombre\": \"SUCURSAL 2\", \"ventas\": 1, \"created_at\": \"2026-07-11T15:33:42.000000Z\", \"updated_at\": \"2026-09-16T20:14:45.000000Z\", \"descripcion\": \"\", \"fecha_registro\": \"2026-07-11\"}', 'SUCURSALES', '2026-09-16', '16:14:45', '2026-09-16 20:14:45', '2026-09-16 20:14:45'),
+(150, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA SUCURSAL', '{\"id\": 3, \"activo\": 0, \"nombre\": \"SUCURSAL 2\", \"ventas\": 1, \"created_at\": \"2026-07-11T15:33:42.000000Z\", \"updated_at\": \"2026-09-16T20:14:45.000000Z\", \"descripcion\": \"\", \"fecha_registro\": \"2026-07-11\"}', '{\"id\": 3, \"activo\": \"1\", \"nombre\": \"SUCURSAL 2\", \"ventas\": 1, \"created_at\": \"2026-07-11T15:33:42.000000Z\", \"updated_at\": \"2026-09-16T20:21:56.000000Z\", \"descripcion\": \"\", \"fecha_registro\": \"2026-07-11\"}', 'SUCURSALES', '2026-09-16', '16:21:56', '2026-09-16 20:21:56', '2026-09-16 20:21:56'),
+(151, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 40 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 31, \"hora\": \"16:57:29\", \"tipo\": \"MOVIMIENTO DE CAJA\", \"fecha\": \"2026-09-16\", \"modulo\": \"MovimientoCaja\", \"user_id\": 1, \"monto_qr\": \"20\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T20:58:56.000000Z\", \"updated_at\": \"2026-09-16T20:58:56.000000Z\", \"descripcion\": \"ingreso mixto\", \"monto_total\": 40, \"registro_id\": 31, \"sucursal_id\": 1, \"monto_efectivo\": \"20\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '16:58:56', '2026-09-16 20:58:56', '2026-09-16 20:58:56'),
+(152, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 240 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 32, \"hora\": \"17:08:19\", \"tipo\": \"COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoProducto\", \"user_id\": 1, \"monto_qr\": \"40\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:08:19.000000Z\", \"updated_at\": \"2026-09-16T21:08:19.000000Z\", \"descripcion\": \"COMPRA DE PRODUCTOS\", \"monto_total\": 240, \"registro_id\": 16, \"sucursal_id\": 1, \"monto_efectivo\": \"200\", \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:08:19', '2026-09-16 21:08:19', '2026-09-16 21:08:19'),
+(153, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 16, \"saldo\": \"0.00\", \"total\": \"240.00\", \"codigo\": \"L-00016\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:08:19.000000Z\", \"updated_at\": \"2026-09-16T21:08:19.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CONTADO,\", \"cancelado_qr\": \"40\", \"proveedor_id\": \"3\", \"fecha_registro\": \"2026-09-16\", \"tipo_ingreso_id\": \"1\", \"total_cancelado\": 240, \"ingreso_detalles\": [{\"id\": 17, \"costo\": \"120.00\", \"cantidad\": 2, \"repuesto\": 0, \"subtotal\": \"240.00\", \"faltantes\": null, \"created_at\": \"2026-09-16T21:08:19.000000Z\", \"updated_at\": \"2026-09-16T21:08:19.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 2, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 16}], \"cancelado_efectivo\": \"200\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-09-16', '17:08:19', '2026-09-16 21:08:19', '2026-09-16 21:08:19'),
+(154, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 17, \"saldo\": \"600.00\", \"total\": \"600.00\", \"codigo\": \"L-00017\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:09:03.000000Z\", \"updated_at\": \"2026-09-16T21:09:03.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-09-16\", \"tipo_ingreso_id\": \"2\", \"total_cancelado\": 0, \"ingreso_detalles\": [{\"id\": 18, \"costo\": \"300.00\", \"cantidad\": 2, \"repuesto\": 0, \"subtotal\": \"600.00\", \"faltantes\": null, \"created_at\": \"2026-09-16T21:09:03.000000Z\", \"updated_at\": \"2026-09-16T21:09:03.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 4, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 2, \"ingreso_producto_id\": 17}], \"cancelado_efectivo\": \"0\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-09-16', '17:09:03', '2026-09-16 21:09:03', '2026-09-16 21:09:03'),
+(155, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 550 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 33, \"hora\": \"17:22:14\", \"tipo\": \"VENTA\", \"fecha\": \"2026-09-16\", \"modulo\": \"Venta\", \"user_id\": 1, \"monto_qr\": \"50\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"descripcion\": \"INGRESO POR VENTA\", \"monto_total\": 550, \"registro_id\": 17, \"sucursal_id\": 1, \"monto_efectivo\": \"500\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:22:14', '2026-09-16 21:22:14', '2026-09-16 21:22:14');
+INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `datos_original`, `datos_nuevo`, `modulo`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
+(156, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 17, \"hora\": \"17:22:14\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"total\": \"550.00\", \"nit_ci\": \"32233\", \"user_id\": 1, \"subtotal\": \"550.00\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 6, \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"50\", \"codigo_venta\": \"V17\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 24, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 25, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 550, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"500\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-16', '17:22:14', '2026-09-16 21:22:14', '2026-09-16 21:22:14'),
+(157, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 750 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 34, \"hora\": \"17:22:14\", \"tipo\": \"VENTA\", \"fecha\": \"2026-09-16\", \"modulo\": \"Venta\", \"user_id\": 1, \"monto_qr\": \"250\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:24:58.000000Z\", \"updated_at\": \"2026-09-16T21:24:58.000000Z\", \"descripcion\": \"INGRESO POR VENTA\", \"monto_total\": 750, \"registro_id\": 17, \"sucursal_id\": 1, \"monto_efectivo\": \"500.00\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:24:58', '2026-09-16 21:24:58', '2026-09-16 21:24:58'),
+(158, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA VENTA', '{\"id\": 17, \"hora\": \"17:22:14\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"total\": \"550.00\", \"nit_ci\": \"32233\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"550.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 6, \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"50.00\", \"codigo_venta\": \"V17\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 24, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 25, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": \"550.00\", \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"500.00\", \"porcentaje_descuento\": 0}', '{\"id\": 17, \"hora\": \"17:22:14\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"total\": \"750.00\", \"nit_ci\": \"32233\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"750.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 6, \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T21:24:58.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"250\", \"codigo_venta\": \"V17\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 24, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 25, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 26, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T21:24:58.000000Z\", \"updated_at\": \"2026-09-16T21:24:58.000000Z\", \"producto_id\": 6, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 750, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"500.00\", \"porcentaje_descuento\": \"0\"}', 'VENTAS', '2026-09-16', '17:24:58', '2026-09-16 21:24:58', '2026-09-16 21:24:58'),
+(159, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 250 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 35, \"hora\": \"17:22:14\", \"tipo\": \"VENTA\", \"fecha\": \"2026-09-16\", \"modulo\": \"Venta\", \"user_id\": 1, \"monto_qr\": \"250.00\", \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:25:13.000000Z\", \"updated_at\": \"2026-09-16T21:25:13.000000Z\", \"descripcion\": \"INGRESO POR VENTA\", \"monto_total\": 250, \"registro_id\": 17, \"sucursal_id\": 1, \"monto_efectivo\": \"0\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:25:13', '2026-09-16 21:25:13', '2026-09-16 21:25:13'),
+(160, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA VENTA', '{\"id\": 17, \"hora\": \"17:22:14\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"total\": \"750.00\", \"nit_ci\": \"32233\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"750.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 6, \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T21:24:58.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"250.00\", \"codigo_venta\": \"V17\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 24, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 25, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 26, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T21:24:58.000000Z\", \"updated_at\": \"2026-09-16T21:24:58.000000Z\", \"producto_id\": 6, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": \"750.00\", \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"500.00\", \"porcentaje_descuento\": 0}', '{\"id\": 17, \"hora\": \"17:22:14\", \"fecha\": \"2026-09-16\", \"saldo\": \"500.00\", \"total\": \"750.00\", \"nit_ci\": \"32233\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"750.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"cliente_id\": 6, \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-09-16T21:25:13.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"250.00\", \"codigo_venta\": \"V17\", \"fecha_registro\": \"2026-09-16\", \"venta_detalles\": [{\"id\": 24, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 25, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T21:22:14.000000Z\", \"updated_at\": \"2026-09-16T21:22:14.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 26, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 17, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T21:24:58.000000Z\", \"updated_at\": \"2026-09-16T21:24:58.000000Z\", \"producto_id\": 6, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 250, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"0\", \"porcentaje_descuento\": \"0\"}', 'VENTAS', '2026-09-16', '17:25:13', '2026-09-16 21:25:13', '2026-09-16 21:25:13'),
+(161, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 550 EN LA SUCURSAL SUCURSAL 2; almacén ALMACEN 2', '{\"id\": 36, \"hora\": \"10:41:26\", \"tipo\": \"VENTA\", \"fecha\": \"2026-09-15\", \"modulo\": \"Venta\", \"user_id\": 1, \"monto_qr\": \"50\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 3, \"created_at\": \"2026-09-16T21:25:32.000000Z\", \"updated_at\": \"2026-09-16T21:25:32.000000Z\", \"descripcion\": \"INGRESO POR VENTA\", \"monto_total\": 550, \"registro_id\": 14, \"sucursal_id\": 3, \"monto_efectivo\": \"500\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:25:32', '2026-09-16 21:25:32', '2026-09-16 21:25:32'),
+(162, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA VENTA', '{\"id\": 14, \"hora\": \"10:41:26\", \"fecha\": \"2026-09-15\", \"saldo\": \"0.00\", \"total\": \"550.00\", \"nit_ci\": \"43343434\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"550.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 3, \"cliente_id\": 5, \"created_at\": \"2026-09-15T14:41:26.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T19:05:17.000000Z\", \"sucursal_id\": 3, \"cancelado_qr\": \"0.00\", \"codigo_venta\": \"V14\", \"fecha_registro\": \"2026-09-15\", \"venta_detalles\": [{\"id\": 22, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 14, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T19:05:17.000000Z\", \"updated_at\": \"2026-09-16T19:05:17.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 23, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 14, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T19:05:17.000000Z\", \"updated_at\": \"2026-09-16T19:05:17.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": \"550.00\", \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"550.00\", \"porcentaje_descuento\": 0}', '{\"id\": 14, \"hora\": \"10:41:26\", \"fecha\": \"2026-09-15\", \"saldo\": \"0.00\", \"total\": \"550.00\", \"nit_ci\": \"43343434\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"550.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 3, \"cliente_id\": 5, \"created_at\": \"2026-09-15T14:41:26.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-16T21:25:32.000000Z\", \"sucursal_id\": 3, \"cancelado_qr\": \"50\", \"codigo_venta\": \"V14\", \"fecha_registro\": \"2026-09-15\", \"venta_detalles\": [{\"id\": 22, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 14, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-16T19:05:17.000000Z\", \"updated_at\": \"2026-09-16T19:05:17.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 23, \"total\": \"350.00\", \"precio\": \"350.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 14, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"350.00\", \"created_at\": \"2026-09-16T19:05:17.000000Z\", \"updated_at\": \"2026-09-16T19:05:17.000000Z\", \"producto_id\": 3, \"precio_final\": \"350.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 550, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"500\", \"porcentaje_descuento\": \"0\"}', 'VENTAS', '2026-09-16', '17:25:32', '2026-09-16 21:25:32', '2026-09-16 21:25:32'),
+(163, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 40 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 37, \"hora\": \"17:34:57\", \"tipo\": \"COBRO POR VENTA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"VentaCobro\", \"user_id\": 1, \"monto_qr\": \"20\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:34:57.000000Z\", \"updated_at\": \"2026-09-16T21:34:57.000000Z\", \"descripcion\": \"COBRO POR VENTA DE PRODUCTOS\", \"monto_total\": 40, \"registro_id\": 9, \"sucursal_id\": 1, \"monto_efectivo\": \"20\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:34:57', '2026-09-16 21:34:57', '2026-09-16 21:34:57'),
+(164, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 9, \"hora\": \"17:34:57\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": \"20\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:34:57.000000Z\", \"updated_at\": \"2026-09-16T21:34:57.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"monto_efectivo\": \"20\"}', NULL, 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-16', '17:34:57', '2026-09-16 21:34:57', '2026-09-16 21:34:57'),
+(165, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR VENTA DE PRODUCTOS', '{\"id\": 9, \"hora\": \"17:34:57\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:34:57.000000Z\", \"updated_at\": \"2026-09-16T21:34:57.000000Z\", \"monto_total\": \"40.00\", \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\"}', '{\"id\": 9, \"hora\": \"17:36:56\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": \"0\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:34:57.000000Z\", \"updated_at\": \"2026-09-16T21:36:56.000000Z\", \"monto_total\": 20, \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\"}', 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-16', '17:36:56', '2026-09-16 21:36:56', '2026-09-16 21:36:56'),
+(166, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR VENTA DE PRODUCTOS', '{\"id\": 9, \"hora\": \"17:36:56\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"user_id\": 1, \"monto_qr\": \"0.00\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:34:57.000000Z\", \"updated_at\": \"2026-09-16T21:36:56.000000Z\", \"monto_total\": \"20.00\", \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\"}', '{\"id\": 9, \"hora\": \"17:37:27\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": \"20.00\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:34:57.000000Z\", \"updated_at\": \"2026-09-16T21:37:27.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\"}', 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-16', '17:37:27', '2026-09-16 21:37:27', '2026-09-16 21:37:27'),
+(167, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR VENTA DE PRODUCTOS', '{\"id\": 9, \"hora\": \"17:37:27\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:34:57.000000Z\", \"updated_at\": \"2026-09-16T21:37:27.000000Z\", \"monto_total\": \"40.00\", \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\"}', '{\"id\": 9, \"hora\": \"17:37:43\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": \"20.00\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:34:57.000000Z\", \"updated_at\": \"2026-09-16T21:37:43.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\"}', 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-16', '17:37:43', '2026-09-16 21:37:43', '2026-09-16 21:37:43'),
+(168, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR VENTA DE PRODUCTOS', '{\"id\": 9, \"hora\": \"17:37:43\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:34:57.000000Z\", \"updated_at\": \"2026-09-16T21:37:43.000000Z\", \"monto_total\": \"40.00\", \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\"}', '{\"id\": 9, \"hora\": \"17:38:34\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": \"20.00\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:34:57.000000Z\", \"updated_at\": \"2026-09-16T21:38:34.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\"}', 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-16', '17:38:34', '2026-09-16 21:38:34', '2026-09-16 21:38:34'),
+(169, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 2000 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 38, \"hora\": \"17:38:50\", \"tipo\": \"COBRO POR VENTA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"VentaCobro\", \"user_id\": 1, \"monto_qr\": 0, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:38:50.000000Z\", \"updated_at\": \"2026-09-16T21:38:50.000000Z\", \"descripcion\": \"COBRO POR VENTA DE PRODUCTOS\", \"monto_total\": 2000, \"registro_id\": 10, \"sucursal_id\": 1, \"monto_efectivo\": \"2000\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:38:50', '2026-09-16 21:38:50', '2026-09-16 21:38:50'),
+(170, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 10, \"hora\": \"17:38:50\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": 0, \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:38:50.000000Z\", \"updated_at\": \"2026-09-16T21:38:50.000000Z\", \"monto_total\": 2000, \"sucursal_id\": 1, \"monto_efectivo\": \"2000\"}', NULL, 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-16', '17:38:50', '2026-09-16 21:38:50', '2026-09-16 21:38:50'),
+(171, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR VENTA DE PRODUCTOS', '{\"id\": 10, \"hora\": \"17:38:50\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"user_id\": 1, \"monto_qr\": \"0.00\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:38:50.000000Z\", \"updated_at\": \"2026-09-16T21:38:50.000000Z\", \"monto_total\": \"2000.00\", \"sucursal_id\": 1, \"monto_efectivo\": \"2000.00\"}', '{\"id\": 10, \"hora\": \"17:39:31\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": \"0.00\", \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:38:50.000000Z\", \"updated_at\": \"2026-09-16T21:39:31.000000Z\", \"monto_total\": 20, \"sucursal_id\": 1, \"monto_efectivo\": \"20\"}', 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-16', '17:39:31', '2026-09-16 21:39:31', '2026-09-16 21:39:31'),
+(172, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 180 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 39, \"hora\": \"17:39:52\", \"tipo\": \"COBRO POR VENTA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"VentaCobro\", \"user_id\": 1, \"monto_qr\": 0, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:39:52.000000Z\", \"updated_at\": \"2026-09-16T21:39:52.000000Z\", \"descripcion\": \"COBRO POR VENTA DE PRODUCTOS\", \"monto_total\": 180, \"registro_id\": 12, \"sucursal_id\": 1, \"monto_efectivo\": \"180\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:39:52', '2026-09-16 21:39:52', '2026-09-16 21:39:52'),
+(173, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 12, \"hora\": \"17:39:52\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": 0, \"venta_id\": 15, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-16T21:39:52.000000Z\", \"updated_at\": \"2026-09-16T21:39:52.000000Z\", \"monto_total\": 180, \"sucursal_id\": 1, \"monto_efectivo\": \"180\"}', NULL, 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-16', '17:39:52', '2026-09-16 21:39:52', '2026-09-16 21:39:52'),
+(174, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR VENTA DE PRODUCTOS', '{\"id\": 8, \"hora\": \"14:50:35\", \"fecha\": \"2026-09-16\", \"saldo\": \"0.00\", \"user_id\": 1, \"monto_qr\": \"0.00\", \"venta_id\": 16, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-16T18:50:35.000000Z\", \"updated_at\": \"2026-09-16T18:50:35.000000Z\", \"monto_total\": \"10.00\", \"sucursal_id\": 1, \"monto_efectivo\": \"10.00\"}', '{\"id\": 8, \"hora\": \"17:46:42\", \"fecha\": \"2026-09-16\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": \"10.00\", \"venta_id\": 16, \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-09-16T18:50:35.000000Z\", \"updated_at\": \"2026-09-16T21:46:42.000000Z\", \"monto_total\": 20, \"sucursal_id\": 1, \"monto_efectivo\": \"10.00\"}', 'COBROS DE CRÉDITOS POR VENTAS', '2026-09-16', '17:46:42', '2026-09-16 21:46:42', '2026-09-16 21:46:42'),
+(175, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 40 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 40, \"hora\": \"17:53:06\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"user_id\": 1, \"monto_qr\": \"20\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:53:06.000000Z\", \"updated_at\": \"2026-09-16T21:53:06.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": 40, \"registro_id\": 12, \"sucursal_id\": 1, \"monto_efectivo\": \"20\", \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:53:06', '2026-09-16 21:53:06', '2026-09-16 21:53:06'),
+(176, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 12, \"hora\": \"17:53:06\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:53:06.000000Z\", \"updated_at\": \"2026-09-16T21:53:06.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20\", \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:53:06', '2026-09-16 21:53:06', '2026-09-16 21:53:06'),
+(177, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 12, \"hora\": \"17:53:06\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:53:06.000000Z\", \"updated_at\": \"2026-09-16T21:53:06.000000Z\", \"monto_total\": \"40.00\", \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20.00\", \"ingreso_producto_id\": 12}', '{\"id\": 12, \"hora\": \"17:53:06\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:53:06.000000Z\", \"updated_at\": \"2026-09-16T21:54:25.000000Z\", \"monto_total\": 140, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"120.00\", \"ingreso_producto_id\": 12}', 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:54:25', '2026-09-16 21:54:25', '2026-09-16 21:54:25'),
+(178, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 12, \"hora\": \"17:53:06\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:53:06.000000Z\", \"updated_at\": \"2026-09-16T21:54:25.000000Z\", \"monto_total\": \"140.00\", \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"120.00\", \"ingreso_producto_id\": 12}', '{\"id\": 12, \"hora\": \"17:53:06\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:53:06.000000Z\", \"updated_at\": \"2026-09-16T21:55:38.000000Z\", \"monto_total\": 140, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"120.00\", \"ingreso_producto_id\": 12}', 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:55:38', '2026-09-16 21:55:38', '2026-09-16 21:55:38'),
+(179, 1, 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ UN MOVIMIENTO DE CAJA', '{\"id\": 40, \"hora\": \"17:53:06\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"status\": 1, \"user_id\": 1, \"monto_qr\": \"20.00\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:53:06.000000Z\", \"updated_at\": \"2026-09-16T21:55:38.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": \"140.00\", \"registro_id\": 12, \"sucursal_id\": 1, \"monto_efectivo\": \"120.00\", \"tipo_movimiento\": \"EGRESO\"}', '{\"id\": 40, \"hora\": \"17:53:06\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"status\": 0, \"user_id\": 1, \"monto_qr\": \"20.00\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:53:06.000000Z\", \"updated_at\": \"2026-09-16T21:56:10.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": \"140.00\", \"registro_id\": 12, \"sucursal_id\": 1, \"monto_efectivo\": \"120.00\", \"tipo_movimiento\": \"EGRESO\"}', 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:56:10', '2026-09-16 21:56:10', '2026-09-16 21:56:10'),
+(180, 1, 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 12, \"hora\": \"17:53:06\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:53:06.000000Z\", \"updated_at\": \"2026-09-16T21:55:38.000000Z\", \"monto_total\": \"140.00\", \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"120.00\", \"ingreso_producto\": {\"id\": 12, \"saldo\": 1560, \"total\": \"1560.00\", \"codigo\": \"L-00012\", \"status\": 1, \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:22:25.000000Z\", \"updated_at\": \"2026-09-16T21:56:10.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0.00\", \"proveedor_id\": 1, \"estado_ingreso\": \"VERIFICADO\", \"fecha_registro\": \"2026-09-16\", \"tipo_ingreso_id\": 1, \"total_cancelado\": \"540.00\", \"estado_faltantes\": \"COMPLETO\", \"fecha_registro_t\": \"16/09/2026\", \"cancelado_efectivo\": \"540.00\"}, \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:56:10', '2026-09-16 21:56:10', '2026-09-16 21:56:10'),
+(181, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 40 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 41, \"hora\": \"17:56:38\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"user_id\": 1, \"monto_qr\": \"20\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:56:38.000000Z\", \"updated_at\": \"2026-09-16T21:56:38.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": 40, \"registro_id\": 13, \"sucursal_id\": 1, \"monto_efectivo\": \"20\", \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:56:38', '2026-09-16 21:56:38', '2026-09-16 21:56:38'),
+(182, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 13, \"hora\": \"17:56:38\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:56:38.000000Z\", \"updated_at\": \"2026-09-16T21:56:38.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20\", \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:56:38', '2026-09-16 21:56:38', '2026-09-16 21:56:38'),
+(183, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 13, \"hora\": \"17:56:38\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:56:38.000000Z\", \"updated_at\": \"2026-09-16T21:56:38.000000Z\", \"monto_total\": \"40.00\", \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20.00\", \"ingreso_producto_id\": 12}', '{\"id\": 13, \"hora\": \"17:56:38\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:56:38.000000Z\", \"updated_at\": \"2026-09-16T21:57:49.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20.00\", \"ingreso_producto_id\": 12}', 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:57:49', '2026-09-16 21:57:49', '2026-09-16 21:57:49'),
+(184, 1, 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ UN MOVIMIENTO DE CAJA', '{\"id\": 41, \"hora\": \"17:56:38\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"status\": 1, \"user_id\": 1, \"monto_qr\": \"20.00\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:56:38.000000Z\", \"updated_at\": \"2026-09-16T21:57:49.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": \"40.00\", \"registro_id\": 13, \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\", \"tipo_movimiento\": \"EGRESO\"}', '{\"id\": 41, \"hora\": \"17:56:38\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"status\": 0, \"user_id\": 1, \"monto_qr\": \"20.00\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:56:38.000000Z\", \"updated_at\": \"2026-09-16T21:58:29.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": \"40.00\", \"registro_id\": 13, \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\", \"tipo_movimiento\": \"EGRESO\"}', 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:58:29', '2026-09-16 21:58:29', '2026-09-16 21:58:29'),
+(185, 1, 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 13, \"hora\": \"17:56:38\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:56:38.000000Z\", \"updated_at\": \"2026-09-16T21:57:49.000000Z\", \"monto_total\": \"40.00\", \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20.00\", \"ingreso_producto\": {\"id\": 12, \"saldo\": 1560, \"total\": \"1560.00\", \"codigo\": \"L-00012\", \"status\": 1, \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:22:25.000000Z\", \"updated_at\": \"2026-09-16T21:58:29.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0.00\", \"proveedor_id\": 1, \"estado_ingreso\": \"VERIFICADO\", \"fecha_registro\": \"2026-09-16\", \"tipo_ingreso_id\": 1, \"total_cancelado\": \"540.00\", \"estado_faltantes\": \"COMPLETO\", \"fecha_registro_t\": \"16/09/2026\", \"cancelado_efectivo\": \"540.00\"}, \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:58:29', '2026-09-16 21:58:29', '2026-09-16 21:58:29'),
+(186, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 40 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 42, \"hora\": \"17:58:42\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"user_id\": 1, \"monto_qr\": \"20\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:58:42.000000Z\", \"updated_at\": \"2026-09-16T21:58:42.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": 40, \"registro_id\": 14, \"sucursal_id\": 1, \"monto_efectivo\": \"20\", \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:58:42', '2026-09-16 21:58:42', '2026-09-16 21:58:42'),
+(187, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 14, \"hora\": \"17:58:42\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:58:42.000000Z\", \"updated_at\": \"2026-09-16T21:58:42.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20\", \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:58:42', '2026-09-16 21:58:42', '2026-09-16 21:58:42'),
+(188, 1, 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ UN MOVIMIENTO DE CAJA', '{\"id\": 42, \"hora\": \"17:58:42\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"status\": 1, \"user_id\": 1, \"monto_qr\": \"20.00\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:58:42.000000Z\", \"updated_at\": \"2026-09-16T21:58:42.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": \"40.00\", \"registro_id\": 14, \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\", \"tipo_movimiento\": \"EGRESO\"}', '{\"id\": 42, \"hora\": \"17:58:42\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"status\": 0, \"user_id\": 1, \"monto_qr\": \"20.00\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:58:42.000000Z\", \"updated_at\": \"2026-09-16T21:59:36.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": \"40.00\", \"registro_id\": 14, \"sucursal_id\": 1, \"monto_efectivo\": \"20.00\", \"tipo_movimiento\": \"EGRESO\"}', 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:59:36', '2026-09-16 21:59:36', '2026-09-16 21:59:36'),
+(189, 1, 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 14, \"hora\": \"17:58:42\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:58:42.000000Z\", \"updated_at\": \"2026-09-16T21:58:42.000000Z\", \"monto_total\": \"40.00\", \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20.00\", \"ingreso_producto\": {\"id\": 12, \"saldo\": 1020, \"total\": \"1560.00\", \"codigo\": \"L-00012\", \"status\": 1, \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-09-16T14:22:25.000000Z\", \"updated_at\": \"2026-09-16T21:59:36.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0.00\", \"proveedor_id\": 1, \"estado_ingreso\": \"VERIFICADO\", \"fecha_registro\": \"2026-09-16\", \"tipo_ingreso_id\": 1, \"total_cancelado\": \"540.00\", \"estado_faltantes\": \"COMPLETO\", \"fecha_registro_t\": \"16/09/2026\", \"cancelado_efectivo\": \"540.00\"}, \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:59:36', '2026-09-16 21:59:36', '2026-09-16 21:59:36'),
+(190, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 40 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 43, \"hora\": \"17:59:48\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"user_id\": 1, \"monto_qr\": \"20\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:59:48.000000Z\", \"updated_at\": \"2026-09-16T21:59:48.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": 40, \"registro_id\": 15, \"sucursal_id\": 1, \"monto_efectivo\": \"20\", \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '17:59:48', '2026-09-16 21:59:48', '2026-09-16 21:59:48'),
+(191, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 15, \"hora\": \"17:59:48\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:59:48.000000Z\", \"updated_at\": \"2026-09-16T21:59:48.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20\", \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:59:48', '2026-09-16 21:59:48', '2026-09-16 21:59:48'),
+(192, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 15, \"hora\": \"17:59:48\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:59:48.000000Z\", \"updated_at\": \"2026-09-16T21:59:48.000000Z\", \"monto_total\": \"40.00\", \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20.00\", \"ingreso_producto_id\": 12}', '{\"id\": 15, \"hora\": \"17:59:48\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:59:48.000000Z\", \"updated_at\": \"2026-09-16T22:04:52.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20.00\", \"ingreso_producto_id\": 12}', 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '18:04:52', '2026-09-16 22:04:52', '2026-09-16 22:04:52'),
+(193, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 980 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 44, \"hora\": \"18:09:40\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"user_id\": 1, \"monto_qr\": \"80\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T22:09:40.000000Z\", \"updated_at\": \"2026-09-16T22:09:40.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": 980, \"registro_id\": 16, \"sucursal_id\": 1, \"monto_efectivo\": \"900\", \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '18:09:40', '2026-09-16 22:09:40', '2026-09-16 22:09:40'),
+(194, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 16, \"hora\": \"18:09:40\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"80\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T22:09:40.000000Z\", \"updated_at\": \"2026-09-16T22:09:40.000000Z\", \"monto_total\": 980, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"900\", \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '18:09:40', '2026-09-16 22:09:40', '2026-09-16 22:09:40');
 
 -- --------------------------------------------------------
 
@@ -325,7 +397,14 @@ INSERT INTO `ingreso_detalles` (`id`, `ingreso_producto_id`, `tipo_ingreso_id`, 
 (7, 7, 1, 3, 4, 2.00, 2, 2.00, NULL, 5.00, 300.00, 1200.00, '2026-08-30 16:05:07', '2026-08-30 16:12:35'),
 (8, 8, 1, 2, 4, 2.00, 2, 2.00, NULL, 4.00, 120.00, 480.00, '2026-08-30 16:13:09', '2026-08-30 16:16:35'),
 (9, 9, 3, 5, 1, 1.00, 0, 0.00, NULL, 1.00, 240.00, 240.00, '2026-09-13 20:34:45', '2026-09-13 20:53:57'),
-(10, 10, 1, 5, 3, 2.00, 1, 0.00, 'falta 1', 2.00, 240.00, 720.00, '2026-09-13 20:36:17', '2026-09-13 20:56:20');
+(10, 10, 1, 5, 3, 2.00, 1, 0.00, 'falta 1', 2.00, 240.00, 720.00, '2026-09-13 20:36:17', '2026-09-13 20:56:20'),
+(11, 11, 1, 3, 1, 1.00, 0, 0.00, NULL, 1.00, 300.00, 300.00, '2026-09-16 14:13:28', '2026-09-16 14:15:33'),
+(12, 12, 1, 2, 3, 3.00, 0, 0.00, NULL, 3.00, 120.00, 360.00, '2026-09-16 14:22:25', '2026-09-16 14:23:36'),
+(13, 12, 1, 3, 4, 3.00, 1, 1.00, 'observacion', 4.00, 300.00, 1200.00, '2026-09-16 14:22:25', '2026-09-16 14:24:18'),
+(14, 13, 1, 2, 4, 2.00, 2, 0.00, NULL, 2.00, 120.00, 480.00, '2026-09-16 14:25:21', '2026-09-16 14:25:33'),
+(15, 14, 1, 3, 2, 2.00, 0, 0.00, NULL, 2.00, 300.00, 600.00, '2026-09-16 18:47:03', '2026-09-16 18:47:18'),
+(17, 16, 1, 2, 2, NULL, NULL, 0.00, NULL, NULL, 120.00, 240.00, '2026-09-16 21:08:19', '2026-09-16 21:08:19'),
+(18, 17, 2, 4, 2, NULL, NULL, 0.00, NULL, NULL, 300.00, 600.00, '2026-09-16 21:09:03', '2026-09-16 21:09:03');
 
 -- --------------------------------------------------------
 
@@ -339,7 +418,9 @@ CREATE TABLE `ingreso_pagos` (
   `almacen_id` bigint UNSIGNED NOT NULL,
   `ingreso_producto_id` bigint UNSIGNED NOT NULL,
   `proveedor_id` bigint UNSIGNED NOT NULL,
-  `monto` decimal(24,2) NOT NULL,
+  `monto_efectivo` decimal(24,2) NOT NULL,
+  `monto_qr` decimal(24,2) NOT NULL,
+  `monto_total` decimal(24,2) NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
@@ -351,9 +432,12 @@ CREATE TABLE `ingreso_pagos` (
 -- Volcado de datos para la tabla `ingreso_pagos`
 --
 
-INSERT INTO `ingreso_pagos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_producto_id`, `proveedor_id`, `monto`, `fecha`, `hora`, `user_id`, `created_at`, `updated_at`) VALUES
-(3, 1, 1, 3, 1, 380.00, '2026-09-07', '12:30:17', 1, '2026-09-07 16:30:17', '2026-09-10 16:06:58'),
-(4, 1, 1, 3, 1, 100.00, '2026-09-10', '12:07:07', 1, '2026-09-10 16:07:07', '2026-09-10 16:09:00');
+INSERT INTO `ingreso_pagos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_producto_id`, `proveedor_id`, `monto_efectivo`, `monto_qr`, `monto_total`, `fecha`, `hora`, `user_id`, `created_at`, `updated_at`) VALUES
+(3, 1, 1, 3, 1, 380.00, 0.00, 380.00, '2026-09-07', '12:30:17', 1, '2026-09-07 16:30:17', '2026-09-10 16:06:58'),
+(4, 1, 1, 3, 1, 100.00, 0.00, 100.00, '2026-09-10', '12:07:07', 1, '2026-09-10 16:07:07', '2026-09-10 16:09:00'),
+(11, 1, 1, 11, 1, 300.00, 0.00, 300.00, '2026-09-16', '10:36:53', 1, '2026-09-16 14:36:53', '2026-09-16 14:36:53'),
+(15, 1, 1, 12, 1, 20.00, 20.00, 40.00, '2026-09-16', '17:59:48', 1, '2026-09-16 21:59:48', '2026-09-16 22:04:52'),
+(16, 1, 1, 12, 1, 900.00, 80.00, 980.00, '2026-09-16', '18:09:40', 1, '2026-09-16 22:09:40', '2026-09-16 22:09:40');
 
 -- --------------------------------------------------------
 
@@ -370,9 +454,11 @@ CREATE TABLE `ingreso_productos` (
   `proveedor_id` bigint UNSIGNED NOT NULL,
   `descripcion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `total` decimal(24,2) NOT NULL,
-  `cancelado` decimal(24,2) NOT NULL,
+  `cancelado_efectivo` decimal(24,2) NOT NULL,
+  `cancelado_qr` decimal(24,2) NOT NULL,
+  `total_cancelado` decimal(24,2) NOT NULL,
   `saldo` decimal(24,2) NOT NULL,
-  `tipo_compra` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo_compra` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `fecha_registro` date DEFAULT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
   `estado_ingreso` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PENDIENTE',
@@ -386,15 +472,21 @@ CREATE TABLE `ingreso_productos` (
 -- Volcado de datos para la tabla `ingreso_productos`
 --
 
-INSERT INTO `ingreso_productos` (`id`, `codigo`, `sucursal_id`, `almacen_id`, `tipo_ingreso_id`, `proveedor_id`, `descripcion`, `total`, `cancelado`, `saldo`, `tipo_compra`, `fecha_registro`, `user_id`, `estado_ingreso`, `estado_faltantes`, `status`, `created_at`, `updated_at`) VALUES
-(3, 'L-00003', 1, 1, 1, 1, '', 1080.00, 0.00, 600.00, 'CRÉDITO', '2026-08-24', 1, 'VERIFICADO', NULL, 1, '2026-08-25 01:33:33', '2026-09-11 15:25:45'),
-(4, 'L-00004', 1, 1, 1, 1, '', 300.00, 300.00, 0.00, 'CONTADO', '2026-08-24', 1, 'VERIFICADO', NULL, 1, '2026-08-25 01:35:28', '2026-08-30 15:28:12'),
-(5, 'L-00005', 1, 1, 1, 1, 'DESC', 1500.00, 0.00, 1500.00, 'CRÉDITO', '2026-08-29', 1, 'VERIFICADO', 'PENDIENTE', 1, '2026-08-29 15:44:23', '2026-08-30 15:26:54'),
-(6, 'L-00006', 1, 1, 2, 2, '', 3000.00, 0.00, 3000.00, 'CRÉDITO', '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:01:02', '2026-08-30 16:02:46'),
-(7, 'L-00007', 1, 1, 1, 1, '', 1200.00, 0.00, 1200.00, 'CRÉDITO', '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:05:07', '2026-08-30 16:12:35'),
-(8, 'L-00008', 1, 1, 1, 1, '', 480.00, 0.00, 480.00, 'CRÉDITO', '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:13:09', '2026-08-30 16:16:35'),
-(9, 'L-00009', 1, 1, 3, 1, 'PRUEBA', 240.00, 240.00, 0.00, 'CONTADO,', '2026-09-13', 1, 'VERIFICADO', 'SIN FALTANTES', 1, '2026-09-13 20:34:45', '2026-09-13 20:53:57'),
-(10, 'L-00010', 1, 1, 1, 1, 'PRUEBA 2', 720.00, 0.00, 720.00, 'CRÉDITO', '2026-09-13', 1, 'VERIFICADO', 'PENDIENTE', 1, '2026-09-13 20:36:17', '2026-09-13 20:56:20');
+INSERT INTO `ingreso_productos` (`id`, `codigo`, `sucursal_id`, `almacen_id`, `tipo_ingreso_id`, `proveedor_id`, `descripcion`, `total`, `cancelado_efectivo`, `cancelado_qr`, `total_cancelado`, `saldo`, `tipo_compra`, `fecha_registro`, `user_id`, `estado_ingreso`, `estado_faltantes`, `status`, `created_at`, `updated_at`) VALUES
+(3, 'L-00003', 1, 1, 1, 1, '', 1080.00, 0.00, 0.00, 0.00, 600.00, 'CRÉDITO', '2026-08-24', 1, 'VERIFICADO', NULL, 1, '2026-08-25 01:33:33', '2026-09-11 15:25:45'),
+(4, 'L-00004', 1, 1, 1, 1, '', 300.00, 300.00, 0.00, 300.00, 0.00, 'CONTADO', '2026-08-24', 1, 'VERIFICADO', NULL, 1, '2026-08-25 01:35:28', '2026-08-30 15:28:12'),
+(5, 'L-00005', 1, 1, 1, 1, 'DESC', 1500.00, 0.00, 0.00, 0.00, 1500.00, 'CRÉDITO', '2026-08-29', 1, 'VERIFICADO', 'PENDIENTE', 1, '2026-08-29 15:44:23', '2026-08-30 15:26:54'),
+(6, 'L-00006', 1, 1, 2, 2, '', 3000.00, 0.00, 0.00, 0.00, 3000.00, 'CRÉDITO', '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:01:02', '2026-08-30 16:02:46'),
+(7, 'L-00007', 1, 1, 1, 1, '', 1200.00, 0.00, 0.00, 0.00, 1200.00, 'CRÉDITO', '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:05:07', '2026-08-30 16:12:35'),
+(8, 'L-00008', 1, 1, 1, 1, '', 480.00, 0.00, 0.00, 0.00, 480.00, 'CRÉDITO', '2026-08-30', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-08-30 16:13:09', '2026-08-30 16:16:35'),
+(9, 'L-00009', 1, 1, 3, 1, 'PRUEBA', 240.00, 240.00, 0.00, 240.00, 0.00, 'CONTADO,', '2026-09-13', 1, 'VERIFICADO', 'SIN FALTANTES', 1, '2026-09-13 20:34:45', '2026-09-13 20:53:57'),
+(10, 'L-00010', 1, 1, 1, 1, 'PRUEBA 2', 720.00, 0.00, 0.00, 0.00, 720.00, 'CRÉDITO', '2026-09-13', 1, 'VERIFICADO', 'PENDIENTE', 1, '2026-09-13 20:36:17', '2026-09-13 20:56:20'),
+(11, 'L-00011', 1, 1, 1, 1, '', 300.00, 0.00, 0.00, 0.00, 0.00, 'CRÉDITO', '2026-09-16', 1, 'VERIFICADO', 'SIN FALTANTES', 1, '2026-09-16 14:13:28', '2026-09-16 14:36:53'),
+(12, 'L-00012', 1, 1, 1, 1, '', 1560.00, 540.00, 0.00, 540.00, 0.00, 'CRÉDITO', '2026-09-16', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-09-16 14:22:25', '2026-09-16 22:09:40'),
+(13, 'L-00013', 1, 1, 1, 1, '', 480.00, 0.00, 0.00, 0.00, 480.00, 'CRÉDITO', '2026-09-16', 1, 'VERIFICADO', 'PENDIENTE', 1, '2026-09-16 14:25:21', '2026-09-16 14:25:33'),
+(14, 'L-00014', 1, 1, 1, 1, '', 600.00, 0.00, 0.00, 0.00, 600.00, 'CRÉDITO', '2026-09-16', 1, 'VERIFICADO', 'SIN FALTANTES', 1, '2026-09-16 18:47:03', '2026-09-16 18:47:18'),
+(16, 'L-00016', 1, 1, 1, 3, '', 240.00, 200.00, 40.00, 240.00, 0.00, 'CONTADO,', '2026-09-16', 1, 'PENDIENTE', NULL, 1, '2026-09-16 21:08:19', '2026-09-16 21:08:19'),
+(17, 'L-00017', 1, 1, 2, 1, '', 600.00, 0.00, 0.00, 0.00, 600.00, 'CRÉDITO', '2026-09-16', 1, 'PENDIENTE', NULL, 1, '2026-09-16 21:09:03', '2026-09-16 21:09:03');
 
 -- --------------------------------------------------------
 
@@ -483,7 +575,84 @@ INSERT INTO `kardex_productos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_deta
 (71, 1, 1, NULL, 'TRASPASO DE PRODUCTOS', 17, 'TraspasoDetalle', 6, 'TRASPASO A ALMACEN 2', 120.00, 'EGRESO', NULL, 1, 9, 120.00, NULL, 120.00, 1080.00, '2026-09-15', 1, '2026-09-15 14:25:34', '2026-09-15 14:25:34'),
 (72, 3, 3, NULL, 'TRASPASO DE PRODUCTOS', 17, 'TraspasoDetalle', 6, 'TRASPASO A ALMACEN 2', 120.00, 'INGRESO', 1, NULL, 1, 120.00, 120.00, NULL, 120.00, '2026-09-15', 1, '2026-09-15 14:25:34', '2026-09-15 14:25:34'),
 (73, 3, 3, NULL, 'VENTA DE PRODUCTO', 15, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 1, 0, 200.00, NULL, 200.00, -80.00, '2026-09-15', 1, '2026-09-15 14:41:26', '2026-09-15 14:41:26'),
-(74, 3, 3, NULL, 'VENTA DE PRODUCTO', 16, 'VentaDetalle', 4, 'SALIDA POR VENTA', 390.00, 'EGRESO', NULL, 1, 0, 390.00, NULL, 390.00, -90.00, '2026-09-15', 1, '2026-09-15 14:41:26', '2026-09-15 14:41:26');
+(74, 3, 3, NULL, 'VENTA DE PRODUCTO', 16, 'VentaDetalle', 4, 'SALIDA POR VENTA', 390.00, 'EGRESO', NULL, 1, 0, 390.00, NULL, 390.00, -90.00, '2026-09-15', 1, '2026-09-15 14:41:26', '2026-09-15 14:41:26'),
+(75, 1, 1, 11, 'INGRESO DE PRODUCTO', 11, 'IngresoDetalle', 3, 'INGRESO 1', 300.00, 'INGRESO', 1, NULL, 15, 300.00, 300.00, NULL, 4220.02, '2026-09-16', 1, '2026-09-16 14:15:33', '2026-09-16 14:15:33'),
+(76, 1, 1, NULL, 'TRASPASO DE PRODUCTOS', 18, 'TraspasoDetalle', 2, 'TRASPASO A ALMACEN 1', 120.00, 'EGRESO', NULL, 2, 9, 120.00, NULL, 240.00, 920.00, '2026-09-16', 1, '2026-09-16 14:17:07', '2026-09-16 14:17:07'),
+(77, 2, 2, NULL, 'TRASPASO DE PRODUCTOS', 18, 'TraspasoDetalle', 2, 'TRASPASO A ALMACEN 1', 120.00, 'INGRESO', 2, NULL, 5, 120.00, 240.00, NULL, 600.00, '2026-09-16', 1, '2026-09-16 14:17:07', '2026-09-16 14:17:07'),
+(78, 1, 1, 12, 'INGRESO DE PRODUCTO', 12, 'IngresoDetalle', 2, 'INGRESO 1', 120.00, 'INGRESO', 3, NULL, 12, 120.00, 360.00, NULL, 1280.00, '2026-09-16', 1, '2026-09-16 14:23:36', '2026-09-16 14:23:36'),
+(79, 1, 1, 13, 'INGRESO DE PRODUCTO', 13, 'IngresoDetalle', 3, 'INGRESO 1', 300.00, 'INGRESO', 3, NULL, 18, 300.00, 900.00, NULL, 5120.02, '2026-09-16', 1, '2026-09-16 14:23:36', '2026-09-16 14:23:36'),
+(80, 1, 1, 13, 'INGRESO DE PRODUCTO', 13, 'IngresoDetalle', 3, 'INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA', 300.00, 'INGRESO', 1, NULL, 19, 300.00, 300.00, NULL, 5420.02, '2026-09-16', 1, '2026-09-16 14:24:18', '2026-09-16 14:24:18'),
+(81, 1, 1, 14, 'INGRESO DE PRODUCTO', 14, 'IngresoDetalle', 2, 'INGRESO 1', 120.00, 'INGRESO', 2, NULL, 14, 120.00, 240.00, NULL, 1520.00, '2026-09-16', 1, '2026-09-16 14:25:33', '2026-09-16 14:25:33'),
+(82, 3, 3, NULL, 'VENTA DE PRODUCTO', 15, 'VentaDetalle', 2, 'INGRESO POR ELIMINACIÓN DE VENTA', 200.00, 'INGRESO', 1, NULL, 1, 200.00, 200.00, NULL, 120.00, '2026-09-16', 1, '2026-09-16 14:31:17', '2026-09-16 14:31:17'),
+(83, 3, 3, NULL, 'VENTA DE PRODUCTO', 16, 'VentaDetalle', 4, 'INGRESO POR ELIMINACIÓN DE VENTA', 390.00, 'INGRESO', 1, NULL, 1, 390.00, 390.00, NULL, 300.00, '2026-09-16', 1, '2026-09-16 14:31:17', '2026-09-16 14:31:17'),
+(84, 1, 1, NULL, 'VENTA DE PRODUCTO', 17, 'VentaDetalle', 2, 'SALIDA POR VENTA', 290.00, 'EGRESO', NULL, 1, 13, 290.00, NULL, 290.00, 1230.00, '2026-09-16', 1, '2026-09-16 14:33:00', '2026-09-16 14:33:00'),
+(85, 1, 1, NULL, 'VENTA DE PRODUCTO', 18, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 1, 12, 200.00, NULL, 200.00, 1030.00, '2026-09-16', 1, '2026-09-16 18:45:46', '2026-09-16 18:45:46'),
+(86, 1, 1, NULL, 'VENTA DE PRODUCTO', 19, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 18, 350.00, NULL, 350.00, 5070.02, '2026-09-16', 1, '2026-09-16 18:45:46', '2026-09-16 18:45:46'),
+(87, 1, 1, 15, 'INGRESO DE PRODUCTO', 15, 'IngresoDetalle', 3, 'INGRESO 1', 300.00, 'INGRESO', 2, NULL, 20, 300.00, 600.00, NULL, 5670.02, '2026-09-16', 1, '2026-09-16 18:47:18', '2026-09-16 18:47:18'),
+(88, 1, 1, NULL, 'VENTA DE PRODUCTO', 18, 'VentaDetalle', 2, 'INGRESO POR MODIFICACIÓN DE VENTA', 200.00, 'INGRESO', 1, NULL, 13, 200.00, 200.00, NULL, 1230.00, '2026-09-16', 1, '2026-09-16 18:49:44', '2026-09-16 18:49:44'),
+(89, 1, 1, NULL, 'VENTA DE PRODUCTO', 18, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 2, 11, 200.00, NULL, 400.00, 830.00, '2026-09-16', 1, '2026-09-16 18:49:44', '2026-09-16 18:49:44'),
+(90, 1, 1, NULL, 'VENTA DE PRODUCTO', 19, 'VentaDetalle', 3, 'INGRESO POR MODIFICACIÓN DE VENTA', 350.00, 'INGRESO', 1, NULL, 21, 350.00, 350.00, NULL, 6020.02, '2026-09-16', 1, '2026-09-16 18:49:44', '2026-09-16 18:49:44'),
+(91, 1, 1, NULL, 'VENTA DE PRODUCTO', 19, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 20, 350.00, NULL, 350.00, 5670.02, '2026-09-16', 1, '2026-09-16 18:49:44', '2026-09-16 18:49:44'),
+(92, 1, 1, NULL, 'VENTA DE PRODUCTO', 18, 'VentaDetalle', 2, 'INGRESO POR MODIFICACIÓN DE VENTA', 200.00, 'INGRESO', 2, NULL, 13, 200.00, 400.00, NULL, 1230.00, '2026-09-16', 1, '2026-09-16 18:50:00', '2026-09-16 18:50:00'),
+(93, 1, 1, NULL, 'VENTA DE PRODUCTO', 18, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 3, 10, 200.00, NULL, 600.00, 630.00, '2026-09-16', 1, '2026-09-16 18:50:00', '2026-09-16 18:50:00'),
+(94, 1, 1, NULL, 'VENTA DE PRODUCTO', 19, 'VentaDetalle', 3, 'INGRESO POR MODIFICACIÓN DE VENTA', 350.00, 'INGRESO', 1, NULL, 21, 350.00, 350.00, NULL, 6020.02, '2026-09-16', 1, '2026-09-16 18:50:00', '2026-09-16 18:50:00'),
+(95, 1, 1, NULL, 'VENTA DE PRODUCTO', 19, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 20, 350.00, NULL, 350.00, 5670.02, '2026-09-16', 1, '2026-09-16 18:50:00', '2026-09-16 18:50:00'),
+(96, 3, 3, NULL, 'VENTA DE PRODUCTO', 22, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 1, 0, 200.00, NULL, 200.00, -80.00, '2026-09-16', 1, '2026-09-16 19:05:17', '2026-09-16 19:05:17'),
+(97, 3, 3, NULL, 'VENTA DE PRODUCTO', 23, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 0, 350.00, NULL, 350.00, -50.00, '2026-09-16', 1, '2026-09-16 19:05:17', '2026-09-16 19:05:17'),
+(98, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 7, 'INCREMENTO DE STOCK', 300.00, 'INGRESO', 20, NULL, 20, 300.00, 6000.00, NULL, 6000.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(99, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 8, 'INCREMENTO DE STOCK', 299.00, 'INGRESO', 20, NULL, 20, 299.00, 5980.00, NULL, 5980.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(100, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 9, 'INCREMENTO DE STOCK', 298.00, 'INGRESO', 20, NULL, 20, 298.00, 5960.00, NULL, 5960.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(101, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 10, 'INCREMENTO DE STOCK', 297.00, 'INGRESO', 20, NULL, 20, 297.00, 5940.00, NULL, 5940.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(102, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 11, 'INCREMENTO DE STOCK', 296.00, 'INGRESO', 20, NULL, 20, 296.00, 5920.00, NULL, 5920.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(103, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 12, 'INCREMENTO DE STOCK', 295.00, 'INGRESO', 20, NULL, 20, 295.00, 5900.00, NULL, 5900.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(104, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 13, 'INCREMENTO DE STOCK', 294.00, 'INGRESO', 20, NULL, 20, 294.00, 5880.00, NULL, 5880.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(105, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 14, 'INCREMENTO DE STOCK', 293.00, 'INGRESO', 20, NULL, 20, 293.00, 5860.00, NULL, 5860.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(106, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 15, 'INCREMENTO DE STOCK', 292.00, 'INGRESO', 20, NULL, 20, 292.00, 5840.00, NULL, 5840.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(107, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 16, 'INCREMENTO DE STOCK', 291.00, 'INGRESO', 20, NULL, 20, 291.00, 5820.00, NULL, 5820.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(108, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 17, 'INCREMENTO DE STOCK', 290.00, 'INGRESO', 20, NULL, 20, 290.00, 5800.00, NULL, 5800.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(109, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 18, 'INCREMENTO DE STOCK', 289.00, 'INGRESO', 20, NULL, 20, 289.00, 5780.00, NULL, 5780.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(110, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 19, 'INCREMENTO DE STOCK', 288.00, 'INGRESO', 20, NULL, 20, 288.00, 5760.00, NULL, 5760.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(111, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 20, 'INCREMENTO DE STOCK', 287.00, 'INGRESO', 20, NULL, 20, 287.00, 5740.00, NULL, 5740.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(112, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 21, 'INCREMENTO DE STOCK', 286.00, 'INGRESO', 20, NULL, 20, 286.00, 5720.00, NULL, 5720.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(113, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 22, 'INCREMENTO DE STOCK', 285.00, 'INGRESO', 20, NULL, 20, 285.00, 5700.00, NULL, 5700.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(114, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 23, 'INCREMENTO DE STOCK', 284.00, 'INGRESO', 20, NULL, 20, 284.00, 5680.00, NULL, 5680.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(115, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 24, 'INCREMENTO DE STOCK', 283.00, 'INGRESO', 20, NULL, 20, 283.00, 5660.00, NULL, 5660.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(116, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 25, 'INCREMENTO DE STOCK', 282.00, 'INGRESO', 20, NULL, 20, 282.00, 5640.00, NULL, 5640.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(117, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 26, 'INCREMENTO DE STOCK', 281.00, 'INGRESO', 20, NULL, 20, 281.00, 5620.00, NULL, 5620.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(118, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 27, 'INCREMENTO DE STOCK', 280.00, 'INGRESO', 20, NULL, 20, 280.00, 5600.00, NULL, 5600.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(119, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 28, 'INCREMENTO DE STOCK', 279.00, 'INGRESO', 20, NULL, 20, 279.00, 5580.00, NULL, 5580.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(120, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 29, 'INCREMENTO DE STOCK', 278.00, 'INGRESO', 20, NULL, 20, 278.00, 5560.00, NULL, 5560.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(121, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 30, 'INCREMENTO DE STOCK', 277.00, 'INGRESO', 20, NULL, 20, 277.00, 5540.00, NULL, 5540.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(122, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 31, 'INCREMENTO DE STOCK', 276.00, 'INGRESO', 20, NULL, 20, 276.00, 5520.00, NULL, 5520.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(123, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 32, 'INCREMENTO DE STOCK', 275.00, 'INGRESO', 20, NULL, 20, 275.00, 5500.00, NULL, 5500.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(124, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 33, 'INCREMENTO DE STOCK', 274.00, 'INGRESO', 20, NULL, 20, 274.00, 5480.00, NULL, 5480.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(125, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 34, 'INCREMENTO DE STOCK', 273.00, 'INGRESO', 20, NULL, 20, 273.00, 5460.00, NULL, 5460.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(126, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 35, 'INCREMENTO DE STOCK', 272.00, 'INGRESO', 20, NULL, 20, 272.00, 5440.00, NULL, 5440.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(127, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 36, 'INCREMENTO DE STOCK', 271.00, 'INGRESO', 20, NULL, 20, 271.00, 5420.00, NULL, 5420.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(128, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 37, 'INCREMENTO DE STOCK', 270.00, 'INGRESO', 20, NULL, 20, 270.00, 5400.00, NULL, 5400.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(129, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 38, 'INCREMENTO DE STOCK', 269.00, 'INGRESO', 20, NULL, 20, 269.00, 5380.00, NULL, 5380.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(130, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 39, 'INCREMENTO DE STOCK', 268.00, 'INGRESO', 20, NULL, 20, 268.00, 5360.00, NULL, 5360.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(131, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 40, 'INCREMENTO DE STOCK', 267.00, 'INGRESO', 20, NULL, 20, 267.00, 5340.00, NULL, 5340.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(132, 1, 1, NULL, 'CARGA MASIVA', NULL, '', 41, 'INCREMENTO DE STOCK', 266.00, 'INGRESO', 20, NULL, 20, 266.00, 5320.00, NULL, 5320.00, '2026-09-16', 1, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(133, 1, 1, NULL, 'TRASPASO DE PRODUCTOS', 19, 'TraspasoDetalle', 3, 'TRASPASO 10 PRODUCTOS A ALMACEN 2', 300.00, 'EGRESO', NULL, 10, 10, 300.00, NULL, 3000.00, 2670.02, '2026-09-16', 1, '2026-09-16 19:49:39', '2026-09-16 19:49:39'),
+(134, 3, 3, NULL, 'TRASPASO DE PRODUCTOS', 19, 'TraspasoDetalle', 3, 'TRASPASO 10 PRODUCTOS A ALMACEN 2', 300.00, 'INGRESO', 10, NULL, 10, 300.00, 3000.00, NULL, 2950.00, '2026-09-16', 1, '2026-09-16 19:49:39', '2026-09-16 19:49:39'),
+(135, 1, 1, NULL, 'VENTA DE PRODUCTO', 24, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 1, 9, 200.00, NULL, 200.00, 430.00, '2026-09-16', 1, '2026-09-16 21:22:14', '2026-09-16 21:22:14'),
+(136, 1, 1, NULL, 'VENTA DE PRODUCTO', 25, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 9, 350.00, NULL, 350.00, 2320.02, '2026-09-16', 1, '2026-09-16 21:22:14', '2026-09-16 21:22:14'),
+(137, 1, 1, NULL, 'VENTA DE PRODUCTO', 24, 'VentaDetalle', 2, 'INGRESO POR MODIFICACIÓN DE VENTA', 200.00, 'INGRESO', 1, NULL, 10, 200.00, 200.00, NULL, 630.00, '2026-09-16', 1, '2026-09-16 21:24:58', '2026-09-16 21:24:58'),
+(138, 1, 1, NULL, 'VENTA DE PRODUCTO', 24, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 1, 9, 200.00, NULL, 200.00, 430.00, '2026-09-16', 1, '2026-09-16 21:24:58', '2026-09-16 21:24:58'),
+(139, 1, 1, NULL, 'VENTA DE PRODUCTO', 25, 'VentaDetalle', 3, 'INGRESO POR MODIFICACIÓN DE VENTA', 350.00, 'INGRESO', 1, NULL, 10, 350.00, 350.00, NULL, 2670.02, '2026-09-16', 1, '2026-09-16 21:24:58', '2026-09-16 21:24:58'),
+(140, 1, 1, NULL, 'VENTA DE PRODUCTO', 25, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 9, 350.00, NULL, 350.00, 2320.02, '2026-09-16', 1, '2026-09-16 21:24:58', '2026-09-16 21:24:58'),
+(141, 1, 1, NULL, 'VENTA DE PRODUCTO', 26, 'VentaDetalle', 6, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 1, 8, 200.00, NULL, 200.00, 880.00, '2026-09-16', 1, '2026-09-16 21:24:58', '2026-09-16 21:24:58'),
+(142, 1, 1, NULL, 'VENTA DE PRODUCTO', 24, 'VentaDetalle', 2, 'INGRESO POR MODIFICACIÓN DE VENTA', 200.00, 'INGRESO', 1, NULL, 10, 200.00, 200.00, NULL, 630.00, '2026-09-16', 1, '2026-09-16 21:25:13', '2026-09-16 21:25:13'),
+(143, 1, 1, NULL, 'VENTA DE PRODUCTO', 24, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 1, 9, 200.00, NULL, 200.00, 430.00, '2026-09-16', 1, '2026-09-16 21:25:13', '2026-09-16 21:25:13'),
+(144, 1, 1, NULL, 'VENTA DE PRODUCTO', 25, 'VentaDetalle', 3, 'INGRESO POR MODIFICACIÓN DE VENTA', 350.00, 'INGRESO', 1, NULL, 10, 350.00, 350.00, NULL, 2670.02, '2026-09-16', 1, '2026-09-16 21:25:13', '2026-09-16 21:25:13'),
+(145, 1, 1, NULL, 'VENTA DE PRODUCTO', 25, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 9, 350.00, NULL, 350.00, 2320.02, '2026-09-16', 1, '2026-09-16 21:25:13', '2026-09-16 21:25:13'),
+(146, 1, 1, NULL, 'VENTA DE PRODUCTO', 26, 'VentaDetalle', 6, 'INGRESO POR MODIFICACIÓN DE VENTA', 200.00, 'INGRESO', 1, NULL, 9, 200.00, 200.00, NULL, 1080.00, '2026-09-16', 1, '2026-09-16 21:25:13', '2026-09-16 21:25:13'),
+(147, 1, 1, NULL, 'VENTA DE PRODUCTO', 26, 'VentaDetalle', 6, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 1, 8, 200.00, NULL, 200.00, 880.00, '2026-09-16', 1, '2026-09-16 21:25:13', '2026-09-16 21:25:13'),
+(148, 3, 3, NULL, 'VENTA DE PRODUCTO', 22, 'VentaDetalle', 2, 'INGRESO POR MODIFICACIÓN DE VENTA', 200.00, 'INGRESO', 1, NULL, 1, 200.00, 200.00, NULL, 120.00, '2026-09-16', 1, '2026-09-16 21:25:32', '2026-09-16 21:25:32'),
+(149, 3, 3, NULL, 'VENTA DE PRODUCTO', 22, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 1, 0, 200.00, NULL, 200.00, -80.00, '2026-09-16', 1, '2026-09-16 21:25:32', '2026-09-16 21:25:32'),
+(150, 3, 3, NULL, 'VENTA DE PRODUCTO', 23, 'VentaDetalle', 3, 'INGRESO POR MODIFICACIÓN DE VENTA', 350.00, 'INGRESO', 1, NULL, 11, 350.00, 350.00, NULL, 3300.00, '2026-09-16', 1, '2026-09-16 21:25:32', '2026-09-16 21:25:32'),
+(151, 3, 3, NULL, 'VENTA DE PRODUCTO', 23, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 10, 350.00, NULL, 350.00, 2950.00, '2026-09-16', 1, '2026-09-16 21:25:32', '2026-09-16 21:25:32');
 
 -- --------------------------------------------------------
 
@@ -585,10 +754,12 @@ CREATE TABLE `movimiento_cajas` (
   `id` bigint UNSIGNED NOT NULL,
   `sucursal_id` bigint UNSIGNED DEFAULT NULL,
   `almacen_id` bigint UNSIGNED DEFAULT NULL,
-  `tipo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tipo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `modulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `registro_id` bigint UNSIGNED DEFAULT NULL,
-  `monto` decimal(24,2) NOT NULL,
+  `monto_efectivo` decimal(24,2) NOT NULL,
+  `monto_qr` decimal(24,2) NOT NULL,
+  `monto_total` decimal(24,2) NOT NULL,
   `tipo_movimiento` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tipo_pago` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` varchar(900) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -604,29 +775,49 @@ CREATE TABLE `movimiento_cajas` (
 -- Volcado de datos para la tabla `movimiento_cajas`
 --
 
-INSERT INTO `movimiento_cajas` (`id`, `sucursal_id`, `almacen_id`, `tipo`, `modulo`, `registro_id`, `monto`, `tipo_movimiento`, `tipo_pago`, `descripcion`, `fecha`, `hora`, `user_id`, `status`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'COMPRA DE PRODUCTOS', 'IngresoProducto', 4, 300.00, 'EGRESO', 'EFECTIVO', 'COMPRA DE PRODUCTOS', '2026-08-24', '21:35:28', 1, 1, '2026-08-25 01:35:28', '2026-08-25 01:35:28'),
-(2, 1, 1, 'MOVIMIENTO DE CAJA', 'MovimientoCaja', 2, 2000.00, 'INGRESO', 'EFECTIVO', 'ingreso de efectivo', '2026-09-03', '11:16:34', 1, 1, '2026-09-03 15:18:33', '2026-09-03 15:31:35'),
-(3, 1, 1, 'VENTA', 'Venta', 9, 350.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-09-07', '10:32:13', 1, 1, '2026-09-07 14:32:14', '2026-09-07 14:32:14'),
-(4, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 3, 380.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-07', '12:30:17', 1, 1, '2026-09-07 16:30:17', '2026-09-10 16:06:58'),
-(5, 1, 1, 'VENTA', 'Venta', 12, 100.00, 'INGRESO', 'QR', 'INGRESO POR VENTA', '2026-09-08', '11:01:10', 1, 1, '2026-09-08 15:01:11', '2026-09-08 15:01:11'),
-(6, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 2, 700.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-09', '10:25:07', 1, 0, '2026-09-09 14:25:07', '2026-09-11 15:13:14'),
-(7, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 3, 70.00, 'INGRESO', 'QR', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-09', '10:26:40', 1, 0, '2026-09-09 14:26:40', '2026-09-11 15:12:45'),
-(8, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 4, 50.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-09', '10:29:45', 1, 1, '2026-09-09 14:29:45', '2026-09-09 14:29:45'),
-(10, 1, 1, 'VENTA', 'Venta', 13, 1090.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-09-09', '16:25:25', 1, 1, '2026-09-09 20:58:31', '2026-09-09 20:58:31'),
-(11, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 4, 100.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:07:07', 1, 1, '2026-09-10 16:07:07', '2026-09-10 16:09:01'),
-(12, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 5, 100.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:09:08', 1, 0, '2026-09-10 16:09:08', '2026-09-11 15:25:45'),
-(13, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 6, 10.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:11:06', 1, 0, '2026-09-10 16:11:06', '2026-09-11 15:25:40'),
-(14, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 7, 10.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:11:13', 1, 0, '2026-09-10 16:11:13', '2026-09-11 15:25:36'),
-(15, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 8, 100.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:11:43', 1, 0, '2026-09-10 16:11:43', '2026-09-11 15:25:33'),
-(16, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 9, 10.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:13:03', 1, 0, '2026-09-10 16:13:03', '2026-09-11 15:25:26'),
-(17, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 10, 20.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:14:02', 1, 0, '2026-09-10 16:14:02', '2026-09-11 15:25:17'),
-(18, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 5, 10.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-10', '12:16:07', 1, 1, '2026-09-10 16:16:07', '2026-09-10 16:16:07'),
-(19, 1, 1, 'MOVIMIENTO DE CAJA', 'MovimientoCaja', 19, 400.00, 'INGRESO', 'QR', 'Ingreso prueba modificado', '2026-09-11', '11:30:21', 1, 1, '2026-09-11 15:30:35', '2026-09-11 15:31:50'),
-(20, 1, 1, 'COMPRA DE PRODUCTOS', 'IngresoProducto', 9, 240.00, 'EGRESO', 'EFECTIVO', 'COMPRA DE PRODUCTOS', '2026-09-13', '16:34:45', 1, 1, '2026-09-13 20:34:45', '2026-09-13 20:34:45'),
-(21, 3, 3, 'VENTA', 'Venta', 14, 590.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-09-15', '10:41:26', 1, 1, '2026-09-15 14:41:26', '2026-09-15 14:41:26'),
-(22, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 6, 500.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-15', '11:22:58', 1, 1, '2026-09-15 15:22:58', '2026-09-15 15:22:58'),
-(23, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 7, 50.00, 'INGRESO', 'QR', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-15', '11:23:38', 1, 1, '2026-09-15 15:23:38', '2026-09-15 15:23:49');
+INSERT INTO `movimiento_cajas` (`id`, `sucursal_id`, `almacen_id`, `tipo`, `modulo`, `registro_id`, `monto_efectivo`, `monto_qr`, `monto_total`, `tipo_movimiento`, `tipo_pago`, `descripcion`, `fecha`, `hora`, `user_id`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'COMPRA DE PRODUCTOS', 'IngresoProducto', 4, 300.00, 0.00, 300.00, 'EGRESO', 'EFECTIVO', 'COMPRA DE PRODUCTOS', '2026-08-24', '21:35:28', 1, 1, '2026-08-25 01:35:28', '2026-08-25 01:35:28'),
+(2, 1, 1, 'MOVIMIENTO DE CAJA', 'MovimientoCaja', 2, 2000.00, 0.00, 2000.00, 'INGRESO', 'EFECTIVO', 'ingreso de efectivo', '2026-09-03', '11:16:34', 1, 1, '2026-09-03 15:18:33', '2026-09-03 15:31:35'),
+(3, 1, 1, 'VENTA', 'Venta', 9, 350.00, 0.00, 350.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-09-07', '10:32:13', 1, 1, '2026-09-07 14:32:14', '2026-09-07 14:32:14'),
+(4, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 3, 380.00, 0.00, 380.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-07', '12:30:17', 1, 1, '2026-09-07 16:30:17', '2026-09-10 16:06:58'),
+(5, 1, 1, 'VENTA', 'Venta', 12, 0.00, 100.00, 100.00, 'INGRESO', 'QR', 'INGRESO POR VENTA', '2026-09-08', '11:01:10', 1, 1, '2026-09-08 15:01:11', '2026-09-08 15:01:11'),
+(6, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 2, 700.00, 0.00, 700.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-09', '10:25:07', 1, 0, '2026-09-09 14:25:07', '2026-09-11 15:13:14'),
+(7, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 3, 0.00, 70.00, 70.00, 'INGRESO', 'QR', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-09', '10:26:40', 1, 0, '2026-09-09 14:26:40', '2026-09-11 15:12:45'),
+(8, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 4, 50.00, 0.00, 50.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-09', '10:29:45', 1, 1, '2026-09-09 14:29:45', '2026-09-09 14:29:45'),
+(10, 1, 1, 'VENTA', 'Venta', 13, 1090.00, 0.00, 1090.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-09-09', '16:25:25', 1, 1, '2026-09-09 20:58:31', '2026-09-09 20:58:31'),
+(11, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 4, 100.00, 0.00, 100.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:07:07', 1, 1, '2026-09-10 16:07:07', '2026-09-10 16:09:01'),
+(12, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 5, 100.00, 0.00, 100.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:09:08', 1, 0, '2026-09-10 16:09:08', '2026-09-11 15:25:45'),
+(13, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 6, 10.00, 0.00, 10.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:11:06', 1, 0, '2026-09-10 16:11:06', '2026-09-11 15:25:40'),
+(14, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 7, 10.00, 0.00, 10.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:11:13', 1, 0, '2026-09-10 16:11:13', '2026-09-11 15:25:36'),
+(15, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 8, 100.00, 0.00, 100.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:11:43', 1, 0, '2026-09-10 16:11:43', '2026-09-11 15:25:33'),
+(16, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 9, 10.00, 0.00, 10.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:13:03', 1, 0, '2026-09-10 16:13:03', '2026-09-11 15:25:26'),
+(17, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 10, 20.00, 0.00, 20.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-10', '12:14:02', 1, 0, '2026-09-10 16:14:02', '2026-09-11 15:25:17'),
+(18, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 5, 10.00, 0.00, 10.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-10', '12:16:07', 1, 1, '2026-09-10 16:16:07', '2026-09-10 16:16:07'),
+(19, 1, 1, 'MOVIMIENTO DE CAJA', 'MovimientoCaja', 19, 0.00, 400.00, 400.00, 'INGRESO', 'QR', 'Ingreso prueba modificado', '2026-09-11', '11:30:21', 1, 1, '2026-09-11 15:30:35', '2026-09-11 15:31:50'),
+(20, 1, 1, 'COMPRA DE PRODUCTOS', 'IngresoProducto', 9, 240.00, 0.00, 240.00, 'EGRESO', 'EFECTIVO', 'COMPRA DE PRODUCTOS', '2026-09-13', '16:34:45', 1, 1, '2026-09-13 20:34:45', '2026-09-13 20:34:45'),
+(21, 3, 3, 'VENTA', 'Venta', 14, 590.00, 0.00, 590.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-09-15', '10:41:26', 1, 0, '2026-09-15 14:41:26', '2026-09-16 19:05:17'),
+(22, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 6, 500.00, 0.00, 500.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-15', '11:22:58', 1, 1, '2026-09-15 15:22:58', '2026-09-15 15:22:58'),
+(23, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 7, 0.00, 50.00, 50.00, 'INGRESO', 'QR', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-15', '11:23:38', 1, 1, '2026-09-15 15:23:38', '2026-09-15 15:23:49'),
+(24, 1, 1, 'COMPRA DE PRODUCTOS', 'IngresoProducto', 12, 540.00, 0.00, 540.00, 'EGRESO', 'EFECTIVO', 'COMPRA DE PRODUCTOS', '2026-09-16', '10:22:25', 1, 1, '2026-09-16 14:22:25', '2026-09-16 14:22:25'),
+(25, 1, 1, 'VENTA', 'Venta', 15, 50.00, 0.00, 50.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-09-16', '10:33:00', 1, 1, '2026-09-16 14:33:00', '2026-09-16 14:33:00'),
+(26, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 11, 300.00, 0.00, 300.00, 'EGRESO', 'EFECTIVO', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-16', '10:36:53', 1, 1, '2026-09-16 14:36:53', '2026-09-16 14:36:53'),
+(27, 1, 1, 'MOVIMIENTO DE CAJA', 'MovimientoCaja', 27, 2000.00, 0.00, 2000.00, 'INGRESO', 'EFECTIVO', 'ingreso de prueba', '2026-09-16', '10:37:02', 1, 1, '2026-09-16 14:38:13', '2026-09-16 14:38:13'),
+(28, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 8, 10.00, 10.00, 20.00, 'INGRESO', 'EFECTIVO-QR', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-16', '14:50:35', 1, 1, '2026-09-16 18:50:35', '2026-09-16 21:46:42'),
+(29, 3, 3, 'VENTA', 'Venta', 14, 550.00, 0.00, 550.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-09-15', '10:41:26', 1, 1, '2026-09-16 19:05:17', '2026-09-16 19:05:17'),
+(31, 1, 1, 'MOVIMIENTO DE CAJA', 'MovimientoCaja', 31, 80.00, 20.00, 100.00, 'INGRESO', 'EFECTIVO-QR', 'ingreso mixto', '2026-09-16', '16:57:29', 1, 1, '2026-09-16 20:58:56', '2026-09-16 21:00:20'),
+(32, 1, 1, 'COMPRA DE PRODUCTOS', 'IngresoProducto', 16, 200.00, 40.00, 240.00, 'EGRESO', 'EFECTIVO-QR', 'COMPRA DE PRODUCTOS', '2026-09-16', '17:08:19', 1, 1, '2026-09-16 21:08:19', '2026-09-16 21:08:19'),
+(33, 1, 1, 'VENTA', 'Venta', 17, 500.00, 50.00, 550.00, 'INGRESO', 'EFECTIVO-QR', 'INGRESO POR VENTA', '2026-09-16', '17:22:14', 1, 0, '2026-09-16 21:22:14', '2026-09-16 21:24:58'),
+(34, 1, 1, 'VENTA', 'Venta', 17, 500.00, 250.00, 750.00, 'INGRESO', 'EFECTIVO-QR', 'INGRESO POR VENTA', '2026-09-16', '17:22:14', 1, 1, '2026-09-16 21:24:58', '2026-09-16 21:24:58'),
+(35, 1, 1, 'VENTA', 'Venta', 17, 0.00, 250.00, 250.00, 'INGRESO', 'QR', 'INGRESO POR VENTA', '2026-09-16', '17:22:14', 1, 1, '2026-09-16 21:25:13', '2026-09-16 21:25:13'),
+(36, 3, 3, 'VENTA', 'Venta', 14, 500.00, 50.00, 550.00, 'INGRESO', 'EFECTIVO-QR', 'INGRESO POR VENTA', '2026-09-15', '10:41:26', 1, 1, '2026-09-16 21:25:32', '2026-09-16 21:25:32'),
+(37, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 9, 20.00, 20.00, 40.00, 'INGRESO', 'EFECTIVO-QR', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-16', '17:34:57', 1, 1, '2026-09-16 21:34:57', '2026-09-16 21:38:34'),
+(38, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 10, 20.00, 0.00, 20.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-16', '17:38:50', 1, 1, '2026-09-16 21:38:50', '2026-09-16 21:39:31'),
+(39, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 12, 180.00, 0.00, 180.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-09-16', '17:39:52', 1, 1, '2026-09-16 21:39:52', '2026-09-16 21:39:52'),
+(40, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 12, 120.00, 20.00, 140.00, 'EGRESO', 'EFECTIVO-QR', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-16', '17:53:06', 1, 0, '2026-09-16 21:53:06', '2026-09-16 21:56:10'),
+(41, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 13, 20.00, 20.00, 40.00, 'EGRESO', 'EFECTIVO-QR', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-16', '17:56:38', 1, 0, '2026-09-16 21:56:38', '2026-09-16 21:58:29'),
+(42, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 14, 20.00, 20.00, 40.00, 'EGRESO', 'EFECTIVO-QR', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-16', '17:58:42', 1, 0, '2026-09-16 21:58:42', '2026-09-16 21:59:36'),
+(43, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 15, 20.00, 20.00, 40.00, 'EGRESO', 'EFECTIVO-QR', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-16', '17:59:48', 1, 1, '2026-09-16 21:59:48', '2026-09-16 22:04:52'),
+(44, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 16, 900.00, 80.00, 980.00, 'EGRESO', 'EFECTIVO-QR', 'PAGO POR COMPRA DE PRODUCTOS', '2026-09-16', '18:09:40', 1, 1, '2026-09-16 22:09:40', '2026-09-16 22:09:40');
 
 -- --------------------------------------------------------
 
@@ -677,7 +868,42 @@ INSERT INTO `productos` (`id`, `codigo`, `nombre`, `categoria_id`, `marca_id`, `
 (3, 'P002', 'PRODUCTO 2', 1, 1, 1, 350.00, 400.00, 420.00, 450.00, 300.00, 3, NULL, 1, '2026-07-11', '2026-07-11 20:00:05', '2026-09-06 21:18:15'),
 (4, 'P003', 'PRODUCTO 3', 2, 2, 1, 390.00, NULL, NULL, NULL, 300.00, 5, NULL, 1, '2026-07-13', '2026-07-13 20:15:16', '2026-07-15 20:02:46'),
 (5, 'CODP', 'PRODUCTO NUEVO', 3, 3, 1, 300.00, 200.00, NULL, NULL, 240.00, 1, NULL, 1, '2026-09-11', NULL, NULL),
-(6, 'P004', 'PRODUCTO 4', 2, 4, 1, 200.00, 190.00, NULL, NULL, 120.00, 1, NULL, 1, '2026-09-13', NULL, NULL);
+(6, 'P004', 'PRODUCTO 4', 2, 4, 1, 200.00, 190.00, NULL, NULL, 120.00, 1, NULL, 1, '2026-09-13', NULL, NULL),
+(7, 'P005', 'PRODUCTO 5', 1, 2, 1, 343.00, NULL, NULL, NULL, 300.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(8, 'P006', 'PRODUCTO 6', 1, 2, 1, 344.00, NULL, NULL, NULL, 299.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(9, 'P007', 'PRODUCTO 7', 1, 2, 1, 345.00, NULL, NULL, NULL, 298.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(10, 'P008', 'PRODUCTO 8', 1, 2, 1, 346.00, NULL, NULL, NULL, 297.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(11, 'P009', 'PRODUCTO 9', 1, 2, 1, 347.00, NULL, NULL, NULL, 296.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(12, 'P010', 'PRODUCTO 10', 1, 2, 1, 348.00, NULL, NULL, NULL, 295.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(13, 'P011', 'PRODUCTO 11', 1, 2, 1, 349.00, NULL, NULL, NULL, 294.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(14, 'P012', 'PRODUCTO 12', 1, 2, 1, 350.00, NULL, NULL, NULL, 293.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(15, 'P013', 'PRODUCTO 13', 1, 2, 1, 351.00, NULL, NULL, NULL, 292.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(16, 'P014', 'PRODUCTO 14', 1, 2, 1, 352.00, NULL, NULL, NULL, 291.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(17, 'P015', 'PRODUCTO 15', 1, 2, 1, 353.00, NULL, NULL, NULL, 290.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(18, 'P016', 'PRODUCTO 16', 1, 2, 1, 354.00, NULL, NULL, NULL, 289.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(19, 'P017', 'PRODUCTO 17', 1, 2, 1, 355.00, NULL, NULL, NULL, 288.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(20, 'P018', 'PRODUCTO 18', 1, 2, 1, 356.00, NULL, NULL, NULL, 287.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(21, 'P019', 'PRODUCTO 19', 1, 2, 1, 357.00, NULL, NULL, NULL, 286.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(22, 'P020', 'PRODUCTO 20', 1, 2, 1, 358.00, NULL, NULL, NULL, 285.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(23, 'P021', 'PRODUCTO 21', 1, 2, 1, 359.00, NULL, NULL, NULL, 284.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(24, 'P022', 'PRODUCTO 22', 1, 2, 1, 360.00, NULL, NULL, NULL, 283.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(25, 'P023', 'PRODUCTO 23', 1, 2, 1, 361.00, NULL, NULL, NULL, 282.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(26, 'P024', 'PRODUCTO 24', 1, 2, 1, 362.00, NULL, NULL, NULL, 281.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(27, 'P025', 'PRODUCTO 25', 1, 2, 1, 363.00, NULL, NULL, NULL, 280.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(28, 'P026', 'PRODUCTO 26', 1, 2, 1, 364.00, NULL, NULL, NULL, 279.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(29, 'P027', 'PRODUCTO 27', 1, 2, 1, 365.00, NULL, NULL, NULL, 278.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(30, 'P028', 'PRODUCTO 28', 1, 2, 1, 366.00, NULL, NULL, NULL, 277.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(31, 'P029', 'PRODUCTO 29', 1, 2, 1, 367.00, NULL, NULL, NULL, 276.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(32, 'P030', 'PRODUCTO 30', 1, 2, 1, 368.00, NULL, NULL, NULL, 275.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(33, 'P031', 'PRODUCTO 31', 1, 2, 1, 369.00, NULL, NULL, NULL, 274.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(34, 'P032', 'PRODUCTO 32', 1, 2, 1, 370.00, NULL, NULL, NULL, 273.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(35, 'P033', 'PRODUCTO 33', 1, 2, 1, 371.00, NULL, NULL, NULL, 272.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(36, 'P034', 'PRODUCTO 34', 1, 2, 1, 372.00, NULL, NULL, NULL, 271.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(37, 'P035', 'PRODUCTO 35', 1, 2, 1, 373.00, NULL, NULL, NULL, 270.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(38, 'P036', 'PRODUCTO 36', 1, 2, 1, 374.00, NULL, NULL, NULL, 269.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(39, 'P037', 'PRODUCTO 37', 1, 2, 1, 375.00, NULL, NULL, NULL, 268.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(40, 'P038', 'PRODUCTO 38', 1, 2, 1, 376.00, NULL, NULL, NULL, 267.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(41, 'P039', 'PRODUCTO 39', 1, 2, 1, 377.00, NULL, NULL, NULL, 266.00, 1, NULL, 1, '2026-09-16', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -700,20 +926,55 @@ CREATE TABLE `producto_sucursals` (
 --
 
 INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `almacen_id`, `producto_id`, `stock_actual`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 2, 21, '2026-08-26 00:56:23', '2026-09-15 14:25:34'),
-(2, 1, 1, 3, 24, '2026-08-26 00:56:23', '2026-09-15 14:25:34'),
+(1, 1, 1, 2, 19, '2026-08-26 00:56:23', '2026-09-16 21:25:13'),
+(2, 1, 1, 3, 19, '2026-08-26 00:56:23', '2026-09-16 21:25:13'),
 (3, 1, 1, 4, 13, '2026-08-26 00:56:23', '2026-09-15 14:25:34'),
-(5, 2, 2, 2, 3, '2026-09-04 15:07:52', '2026-09-04 15:07:52'),
+(5, 2, 2, 2, 5, '2026-09-04 15:07:52', '2026-09-16 14:17:07'),
 (6, 1, 4, 2, 20, '2026-09-13 20:05:01', '2026-09-13 20:07:28'),
 (7, 1, 4, 3, 20, '2026-09-13 20:05:01', '2026-09-13 20:07:28'),
 (8, 1, 4, 6, 20, '2026-09-13 20:05:01', '2026-09-13 20:07:28'),
-(9, 1, 1, 6, 9, '2026-09-13 20:07:59', '2026-09-15 14:25:34'),
+(9, 1, 1, 6, 8, '2026-09-13 20:07:59', '2026-09-16 21:25:13'),
 (10, 1, 1, 5, 9, '2026-09-13 20:53:57', '2026-09-15 14:25:34'),
-(18, 3, 3, 2, 0, '2026-09-15 14:25:34', '2026-09-15 14:41:26'),
-(19, 3, 3, 3, 1, '2026-09-15 14:25:34', '2026-09-15 14:25:34'),
-(20, 3, 3, 4, 0, '2026-09-15 14:25:34', '2026-09-15 14:41:26'),
+(18, 3, 3, 2, 0, '2026-09-15 14:25:34', '2026-09-16 21:25:32'),
+(19, 3, 3, 3, 10, '2026-09-15 14:25:34', '2026-09-16 21:25:32'),
+(20, 3, 3, 4, 1, '2026-09-15 14:25:34', '2026-09-16 14:31:17'),
 (21, 3, 3, 5, 1, '2026-09-15 14:25:34', '2026-09-15 14:25:34'),
-(22, 3, 3, 6, 1, '2026-09-15 14:25:34', '2026-09-15 14:25:34');
+(22, 3, 3, 6, 1, '2026-09-15 14:25:34', '2026-09-15 14:25:34'),
+(23, 1, 1, 7, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(24, 1, 1, 8, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(25, 1, 1, 9, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(26, 1, 1, 10, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(27, 1, 1, 11, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(28, 1, 1, 12, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(29, 1, 1, 13, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(30, 1, 1, 14, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(31, 1, 1, 15, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(32, 1, 1, 16, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(33, 1, 1, 17, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(34, 1, 1, 18, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(35, 1, 1, 19, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(36, 1, 1, 20, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(37, 1, 1, 21, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(38, 1, 1, 22, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(39, 1, 1, 23, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(40, 1, 1, 24, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(41, 1, 1, 25, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(42, 1, 1, 26, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(43, 1, 1, 27, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(44, 1, 1, 28, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(45, 1, 1, 29, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(46, 1, 1, 30, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(47, 1, 1, 31, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(48, 1, 1, 32, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(49, 1, 1, 33, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(50, 1, 1, 34, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(51, 1, 1, 35, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(52, 1, 1, 36, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(53, 1, 1, 37, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(54, 1, 1, 38, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(55, 1, 1, 39, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(56, 1, 1, 40, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03'),
+(57, 1, 1, 41, 20, '2026-09-16 19:10:03', '2026-09-16 19:10:03');
 
 -- --------------------------------------------------------
 
@@ -723,12 +984,12 @@ INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `almacen_id`, `producto_i
 
 CREATE TABLE `proformas` (
   `id` bigint UNSIGNED NOT NULL,
-  `codigo_proforma` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codigo_proforma` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `sucursal_id` bigint UNSIGNED NOT NULL,
   `almacen_id` bigint UNSIGNED NOT NULL,
   `cliente_id` bigint UNSIGNED NOT NULL,
   `tipo_documento_id` bigint UNSIGNED DEFAULT NULL,
-  `nit_ci` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nit_ci` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `subtotal` decimal(24,2) NOT NULL,
   `descuento` decimal(24,2) NOT NULL,
   `porcentaje_descuento` double NOT NULL,
@@ -750,7 +1011,9 @@ CREATE TABLE `proformas` (
 
 INSERT INTO `proformas` (`id`, `codigo_proforma`, `sucursal_id`, `almacen_id`, `cliente_id`, `tipo_documento_id`, `nit_ci`, `subtotal`, `descuento`, `porcentaje_descuento`, `total`, `cancelado`, `saldo`, `fecha`, `hora`, `fecha_registro`, `status`, `user_id`, `created_at`, `updated_at`) VALUES
 (2, 'P2', 3, 3, 9, 1, '32323', 2650.00, 0.00, 0, 2650.00, 2100.00, 550.00, '2026-09-09', '16:28:35', '2026-09-09', 1, 1, '2026-09-09 20:28:35', '2026-09-09 21:06:05'),
-(3, 'P3', 1, 1, 13, 1, '56565656', 1140.00, 10.00, 0.88, 1130.00, 1130.00, 0.00, '2026-09-15', '10:45:17', '2026-09-15', 1, 1, '2026-09-15 14:45:17', '2026-09-15 14:45:17');
+(3, 'P3', 1, 1, 13, 1, '56565656', 1140.00, 10.00, 0.88, 1130.00, 1130.00, 0.00, '2026-09-15', '10:45:17', '2026-09-15', 1, 1, '2026-09-15 14:45:17', '2026-09-15 14:45:17'),
+(4, 'P4', 1, 1, 8, 2, '43344343', 2300.00, 0.00, 0, 2300.00, 2300.00, 0.00, '2026-09-16', '10:29:09', '2026-09-16', 1, 1, '2026-09-16 14:29:09', '2026-09-16 14:29:09'),
+(5, 'P5', 1, 1, 4, 1, '3433333', 3100.00, 0.00, 0, 3100.00, 2300.00, 800.00, '2026-09-16', '14:46:11', '2026-09-16', 1, 1, '2026-09-16 18:46:11', '2026-09-16 18:46:34');
 
 -- --------------------------------------------------------
 
@@ -784,7 +1047,12 @@ INSERT INTO `proforma_detalles` (`id`, `proforma_id`, `producto_id`, `cantidad`,
 (5, 2, 2, 1, 200.00, 0.00, 0, 0.00, 0, 200.00, 200.00, 200.00, '2026-09-09 21:05:53', '2026-09-09 21:05:53'),
 (7, 3, 2, 2, 200.00, 0.00, 0, 1.76, 0.88, 198.24, 396.48, 400.00, '2026-09-15 14:45:17', '2026-09-15 14:45:17'),
 (8, 3, 3, 1, 350.00, 0.00, 0, 3.08, 0.88, 346.92, 346.92, 350.00, '2026-09-15 14:45:17', '2026-09-15 14:45:17'),
-(9, 3, 4, 1, 390.00, 0.00, 0, 3.43, 0.88, 386.57, 386.57, 390.00, '2026-09-15 14:45:17', '2026-09-15 14:45:17');
+(9, 3, 4, 1, 390.00, 0.00, 0, 3.43, 0.88, 386.57, 386.57, 390.00, '2026-09-15 14:45:17', '2026-09-15 14:45:17'),
+(10, 4, 3, 3, 300.00, 0.00, 0, 0.00, 0, 350.00, 900.00, 900.00, '2026-09-16 14:29:09', '2026-09-16 14:29:09'),
+(11, 4, 2, 4, 200.00, 0.00, 0, 0.00, 0, 200.00, 800.00, 800.00, '2026-09-16 14:29:09', '2026-09-16 14:29:09'),
+(12, 4, 5, 2, 300.00, 0.00, 0, 0.00, 0, 300.00, 600.00, 600.00, '2026-09-16 14:29:09', '2026-09-16 14:29:09'),
+(13, 5, 2, 5, 200.00, 0.00, 0, 0.00, 0, 200.00, 1000.00, 1000.00, '2026-09-16 18:46:11', '2026-09-16 18:46:34'),
+(14, 5, 3, 6, 350.00, 0.00, 0, 0.00, 0, 350.00, 2100.00, 2100.00, '2026-09-16 18:46:11', '2026-09-16 18:46:11');
 
 -- --------------------------------------------------------
 
@@ -847,7 +1115,7 @@ CREATE TABLE `salida_detalles` (
   `tipo_salida_id` bigint UNSIGNED NOT NULL,
   `producto_id` bigint UNSIGNED NOT NULL,
   `cantidad` double NOT NULL,
-  `observacion` varchar(900) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `observacion` varchar(900) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -910,7 +1178,7 @@ CREATE TABLE `sucursals` (
 INSERT INTO `sucursals` (`id`, `nombre`, `descripcion`, `activo`, `ventas`, `fecha_registro`, `created_at`, `updated_at`) VALUES
 (1, 'SUCURSAL CENTRAL', '', 1, 0, '2026-07-11', '2026-07-11 15:33:24', '2026-08-28 15:41:04'),
 (2, 'SUCURSAL 1', '', 1, 1, '2026-07-11', '2026-07-11 15:33:34', '2026-07-11 15:33:34'),
-(3, 'SUCURSAL 2', '', 0, 1, '2026-07-11', '2026-07-11 15:33:42', '2026-08-28 15:40:51');
+(3, 'SUCURSAL 2', '', 1, 1, '2026-07-11', '2026-07-11 15:33:42', '2026-09-16 20:21:56');
 
 -- --------------------------------------------------------
 
@@ -993,7 +1261,7 @@ CREATE TABLE `traspasos` (
   `sucursal_destino_id` bigint UNSIGNED NOT NULL,
   `almacen_destino_id` bigint UNSIGNED NOT NULL,
   `cantidad` double NOT NULL,
-  `descripcion` varchar(900) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descripcion` varchar(900) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `fecha_registro` date NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -1006,7 +1274,9 @@ CREATE TABLE `traspasos` (
 
 INSERT INTO `traspasos` (`id`, `sucursal_origen_id`, `almacen_origen_id`, `sucursal_destino_id`, `almacen_destino_id`, `cantidad`, `descripcion`, `fecha_registro`, `user_id`, `created_at`, `updated_at`) VALUES
 (3, 1, 1, 2, 2, 3, 'TRASPASO DE ALMACEN CENTRAL A ALMACEN 1', '2026-09-04', 1, '2026-09-04 15:07:52', '2026-09-04 15:07:52'),
-(7, 1, 1, 3, 3, 5, 'TRASPASO A ALMACEN 2', '2026-09-15', 1, '2026-09-15 14:25:34', '2026-09-15 14:25:34');
+(7, 1, 1, 3, 3, 5, 'TRASPASO A ALMACEN 2', '2026-09-15', 1, '2026-09-15 14:25:34', '2026-09-15 14:25:34'),
+(8, 1, 1, 2, 2, 2, 'TRASPASO A ALMACEN 1', '2026-09-16', 1, '2026-09-16 14:17:07', '2026-09-16 14:17:07'),
+(9, 1, 1, 3, 3, 10, 'TRASPASO 10 PRODUCTOS A ALMACEN 2', '2026-09-16', 1, '2026-09-16 19:49:39', '2026-09-16 19:49:39');
 
 -- --------------------------------------------------------
 
@@ -1019,7 +1289,7 @@ CREATE TABLE `traspaso_detalles` (
   `traspaso_id` bigint UNSIGNED NOT NULL,
   `producto_id` bigint UNSIGNED NOT NULL,
   `cantidad` double NOT NULL,
-  `observacion` varchar(900) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `observacion` varchar(900) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1034,7 +1304,9 @@ INSERT INTO `traspaso_detalles` (`id`, `traspaso_id`, `producto_id`, `cantidad`,
 (14, 7, 3, 1, NULL, '2026-09-15 14:25:34', '2026-09-15 14:25:34'),
 (15, 7, 4, 1, NULL, '2026-09-15 14:25:34', '2026-09-15 14:25:34'),
 (16, 7, 5, 1, NULL, '2026-09-15 14:25:34', '2026-09-15 14:25:34'),
-(17, 7, 6, 1, NULL, '2026-09-15 14:25:34', '2026-09-15 14:25:34');
+(17, 7, 6, 1, NULL, '2026-09-15 14:25:34', '2026-09-15 14:25:34'),
+(18, 8, 2, 2, NULL, '2026-09-16 14:17:07', '2026-09-16 14:17:07'),
+(19, 9, 3, 10, NULL, '2026-09-16 19:49:39', '2026-09-16 19:49:39');
 
 -- --------------------------------------------------------
 
@@ -1109,13 +1381,15 @@ CREATE TABLE `ventas` (
   `cliente_id` bigint UNSIGNED NOT NULL,
   `tipo_documento_id` bigint UNSIGNED DEFAULT NULL,
   `nit_ci` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `tipo_venta` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo_venta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tipo_pago` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `subtotal` decimal(24,2) NOT NULL,
   `descuento` decimal(24,2) NOT NULL,
   `porcentaje_descuento` double(8,2) NOT NULL,
   `total` decimal(24,2) NOT NULL,
-  `cancelado` decimal(24,2) NOT NULL,
+  `cancelado_efectivo` decimal(24,2) NOT NULL,
+  `cancelado_qr` decimal(24,2) NOT NULL,
+  `total_cancelado` decimal(24,2) NOT NULL,
   `saldo` decimal(24,2) NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
@@ -1130,13 +1404,16 @@ CREATE TABLE `ventas` (
 -- Volcado de datos para la tabla `ventas`
 --
 
-INSERT INTO `ventas` (`id`, `codigo_venta`, `sucursal_id`, `almacen_id`, `cliente_id`, `tipo_documento_id`, `nit_ci`, `tipo_venta`, `tipo_pago`, `subtotal`, `descuento`, `porcentaje_descuento`, `total`, `cancelado`, `saldo`, `fecha`, `hora`, `fecha_registro`, `status`, `user_id`, `created_at`, `updated_at`) VALUES
-(8, 'V8', 1, 1, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 400.00, 0.00, 0.00, 400.00, 400.00, 0.00, '2026-09-06', '18:24:22', '2026-09-06', 1, 1, '2026-09-06 22:24:22', '2026-09-06 22:24:22'),
-(9, 'V9', 1, 1, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 350.00, 0.00, 0.00, 350.00, 350.00, 0.00, '2026-09-07', '10:32:13', '2026-09-07', 1, 1, '2026-09-07 14:32:13', '2026-09-07 14:32:13'),
-(10, 'V10', 1, 1, 3, 2, '345345345', 'CRÉDITO', NULL, 1050.00, 0.00, 0.00, 1050.00, 0.00, 500.00, '2026-09-07', '10:35:45', '2026-09-07', 1, 1, '2026-09-07 14:35:45', '2026-09-15 15:23:49'),
-(11, 'V11', 1, 1, 2, 1, '123456', 'CRÉDITO', NULL, 700.00, 20.00, 2.86, 680.00, 0.00, 680.00, '2026-09-08', '10:55:31', '2026-09-08', 1, 1, '2026-09-08 14:55:31', '2026-09-08 14:55:31'),
-(12, 'V12', 1, 1, 3, 2, '345345345', 'CRÉDITO', 'QR', 780.00, 30.00, 3.85, 750.00, 100.00, 650.00, '2026-09-08', '11:01:10', '2026-09-08', 1, 1, '2026-09-08 15:01:10', '2026-09-08 15:01:10'),
-(14, 'V14', 3, 3, 5, 1, '43343434', 'AL CONTADO', 'EFECTIVO', 590.00, 0.00, 0.00, 590.00, 590.00, 0.00, '2026-09-15', '10:41:26', '2026-09-15', 1, 1, '2026-09-15 14:41:26', '2026-09-15 14:41:26');
+INSERT INTO `ventas` (`id`, `codigo_venta`, `sucursal_id`, `almacen_id`, `cliente_id`, `tipo_documento_id`, `nit_ci`, `tipo_venta`, `tipo_pago`, `subtotal`, `descuento`, `porcentaje_descuento`, `total`, `cancelado_efectivo`, `cancelado_qr`, `total_cancelado`, `saldo`, `fecha`, `hora`, `fecha_registro`, `status`, `user_id`, `created_at`, `updated_at`) VALUES
+(8, 'V8', 1, 1, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 400.00, 0.00, 0.00, 400.00, 400.00, 0.00, 400.00, 0.00, '2026-09-06', '18:24:22', '2026-09-06', 1, 1, '2026-09-06 22:24:22', '2026-09-06 22:24:22'),
+(9, 'V9', 1, 1, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 350.00, 0.00, 0.00, 350.00, 350.00, 0.00, 350.00, 0.00, '2026-09-07', '10:32:13', '2026-09-07', 1, 1, '2026-09-07 14:32:13', '2026-09-07 14:32:13'),
+(10, 'V10', 1, 1, 3, 2, '345345345', 'CRÉDITO', NULL, 1050.00, 0.00, 0.00, 1050.00, 0.00, 0.00, 0.00, 500.00, '2026-09-07', '10:35:45', '2026-09-07', 1, 1, '2026-09-07 14:35:45', '2026-09-15 15:23:49'),
+(11, 'V11', 1, 1, 2, 1, '123456', 'CRÉDITO', NULL, 700.00, 20.00, 2.86, 680.00, 0.00, 0.00, 0.00, 680.00, '2026-09-08', '10:55:31', '2026-09-08', 1, 1, '2026-09-08 14:55:31', '2026-09-08 14:55:31'),
+(12, 'V12', 1, 1, 3, 2, '345345345', 'CRÉDITO', 'QR', 780.00, 30.00, 3.85, 750.00, 0.00, 100.00, 100.00, 650.00, '2026-09-08', '11:01:10', '2026-09-08', 1, 1, '2026-09-08 15:01:10', '2026-09-08 15:01:10'),
+(14, 'V14', 3, 3, 5, 1, '43343434', 'AL CONTADO', 'EFECTIVO-QR', 550.00, 0.00, 0.00, 550.00, 500.00, 50.00, 550.00, 0.00, '2026-09-15', '10:41:26', '2026-09-15', 1, 1, '2026-09-15 14:41:26', '2026-09-16 21:25:32'),
+(15, 'V15', 1, 1, 2, 1, '123456', 'CRÉDITO', 'EFECTIVO', 290.00, 0.00, 0.00, 290.00, 50.00, 0.00, 50.00, 0.00, '2026-09-16', '10:33:00', '2026-09-16', 1, 1, '2026-09-16 14:33:00', '2026-09-16 21:39:52'),
+(16, 'V16', 1, 1, 1, 1, '123456-CM', 'CRÉDITO', NULL, 950.00, 0.00, 0.00, 950.00, 0.00, 0.00, 0.00, 930.00, '2026-09-16', '14:45:46', '2026-09-16', 1, 1, '2026-09-16 18:45:46', '2026-09-16 21:46:42'),
+(17, 'V17', 1, 1, 6, 1, '32233', 'CRÉDITO', 'QR', 750.00, 0.00, 0.00, 750.00, 0.00, 250.00, 250.00, 500.00, '2026-09-16', '17:22:14', '2026-09-16', 1, 1, '2026-09-16 21:22:14', '2026-09-16 21:25:13');
 
 -- --------------------------------------------------------
 
@@ -1150,8 +1427,10 @@ CREATE TABLE `venta_cobros` (
   `almacen_id` bigint UNSIGNED NOT NULL,
   `venta_id` bigint UNSIGNED NOT NULL,
   `cliente_id` bigint UNSIGNED NOT NULL,
-  `tipo_pago` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `monto` decimal(24,2) NOT NULL,
+  `tipo_pago` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `monto_efectivo` decimal(24,2) NOT NULL,
+  `monto_qr` decimal(24,2) NOT NULL,
+  `monto_total` decimal(24,2) NOT NULL,
   `saldo` decimal(24,2) NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
@@ -1164,9 +1443,13 @@ CREATE TABLE `venta_cobros` (
 -- Volcado de datos para la tabla `venta_cobros`
 --
 
-INSERT INTO `venta_cobros` (`id`, `sucursal_id`, `almacen_id`, `venta_id`, `cliente_id`, `tipo_pago`, `monto`, `saldo`, `fecha`, `hora`, `user_id`, `created_at`, `updated_at`) VALUES
-(6, 1, 1, 10, 3, 'EFECTIVO', 500.00, 0.00, '2026-09-15', '11:22:58', 1, '2026-09-15 15:22:58', '2026-09-15 15:22:58'),
-(7, 1, 1, 10, 3, 'QR', 50.00, 0.00, '2026-09-15', '11:23:49', 1, '2026-09-15 15:23:38', '2026-09-15 15:23:49');
+INSERT INTO `venta_cobros` (`id`, `sucursal_id`, `almacen_id`, `venta_id`, `cliente_id`, `tipo_pago`, `monto_efectivo`, `monto_qr`, `monto_total`, `saldo`, `fecha`, `hora`, `user_id`, `created_at`, `updated_at`) VALUES
+(6, 1, 1, 10, 3, 'EFECTIVO', 500.00, 0.00, 500.00, 0.00, '2026-09-15', '11:22:58', 1, '2026-09-15 15:22:58', '2026-09-15 15:22:58'),
+(7, 1, 1, 10, 3, 'QR', 0.00, 50.00, 50.00, 0.00, '2026-09-15', '11:23:49', 1, '2026-09-15 15:23:38', '2026-09-15 15:23:49'),
+(8, 1, 1, 16, 1, 'EFECTIVO-QR', 10.00, 10.00, 20.00, 0.00, '2026-09-16', '17:46:42', 1, '2026-09-16 18:50:35', '2026-09-16 21:46:42'),
+(9, 1, 1, 15, 2, 'EFECTIVO-QR', 20.00, 20.00, 40.00, 0.00, '2026-09-16', '17:38:34', 1, '2026-09-16 21:34:57', '2026-09-16 21:38:34'),
+(10, 1, 1, 15, 2, 'EFECTIVO', 20.00, 0.00, 20.00, 0.00, '2026-09-16', '17:39:31', 1, '2026-09-16 21:38:50', '2026-09-16 21:39:31'),
+(12, 1, 1, 15, 2, 'EFECTIVO', 180.00, 0.00, 180.00, 0.00, '2026-09-16', '17:39:52', 1, '2026-09-16 21:39:52', '2026-09-16 21:39:52');
 
 -- --------------------------------------------------------
 
@@ -1202,8 +1485,16 @@ INSERT INTO `venta_detalles` (`id`, `venta_id`, `producto_id`, `cantidad`, `prec
 (10, 10, 3, 3, 350.00, 0.00, 0.00, 0.00, 0.00, 350.00, 1050.00, 1050.00, 1, '2026-09-07 14:35:45', '2026-09-07 14:35:45'),
 (11, 11, 3, 2, 350.00, 0.00, 0.00, 10.01, 2.86, 339.99, 679.98, 700.00, 1, '2026-09-08 14:55:31', '2026-09-08 14:55:31'),
 (12, 12, 4, 2, 390.00, 0.00, 0.00, 15.02, 3.85, 374.99, 749.97, 780.00, 1, '2026-09-08 15:01:10', '2026-09-08 15:01:10'),
-(15, 14, 2, 1, 200.00, 0.00, 0.00, 0.00, 0.00, 200.00, 200.00, 200.00, 1, '2026-09-15 14:41:26', '2026-09-15 14:41:26'),
-(16, 14, 4, 1, 390.00, 0.00, 0.00, 0.00, 0.00, 390.00, 390.00, 390.00, 1, '2026-09-15 14:41:26', '2026-09-15 14:41:26');
+(15, 14, 2, 1, 200.00, 0.00, 0.00, 0.00, 0.00, 200.00, 200.00, 200.00, 0, '2026-09-15 14:41:26', '2026-09-16 14:31:17'),
+(16, 14, 4, 1, 390.00, 0.00, 0.00, 0.00, 0.00, 390.00, 390.00, 390.00, 0, '2026-09-15 14:41:26', '2026-09-16 14:31:17'),
+(17, 15, 2, 1, 290.00, 0.00, 0.00, 0.00, 0.00, 290.00, 290.00, 290.00, 1, '2026-09-16 14:33:00', '2026-09-16 14:33:00'),
+(18, 16, 2, 3, 200.00, 0.00, 0.00, 0.00, 0.00, 200.00, 600.00, 600.00, 1, '2026-09-16 18:45:46', '2026-09-16 18:50:00'),
+(19, 16, 3, 1, 350.00, 0.00, 0.00, 0.00, 0.00, 350.00, 350.00, 350.00, 1, '2026-09-16 18:45:46', '2026-09-16 18:45:46'),
+(22, 14, 2, 1, 200.00, 0.00, 0.00, 0.00, 0.00, 200.00, 200.00, 200.00, 1, '2026-09-16 19:05:17', '2026-09-16 19:05:17'),
+(23, 14, 3, 1, 350.00, 0.00, 0.00, 0.00, 0.00, 350.00, 350.00, 350.00, 1, '2026-09-16 19:05:17', '2026-09-16 19:05:17'),
+(24, 17, 2, 1, 200.00, 0.00, 0.00, 0.00, 0.00, 200.00, 200.00, 200.00, 1, '2026-09-16 21:22:14', '2026-09-16 21:22:14'),
+(25, 17, 3, 1, 350.00, 0.00, 0.00, 0.00, 0.00, 350.00, 350.00, 350.00, 1, '2026-09-16 21:22:14', '2026-09-16 21:22:14'),
+(26, 17, 6, 1, 200.00, 0.00, 0.00, 0.00, 0.00, 200.00, 200.00, 200.00, 1, '2026-09-16 21:24:58', '2026-09-16 21:24:58');
 
 --
 -- Índices para tablas volcadas
@@ -1510,31 +1801,31 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=195;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
 --
 ALTER TABLE `ingreso_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_pagos`
 --
 ALTER TABLE `ingreso_pagos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_productos`
 --
 ALTER TABLE `ingreso_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `kardex_productos`
 --
 ALTER TABLE `kardex_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=152;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -1558,7 +1849,7 @@ ALTER TABLE `modulos`
 -- AUTO_INCREMENT de la tabla `movimiento_cajas`
 --
 ALTER TABLE `movimiento_cajas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
@@ -1570,25 +1861,25 @@ ALTER TABLE `permisos`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT de la tabla `producto_sucursals`
 --
 ALTER TABLE `producto_sucursals`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT de la tabla `proformas`
 --
 ALTER TABLE `proformas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `proforma_detalles`
 --
 ALTER TABLE `proforma_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedors`
@@ -1642,13 +1933,13 @@ ALTER TABLE `tipo_salidas`
 -- AUTO_INCREMENT de la tabla `traspasos`
 --
 ALTER TABLE `traspasos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `traspaso_detalles`
 --
 ALTER TABLE `traspaso_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `unidad_medidas`
@@ -1666,19 +1957,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `venta_cobros`
 --
 ALTER TABLE `venta_cobros`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `venta_detalles`
 --
 ALTER TABLE `venta_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- Restricciones para tablas volcadas

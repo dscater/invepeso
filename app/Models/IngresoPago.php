@@ -11,7 +11,9 @@ class IngresoPago extends Model
         "almacen_id",
         "ingreso_producto_id",
         "proveedor_id",
-        "monto",
+        "monto_efectivo",
+        "monto_qr",
+        "monto_total",
         "fecha",
         "hora",
         "user_id"

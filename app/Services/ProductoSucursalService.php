@@ -35,6 +35,7 @@ class ProductoSucursalService
         $categoria_id = "",
         $marca_id = "",
         $nombreProducto = "",
+        $activo = NULL,
     ): Collection {
         $productos = Producto::select(
             'productos.*',
@@ -61,41 +62,74 @@ class ProductoSucursalService
             $productos->where('productos.nombre', 'like', "%{$nombreProducto}%");
         }
 
+        if ($activo != NULL) {
+            $productos->where("activo", $activo);
+        }
+
         return $productos
             ->groupBy('productos.id')
             ->get();
     }
+
     /**
      * Lista de producto_sucursals paginado con filtros
      *
      * @param integer $length
      * @param integer $page
      * @param string $search
-     * @param array $columnsSerachLike
-     * @param array $columnsFilter
+     * @param integer|null $almacen_id
+     * @param integer|null $categoria_id
+     * @param integer|null $marca_id
+     * @param string|null $nombreProducto
+     * @param integer|null $activo
+     * @param array $orderBy
      * @return LengthAwarePaginator
      */
-    public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
-    {
-        $producto_sucursals = ProductoSucursal::select("producto_sucursals.*");
+    public function listadoPaginado(
+        int $length,
+        int $page,
+        string $search,
+        array $columnsSerachLike,
+        $almacen_id = "",
+        $categoria_id = "",
+        $marca_id = "",
+        $nombreProducto = "",
+        $activo = NULL,
+        array $orderBy = []
+    ): LengthAwarePaginator {
+        $productos = Producto::select(
+            'productos.*',
+            DB::raw('COALESCE(SUM(producto_sucursals.stock_actual),0) as stock_total')
 
-        // Filtros exactos
-        foreach ($columnsFilter as $key => $value) {
-            if (!is_null($value)) {
-                $producto_sucursals->where("producto_sucursals.$key", $value);
-            }
+        )->with(["categoria:id,nombre", "marca:id,nombre"])
+            ->leftJoin('producto_sucursals', function ($join) use ($almacen_id) {
+                $join->on('productos.id', '=', 'producto_sucursals.producto_id');
+                if (!empty($almacen_id) && $almacen_id != 'todos') {
+                    $join->where('producto_sucursals.almacen_id', $almacen_id);
+                }
+            });
+
+        if (!empty($categoria_id) && $categoria_id != 'todos') {
+            // Log::debug("categoria");
+            $productos->where('productos.categoria_id', $categoria_id);
         }
 
-        // Filtros por rango
-        foreach ($columnsBetweenFilter as $key => $value) {
-            if (isset($value[0], $value[1])) {
-                $producto_sucursals->whereBetween("producto_sucursals.$key", $value);
-            }
+        if (!empty($marca_id) && $marca_id != 'todos') {
+            $productos->where('productos.marca_id', $marca_id);
         }
 
+        if (!empty(trim($nombreProducto))) {
+            $productos->where(function ($query) use ($nombreProducto) {
+                $query->orWhere("productos.nombre", "LIKE", "%$nombreProducto%");
+                $query->orWhere("productos.codigo", "LIKE", "%$nombreProducto%");
+            });
+        }
+        if ($activo != NULL) {
+            $productos->where("productos.activo", $activo);
+        }
         // Búsqueda en múltiples columnas con LIKE
         if (!empty($search) && !empty($columnsSerachLike)) {
-            $producto_sucursals->where(function ($query) use ($search, $columnsSerachLike) {
+            $productos->where(function ($query) use ($search, $columnsSerachLike) {
                 foreach ($columnsSerachLike as $col) {
                     $query->orWhere("$col", "LIKE", "%$search%");
                 }
@@ -105,12 +139,13 @@ class ProductoSucursalService
         // Ordenamiento
         foreach ($orderBy as $value) {
             if (isset($value[0], $value[1])) {
-                $producto_sucursals->orderBy($value[0], $value[1]);
+                // $value[0] = 'productos.columna'
+                $productos->orderBy($value[0], $value[1]);
             }
         }
 
-        $producto_sucursals = $producto_sucursals->paginate($length, ['*'], 'page', $page);
-        return $producto_sucursals;
+        $productos = $productos->groupBy('productos.id')->paginate($length, ['*'], 'page', $page);
+        return $productos;
     }
 
     /**

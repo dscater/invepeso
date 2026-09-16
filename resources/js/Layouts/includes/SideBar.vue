@@ -217,6 +217,10 @@ onUnmounted(() => {});
                             permisos == '*' || permisos.includes('ventas.index')
                         "
                         :label="'Ventas'"
+                        :array-ruta-class-active="[
+                            'ventas.index',
+                            'ventas.edit',
+                        ]"
                         :ruta="'ventas.index'"
                         :icon="'fa fa-list-alt'"
                     ></ItemMenu>

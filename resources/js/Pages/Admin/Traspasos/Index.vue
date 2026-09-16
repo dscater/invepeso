@@ -259,6 +259,7 @@ const eliminarTraspaso = (item) => {
                                         placement="left-start"
                                     >
                                         <button
+                                            :disabled="true"
                                             class="btn btn-warning"
                                             @click="
                                                 setTraspaso(item);

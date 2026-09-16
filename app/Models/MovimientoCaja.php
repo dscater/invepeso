@@ -12,14 +12,16 @@ class MovimientoCaja extends Model
         "tipo",
         "modulo",
         "registro_id",
-        "monto",
-        "tipo_movimiento",
-        "tipo_pago",
+        "monto_efectivo",
+        "monto_qr",
+        "monto_total",
+        "tipo_movimiento", //INGRESO-EGRESO
+        "tipo_pago", //EFECTIVO-QR | EFECTIVO | QR
         "descripcion",
         "fecha",
         "hora",
         "user_id",
-        "status"
+        "status" // 1: activo, 0: eliminado
     ];
 
     protected $appends = ["fecha_t", "fecha_hora_t"];

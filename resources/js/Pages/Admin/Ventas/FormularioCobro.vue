@@ -64,14 +64,8 @@ const enviarFormulario = async () => {
 
             await actualizarListaCobros();
 
-            if (formCobro.id == 0) {
-                form.saldo =
-                    parseFloat(form.saldo) - parseFloat(formCobro.monto);
-                form.saldo = form.saldo.toFixed(2);
-            } else {
-                form.saldo = response.data.venta.saldo;
-                form.saldo = parseFloat(form.saldo).toFixed(2);
-            }
+            form.saldo = response.data.venta.saldo;
+            form.saldo = parseFloat(form.saldo).toFixed(2);
 
             if (response.data.url_blank) {
                 window.open(response.data.url_blank, "_blank");
@@ -188,7 +182,9 @@ const initialState = {
     venta_id: "",
     cliente_id: "",
     tipo_pago: "EFECTIVO",
-    monto: 0,
+    monto_efectivo: 0,
+    monto_qr: 0,
+    monto_total: 0,
     fecha: "",
     hora: "",
     user_id: "",
@@ -236,7 +232,7 @@ const eliminarCobro = (item) => {
     Swal.fire({
         // icon: "question",
         title: "¿Quierés eliminar este registro?",
-        html: `<strong>${item.fecha_hora_t}</strong><br/><b>Monto: </b>${item.monto}<br/><b>Tipo Pago: </b>${item.tipo_pago}`,
+        html: `<strong>${item.fecha_hora_t}</strong><br/><b>Monto: </b>${item.monto_total}<br/><b>Tipo Pago: </b>${item.tipo_pago}`,
         showCancelButton: true,
         confirmButtonText: "Si, eliminar",
         cancelButtonText: "No, cancelar",
@@ -262,7 +258,7 @@ const eliminarCobro = (item) => {
 
 const totalCancelado = computed(() => {
     return form.venta_cobros.reduce((acc, item) => {
-        return acc + parseFloat(item.monto || 0);
+        return acc + parseFloat(item.monto_total || 0);
     }, 0);
 });
 
@@ -317,7 +313,7 @@ onMounted(() => {
                         Saldo Bs.: {{ form.saldo }}
                     </h4>
                     <h4 class="float-end fw-bold fs-5 text-bgDarkGrayP me-3">
-                        Adelanto Bs.: {{ form.cancelado }}
+                        Adelanto Bs.: {{ form.total_cancelado }}
                     </h4>
                     <h4 class="fw-bold fs-5 text-success">
                         Total Bs.: {{ form.total }}
@@ -397,7 +393,10 @@ onMounted(() => {
                                         </ul>
                                     </div>
                                     <div class="col-md-3">
-                                        <label>Monto</label>
+                                        <label
+                                            >Monto Efectivo
+                                            <i class="fa fa-money-bill"></i
+                                        ></label>
                                         <div class="input-group">
                                             <span class="input-group-text">
                                                 <i class="fa fa-money-bill"></i>
@@ -406,21 +405,55 @@ onMounted(() => {
                                                 class="form-control border-0 p-0"
                                             >
                                                 <input
-                                                    v-model="formCobro.monto"
+                                                    v-model="
+                                                        formCobro.monto_efectivo
+                                                    "
                                                     class="form-control"
                                                 />
                                             </div>
                                         </div>
                                         <ul
-                                            v-if="formCobro.errors?.monto"
+                                            v-if="
+                                                formCobro.errors?.monto_efectivo
+                                            "
                                             class="d-block text-danger list-unstyled"
                                         >
                                             <li class="parsley-required">
-                                                {{ formCobro.errors?.monto }}
+                                                {{
+                                                    formCobro.errors
+                                                        ?.monto_efectivo
+                                                }}
                                             </li>
                                         </ul>
                                     </div>
                                     <div class="col-md-3">
+                                        <label
+                                            >Monto QR
+                                            <i class="fa fa-qrcode"></i
+                                        ></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-qrcode"></i>
+                                            </span>
+                                            <div
+                                                class="form-control border-0 p-0"
+                                            >
+                                                <input
+                                                    v-model="formCobro.monto_qr"
+                                                    class="form-control"
+                                                />
+                                            </div>
+                                        </div>
+                                        <ul
+                                            v-if="formCobro.errors?.monto_qr"
+                                            class="d-block text-danger list-unstyled"
+                                        >
+                                            <li class="parsley-required">
+                                                {{ formCobro.errors?.monto_qr }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- <div class="col-md-3">
                                         <label>Tipo de Pago</label>
                                         <el-radio-group
                                             v-model="formCobro.tipo_pago"
@@ -443,7 +476,7 @@ onMounted(() => {
                                                 {{ formCobro.errors?.monto }}
                                             </li>
                                         </ul>
-                                    </div>
+                                    </div> -->
                                     <div
                                         class="col-md-2 d-flex align-items-end"
                                     >
@@ -487,7 +520,7 @@ onMounted(() => {
                                         {{ item.almacen?.nombre }} -
                                         {{ item.sucursal?.nombre }}
                                     </td>
-                                    <td>{{ item.monto }}</td>
+                                    <td>{{ item.monto_total }}</td>
                                     <td>{{ item.tipo_pago }}</td>
                                     <td class="text-center">
                                         {{ item.user?.nombre }}

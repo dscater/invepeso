@@ -3,6 +3,7 @@
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { watch, ref, computed, onMounted, nextTick } from "vue";
+import MiPaginacion from "@/Components/MiPaginacion.vue";
 const props = defineProps({
     form: {
         type: Object,
@@ -109,31 +110,47 @@ const almacen_id = ref("");
 const categoria_id = ref("todos");
 const marca_id = ref("todos");
 const nombreProducto = ref("");
+const currentPage = ref(1);
+const perPage = ref(24);
+const total_registros = ref(0);
+const cambioDePagina = async (value) => {
+    loadingLista.value = true;
+    currentPage.value = value;
+    cargarProductos();
+};
 const cargarProductos = async () => {
     loadingLista.value = true;
     try {
-        const res = await axios.get(route("producto_sucursals.listado"), {
+        const res = await axios.get(route("producto_sucursals.paginado"), {
             params: {
+                perPage: perPage.value,
+                page: currentPage.value,
                 almacen_id: almacen_id.value,
                 categoria_id: categoria_id.value,
                 marca_id: marca_id.value,
                 nombreProducto: nombreProducto.value,
+                activo: 1,
             },
         });
-        listProductoAlmacens.value = res.data.producto_sucursals.map(
-            (item) => ({
-                ...item,
-                cantidad: 1,
-                costo: item.precio_compra,
-                tipo_ingreso_id: tipo_ingreso_id_default,
-            }),
-        );
+        listProductoAlmacens.value = res.data.data.map((item) => ({
+            ...item,
+            cantidad: 1,
+            costo: item.precio_compra,
+            tipo_ingreso_id: tipo_ingreso_id_default,
+        }));
+        total_registros.value = res.data.total;
     } catch (e) {
         console.log(e);
     } finally {
         loadingLista.value = false;
     }
 };
+
+const detectarCambioSelect = () => {
+    currentPage.value = 1;
+    cargarProductos();
+};
+
 const intervalNombre = ref(null);
 const filtrarNombres = () => {
     clearInterval(intervalNombre.value);
@@ -205,7 +222,6 @@ const cargarTipoIngresos = async () => {
 
 const cargarListas = () => {
     cargarTipoIngresos();
-    cargarProductos();
     cargarAlmacens();
     cargarProveedors();
     cargarCategorias();
@@ -302,7 +318,10 @@ const totalCompra = computed(() => {
     }, 0);
 });
 const saldoCompra = computed(() => {
-    return (parseFloat(form.total) || 0) - (parseFloat(form.cancelado) || 0);
+    const cancelado =
+        (parseFloat(form.cancelado_efectivo) || 0) +
+        (parseFloat(form.cancelado_qr) || 0);
+    return (parseFloat(form.total) || 0) - cancelado;
 });
 
 watch([totalCompra, saldoCompra], () => {
@@ -312,6 +331,10 @@ watch([totalCompra, saldoCompra], () => {
 
 onMounted(() => {
     cargarListas();
+    if (form.id != 0 && form.almacen_id) {
+        almacen_id.value = form.almacen_id;
+        cargarProductos();
+    }
 });
 </script>
 
@@ -335,7 +358,7 @@ onMounted(() => {
                                             no-match-text="Sin resultados"
                                             placeholder="Seleccionar Almacén"
                                             filterable
-                                            @change="cargarProductos"
+                                            @change="detectarCambioSelect"
                                         >
                                             <el-option
                                                 v-for="item in listAlmacens"
@@ -363,7 +386,7 @@ onMounted(() => {
                                     no-data-text="Sin Datos"
                                     no-match-text="Sin Resultados"
                                     filterable
-                                    @change="cargarProductos"
+                                    @change="detectarCambioSelect"
                                 >
                                     <el-option
                                         v-for="item in listCategorias"
@@ -379,7 +402,7 @@ onMounted(() => {
                                     no-data-text="Sin Datos"
                                     no-match-text="Sin Resultados"
                                     filterable
-                                    @change="cargarProductos"
+                                    @change="detectarCambioSelect"
                                 >
                                     <el-option
                                         v-for="item in listMarcas"
@@ -430,11 +453,6 @@ onMounted(() => {
                                                 <div class="row">
                                                     <div class="col-12 pb-1">
                                                         <span
-                                                            class="fw-bold h6"
-                                                        >
-                                                            {{ item.nombre }}
-                                                        </span>
-                                                        <span
                                                             class="float-end text-sm"
                                                         >
                                                             Stock:
@@ -457,6 +475,17 @@ onMounted(() => {
                                                                 }}
                                                             </span>
                                                         </span>
+                                                        <span
+                                                            class="fw-bold h6"
+                                                        >
+                                                            {{ item.nombre }}
+                                                        </span>
+                                                        <span
+                                                            class="text-muted text-xs d-block"
+                                                            >{{
+                                                                item.codigo
+                                                            }}</span
+                                                        >
                                                     </div>
                                                     <div
                                                         class="col-12 border-top"
@@ -569,6 +598,18 @@ onMounted(() => {
                         <div class="vacio_info text-muted py-5" v-else>
                             <i class="fa fa-warehouse fs-1"></i>
                             <div>Selecciona una almacén</div>
+                        </div>
+                    </div>
+                    <div class="card-footer" v-if="almacen_id">
+                        <div class="col-12">
+                            Total registros: {{ total_registros }}
+                            <MiPaginacion
+                                :pagination-class="'float-end mb-0'"
+                                :total-data="total_registros"
+                                :current-page="currentPage"
+                                :per-page="perPage"
+                                @updatePage="cambioDePagina"
+                            ></MiPaginacion>
                         </div>
                     </div>
                 </div>
@@ -756,12 +797,28 @@ onMounted(() => {
                             </div>
                             <div class="col-12">
                                 <div class="row fw-bolder fs-5">
-                                    <div class="col-6 h-100">Cancelado Bs.</div>
+                                    <div class="col-6 h-100" title="Efectivo">
+                                        Cancelado
+                                        <i class="fa fa-money-bill"></i> Bs.
+                                    </div>
                                     <div class="col-6">
                                         <input
                                             type="number"
                                             class="form-control text-end fs-6"
-                                            v-model="form.cancelado"
+                                            v-model="form.cancelado_efectivo"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="row fw-bolder fs-5">
+                                    <div class="col-6 h-100" title="QR">
+                                        Cancelado
+                                        <i class="fa fa-qrcode"></i> Bs.
+                                    </div>
+                                    <div class="col-6">
+                                        <input
+                                            type="number"
+                                            class="form-control text-end fs-6"
+                                            v-model="form.cancelado_qr"
                                         />
                                     </div>
                                 </div>

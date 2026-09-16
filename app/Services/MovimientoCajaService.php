@@ -32,6 +32,44 @@ class MovimientoCajaService
         $movimiento_cajas = $movimiento_cajas->get();
         return $movimiento_cajas;
     }
+    public function resumen_movimientos(
+        $user_id = "",
+        $almacen_id = "",
+        $fecha_ini = "",
+        $fecha_fin = "",
+    ) {
+        $movimientos = MovimientoCaja::select("movimiento_cajas.*")
+            ->where("status", 1);
+
+        if ($user_id) {
+            $movimientos->where("user_id", $user_id);
+        }
+
+        if ($almacen_id) {
+            $movimientos->where("almacen_id", $almacen_id);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $movimientos->whereBetween("fecha", [$fecha_ini, $fecha_fin]);
+        }
+
+        $ingresos = (clone $movimientos)
+            ->where("tipo_movimiento", "INGRESO")
+            ->sum("monto_total");
+
+        $egresos = (clone $movimientos)
+            ->where("tipo_movimiento", "EGRESO")
+            ->sum("monto_total");
+
+        $total_caja = $ingresos - $egresos;
+
+        return [
+            "ingresos" => $ingresos,
+            "egresos" => $egresos,
+            "total_caja" => $total_caja,
+        ];
+    }
+
     /**
      * Lista de movimiento_cajas paginado con filtros
      *
@@ -42,8 +80,16 @@ class MovimientoCajaService
      * @param array $columnsFilter
      * @return LengthAwarePaginator
      */
-    public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
-    {
+    public function listadoPaginado(
+        int $length,
+        int $page,
+        string $search,
+        $user_id = "",
+        $almacen_id = "",
+        $fecha_ini = "",
+        $fecha_fin = "",
+        array $orderBy = []
+    ): LengthAwarePaginator {
         $movimiento_cajas = MovimientoCaja::with([
             "sucursal:id,nombre",
             "almacen:id,nombre",
@@ -52,18 +98,17 @@ class MovimientoCajaService
             ->select("movimiento_cajas.*")
             ->where("status", 1);
 
-        // Filtros exactos
-        foreach ($columnsFilter as $key => $value) {
-            if (!is_null($value)) {
-                $movimiento_cajas->where("movimiento_cajas.$key", $value);
-            }
+
+        if ($user_id) {
+            $movimiento_cajas->where("user_id", $user_id);
         }
 
-        // Filtros por rango
-        foreach ($columnsBetweenFilter as $key => $value) {
-            if (isset($value[0], $value[1])) {
-                $movimiento_cajas->whereBetween("movimiento_cajas.$key", $value);
-            }
+        if ($almacen_id) {
+            $movimiento_cajas->where("almacen_id", $almacen_id);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $movimiento_cajas->whereBetween("fecha", [$fecha_ini, $fecha_fin]);
         }
 
         // Búsqueda en múltiples columnas con LIKE
@@ -95,15 +140,36 @@ class MovimientoCajaService
         $sucursal = Sucursal::findOrFail($datos["sucursal_id"]);
         $almacen = Almacen::findOrFail($datos["almacen_id"]);
 
+        if (!$datos["monto_efectivo"] && !$datos["monto_qr"]) {
+            throw new Exception("No puedes dejar vacíos los campos EFECTIVO y QR");
+        }
+
+        if ((float)$datos["monto_efectivo"] <= 0 && (float)$datos["monto_qr"] <= 0) {
+            throw new Exception("No puedes registrar EFECTIVO y QR con un valor menor o igual a 0");
+        }
+
+
+        $tipo_pago = 'EFECTIVO';
+        if ((float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'QR';
+        }
+        if ((float)$datos["monto_efectivo"] > 0 && (float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'EFECTIVO-QR';
+        }
+
+        $monto_total = (float)($datos["monto_efectivo"] ?? 0) + (float)($datos["monto_qr"] ?? 0);
+
         $movimiento_caja = MovimientoCaja::create([
             "sucursal_id" => $datos["sucursal_id"],
             "almacen_id" => $datos["almacen_id"],
             "tipo" => $datos["tipo"],
             "modulo" => $datos["modulo"],
             "registro_id" => $datos["registro_id"] ?? NULL,
-            "monto" => $datos["monto"],
+            "monto_efectivo" => $datos["monto_efectivo"],
+            "monto_qr" => $datos["monto_qr"],
+            "monto_total" => $monto_total,
             "tipo_movimiento" => $datos["tipo_movimiento"],
-            "tipo_pago" => $datos["tipo_pago"],
+            "tipo_pago" => $tipo_pago,
             "descripcion" => isset($datos["descripcion"]) && $datos["descripcion"] ? $datos["descripcion"] : $datos["tipo_movimiento"],
             "fecha" => $datos["fecha"] ?? $fecha_actual,
             "hora" => $datos["hora"] ?? $hora_actual,
@@ -111,13 +177,13 @@ class MovimientoCajaService
         ]);
 
         // registrar accion
-        $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $datos["monto"];
+        $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $monto_total;
         if ($sucursal) {
-            $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $datos["monto"] . " EN LA SUCURSAL " . $sucursal->nombre;
+            $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $monto_total . " EN LA SUCURSAL " . $sucursal->nombre;
         }
 
         if ($sucursal && $almacen) {
-            $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $datos["monto"] . " EN LA SUCURSAL " . $sucursal->nombre . "; almacén " . $almacen->nombre;
+            $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $monto_total . " EN LA SUCURSAL " . $sucursal->nombre . "; almacén " . $almacen->nombre;
         }
 
         // REGISTR MOVIMIENTO
@@ -141,15 +207,36 @@ class MovimientoCajaService
         $sucursal = Sucursal::findOrFail($datos["sucursal_id"]);
         $almacen = Almacen::findOrFail($datos["almacen_id"]);
 
+
+        if (!$datos["monto_efectivo"] && !$datos["monto_qr"]) {
+            throw new Exception("No puedes dejar vacíos los campos EFECTIVO y QR");
+        }
+
+        if ((float)$datos["monto_efectivo"] <= 0 && (float)$datos["monto_qr"] <= 0) {
+            throw new Exception("No puedes registrar EFECTIVO y QR con un valor menor o igual a 0");
+        }
+
+        $tipo_pago = 'EFECTIVO';
+        if ((float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'QR';
+        }
+        if ((float)$datos["monto_efectivo"] > 0 && (float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'EFECTIVO-QR';
+        }
+
+        $monto_total = (float)($datos["monto_efectivo"] ?? 0) + (float)($datos["monto_qr"] ?? 0);
+
         $movimiento_caja->update([
             "sucursal_id" => $datos["sucursal_id"],
             "almacen_id" => $datos["almacen_id"],
             "tipo" => $datos["tipo"],
             "modulo" => $datos["modulo"],
             "registro_id" => $datos["registro_id"] ?? NULL,
-            "monto" => $datos["monto"],
+            "monto_efectivo" => $datos["monto_efectivo"],
+            "monto_qr" => $datos["monto_qr"],
+            "monto_total" => $monto_total,
             "tipo_movimiento" => $datos["tipo_movimiento"],
-            "tipo_pago" => $datos["tipo_pago"],
+            "tipo_pago" => $tipo_pago,
             "descripcion" => isset($datos["descripcion"]) && $datos["descripcion"] ? $datos["descripcion"] : $datos["tipo_movimiento"],
             // "fecha" => $datos["fecha"] ?? $fecha_actual,
             // "hora" => $datos["hora"] ?? $hora_actual,
@@ -157,13 +244,13 @@ class MovimientoCajaService
         ]);
 
         // registrar accion
-        $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $datos["monto"];
+        $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $monto_total;
         if ($sucursal) {
-            $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $datos["monto"] . " EN LA SUCURSAL " . $sucursal->nombre;
+            $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $monto_total . " EN LA SUCURSAL " . $sucursal->nombre;
         }
 
         if ($sucursal && $almacen) {
-            $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $datos["monto"] . " EN LA SUCURSAL " . $sucursal->nombre . "; almacén " . $almacen->nombre;
+            $descripcion_accion = "REGISTRO UN " . $datos["tipo_movimiento"] . " DE BS. " . $monto_total . " EN LA SUCURSAL " . $sucursal->nombre . "; almacén " . $almacen->nombre;
         }
 
         // REGISTR MOVIMIENTO

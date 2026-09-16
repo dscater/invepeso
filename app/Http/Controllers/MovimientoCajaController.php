@@ -47,11 +47,25 @@ class MovimientoCajaController extends Controller
         ]);
     }
 
+    public function resumen(Request $request)
+    {
+        $user_id = (string)$request->input("user_id", "");
+        $almacen_id = (string)$request->input("almacen_id", "");
+        $fecha_ini = (string)$request->input("fecha_ini", "");
+        $fecha_fin = (string)$request->input("fecha_fin", "");
+        $resumen = $this->movimiento_cajaService->resumen_movimientos($user_id, $almacen_id, $fecha_ini, $fecha_fin);
+        return response()->JSON(["resumen" => $resumen]);
+    }
+
     public function paginado(Request $request)
     {
         $perPage = $request->perPage;
         $page = (int)($request->input("page", 1));
         $search = (string)$request->input("search", "");
+        $user_id = (string)$request->input("user_id", "");
+        $almacen_id = (string)$request->input("almacen_id", "");
+        $fecha_ini = (string)$request->input("fecha_ini", "");
+        $fecha_fin = (string)$request->input("fecha_fin", "");
         $orderBy = $request->orderBy;
         $orderAsc = $request->orderAsc;
 
@@ -68,11 +82,22 @@ class MovimientoCajaController extends Controller
             ];
         }
 
-        $movimiento_cajas = $this->movimiento_cajaService->listadoPaginado($perPage, $page, $search, $columnsSerachLike, $columnsFilter, $columnsBetweenFilter, $arrayOrderBy);
+        $movimiento_cajas = $this->movimiento_cajaService->listadoPaginado(
+            $perPage,
+            $page,
+            $search,
+            $user_id,
+            $almacen_id,
+            $fecha_ini,
+            $fecha_fin,
+            $arrayOrderBy
+        );
+
+
         return response()->JSON([
             "data" => $movimiento_cajas->items(),
             "total" => $movimiento_cajas->total(),
-            "lastPage" => $movimiento_cajas->lastPage()
+            "lastPage" => $movimiento_cajas->lastPage(),
         ]);
     }
 

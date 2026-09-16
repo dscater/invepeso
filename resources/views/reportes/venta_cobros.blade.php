@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>OrdenDeCompra</title>
+    <title>CobrosPorVenta</title>
     <style type="text/css">
         * {
             font-family: sans-serif;
@@ -181,7 +181,7 @@
             </tr>
             <tr>
                 <td><span class="bold">Total Bs.:</span> {{ $venta->total }}</td>
-                <td><span class="bold">Adelanto Bs.:</span> {{ $venta->cancelado }}</td>
+                <td><span class="bold">Adelanto Bs.:</span> {{ $venta->total_cancelado }}</td>
             </tr>
             <tr>
                 <td><span class="bold">Saldo Bs.: {{ $venta->saldo }}</td>
@@ -208,14 +208,14 @@
             @endphp
             @foreach ($venta->venta_cobros as $item)
                 <tr>
-                    <td>{{ $cont++ }}</td>
+                    <td>{{ $item->fecha_hora_t }}</td>
                     <td>{{ $item->almacen->nombre }} {{ $item->sucursal->nombre }}</td>
                     <td>{{ $item->user->full_name }}</td>
                     <td>{{ $item->tipo_pago }}</td>
-                    <td class="derecha">{{ $item->monto }}</td>
+                    <td class="derecha">{{ $item->monto_total }}</td>
                 </tr>
                 @php
-                    $total += (float) $item->monto;
+                    $total += (float) $item->monto_total;
                 @endphp
             @endforeach
             <tr>

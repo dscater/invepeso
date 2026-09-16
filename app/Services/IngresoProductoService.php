@@ -97,6 +97,19 @@ class IngresoProductoService
     {
         $almacen = Almacen::findOrFail($datos["almacen_id"]);
 
+        $tipo_pago = '';
+        if ((float)$datos["cancelado_efectivo"] > 0) {
+            $tipo_pago = 'EFECTIVO';
+        }
+        if ((float)$datos["cancelado_qr"] > 0) {
+            $tipo_pago = 'QR';
+        }
+        if ((float)$datos["cancelado_efectivo"] > 0 && (float)$datos["cancelado_qr"] > 0) {
+            $tipo_pago = 'EFECTIVO-QR';
+        }
+
+        $total_cancelado = (float)($datos["cancelado_efectivo"] ?? 0) + (float)($datos["cancelado_qr"] ?? 0);
+
         $ingreso_producto = IngresoProducto::create([
             "codigo" => "",
             "sucursal_id" => $almacen->sucursal_id,
@@ -105,7 +118,9 @@ class IngresoProductoService
             "proveedor_id" => $datos["proveedor_id"],
             "descripcion" => mb_strtoupper($datos["descripcion"]) ?? NULL,
             "total" => $datos["total"],
-            "cancelado" => $datos["cancelado"],
+            "cancelado_efectivo" => $datos["cancelado_efectivo"],
+            "cancelado_qr" => $datos["cancelado_qr"],
+            "total_cancelado" => $total_cancelado,
             "saldo" => $datos["saldo"],
             "tipo_compra" => (float)$datos["saldo"] > 0 ? 'CRÉDITO' : 'CONTADO,',
             "fecha_registro" => date("Y-m-d"),
@@ -150,16 +165,17 @@ class IngresoProductoService
         }
 
         // REGISTRAR VALOR CANCELADO EN MOVIMIENTO DE CAJAS
-        if ((float)$ingreso_producto->cancelado > 0) {
+        if ((float)$total_cancelado > 0) {
             $movimiento_caja = [
                 "sucursal_id" => $ingreso_producto->sucursal_id,
                 "almacen_id" => $ingreso_producto->almacen_id,
                 "tipo" => "COMPRA DE PRODUCTOS",
                 "modulo" => "IngresoProducto",
                 "registro_id" => $ingreso_producto->id,
-                "monto" => $ingreso_producto->cancelado,
+                "monto_efectivo" => $ingreso_producto->cancelado_efectivo,
+                "monto_qr" => $ingreso_producto->cancelado_qr,
                 "tipo_movimiento" => "EGRESO",
-                "tipo_pago" => "EFECTIVO",
+                "tipo_pago" => $tipo_pago,
                 "descripcion" => "COMPRA DE PRODUCTOS",
             ];
             $this->movimiento_caja_service->crear($movimiento_caja);

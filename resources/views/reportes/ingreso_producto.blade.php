@@ -224,7 +224,7 @@
             <tr>
                 <td class="bold derecha" colspan="4">CANCELADO</td>
                 <td></td>
-                <td class="bold derecha">{{ $ingreso_producto->cancelado }}</td>
+                <td class="bold derecha">{{ $ingreso_producto->total_cancelado }}</td>
             </tr>
             <tr>
                 <td class="bold derecha" colspan="4">SALDO</td>

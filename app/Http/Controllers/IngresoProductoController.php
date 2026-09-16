@@ -92,12 +92,15 @@ class IngresoProductoController extends Controller
             $datos["ingreso_producto_id"] = $ingreso_producto->id;
             $datos["sucursal_id"] = $almacen->sucursal_id;
             $datos["proveedor_id"] = $ingreso_producto->proveedor_id;
-            $this->ingreso_pago_service->crear($datos);
+            $ingreso_pago = $this->ingreso_pago_service->crear($datos);
             DB::commit();
 
             return response()->JSON([
                 "sw" => true,
-                "message" => "Registro realizado"
+                "message" => "Registro realizado",
+                "ingreso_pago" => $ingreso_pago,
+                "ingreso_producto" => $ingreso_pago->ingreso_producto,
+                "url_blank" => route('ingreso_productos.pdf_pagos', $ingreso_pago->ingreso_producto_id)
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -125,6 +128,7 @@ class IngresoProductoController extends Controller
                 "message" => "Registro realizado",
                 "ingreso_pago" => $ingreso_pago,
                 "ingreso_producto" => $ingreso_pago->ingreso_producto,
+                "url_blank" => route('ingreso_productos.pdf_pagos', $ingreso_pago->ingreso_producto_id)
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -132,6 +136,19 @@ class IngresoProductoController extends Controller
                 'error' =>  $e->getMessage(),
             ]);
         }
+    }
+
+    public function pdf_pagos(IngresoProducto $ingreso_producto)
+    {
+        $pdf = PDF::loadView('reportes.ingreso_producto_pagos', compact('ingreso_producto'))->setPaper('letter', 'portrait');
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+        return $pdf->stream('compra_pagos_' . $ingreso_producto->codigo . '.pdf');
     }
 
     public function eliminar_pago(IngresoPago $ingreso_pago): JsonResponse|Response

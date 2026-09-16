@@ -64,13 +64,11 @@ const enviarFormulario = async () => {
 
             await actualizarListaPagos();
 
-            if (formPago.id == 0) {
-                form.saldo =
-                    parseFloat(form.saldo) - parseFloat(formPago.monto);
-                form.saldo = form.saldo.toFixed(2);
-            } else {
-                form.saldo = response.data.ingreso_producto.saldo;
-                form.saldo = parseFloat(form.saldo).toFixed(2);
+            form.saldo = response.data.ingreso_producto.saldo;
+            form.saldo = parseFloat(form.saldo).toFixed(2);
+
+            if (response.data.url_blank) {
+                window.open(response.data.url_blank, "_blank");
             }
 
             emits("envio-formulario");
@@ -174,7 +172,9 @@ const initialState = {
     almacen_id: "",
     ingreso_producto_id: "",
     proveedor_id: "",
-    monto: 0,
+    monto_efectivo: 0,
+    monto_qr: 0,
+    monto_total: 0,
     fecha: "",
     hora: "",
     user_id: "",
@@ -221,7 +221,7 @@ const eliminarPago = (item) => {
     Swal.fire({
         // icon: "question",
         title: "¿Quierés eliminar este registro?",
-        html: `<strong>${item.fecha_hora_t}</strong><br/><b>Monto: </b>${item.monto}<br/>`,
+        html: `<strong>${item.fecha_hora_t}</strong><br/><b>Monto: </b>${item.monto_total}<br/>`,
         showCancelButton: true,
         confirmButtonText: "Si, eliminar",
         cancelButtonText: "No, cancelar",
@@ -247,7 +247,7 @@ const eliminarPago = (item) => {
 
 const totalCancelado = computed(() => {
     return form.ingreso_pagos.reduce((acc, item) => {
-        return acc + parseFloat(item.monto || 0);
+        return acc + parseFloat(item.monto_total || 0);
     }, 0);
 });
 
@@ -296,7 +296,7 @@ onMounted(() => {
                         Saldo Bs.: {{ form.saldo }}
                     </h4>
                     <h4 class="float-end fw-bold fs-5 text-bgDarkGrayP me-3">
-                        Adelanto Bs.: {{ form.cancelado }}
+                        Adelanto Bs.: {{ form.total_cancelado }}
                     </h4>
                     <h4 class="fw-bold fs-5 text-success">
                         Total Bs.: {{ form.total }}
@@ -336,7 +336,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
                                         <label>Almacén</label>
                                         <div class="input-group">
                                             <span class="input-group-text">
@@ -375,8 +375,11 @@ onMounted(() => {
                                             </li>
                                         </ul>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label>Monto</label>
+                                    <div class="col-md-3">
+                                        <label
+                                            >Monto Efectivo
+                                            <i class="fa fa-money-bill"></i
+                                        ></label>
                                         <div class="input-group">
                                             <span class="input-group-text">
                                                 <i class="fa fa-money-bill"></i>
@@ -385,22 +388,56 @@ onMounted(() => {
                                                 class="form-control border-0 p-0"
                                             >
                                                 <input
-                                                    v-model="formPago.monto"
+                                                    v-model="
+                                                        formPago.monto_efectivo
+                                                    "
                                                     class="form-control"
                                                 />
                                             </div>
                                         </div>
                                         <ul
-                                            v-if="formPago.errors?.monto"
+                                            v-if="
+                                                formPago.errors?.monto_efectivo
+                                            "
                                             class="d-block text-danger list-unstyled"
                                         >
                                             <li class="parsley-required">
-                                                {{ formPago.errors?.monto }}
+                                                {{
+                                                    formPago.errors
+                                                        ?.monto_efectivo
+                                                }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label
+                                            >Monto QR
+                                            <i class="fa fa-qrcode"></i
+                                        ></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-qrcode"></i>
+                                            </span>
+                                            <div
+                                                class="form-control border-0 p-0"
+                                            >
+                                                <input
+                                                    v-model="formPago.monto_qr"
+                                                    class="form-control"
+                                                />
+                                            </div>
+                                        </div>
+                                        <ul
+                                            v-if="formPago.errors?.monto_qr"
+                                            class="d-block text-danger list-unstyled"
+                                        >
+                                            <li class="parsley-required">
+                                                {{ formPago.errors?.monto_qr }}
                                             </li>
                                         </ul>
                                     </div>
                                     <div
-                                        class="col-md-3 d-flex align-items-end"
+                                        class="col-md-2 d-flex align-items-end"
                                     >
                                         <button
                                             :disabled="enviando"
@@ -439,7 +476,7 @@ onMounted(() => {
                                         {{ item.almacen?.nombre }} -
                                         {{ item.sucursal?.nombre }}
                                     </td>
-                                    <td>{{ item.monto }}</td>
+                                    <td>{{ item.monto_total }}</td>
                                     <td class="text-center">
                                         {{ item.user?.nombre }}
                                         {{ item.user?.paterno }}

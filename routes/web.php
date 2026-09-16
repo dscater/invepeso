@@ -212,6 +212,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::delete("ingreso_productos/eliminar_pago/{ingreso_pago}", [IngresoProductoController::class, 'eliminar_pago'])->name("ingreso_productos.eliminar_pago");
     Route::get("ingreso_productos/pdf/{ingreso_producto}", [IngresoProductoController::class, 'pdf'])->name("ingreso_productos.pdf");
     Route::get("ingreso_productos/verificar_pdf/{ingreso_producto}", [IngresoProductoController::class, 'verificar_pdf'])->name("ingreso_productos.verificar_pdf");
+    Route::get("ingreso_productos/pdf_pagos/{ingreso_producto}", [IngresoProductoController::class, 'pdf_pagos'])->name("ingreso_productos.pdf_pagos");
     Route::resource("ingreso_productos", IngresoProductoController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );
@@ -229,6 +230,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // MOVIMIENTO CAJAS
     Route::get("movimiento_cajas/paginado", [MovimientoCajaController::class, 'paginado'])->name("movimiento_cajas.paginado");
     Route::get("movimiento_cajas/listado", [MovimientoCajaController::class, 'listado'])->name("movimiento_cajas.listado");
+    Route::get("movimiento_cajas/resumen", [MovimientoCajaController::class, 'resumen'])->name("movimiento_cajas.resumen");
     Route::resource("movimiento_cajas", MovimientoCajaController::class)->only(
         ["index", "create", "store", "edit", "show", "update", "destroy"]
     );

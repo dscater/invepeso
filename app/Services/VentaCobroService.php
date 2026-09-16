@@ -98,13 +98,33 @@ class VentaCobroService
      */
     public function crear(array $datos): VentaCobro
     {
+        if (!$datos["monto_efectivo"] && !$datos["monto_qr"]) {
+            throw new Exception("No puedes dejar vacíos los campos EFECTIVO y QR");
+        }
+
+        if ((float)$datos["monto_efectivo"] <= 0 && (float)$datos["monto_qr"] <= 0) {
+            throw new Exception("No puedes registrar EFECTIVO y QR con un valor menor o igual a 0");
+        }
+
+        $tipo_pago = 'EFECTIVO';
+        if ((float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'QR';
+        }
+        if ((float)$datos["monto_efectivo"] > 0 && (float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'EFECTIVO-QR';
+        }
+
+        $monto_total = (float)($datos["monto_efectivo"] ?? 0) + (float)($datos["monto_qr"] ?? 0);
+
         $venta_cobro = VentaCobro::create([
             "sucursal_id" => $datos["sucursal_id"],
             "almacen_id" => $datos["almacen_id"],
             "venta_id" => $datos["venta_id"],
             "cliente_id" => $datos["cliente_id"],
-            "tipo_pago" => $datos["tipo_pago"],
-            "monto" => $datos["monto"],
+            "tipo_pago" => $tipo_pago,
+            "monto_efectivo" => $datos["monto_efectivo"],
+            "monto_qr" => $datos["monto_qr"],
+            "monto_total" => $monto_total,
             "saldo" => 0,
             "fecha" => date("Y-m-d"),
             "hora" => date("H:i:s"),
@@ -112,7 +132,7 @@ class VentaCobroService
         ]);
 
         $venta = Venta::findOrFail($venta_cobro->venta_id);
-        if ((float)$venta_cobro->monto > (float)$venta->saldo) {
+        if ((float)$monto_total > (float)$venta->saldo) {
             throw new Exception("El monto cancelado no puede ser mayor al saldo actual de $venta->saldo");
         }
 
@@ -123,14 +143,15 @@ class VentaCobroService
             "tipo" => "COBRO POR VENTA DE PRODUCTOS",
             "modulo" => "VentaCobro",
             "registro_id" => $venta_cobro->id,
-            "monto" => $venta_cobro->monto,
+            "monto_qr" => $venta_cobro->monto_qr,
+            "monto_efectivo" => $venta_cobro->monto_efectivo,
             "tipo_movimiento" => "INGRESO",
             "tipo_pago" => $venta_cobro->tipo_pago,
             "descripcion" => "COBRO POR VENTA DE PRODUCTOS",
         ];
 
         // SALDO
-        $venta->saldo = (float)$venta->saldo - (float)$venta_cobro->monto;
+        $venta->saldo = (float)$venta->saldo - (float)$venta_cobro->monto_total;
         $venta->save();
         if ($venta->saldo < 0) {
             throw new Exception("No se pudo realizar el registro por que el saldo calculado es menor a 0");
@@ -154,24 +175,45 @@ class VentaCobroService
     public function actualizar(array $datos, VentaCobro $venta_cobro): VentaCobro
     {
         $old_venta_cobro = clone $venta_cobro;
+
+        if (!$datos["monto_efectivo"] && !$datos["monto_qr"]) {
+            throw new Exception("No puedes dejar vacíos los campos EFECTIVO y QR");
+        }
+
+        if ((float)$datos["monto_efectivo"] <= 0 && (float)$datos["monto_qr"] <= 0) {
+            throw new Exception("No puedes registrar EFECTIVO y QR con un valor menor o igual a 0");
+        }
+
+        $tipo_pago = 'EFECTIVO';
+        if ((float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'QR';
+        }
+        if ((float)$datos["monto_efectivo"] > 0 && (float)$datos["monto_qr"] > 0) {
+            $tipo_pago = 'EFECTIVO-QR';
+        }
+
+        $monto_total = (float)($datos["monto_efectivo"] ?? 0) + (float)($datos["monto_qr"] ?? 0);
+
         $venta_cobro->update([
             "sucursal_id" => $datos["sucursal_id"],
             "almacen_id" => $datos["almacen_id"],
             "venta_id" => $datos["venta_id"],
             "cliente_id" => $datos["cliente_id"],
-            "tipo_pago" => $datos["tipo_pago"],
-            "monto" => $datos["monto"],
+            "tipo_pago" => $tipo_pago,
+            "monto_efectivo" => $datos["monto_efectivo"],
+            "monto_qr" => $datos["monto_qr"],
+            "monto_total" => $monto_total,
             "saldo" => 0,
             "fecha" => date("Y-m-d"),
             "hora" => date("H:i:s"),
             "user_id" => Auth::user()->id,
         ]);
 
-        $cancelado = $venta_cobro->venta->cancelado;
+        $cancelado = $venta_cobro->venta->total_cancelado;
         $monto_total_cancelado = VentaCobro::where("id", "!=", $venta_cobro->id)
             ->where("venta_id", $venta_cobro->venta_id)
-            ->sum("monto");
-        $monto_total_cancelado = (float)$monto_total_cancelado + (float)$venta_cobro->monto + $cancelado;
+            ->sum("monto_total");
+        $monto_total_cancelado = (float)$monto_total_cancelado + (float)$venta_cobro->monto_total + $cancelado;
         if ((float)$monto_total_cancelado > (float)$venta_cobro->venta->total) {
             throw new Exception("El monto cancelado no puede ser mayor al total de la venta " . $venta_cobro->venta->total);
         }
@@ -183,7 +225,8 @@ class VentaCobroService
             "tipo" => "COBRO POR VENTA DE PRODUCTOS",
             "modulo" => "VentaCobro",
             "registro_id" => $venta_cobro->id,
-            "monto" => $venta_cobro->monto,
+            "monto_qr" => $venta_cobro->monto_qr,
+            "monto_efectivo" => $venta_cobro->monto_efectivo,
             "tipo_movimiento" => "INGRESO",
             "tipo_pago" => $venta_cobro->tipo_pago,
             "descripcion" => "COBRO POR VENTA DE PRODUCTOS",
@@ -223,11 +266,10 @@ class VentaCobroService
         $cancelado = $venta_cobro->venta->cancelado;
         $monto_total_cancelado = VentaCobro::where("id", "!=", $venta_cobro->id)
             ->where("venta_id", $venta_cobro->venta_id)
-            ->sum("monto");
+            ->sum("monto_total");
         $monto_total_cancelado = (float)$monto_total_cancelado + $cancelado;
         $venta->saldo = (float)$venta->total - (float)$monto_total_cancelado;
         $venta->save();
-
 
         $movimiento_caja = MovimientoCaja::where("registro_id", $venta_cobro->id)
             ->where("modulo", "VentaCobro")

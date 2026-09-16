@@ -6,6 +6,7 @@ use App\Services\HistorialAccionService;
 use App\Models\Cliente;
 use App\Models\TipoDocumento;
 use App\Models\User;
+use App\Models\Venta;
 use Illuminate\Http\UploadedFile;
 use Exception;
 use Illuminate\Container\Attributes\Auth;
@@ -139,6 +140,12 @@ class ClienteService
     public function eliminar(Cliente $cliente): bool|Exception
     {
         $old_cliente = clone $cliente;
+
+        $usos = Venta::where("cliente_id", $cliente->id)->count();
+        if ($usos > 0) {
+            throw new Exception("No se puede eliminar este cliente porque está registrado en $usos ventas.");
+        }
+
         $cliente->delete();
 
         // registrar accion
