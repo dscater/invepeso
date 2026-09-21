@@ -4,6 +4,7 @@ use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ClienteProductoController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\IngresoFaltanteController;
 use App\Http\Controllers\IngresoPagoController;
@@ -171,6 +172,14 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::post("productos/cargaProductos", [ProductoController::class, 'cargaProductos'])->name("productos.cargaProductos");
     Route::resource("productos", ProductoController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
+    );
+
+    // CLIENTE-PRODUCTOS
+    Route::get("cliente_productos/paginado", [ClienteProductoController::class, 'paginado'])->name("cliente_productos.paginado");
+    Route::get("cliente_productos/listado", [ClienteProductoController::class, 'listado'])->name("cliente_productos.listado");
+    Route::get("cliente_productos/{cliente}", [ClienteProductoController::class, 'index'])->name("cliente_productos.index");
+    Route::resource("cliente_productos", ClienteProductoController::class)->only(
+        ["store", "edit", "show", "update", "destroy"]
     );
 
     // TIPO DE INGRESOS

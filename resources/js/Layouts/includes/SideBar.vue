@@ -516,6 +516,10 @@ onUnmounted(() => {});
                             permisos.includes('clientes.index')
                         "
                         :label="'Clientes'"
+                        :array-ruta-class-active="[
+                            'clientes.index',
+                            'cliente_productos.index',
+                        ]"
                         :ruta="'clientes.index'"
                         :icon="'fa fa-user-friends'"
                     ></ItemMenu>

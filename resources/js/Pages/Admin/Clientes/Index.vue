@@ -223,6 +223,32 @@ const eliminarCliente = (item) => {
                                     v-if="
                                         props_page.auth?.user.permisos == '*' ||
                                         props_page.auth?.user.permisos.includes(
+                                            'cliente_productos.index',
+                                        )
+                                    "
+                                >
+                                    <el-tooltip
+                                        class="box-item"
+                                        effect="dark"
+                                        content="Precio de Productos"
+                                        placement="left-start"
+                                    >
+                                        <Link
+                                            class="btn btn-primary"
+                                            :href="
+                                                route(
+                                                    'cliente_productos.index',
+                                                    item.id,
+                                                )
+                                            "
+                                        >
+                                            <i class="fa fa-boxes"></i></Link
+                                    ></el-tooltip>
+                                </template>
+                                <template
+                                    v-if="
+                                        props_page.auth?.user.permisos == '*' ||
+                                        props_page.auth?.user.permisos.includes(
                                             'clientes.edit',
                                         )
                                     "

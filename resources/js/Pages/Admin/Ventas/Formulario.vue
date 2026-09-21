@@ -520,6 +520,23 @@ const nuevoCliente = () => {
     muestra_form_cliente.value = true;
 };
 
+const listClienteProductos = ref([]);
+
+const buscarClienteProductos = () => {
+    listClienteProductos.value = [];
+    if (form.cliente_id) {
+        axios
+            .get(route("cliente_productos.listado"), {
+                params: {
+                    cliente_id: form.cliente_id,
+                },
+            })
+            .then((response) => {
+                listClienteProductos.value = response.data.cliente_productos;
+            });
+    }
+};
+
 onMounted(() => {
     cargarListas();
     // edit
@@ -917,6 +934,7 @@ onMounted(() => {
                                             placeholder="Cliente"
                                             size="large"
                                             filterable
+                                            @change="buscarClienteProductos"
                                         >
                                             <el-option
                                                 v-for="item in listClientes"
@@ -937,6 +955,7 @@ onMounted(() => {
                                         </button>
                                     </span>
                                 </div>
+                                {{ listClienteProductos.length }}
 
                                 <ul
                                     v-if="form.errors?.cliente_id"
