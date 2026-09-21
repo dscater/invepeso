@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 16-09-2026 a las 22:33:20
+-- Tiempo de generación: 21-09-2026 a las 01:26:21
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -358,7 +358,8 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (191, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 15, \"hora\": \"17:59:48\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:59:48.000000Z\", \"updated_at\": \"2026-09-16T21:59:48.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20\", \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '17:59:48', '2026-09-16 21:59:48', '2026-09-16 21:59:48'),
 (192, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 15, \"hora\": \"17:59:48\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:59:48.000000Z\", \"updated_at\": \"2026-09-16T21:59:48.000000Z\", \"monto_total\": \"40.00\", \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20.00\", \"ingreso_producto_id\": 12}', '{\"id\": 15, \"hora\": \"17:59:48\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"20.00\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T21:59:48.000000Z\", \"updated_at\": \"2026-09-16T22:04:52.000000Z\", \"monto_total\": 40, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"20.00\", \"ingreso_producto_id\": 12}', 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '18:04:52', '2026-09-16 22:04:52', '2026-09-16 22:04:52'),
 (193, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 980 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 44, \"hora\": \"18:09:40\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-09-16\", \"modulo\": \"IngresoPago\", \"user_id\": 1, \"monto_qr\": \"80\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T22:09:40.000000Z\", \"updated_at\": \"2026-09-16T22:09:40.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": 980, \"registro_id\": 16, \"sucursal_id\": 1, \"monto_efectivo\": \"900\", \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-16', '18:09:40', '2026-09-16 22:09:40', '2026-09-16 22:09:40'),
-(194, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 16, \"hora\": \"18:09:40\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"80\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T22:09:40.000000Z\", \"updated_at\": \"2026-09-16T22:09:40.000000Z\", \"monto_total\": 980, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"900\", \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '18:09:40', '2026-09-16 22:09:40', '2026-09-16 22:09:40');
+(194, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 16, \"hora\": \"18:09:40\", \"fecha\": \"2026-09-16\", \"user_id\": 1, \"monto_qr\": \"80\", \"almacen_id\": 1, \"created_at\": \"2026-09-16T22:09:40.000000Z\", \"updated_at\": \"2026-09-16T22:09:40.000000Z\", \"monto_total\": 980, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"900\", \"ingreso_producto_id\": 12}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-09-16', '18:09:40', '2026-09-16 22:09:40', '2026-09-16 22:09:40'),
+(195, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 18, \"saldo\": \"4200.00\", \"total\": \"4200.00\", \"codigo\": \"L-00018\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-09-20T18:46:22.000000Z\", \"updated_at\": \"2026-09-20T18:46:22.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-09-20\", \"tipo_ingreso_id\": \"1\", \"total_cancelado\": 0, \"ingreso_detalles\": [{\"id\": 19, \"costo\": \"120.00\", \"cantidad\": 10, \"repuesto\": 0, \"subtotal\": \"1200.00\", \"faltantes\": null, \"created_at\": \"2026-09-20T18:46:22.000000Z\", \"updated_at\": \"2026-09-20T18:46:22.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 2, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 18}, {\"id\": 20, \"costo\": \"300.00\", \"cantidad\": 10, \"repuesto\": 0, \"subtotal\": \"3000.00\", \"faltantes\": null, \"created_at\": \"2026-09-20T18:46:22.000000Z\", \"updated_at\": \"2026-09-20T18:46:22.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 3, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 18}], \"cancelado_efectivo\": \"0\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-09-20', '14:46:22', '2026-09-20 18:46:22', '2026-09-20 18:46:22');
 
 -- --------------------------------------------------------
 
@@ -393,18 +394,50 @@ INSERT INTO `ingreso_detalles` (`id`, `ingreso_producto_id`, `tipo_ingreso_id`, 
 (3, 3, 1, 4, 1, 1.00, 0, 0.00, NULL, 1.00, 300.00, 300.00, '2026-08-25 01:33:33', '2026-08-26 00:56:23'),
 (4, 4, 1, 4, 1, 1.00, 0, 0.00, NULL, 1.00, 300.00, 300.00, '2026-08-25 01:35:28', '2026-08-30 15:28:12'),
 (5, 5, 1, 3, 5, 3.00, 2, 0.00, 'faltan 2', 3.00, 300.00, 1500.00, '2026-08-29 15:44:23', '2026-08-30 15:26:54'),
-(6, 6, 2, 4, 10, 7.00, 3, 3.00, NULL, 10.00, 300.00, 3000.00, '2026-08-30 16:01:02', '2026-08-30 16:02:46'),
-(7, 7, 1, 3, 4, 2.00, 2, 2.00, NULL, 5.00, 300.00, 1200.00, '2026-08-30 16:05:07', '2026-08-30 16:12:35'),
-(8, 8, 1, 2, 4, 2.00, 2, 2.00, NULL, 4.00, 120.00, 480.00, '2026-08-30 16:13:09', '2026-08-30 16:16:35'),
+(6, 6, 2, 4, 10, 7.00, 0, 3.00, NULL, 10.00, 300.00, 3000.00, '2026-08-30 16:01:02', '2026-08-30 16:02:46'),
+(7, 7, 1, 3, 4, 2.00, 0, 2.00, NULL, 5.00, 300.00, 1200.00, '2026-08-30 16:05:07', '2026-08-30 16:12:35'),
+(8, 8, 1, 2, 4, 2.00, 0, 2.00, NULL, 4.00, 120.00, 480.00, '2026-08-30 16:13:09', '2026-08-30 16:16:35'),
 (9, 9, 3, 5, 1, 1.00, 0, 0.00, NULL, 1.00, 240.00, 240.00, '2026-09-13 20:34:45', '2026-09-13 20:53:57'),
 (10, 10, 1, 5, 3, 2.00, 1, 0.00, 'falta 1', 2.00, 240.00, 720.00, '2026-09-13 20:36:17', '2026-09-13 20:56:20'),
 (11, 11, 1, 3, 1, 1.00, 0, 0.00, NULL, 1.00, 300.00, 300.00, '2026-09-16 14:13:28', '2026-09-16 14:15:33'),
 (12, 12, 1, 2, 3, 3.00, 0, 0.00, NULL, 3.00, 120.00, 360.00, '2026-09-16 14:22:25', '2026-09-16 14:23:36'),
-(13, 12, 1, 3, 4, 3.00, 1, 1.00, 'observacion', 4.00, 300.00, 1200.00, '2026-09-16 14:22:25', '2026-09-16 14:24:18'),
+(13, 12, 1, 3, 4, 3.00, 0, 1.00, 'observacion', 4.00, 300.00, 1200.00, '2026-09-16 14:22:25', '2026-09-16 14:24:18'),
 (14, 13, 1, 2, 4, 2.00, 2, 0.00, NULL, 2.00, 120.00, 480.00, '2026-09-16 14:25:21', '2026-09-16 14:25:33'),
 (15, 14, 1, 3, 2, 2.00, 0, 0.00, NULL, 2.00, 300.00, 600.00, '2026-09-16 18:47:03', '2026-09-16 18:47:18'),
 (17, 16, 1, 2, 2, NULL, NULL, 0.00, NULL, NULL, 120.00, 240.00, '2026-09-16 21:08:19', '2026-09-16 21:08:19'),
-(18, 17, 2, 4, 2, NULL, NULL, 0.00, NULL, NULL, 300.00, 600.00, '2026-09-16 21:09:03', '2026-09-16 21:09:03');
+(18, 17, 2, 4, 2, NULL, NULL, 0.00, NULL, NULL, 300.00, 600.00, '2026-09-16 21:09:03', '2026-09-16 21:09:03'),
+(19, 18, 1, 2, 10, 5.00, 0, 5.00, NULL, 10.00, 120.00, 1200.00, '2026-09-20 18:46:22', '2026-09-21 01:13:09'),
+(20, 18, 1, 3, 10, 5.00, 0, 5.00, NULL, 10.00, 300.00, 3000.00, '2026-09-20 18:46:22', '2026-09-21 01:13:09');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ingreso_faltantes`
+--
+
+CREATE TABLE `ingreso_faltantes` (
+  `id` bigint UNSIGNED NOT NULL,
+  `ingreso_producto_id` bigint UNSIGNED NOT NULL,
+  `ingreso_detalle_id` bigint UNSIGNED NOT NULL,
+  `cantidad` double NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `ingreso_faltantes`
+--
+
+INSERT INTO `ingreso_faltantes` (`id`, `ingreso_producto_id`, `ingreso_detalle_id`, `cantidad`, `user_id`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
+(1, 18, 19, 3, 1, '2026-09-20', '16:04:23', '2026-09-20 20:04:23', '2026-09-20 20:04:23'),
+(2, 18, 20, 2, 1, '2026-09-20', '21:07:27', '2026-09-21 01:07:27', '2026-09-21 01:07:27'),
+(3, 18, 20, 1, 1, '2026-09-20', '21:11:14', '2026-09-21 01:11:14', '2026-09-21 01:11:14'),
+(4, 18, 20, 1, 1, '2026-09-20', '21:12:31', '2026-09-21 01:12:31', '2026-09-21 01:12:31'),
+(5, 18, 19, 2, 1, '2026-09-20', '21:13:09', '2026-09-21 01:13:09', '2026-09-21 01:13:09'),
+(6, 18, 20, 1, 1, '2026-09-20', '21:13:09', '2026-09-21 01:13:09', '2026-09-21 01:13:09');
 
 -- --------------------------------------------------------
 
@@ -486,7 +519,8 @@ INSERT INTO `ingreso_productos` (`id`, `codigo`, `sucursal_id`, `almacen_id`, `t
 (13, 'L-00013', 1, 1, 1, 1, '', 480.00, 0.00, 0.00, 0.00, 480.00, 'CRÉDITO', '2026-09-16', 1, 'VERIFICADO', 'PENDIENTE', 1, '2026-09-16 14:25:21', '2026-09-16 14:25:33'),
 (14, 'L-00014', 1, 1, 1, 1, '', 600.00, 0.00, 0.00, 0.00, 600.00, 'CRÉDITO', '2026-09-16', 1, 'VERIFICADO', 'SIN FALTANTES', 1, '2026-09-16 18:47:03', '2026-09-16 18:47:18'),
 (16, 'L-00016', 1, 1, 1, 3, '', 240.00, 200.00, 40.00, 240.00, 0.00, 'CONTADO,', '2026-09-16', 1, 'PENDIENTE', NULL, 1, '2026-09-16 21:08:19', '2026-09-16 21:08:19'),
-(17, 'L-00017', 1, 1, 2, 1, '', 600.00, 0.00, 0.00, 0.00, 600.00, 'CRÉDITO', '2026-09-16', 1, 'PENDIENTE', NULL, 1, '2026-09-16 21:09:03', '2026-09-16 21:09:03');
+(17, 'L-00017', 1, 1, 2, 1, '', 600.00, 0.00, 0.00, 0.00, 600.00, 'CRÉDITO', '2026-09-16', 1, 'PENDIENTE', NULL, 1, '2026-09-16 21:09:03', '2026-09-16 21:09:03'),
+(18, 'L-00018', 1, 1, 1, 1, '', 4200.00, 0.00, 0.00, 0.00, 4200.00, 'CRÉDITO', '2026-09-20', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-09-20 18:46:22', '2026-09-21 01:13:09');
 
 -- --------------------------------------------------------
 
@@ -652,7 +686,15 @@ INSERT INTO `kardex_productos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_deta
 (148, 3, 3, NULL, 'VENTA DE PRODUCTO', 22, 'VentaDetalle', 2, 'INGRESO POR MODIFICACIÓN DE VENTA', 200.00, 'INGRESO', 1, NULL, 1, 200.00, 200.00, NULL, 120.00, '2026-09-16', 1, '2026-09-16 21:25:32', '2026-09-16 21:25:32'),
 (149, 3, 3, NULL, 'VENTA DE PRODUCTO', 22, 'VentaDetalle', 2, 'SALIDA POR VENTA', 200.00, 'EGRESO', NULL, 1, 0, 200.00, NULL, 200.00, -80.00, '2026-09-16', 1, '2026-09-16 21:25:32', '2026-09-16 21:25:32'),
 (150, 3, 3, NULL, 'VENTA DE PRODUCTO', 23, 'VentaDetalle', 3, 'INGRESO POR MODIFICACIÓN DE VENTA', 350.00, 'INGRESO', 1, NULL, 11, 350.00, 350.00, NULL, 3300.00, '2026-09-16', 1, '2026-09-16 21:25:32', '2026-09-16 21:25:32'),
-(151, 3, 3, NULL, 'VENTA DE PRODUCTO', 23, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 10, 350.00, NULL, 350.00, 2950.00, '2026-09-16', 1, '2026-09-16 21:25:32', '2026-09-16 21:25:32');
+(151, 3, 3, NULL, 'VENTA DE PRODUCTO', 23, 'VentaDetalle', 3, 'SALIDA POR VENTA', 350.00, 'EGRESO', NULL, 1, 10, 350.00, NULL, 350.00, 2950.00, '2026-09-16', 1, '2026-09-16 21:25:32', '2026-09-16 21:25:32'),
+(152, 1, 1, 19, 'INGRESO DE PRODUCTO', 19, 'IngresoDetalle', 2, 'INGRESO 1', 120.00, 'INGRESO', 5, NULL, 14, 120.00, 600.00, NULL, 1030.00, '2026-09-20', 1, '2026-09-20 18:46:44', '2026-09-20 18:46:44'),
+(153, 1, 1, 20, 'INGRESO DE PRODUCTO', 20, 'IngresoDetalle', 3, 'INGRESO 1', 300.00, 'INGRESO', 5, NULL, 14, 300.00, 1500.00, NULL, 3820.02, '2026-09-20', 1, '2026-09-20 18:46:44', '2026-09-20 18:46:44'),
+(154, 1, 1, 19, 'INGRESO DE PRODUCTO', 19, 'IngresoDetalle', 2, 'INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA', 120.00, 'INGRESO', 3, NULL, 17, 120.00, 360.00, NULL, 1390.00, '2026-09-20', 1, '2026-09-20 20:04:23', '2026-09-20 20:04:23'),
+(155, 1, 1, 20, 'INGRESO DE PRODUCTO', 20, 'IngresoDetalle', 3, 'INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA', 300.00, 'INGRESO', 2, NULL, 16, 300.00, 600.00, NULL, 4420.02, '2026-09-20', 1, '2026-09-21 01:07:27', '2026-09-21 01:07:27'),
+(156, 1, 1, 20, 'INGRESO DE PRODUCTO', 20, 'IngresoDetalle', 3, 'INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA', 300.00, 'INGRESO', 1, NULL, 17, 300.00, 300.00, NULL, 4720.02, '2026-09-20', 1, '2026-09-21 01:11:14', '2026-09-21 01:11:14'),
+(157, 1, 1, 20, 'INGRESO DE PRODUCTO', 20, 'IngresoDetalle', 3, 'INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA', 300.00, 'INGRESO', 1, NULL, 18, 300.00, 300.00, NULL, 5020.02, '2026-09-20', 1, '2026-09-21 01:12:31', '2026-09-21 01:12:31'),
+(158, 1, 1, 19, 'INGRESO DE PRODUCTO', 19, 'IngresoDetalle', 2, 'INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA', 120.00, 'INGRESO', 2, NULL, 19, 120.00, 240.00, NULL, 1630.00, '2026-09-20', 1, '2026-09-21 01:13:09', '2026-09-21 01:13:09'),
+(159, 1, 1, 20, 'INGRESO DE PRODUCTO', 20, 'IngresoDetalle', 3, 'INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA', 300.00, 'INGRESO', 1, NULL, 19, 300.00, 300.00, NULL, 5320.02, '2026-09-20', 1, '2026-09-21 01:13:09', '2026-09-21 01:13:09');
 
 -- --------------------------------------------------------
 
@@ -726,7 +768,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (32, '2026_09_07_112006_create_ingreso_pagos_table', 8),
 (33, '2026_09_09_093956_create_venta_cobros_table', 9),
 (34, '2026_09_09_152725_create_proformas_table', 10),
-(35, '2026_09_09_152745_create_proforma_detalles_table', 10);
+(35, '2026_09_09_152745_create_proforma_detalles_table', 10),
+(36, '2026_09_20_145902_create_ingreso_faltantes_table', 11);
 
 -- --------------------------------------------------------
 
@@ -926,8 +969,8 @@ CREATE TABLE `producto_sucursals` (
 --
 
 INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `almacen_id`, `producto_id`, `stock_actual`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 2, 19, '2026-08-26 00:56:23', '2026-09-16 21:25:13'),
-(2, 1, 1, 3, 19, '2026-08-26 00:56:23', '2026-09-16 21:25:13'),
+(1, 1, 1, 2, 29, '2026-08-26 00:56:23', '2026-09-21 01:13:09'),
+(2, 1, 1, 3, 29, '2026-08-26 00:56:23', '2026-09-21 01:13:09'),
 (3, 1, 1, 4, 13, '2026-08-26 00:56:23', '2026-09-15 14:25:34'),
 (5, 2, 2, 2, 5, '2026-09-04 15:07:52', '2026-09-16 14:17:07'),
 (6, 1, 4, 2, 20, '2026-09-13 20:05:01', '2026-09-13 20:07:28'),
@@ -1544,6 +1587,15 @@ ALTER TABLE `ingreso_detalles`
   ADD KEY `ingreso_detalles_tipo_ingreso_id` (`tipo_ingreso_id`);
 
 --
+-- Indices de la tabla `ingreso_faltantes`
+--
+ALTER TABLE `ingreso_faltantes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ingreso_faltantes_ingreso_producto_id_foreign` (`ingreso_producto_id`),
+  ADD KEY `ingreso_faltantes_ingreso_detalle_id_foreign` (`ingreso_detalle_id`),
+  ADD KEY `ingreso_faltantes_user_id_foreign` (`user_id`);
+
+--
 -- Indices de la tabla `ingreso_pagos`
 --
 ALTER TABLE `ingreso_pagos`
@@ -1801,13 +1853,19 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=195;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=196;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
 --
 ALTER TABLE `ingreso_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT de la tabla `ingreso_faltantes`
+--
+ALTER TABLE `ingreso_faltantes`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_pagos`
@@ -1819,13 +1877,13 @@ ALTER TABLE `ingreso_pagos`
 -- AUTO_INCREMENT de la tabla `ingreso_productos`
 --
 ALTER TABLE `ingreso_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `kardex_productos`
 --
 ALTER TABLE `kardex_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=152;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=160;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -1837,7 +1895,7 @@ ALTER TABLE `marcas`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `modulos`
@@ -1994,6 +2052,14 @@ ALTER TABLE `ingreso_detalles`
   ADD CONSTRAINT `ingreso_detalles_ingreso_producto_id_foreign` FOREIGN KEY (`ingreso_producto_id`) REFERENCES `ingreso_productos` (`id`),
   ADD CONSTRAINT `ingreso_detalles_producto_id_foreign` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`),
   ADD CONSTRAINT `ingreso_detalles_tipo_ingreso_id` FOREIGN KEY (`tipo_ingreso_id`) REFERENCES `tipo_ingresos` (`id`);
+
+--
+-- Filtros para la tabla `ingreso_faltantes`
+--
+ALTER TABLE `ingreso_faltantes`
+  ADD CONSTRAINT `ingreso_faltantes_ingreso_detalle_id_foreign` FOREIGN KEY (`ingreso_detalle_id`) REFERENCES `ingreso_detalles` (`id`),
+  ADD CONSTRAINT `ingreso_faltantes_ingreso_producto_id_foreign` FOREIGN KEY (`ingreso_producto_id`) REFERENCES `ingreso_productos` (`id`),
+  ADD CONSTRAINT `ingreso_faltantes_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Filtros para la tabla `ingreso_pagos`

@@ -319,7 +319,9 @@ class IngresoProductoController extends Controller
             // actualizar ingreso_producto
             $this->ingreso_productoService->faltante($request->validated(), $ingreso_producto);
             DB::commit();
-            return redirect()->route("ingreso_productos.faltantes_ingresos")->with("bien", "Registro actualizado");
+            return redirect()->route("ingreso_productos.faltantes_ingresos")
+                ->with("bien", "Registro actualizado")
+                ->with("url_blank", route('ingreso_productos.verificar_pdf', $ingreso_producto->id));
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());

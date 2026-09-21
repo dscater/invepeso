@@ -58,7 +58,7 @@ const headers = [
         sortable: true,
     },
     {
-        label: "ESTADO",
+        label: "VERIFICADO / FALTANTES",
         key: "estado",
         sortable: true,
     },
@@ -220,9 +220,39 @@ const eliminarIngresoProducto = (item) => {
                                 }}</span>
                             </template>
                             <template #estado="{ item }">
-                                <span class="text-sm">{{
-                                    item.estado_ingreso
-                                }}</span>
+                                <div
+                                    class="text-sm badge"
+                                    :class="{
+                                        'bg-success':
+                                            item.estado_ingreso == 'VERIFICADO',
+                                        'bg-dark-gray':
+                                            item.estado_ingreso != 'VERIFICADO',
+                                    }"
+                                >
+                                    {{ item.estado_ingreso }}
+                                </div>
+                                <br />
+                                <div
+                                    class="badge text-sm"
+                                    v-if="
+                                        item.estado_ingreso == 'VERIFICADO' &&
+                                        (item.estado_faltantes == 'PENDIENTE' ||
+                                            item.estado_faltantes == 'COMPLETO')
+                                    "
+                                    :class="{
+                                        'bg-warning':
+                                            item.estado_faltantes ==
+                                            'PENDIENTE',
+                                        bgActivo:
+                                            item.estado_faltantes == 'COMPLETO',
+                                    }"
+                                >
+                                    {{
+                                        item.estado_faltantes == "PENDIENTE"
+                                            ? "FALTANTES PENDIENTES"
+                                            : "FALTANTES COMPLETO"
+                                    }}
+                                </div>
                             </template>
                             <template #accion="{ item }">
                                 <template

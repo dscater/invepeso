@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class IngresoProductoService
@@ -23,7 +24,8 @@ class IngresoProductoService
         private  CargarArchivoService $cargarArchivoService,
         private HistorialAccionService $historialAccionService,
         private KardexProductoService $kardex_producto_service,
-        private MovimientoCajaService $movimiento_caja_service
+        private MovimientoCajaService $movimiento_caja_service,
+        private IngresoFaltanteService $ingreso_faltante_service
     ) {}
 
     public function listado(): Collection
@@ -247,15 +249,19 @@ class IngresoProductoService
     {
         $count_faltantes = 0;
         foreach ($datos["ingreso_detalles"] as $item) {
-            if ((float)$item["repuesto"] > (float)$item["faltantes"]) {
-                throw new Exception("La cantidad repuesta no puede ser mayor a los faltantes");
+            // Log::debug($item["repuesto_actual"]);
+            // Log::debug($item["faltantes_aux"]);
+            if ((float)$item["repuesto_actual"] > (float)$item["faltantes_aux"]) {
+                $producto = Producto::findOrFail($item["producto_id"]);
+                throw new Exception("La cantidad repuesta del producto {$producto->nombre} no puede ser mayor a los faltantes");
             }
 
             $ingreso_detalle = IngresoDetalle::findOrFail($item["id"]);
-            $faltantes = (float)$item["faltantes"] - (float)$item["repuesto"];
-            $cantidad_fisica = $ingreso_detalle->cantidad_fisica + (float)$item["repuesto"];
+            $faltantes_iniciales = (float)$ingreso_detalle->cantidad - (float)$ingreso_detalle->verificado;
+            $faltantes = (float)$faltantes_iniciales - (float)$item["repuesto"];
+            $cantidad_fisica = $ingreso_detalle->cantidad_fisica + (float)$item["repuesto_actual"];
             $dato_ingreso_detalle = [
-                // "faltantes" => $faltantes,
+                "faltantes" => $faltantes,
                 "repuesto" => $item["repuesto"],
                 "observacion" => $item["observacion"] ?? NULL,
                 "cantidad_fisica" => $cantidad_fisica,
@@ -264,7 +270,7 @@ class IngresoProductoService
                 $count_faltantes++;
             }
 
-            if ((float)$item["repuesto"] == 0) {
+            if (!isset($item["repuesto_actual"]) || (float)$item["repuesto_actual"] == 0 || !$item["repuesto_actual"]) {
                 continue;
             }
 
@@ -279,12 +285,19 @@ class IngresoProductoService
                 "INGRESO",
                 $ingreso_detalle->id,
                 $producto,
-                (float)$item["repuesto"],
+                (float)$item["repuesto_actual"],
                 $ingreso_detalle->costo,
                 "INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA",
                 "IngresoDetalle",
                 $ingreso_detalle->id
             );
+
+            // HISTORIAL REPOSICIÓN faltantes
+            $this->ingreso_faltante_service->crear([
+                "ingreso_producto_id" => $ingreso_detalle->ingreso_producto_id,
+                "ingreso_detalle_id" => $ingreso_detalle->id,
+                "cantidad" => $item["repuesto_actual"],
+            ]);
         }
         $ingreso_producto->estado_faltantes = $count_faltantes > 0 ? 'PENDIENTE' : 'COMPLETO';
         $ingreso_producto->save();

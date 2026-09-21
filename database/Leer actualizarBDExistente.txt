@@ -1,0 +1,4 @@
+
+1) Crear tabla ingreso_faltantes.sql
+2) actualizar tabla migrations registro tabla ingreso_faltantes migrations.sql
+3) Actualizar los registros ingreso_detalles con el archivo queryFaltantes.txt

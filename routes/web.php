@@ -5,6 +5,7 @@ use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\IngresoFaltanteController;
 use App\Http\Controllers\IngresoPagoController;
 use App\Http\Controllers\IngresoProductoController;
 use App\Http\Controllers\InicioController;
@@ -195,7 +196,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
         ["index", "store", "edit", "show", "update", "destroy"]
     );
 
-    // INGRESOS
+    // INGRESO DE PRODUCTOS
     Route::get("ingreso_productos/paginado", [IngresoProductoController::class, 'paginado'])->name("ingreso_productos.paginado");
     Route::get("ingreso_productos/listado", [IngresoProductoController::class, 'listado'])->name("ingreso_productos.listado");
     Route::get("ingreso_productos/lista_sin_verificar", [IngresoProductoController::class, 'lista_sin_verificar'])->name("ingreso_productos.lista_sin_verificar");
@@ -219,6 +220,14 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     // INGRESO PAGOS
     Route::get("ingreso_pagos/listaByIngreso/{ingreso_producto}", [IngresoPagoController::class, 'listaByIngreso'])->name("ingreso_pagos.listaByIngreso");
+
+    // INGRESO DE FALTANTES
+
+    Route::get("ingreso_faltantes/paginado", [IngresoFaltanteController::class, 'paginado'])->name("ingreso_faltantes.paginado");
+    Route::get("ingreso_faltantes/listado", [IngresoFaltanteController::class, 'listado'])->name("ingreso_faltantes.listado");
+    Route::resource("ingreso_faltantes", IngresoFaltanteController::class)->only(
+        ["index", "store", "show", "update", "destroy"]
+    );
 
     // SALIDAS
     Route::get("salida_productos/paginado", [SalidaProductoController::class, 'paginado'])->name("salida_productos.paginado");

@@ -27,7 +27,7 @@ const textBtn = computed(() => {
     if (enviando.value) {
         return `<i class="fa fa-spin fa-spinner"></i> Enviando...`;
     }
-    return `<i class="fa fa-edit"></i> Registrar verificación`;
+    return `<i class="fa fa-edit"></i> Registrar faltantes`;
 });
 
 const enviarFormulario = () => {
@@ -41,6 +41,7 @@ const enviarFormulario = () => {
             console.log("correcto");
             const success =
                 response.props.flash.success ?? "Proceso realizado con éxito";
+            const url_blank = response.props.url_blank ?? null;
             Swal.fire({
                 icon: "success",
                 title: "Correcto",
@@ -51,6 +52,9 @@ const enviarFormulario = () => {
                 },
             });
 
+            if (url_blank) {
+                window.open(url_blank, "_blank");
+            }
             document
                 .getElementsByTagName("body")[0]
                 .classList.remove("modal-open");
@@ -135,7 +139,62 @@ const booleanInputs = computed(() => {
     );
 });
 
-onMounted(() => {});
+const openInputRepuesto = (item) => {
+    item.muestra_input = true;
+    item.repuesto_actual =
+        parseFloat(item.cantidad) - parseFloat(item.cantidad_fisica);
+    item.faltantes =
+        parseFloat(item.cantidad) -
+        parseFloat(item.cantidad_fisica) -
+        item.repuesto_actual;
+
+    item.repuesto =
+        parseFloat(item.repuesto_aux) + parseFloat(item.repuesto_actual);
+};
+
+const cambioFaltante = (item) => {
+    if (item.repuesto_actual > item.faltantes_aux || item.repuesto_actual < 1) {
+        toast.error(
+            "El total repuesto no puede ser menor a 1 o mayor al faltante actual de " +
+                item.faltantes_aux,
+        );
+
+        item.repuesto_actual =
+            parseFloat(item.cantidad) - parseFloat(item.cantidad_fisica);
+        item.faltantes =
+            parseFloat(item.cantidad) -
+            parseFloat(item.cantidad_fisica) -
+            item.repuesto_actual;
+        item.repuesto =
+            parseFloat(item.repuesto_aux) + parseFloat(item.repuesto_actual);
+        return;
+    }
+
+    item.faltantes =
+        parseFloat(item.cantidad) -
+        parseFloat(item.cantidad_fisica) -
+        item.repuesto_actual;
+
+    item.repuesto =
+        parseFloat(item.repuesto_aux) + parseFloat(item.repuesto_actual);
+};
+
+const cancelarInputRepuesto = (item) => {
+    item.muestra_input = false;
+    item.repuesto_actual = 0;
+    item.repuesto = item.repuesto_aux;
+    item.faltantes = item.faltantes_aux;
+};
+
+onMounted(() => {
+    form.ingreso_detalles = form.ingreso_detalles.map((item) => ({
+        ...item,
+        muestra_input: false,
+        faltantes_aux: item.faltantes,
+        repuesto_aux: item.repuesto,
+        repuesto_actual: 0,
+    }));
+});
 </script>
 
 <template>
@@ -163,17 +222,23 @@ onMounted(() => {});
                             ><i class="fa fa-calendar-alt"></i>
                             {{ form.fecha_registro_t }}</span
                         >
+                        <h4 class="text-primary fw-bold fs-5">
+                            <i class="fa fa-barcode"></i>
+                            {{ form.codigo }}
+                        </h4>
                     </div>
                     <div class="col-12">
                         <span class="float-end text-sm"
                             ><i class="fa fa-truck"></i>
                             {{ form.proveedor.nombre }}</span
                         >
-                        <h4 class="text-primary fw-bold fs-5">
-                            <i class="fa fa-barcode"></i>
-                            {{ form.codigo }}
-                        </h4>
+                        <span class="float-start text-sm"
+                            ><i class="fa fa-warehouse"></i>
+                            {{ form.almacen.nombre }} -
+                            {{ form.sucursal.nombre }}</span
+                        >
                     </div>
+                    <div class="col-12"></div>
                     <div class="col-12">
                         <table class="table table-bordered">
                             <thead>
@@ -182,23 +247,31 @@ onMounted(() => {});
                                     <th class="bg-principal text-white">
                                         Producto
                                     </th>
-                                    <th class="bg-principal text-white">
+                                    <th
+                                        class="bg-principal text-white text-center"
+                                    >
                                         Cantidad
                                     </th>
-                                    <th class="bg-principal text-white">
+                                    <th
+                                        class="bg-principal text-white text-center"
+                                    >
                                         Recibido
                                     </th>
-                                    <th class="bg-principal text-white">
+                                    <th
+                                        class="bg-principal text-white text-center"
+                                    >
                                         Faltantes
                                     </th>
-                                    <th class="bg-principal text-white">
+                                    <th
+                                        class="bg-principal text-white text-center"
+                                    >
                                         Repuesto
-                                        <input
+                                        <!-- <input
                                             type="checkbox"
                                             v-model="inputCheckRecibidos"
                                             style="height: 15px; width: 15px"
                                             @change="recepcionTodos"
-                                        />
+                                        /> -->
                                     </th>
                                     <th class="bg-principal text-white">
                                         Observación
@@ -217,37 +290,62 @@ onMounted(() => {});
                                     <td class="text-center">
                                         {{ item.cantidad }}
                                     </td>
-                                    <td>{{ item.verificado }}</td>
                                     <td class="text-center">
-                                        {{ item.faltantes }}
+                                        {{ item.verificado }}
                                     </td>
-                                    <td>
-                                        <div class="input-group">
-                                            <span class="input-group-text">
+                                    <td class="text-center">
+                                        <span class="d-block">
+                                            {{ item.faltantes }}
+                                        </span>
+                                        <span
+                                            class="text-xs text-muted text-center badge bg-warning"
+                                            v-if="item.muestra_input"
+                                            >{{ item.faltantes_aux }}</span
+                                        >
+                                    </td>
+                                    <td class="text-center">
+                                        <div
+                                            class="input-group"
+                                            v-if="item.muestra_input"
+                                        >
+                                            <input
+                                                type="number"
+                                                class="form-control text-center"
+                                                v-model="item.repuesto_actual"
+                                                @change="cambioFaltante(item)"
+                                                @keyup="cambioFaltante(item)"
+                                            />
+                                            <button
+                                                @click.prevent="
+                                                    cancelarInputRepuesto(item)
+                                                "
+                                                title="Cancelar"
+                                                class="btn btn-default bg-white border p-1 px-2 text-xs"
+                                            >
+                                                <i class="fa fa-sync"></i>
+                                            </button>
+                                        </div>
+                                        <div class="d-block">
+                                            <span
+                                                class=""
+                                                :class="{
+                                                    'text-xs text-muted text-center badge bg-warning':
+                                                        item.muestra_input,
+                                                }"
+                                            >
                                                 {{ item.repuesto }}
                                             </span>
-                                            <span
-                                                class="input-group-text"
-                                                v-if="item.faltantes > 0"
+                                            <button
+                                                v-if="!item.muestra_input"
+                                                type="button"
+                                                class="btn btn-primary btn-sm ms-1 fs-8 p-1"
+                                                title="Registrar faltante"
+                                                @click.prevent="
+                                                    openInputRepuesto(item)
+                                                "
                                             >
-                                                <input
-                                                    type="checkbox"
-                                                    :checked="
-                                                        item.repuesto ==
-                                                        item.faltantes
-                                                    "
-                                                    style="
-                                                        height: 15px;
-                                                        width: 15px;
-                                                    "
-                                                    @change="
-                                                        calculaFaltantesIndex(
-                                                            $event,
-                                                            index,
-                                                        )
-                                                    "
-                                                />
-                                            </span>
+                                                <i class="fa fa-plus"></i>
+                                            </button>
                                         </div>
                                     </td>
                                     <td>

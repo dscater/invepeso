@@ -26,8 +26,8 @@ class IngresoDetalleFaltantesRule implements ValidationRule
             if ($item->faltantes <= 0) {
                 continue;
             }
-            // precio
-            if ($detalle['repuesto'] != "" && (float)$detalle["repuesto"] > (float) $detalle['faltantes']) {
+            // repuesto
+            if ($detalle['repuesto'] != "" && (float)$detalle["repuesto_actual"] > (float) $detalle['faltantes_aux']) {
                 $fail("La cantidad repuesta del producto " . ($index + 1) . " no puede ser superior a los faltantes.");
             }
 

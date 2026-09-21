@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 16-09-2026 a las 22:42:02
+-- Tiempo de generación: 21-09-2026 a las 01:47:54
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -138,6 +138,24 @@ CREATE TABLE `ingreso_detalles` (
   `cantidad_fisica` double(8,2) DEFAULT NULL,
   `costo` decimal(24,2) NOT NULL,
   `subtotal` decimal(24,2) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ingreso_faltantes`
+--
+
+CREATE TABLE `ingreso_faltantes` (
+  `id` bigint UNSIGNED NOT NULL,
+  `ingreso_producto_id` bigint UNSIGNED NOT NULL,
+  `ingreso_detalle_id` bigint UNSIGNED NOT NULL,
+  `cantidad` double NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -286,7 +304,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (32, '2026_09_07_112006_create_ingreso_pagos_table', 8),
 (33, '2026_09_09_093956_create_venta_cobros_table', 9),
 (34, '2026_09_09_152725_create_proformas_table', 10),
-(35, '2026_09_09_152745_create_proforma_detalles_table', 10);
+(35, '2026_09_09_152745_create_proforma_detalles_table', 10),
+(36, '2026_09_20_145902_create_ingreso_faltantes_table', 11);
 
 -- --------------------------------------------------------
 
@@ -806,6 +825,15 @@ ALTER TABLE `ingreso_detalles`
   ADD KEY `ingreso_detalles_tipo_ingreso_id` (`tipo_ingreso_id`);
 
 --
+-- Indices de la tabla `ingreso_faltantes`
+--
+ALTER TABLE `ingreso_faltantes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ingreso_faltantes_ingreso_producto_id_foreign` (`ingreso_producto_id`),
+  ADD KEY `ingreso_faltantes_ingreso_detalle_id_foreign` (`ingreso_detalle_id`),
+  ADD KEY `ingreso_faltantes_user_id_foreign` (`user_id`);
+
+--
 -- Indices de la tabla `ingreso_pagos`
 --
 ALTER TABLE `ingreso_pagos`
@@ -1072,6 +1100,12 @@ ALTER TABLE `ingreso_detalles`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `ingreso_faltantes`
+--
+ALTER TABLE `ingreso_faltantes`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `ingreso_pagos`
 --
 ALTER TABLE `ingreso_pagos`
@@ -1099,7 +1133,7 @@ ALTER TABLE `marcas`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `modulos`
@@ -1256,6 +1290,14 @@ ALTER TABLE `ingreso_detalles`
   ADD CONSTRAINT `ingreso_detalles_ingreso_producto_id_foreign` FOREIGN KEY (`ingreso_producto_id`) REFERENCES `ingreso_productos` (`id`),
   ADD CONSTRAINT `ingreso_detalles_producto_id_foreign` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`),
   ADD CONSTRAINT `ingreso_detalles_tipo_ingreso_id` FOREIGN KEY (`tipo_ingreso_id`) REFERENCES `tipo_ingresos` (`id`);
+
+--
+-- Filtros para la tabla `ingreso_faltantes`
+--
+ALTER TABLE `ingreso_faltantes`
+  ADD CONSTRAINT `ingreso_faltantes_ingreso_detalle_id_foreign` FOREIGN KEY (`ingreso_detalle_id`) REFERENCES `ingreso_detalles` (`id`),
+  ADD CONSTRAINT `ingreso_faltantes_ingreso_producto_id_foreign` FOREIGN KEY (`ingreso_producto_id`) REFERENCES `ingreso_productos` (`id`),
+  ADD CONSTRAINT `ingreso_faltantes_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Filtros para la tabla `ingreso_pagos`
