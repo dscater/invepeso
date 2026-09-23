@@ -279,83 +279,223 @@ onMounted(() => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr
+                                <template
                                     v-for="(
                                         item, index
                                     ) in form.ingreso_detalles"
                                     :key="item.id"
                                 >
-                                    <td>{{ index + 1 }}</td>
-                                    <td>{{ item.producto.nombre }}</td>
-                                    <td class="text-center">
-                                        {{ item.cantidad }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ item.verificado }}
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="d-block">
-                                            {{ item.faltantes }}
-                                        </span>
-                                        <span
-                                            class="text-xs text-muted text-center badge bg-warning"
-                                            v-if="item.muestra_input"
-                                            >{{ item.faltantes_aux }}</span
-                                        >
-                                    </td>
-                                    <td class="text-center">
-                                        <div
-                                            class="input-group"
-                                            v-if="item.muestra_input"
-                                        >
-                                            <input
-                                                type="number"
-                                                class="form-control text-center"
-                                                v-model="item.repuesto_actual"
-                                                @change="cambioFaltante(item)"
-                                                @keyup="cambioFaltante(item)"
-                                            />
-                                            <button
-                                                @click.prevent="
-                                                    cancelarInputRepuesto(item)
-                                                "
-                                                title="Cancelar"
-                                                class="btn btn-default bg-white border p-1 px-2 text-xs"
-                                            >
-                                                <i class="fa fa-sync"></i>
-                                            </button>
-                                        </div>
-                                        <div class="d-block">
-                                            <span
-                                                class=""
-                                                :class="{
-                                                    'text-xs text-muted text-center badge bg-warning':
-                                                        item.muestra_input,
-                                                }"
-                                            >
-                                                {{ item.repuesto }}
-                                            </span>
-                                            <button
-                                                v-if="!item.muestra_input"
-                                                type="button"
-                                                class="btn btn-primary btn-sm ms-1 fs-8 p-1"
-                                                title="Registrar faltante"
-                                                @click.prevent="
-                                                    openInputRepuesto(item)
-                                                "
-                                            >
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <el-input
-                                            type="textarea"
-                                            v-model="item.observacion"
-                                            autosize
-                                        ></el-input>
-                                    </td>
-                                </tr>
+                                    <template v-if="!item.muestra_input">
+                                        <tr>
+                                            <td>{{ index + 1 }}</td>
+                                            <td>{{ item.producto.nombre }}</td>
+                                            <td class="text-center">
+                                                {{ item.cantidad }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.verificado }}
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="d-block">
+                                                    {{ item.faltantes }}
+                                                </span>
+                                                <span
+                                                    class="text-xs text-muted text-center badge bg-warning"
+                                                    v-if="item.muestra_input"
+                                                    >{{
+                                                        item.faltantes_aux
+                                                    }}</span
+                                                >
+                                            </td>
+                                            <td class="text-center">
+                                                <div
+                                                    class="input-group"
+                                                    v-if="item.muestra_input"
+                                                    style="min-width: 100px"
+                                                >
+                                                    <input
+                                                        type="number"
+                                                        class="form-control text-center"
+                                                        v-model="
+                                                            item.repuesto_actual
+                                                        "
+                                                        @change="
+                                                            cambioFaltante(item)
+                                                        "
+                                                        @keyup="
+                                                            cambioFaltante(item)
+                                                        "
+                                                    />
+                                                    <button
+                                                        @click.prevent="
+                                                            cancelarInputRepuesto(
+                                                                item,
+                                                            )
+                                                        "
+                                                        title="Cancelar"
+                                                        class="btn btn-default bg-white border p-1 px-2 text-xs"
+                                                    >
+                                                        <i
+                                                            class="fa fa-sync"
+                                                        ></i>
+                                                    </button>
+                                                </div>
+                                                <div class="d-block">
+                                                    <span
+                                                        class=""
+                                                        :class="{
+                                                            'text-xs text-muted text-center badge bg-warning':
+                                                                item.muestra_input,
+                                                        }"
+                                                    >
+                                                        {{ item.repuesto }}
+                                                    </span>
+                                                    <button
+                                                        v-if="
+                                                            !item.muestra_input
+                                                        "
+                                                        type="button"
+                                                        class="btn btn-primary btn-sm ms-1 fs-8 p-1"
+                                                        title="Registrar faltante"
+                                                        @click.prevent="
+                                                            openInputRepuesto(
+                                                                item,
+                                                            )
+                                                        "
+                                                    >
+                                                        <i
+                                                            class="fa fa-plus"
+                                                        ></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <el-input
+                                                    type="textarea"
+                                                    v-model="item.observacion"
+                                                    autosize
+                                                ></el-input>
+                                            </td></tr
+                                    ></template>
+                                    <template v-else>
+                                        <tr v-if="item.muestra_input">
+                                            <td rowspan="2">{{ index + 1 }}</td>
+                                            <td rowspan="2">
+                                                {{ item.producto.nombre }}
+                                            </td>
+                                            <td rowspan="2" class="text-center">
+                                                {{ item.cantidad }}
+                                            </td>
+                                            <td rowspan="2" class="text-center">
+                                                {{ item.verificado }}
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="d-block">
+                                                    <i
+                                                        class="fa fa-clock text-success me-2"
+                                                    ></i>
+                                                    {{ item.faltantes }}
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div
+                                                    class="input-group"
+                                                    v-if="item.muestra_input"
+                                                    style="min-width: 110px"
+                                                >
+                                                    <span
+                                                        class="input-group-text d-flex justify-content-center align-items-center px-1"
+                                                    >
+                                                        <i
+                                                            class="fa fa-clock text-success"
+                                                        ></i>
+                                                    </span>
+                                                    <input
+                                                        type="number"
+                                                        class="form-control text-center"
+                                                        v-model="
+                                                            item.repuesto_actual
+                                                        "
+                                                        @change="
+                                                            cambioFaltante(item)
+                                                        "
+                                                        @keyup="
+                                                            cambioFaltante(item)
+                                                        "
+                                                    />
+                                                    <button
+                                                        @click.prevent="
+                                                            cancelarInputRepuesto(
+                                                                item,
+                                                            )
+                                                        "
+                                                        title="Cancelar"
+                                                        class="btn btn-default bg-white border p-1 px-2 text-xs"
+                                                    >
+                                                        <i
+                                                            class="fa fa-sync"
+                                                        ></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td rowspan="2">
+                                                <el-input
+                                                    type="textarea"
+                                                    v-model="item.observacion"
+                                                    autosize
+                                                ></el-input>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center">
+                                                <span
+                                                    class="text-xs text-muted text-center badge bg-warning"
+                                                    v-if="item.muestra_input"
+                                                >
+                                                    <i
+                                                        class="fa fa-history text-gray me-2"
+                                                    ></i>
+                                                    {{
+                                                        item.faltantes_aux
+                                                    }}</span
+                                                >
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="d-block">
+                                                    <span
+                                                        class=""
+                                                        :class="{
+                                                            'text-xs text-muted text-center badge bg-warning':
+                                                                item.muestra_input,
+                                                        }"
+                                                    >
+                                                        <i
+                                                            class="fa fa-history text-gray me-2"
+                                                        ></i>
+                                                        {{ item.repuesto }}
+                                                    </span>
+                                                    <button
+                                                        v-if="
+                                                            !item.muestra_input
+                                                        "
+                                                        type="button"
+                                                        class="btn btn-primary btn-sm ms-1 fs-8 p-1"
+                                                        title="Registrar faltante"
+                                                        @click.prevent="
+                                                            openInputRepuesto(
+                                                                item,
+                                                            )
+                                                        "
+                                                    >
+                                                        <i
+                                                            class="fa fa-plus"
+                                                        ></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </template>
                             </tbody>
                         </table>
                     </div>
