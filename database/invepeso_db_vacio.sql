@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 21-09-2026 a las 01:47:54
+-- Tiempo de generación: 23-09-2026 a las 14:46:10
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -67,6 +67,21 @@ CREATE TABLE `clientes` (
   `correo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_registro` date DEFAULT NULL,
   `status` int NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cliente_productos`
+--
+
+CREATE TABLE `cliente_productos` (
+  `id` bigint UNSIGNED NOT NULL,
+  `cliente_id` bigint UNSIGNED NOT NULL,
+  `producto_id` bigint UNSIGNED NOT NULL,
+  `precio` decimal(24,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -305,7 +320,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (33, '2026_09_09_093956_create_venta_cobros_table', 9),
 (34, '2026_09_09_152725_create_proformas_table', 10),
 (35, '2026_09_09_152745_create_proforma_detalles_table', 10),
-(36, '2026_09_20_145902_create_ingreso_faltantes_table', 11);
+(36, '2026_09_20_145902_create_ingreso_faltantes_table', 11),
+(37, '2026_09_21_095110_create_cliente_productos_table', 12);
 
 -- --------------------------------------------------------
 
@@ -803,6 +819,14 @@ ALTER TABLE `clientes`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `cliente_productos`
+--
+ALTER TABLE `cliente_productos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `cliente_productos_cliente_id_foreign` (`cliente_id`),
+  ADD KEY `cliente_productos_producto_id_foreign` (`producto_id`);
+
+--
 -- Indices de la tabla `configuracions`
 --
 ALTER TABLE `configuracions`
@@ -1082,6 +1106,12 @@ ALTER TABLE `clientes`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `cliente_productos`
+--
+ALTER TABLE `cliente_productos`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `configuracions`
 --
 ALTER TABLE `configuracions`
@@ -1133,7 +1163,7 @@ ALTER TABLE `marcas`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT de la tabla `modulos`
@@ -1276,6 +1306,13 @@ ALTER TABLE `venta_detalles`
 --
 ALTER TABLE `almacens`
   ADD CONSTRAINT `almacens_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`);
+
+--
+-- Filtros para la tabla `cliente_productos`
+--
+ALTER TABLE `cliente_productos`
+  ADD CONSTRAINT `cliente_productos_cliente_id_foreign` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`),
+  ADD CONSTRAINT `cliente_productos_producto_id_foreign` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`);
 
 --
 -- Filtros para la tabla `historial_accions`

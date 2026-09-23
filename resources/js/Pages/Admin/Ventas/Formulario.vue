@@ -7,6 +7,7 @@ import { watch, ref, computed, onMounted, nextTick } from "vue";
 import FormularioCliente from "../Clientes/FormularioCliente.vue";
 import { useClientes } from "@/composables/clientes/useClientes";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
+import ListaPorCliente from "../ClienteProductos/ListaPorCliente.vue";
 
 const props = defineProps({
     form: {
@@ -289,9 +290,45 @@ const cargarListas = () => {
     cargarMarcas();
 };
 
+const obtenerPrecioClienteProducto = (producto_id) => {
+    const cliente_producto = listClienteProductos.value.filter(
+        (item) => item.producto_id == producto_id,
+    )[0];
+    if (cliente_producto) {
+        return Number(parseFloat(cliente_producto.precio));
+    }
+    return -1;
+};
+
+const reasignarPreciosPorClienteProductos = () => {
+    const porcentaje = form.porcentaje_descuento;
+    form.venta_detalles.map((elem) => {
+        let cliente_producto_precio = obtenerPrecioClienteProducto(
+            elem.producto_id,
+        );
+        if (cliente_producto_precio > -1) {
+            elem.precio = cliente_producto_precio;
+        }
+
+        const con_descuento = elem.precio - elem.descuento_uni;
+        elem.porcen_dt = porcentaje;
+        elem.descuento_total = con_descuento * (porcentaje / 100);
+        elem.total_uni = elem.cantidad * con_descuento;
+        elem.total_uni = parseFloat(elem.total_uni).toFixed(2);
+
+        // TOTAL PARA CALCULAR GANANCIA BRUTA
+        elem.precio_final = con_descuento - elem.descuento_total;
+        elem.total = elem.cantidad * elem.precio_final;
+    });
+};
+
 const agregarProductoVenta = async (item) => {
     const stock_total = Number(item.stock_total);
-    const precio = Number(item.precio_venta);
+    let precio = Number(item.precio_venta);
+    let cliente_producto_precio = obtenerPrecioClienteProducto(item.id);
+    if (cliente_producto_precio > -1) {
+        precio = cliente_producto_precio;
+    }
     const cantidad = Number(item.cantidad);
 
     if (!stock_total || stock_total < cantidad) {
@@ -521,7 +558,7 @@ const nuevoCliente = () => {
 };
 
 const listClienteProductos = ref([]);
-
+const muestra_cliente_productos = ref(false);
 const buscarClienteProductos = () => {
     listClienteProductos.value = [];
     if (form.cliente_id) {
@@ -533,6 +570,7 @@ const buscarClienteProductos = () => {
             })
             .then((response) => {
                 listClienteProductos.value = response.data.cliente_productos;
+                reasignarPreciosPorClienteProductos();
             });
     }
 };
@@ -934,7 +972,7 @@ onMounted(() => {
                                             placeholder="Cliente"
                                             size="large"
                                             filterable
-                                            @change="buscarClienteProductos"
+                                            @change="buscarClienteProductos()"
                                         >
                                             <el-option
                                                 v-for="item in listClientes"
@@ -955,8 +993,6 @@ onMounted(() => {
                                         </button>
                                     </span>
                                 </div>
-                                {{ listClienteProductos.length }}
-
                                 <ul
                                     v-if="form.errors?.cliente_id"
                                     class="d-block text-danger list-unstyled"
@@ -965,6 +1001,58 @@ onMounted(() => {
                                         {{ form.errors?.cliente_id }}
                                     </li>
                                 </ul>
+                            </div>
+                            <div class="col-12 mt-1">
+                                <div
+                                    class="input-group"
+                                    v-if="listClienteProductos.length > 0"
+                                >
+                                    <ListaPorCliente
+                                        v-if="muestra_cliente_productos"
+                                        :muestra_formulario="
+                                            muestra_cliente_productos
+                                        "
+                                        :cliente_productos="
+                                            listClienteProductos
+                                        "
+                                        @cerrar-formulario="
+                                            muestra_cliente_productos = false
+                                        "
+                                    ></ListaPorCliente>
+                                    <div class="form-control p-0 border-0">
+                                        <button
+                                            type="button"
+                                            class="btn btn-info w-100"
+                                            title="Ver Productos"
+                                            @click.prevent="
+                                                muestra_cliente_productos = true
+                                            "
+                                        >
+                                            <i class="fa fa-boxes"></i>
+                                            {{ listClienteProductos.length }}
+                                            Productos Asignados
+                                        </button>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="btn btn-light bg-white border"
+                                        title="Asignar Precios"
+                                        @click.prevent="
+                                            reasignarPreciosPorClienteProductos
+                                        "
+                                    >
+                                        <i class="fa fa-sync"></i>
+                                    </button>
+                                </div>
+                                <div class="w-100" v-else>
+                                    <button
+                                        class="btn btn-light w-100"
+                                        disabled
+                                    >
+                                        <i class="fa fa-boxes"></i> Sin
+                                        Productos Asignados
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

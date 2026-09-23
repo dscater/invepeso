@@ -220,7 +220,7 @@ class VentaService
                 "descuento_uni" => $item["descuento_uni"],
                 "porcen_du" => $item["porcen_du"],
                 "descuento_total" => $item["descuento_total"],
-                "porcen_dt" => $item["porcen_dt"],
+                "porcen_dt" => $item["porcen_dt"] ?? 0,
                 "precio_final" => $item["precio_final"],
                 "total" => $item["total"],
                 "total_uni" => $item["total_uni"],
