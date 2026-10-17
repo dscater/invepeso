@@ -52,6 +52,21 @@ const headers = [
         sortable: true,
     },
     {
+        label: "CALIDAD",
+        key: "calidad",
+        sortable: true,
+    },
+    {
+        label: "FORMATO",
+        key: "formato",
+        sortable: true,
+    },
+    {
+        label: "COBERTURA",
+        key: "cobertura",
+        sortable: true,
+    },
+    {
         label: "PRECIO VENTA BS.",
         key: "precio",
         sortable: true,
@@ -74,6 +89,11 @@ const headers = [
     {
         label: "ACTIVO",
         key: "activo",
+        sortable: true,
+    },
+    {
+        label: "CARACTERISTICAS",
+        key: "caracteristicas",
         sortable: true,
     },
     {

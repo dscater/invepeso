@@ -12,6 +12,10 @@ class Producto extends Model
         "categoria_id",
         "marca_id",
         "unidad_medida_id",
+        "caracteristicas",
+        "calidad", //EXTRA/COMERCIAL (afecta el precio)
+        "cobertura",
+        "formato",
         "precio",
         "precio2",
         "precio3",

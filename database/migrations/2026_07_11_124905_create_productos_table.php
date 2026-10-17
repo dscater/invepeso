@@ -18,6 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger("categoria_id");
             $table->unsignedBigInteger("marca_id");
             $table->unsignedBigInteger("unidad_medida_id");
+            $table->text("caracteristicas")->nullable();
+            $table->string("calidad"); // EXTRA/COMERCIAL (afecta el precio)
+            $table->string("cobertura")->nullable();
+            $table->string("formato")->nullable();
             $table->decimal("precio", 24, 2);
             $table->decimal("precio2", 24, 2)->nullable();
             $table->decimal("precio3", 24, 2)->nullable();

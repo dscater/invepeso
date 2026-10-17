@@ -249,13 +249,17 @@ class ProductoSucursalService
             "C" => "CATEGORÍA*",
             "D" => "MARCA*",
             "E" => "UNIDAD MEDIDA*",
-            "F" => "PRECIO 1*",
-            "G" => "PRECIO 2",
-            "H" => "PRECIO 3",
-            "I" => "PRECIO 4",
-            "J" => "STOCK MÍNIMO*",
-            "K" => "PRECIO COMPRA*",
-            "L" => "STOCK",
+            "F" => "CARACTERISTICAS",
+            "G" => "CALIDAD*",
+            "H" => "COBERTURA",
+            "I" => "FORMATO",
+            "J" => "PRECIO 1*",
+            "K" => "PRECIO 2",
+            "L" => "PRECIO 3",
+            "M" => "PRECIO 4",
+            "N" => "STOCK MÍNIMO*",
+            "O" => "PRECIO COMPRA*",
+            "P" => "STOCK",
         ];
 
         $encabezados = array_shift($filas);
@@ -360,16 +364,21 @@ class ProductoSucursalService
             $marca = trim((string) ($fila["D"] ?? ""));
             $unidadMedida = trim((string) ($fila["E"] ?? ""));
 
-            $precio1 = $fila["F"] ?? null;
-            $precio2 = $fila["G"] ?? null;
-            $precio3 = $fila["H"] ?? null;
-            $precio4 = $fila["I"] ?? null;
+            $caracteristicas = trim((string) ($fila["F"] ?? ""));
+            $calidad = trim((string) ($fila["G"] ?? ""));
+            $cobertura = trim((string) ($fila["H"] ?? ""));
+            $formato = trim((string) ($fila["I"] ?? ""));
 
-            $stockMin = $fila["J"] ?? null;
-            $precioCompra = $fila["K"] ?? null;
+            $precio1 = $fila["J"] ?? null;
+            $precio2 = $fila["K"] ?? null;
+            $precio3 = $fila["L"] ?? null;
+            $precio4 = $fila["M"] ?? null;
+
+            $stockMin = $fila["N"] ?? null;
+            $precioCompra = $fila["O"] ?? null;
 
             // NUEVO: STOCK
-            $stock = $fila["L"] ?? null;
+            $stock = $fila["P"] ?? null;
 
             /*
          * ========================================================
@@ -404,6 +413,12 @@ class ProductoSucursalService
             if ($unidadMedida === "") {
                 throw new \Exception(
                     "La columna UNIDAD MEDIDA es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($calidad === "") {
+                throw new \Exception(
+                    "La columna CALIDAD es obligatoria. Fila: {$filaExcel}"
                 );
             }
 
@@ -562,6 +577,11 @@ class ProductoSucursalService
                     "categoria_id" => $categorias[$categoriaKey]->id,
                     "marca_id" => $marcas[$marcaKey]->id,
                     "unidad_medida_id" => $unidades[$unidadKey]->id,
+
+                    "calidad" => $calidad,
+                    "caracteristicas" => $caracteristicas,
+                    "cobertura" => $cobertura,
+                    "formato" => $formato,
 
                     "precio" => $precio1,
                     "precio2" => $precio2 ?: null,

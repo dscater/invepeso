@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 23-09-2026 a las 14:41:50
+-- Tiempo de generación: 17-10-2026 a las 14:40:11
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -393,7 +393,16 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (203, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 24, \"hora\": \"10:40:45\", \"fecha\": \"2026-09-23\", \"saldo\": \"200.00\", \"total\": \"200.00\", \"nit_ci\": \"123456\", \"user_id\": 1, \"subtotal\": \"200.00\", \"descuento\": \"0\", \"tipo_pago\": \"\", \"almacen_id\": 1, \"cliente_id\": 2, \"created_at\": \"2026-09-23T14:40:45.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-09-23T14:40:45.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"0\", \"codigo_venta\": \"V24\", \"fecha_registro\": \"2026-09-23\", \"venta_detalles\": [{\"id\": 30, \"total\": \"200.00\", \"precio\": \"200.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 24, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-09-23T14:40:45.000000Z\", \"updated_at\": \"2026-09-23T14:40:45.000000Z\", \"producto_id\": 2, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 0, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"0\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-23', '10:40:45', '2026-09-23 14:40:45', '2026-09-23 14:40:45'),
 (204, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 360 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 46, \"hora\": \"10:41:24\", \"tipo\": \"VENTA\", \"fecha\": \"2026-09-23\", \"modulo\": \"Venta\", \"user_id\": 1, \"monto_qr\": \"180\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-09-23T14:41:24.000000Z\", \"updated_at\": \"2026-09-23T14:41:24.000000Z\", \"descripcion\": \"INGRESO POR VENTA\", \"monto_total\": 360, \"registro_id\": 25, \"sucursal_id\": 1, \"monto_efectivo\": \"180\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-09-23', '10:41:24', '2026-09-23 14:41:24', '2026-09-23 14:41:24');
 INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `datos_original`, `datos_nuevo`, `modulo`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
-(205, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 25, \"hora\": \"10:41:24\", \"fecha\": \"2026-09-23\", \"saldo\": \"0.00\", \"total\": \"360.00\", \"nit_ci\": \"56565656\", \"user_id\": 1, \"subtotal\": \"360.00\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 13, \"created_at\": \"2026-09-23T14:41:24.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-23T14:41:24.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"180\", \"codigo_venta\": \"V25\", \"fecha_registro\": \"2026-09-23\", \"venta_detalles\": [{\"id\": 31, \"total\": \"360.00\", \"precio\": \"360.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 25, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"360.00\", \"created_at\": \"2026-09-23T14:41:24.000000Z\", \"updated_at\": \"2026-09-23T14:41:24.000000Z\", \"producto_id\": 3, \"precio_final\": \"360.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 360, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"180\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-23', '10:41:24', '2026-09-23 14:41:24', '2026-09-23 14:41:24');
+(205, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 25, \"hora\": \"10:41:24\", \"fecha\": \"2026-09-23\", \"saldo\": \"0.00\", \"total\": \"360.00\", \"nit_ci\": \"56565656\", \"user_id\": 1, \"subtotal\": \"360.00\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"cliente_id\": 13, \"created_at\": \"2026-09-23T14:41:24.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-09-23T14:41:24.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"180\", \"codigo_venta\": \"V25\", \"fecha_registro\": \"2026-09-23\", \"venta_detalles\": [{\"id\": 31, \"total\": \"360.00\", \"precio\": \"360.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 25, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"360.00\", \"created_at\": \"2026-09-23T14:41:24.000000Z\", \"updated_at\": \"2026-09-23T14:41:24.000000Z\", \"producto_id\": 3, \"precio_final\": \"360.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 360, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"180\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-09-23', '10:41:24', '2026-09-23 14:41:24', '2026-09-23 14:41:24'),
+(206, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN TIPO DE INGRESO', '{\"id\": 1, \"nombre\": \"INGRESO 1\", \"created_at\": \"2026-07-13T19:57:24.000000Z\", \"updated_at\": \"2026-07-13T19:57:24.000000Z\", \"descripcion\": \"DESC INGRESO 1\"}', '{\"id\": 1, \"nombre\": \"POR COMPRAS\", \"created_at\": \"2026-07-13T19:57:24.000000Z\", \"updated_at\": \"2026-10-15T14:10:35.000000Z\", \"descripcion\": \"DESC INGRESO 1\"}', 'TIPO DE INGRESOS', '2026-10-15', '10:10:35', '2026-10-15 14:10:35', '2026-10-15 14:10:35'),
+(207, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN TIPO DE INGRESO', '{\"id\": 2, \"nombre\": \"INGRESO 2\", \"created_at\": \"2026-07-13T19:57:34.000000Z\", \"updated_at\": \"2026-07-13T19:57:34.000000Z\", \"descripcion\": \"\"}', '{\"id\": 2, \"nombre\": \"POR DONACION\", \"created_at\": \"2026-07-13T19:57:34.000000Z\", \"updated_at\": \"2026-10-15T14:10:48.000000Z\", \"descripcion\": \"\"}', 'TIPO DE INGRESOS', '2026-10-15', '10:10:48', '2026-10-15 14:10:48', '2026-10-15 14:10:48'),
+(208, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN TIPO DE INGRESO', '{\"id\": 2, \"nombre\": \"POR DONACION\", \"created_at\": \"2026-07-13T19:57:34.000000Z\", \"updated_at\": \"2026-10-15T14:10:48.000000Z\", \"descripcion\": \"\"}', '{\"id\": 2, \"nombre\": \"INGRESO 2\", \"created_at\": \"2026-07-13T19:57:34.000000Z\", \"updated_at\": \"2026-10-15T14:14:14.000000Z\", \"descripcion\": \"\"}', 'TIPO DE INGRESOS', '2026-10-15', '10:14:14', '2026-10-15 14:14:14', '2026-10-15 14:14:14'),
+(209, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 19, \"saldo\": \"720.00\", \"total\": \"720.00\", \"codigo\": \"L-00019\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-10-15T14:15:19.000000Z\", \"updated_at\": \"2026-10-15T14:15:19.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-10-15\", \"tipo_ingreso_id\": \"1\", \"total_cancelado\": 0, \"ingreso_detalles\": [{\"id\": 21, \"costo\": \"120.00\", \"cantidad\": 1, \"repuesto\": 0, \"subtotal\": \"120.00\", \"faltantes\": null, \"created_at\": \"2026-10-15T14:15:19.000000Z\", \"updated_at\": \"2026-10-15T14:15:19.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 2, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 19}, {\"id\": 22, \"costo\": \"300.00\", \"cantidad\": 1, \"repuesto\": 0, \"subtotal\": \"300.00\", \"faltantes\": null, \"created_at\": \"2026-10-15T14:15:19.000000Z\", \"updated_at\": \"2026-10-15T14:15:19.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 3, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 19}, {\"id\": 23, \"costo\": \"300.00\", \"cantidad\": 1, \"repuesto\": 0, \"subtotal\": \"300.00\", \"faltantes\": null, \"created_at\": \"2026-10-15T14:15:19.000000Z\", \"updated_at\": \"2026-10-15T14:15:19.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 4, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 19}], \"cancelado_efectivo\": \"0\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-10-15', '10:15:19', '2026-10-15 14:15:19', '2026-10-15 14:15:19'),
+(210, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA UNIDAD DE MEDIDA', '{\"id\": 3, \"nombre\": \"CAJAS\", \"created_at\": \"2026-10-15T14:24:30.000000Z\", \"updated_at\": \"2026-10-15T14:24:30.000000Z\"}', NULL, 'UNIDADES DE MEDIDA', '2026-10-15', '10:24:30', '2026-10-15 14:24:30', '2026-10-15 14:24:30'),
+(211, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA PRODUCTO', '{\"id\": 2, \"activo\": 1, \"codigo\": \"P001\", \"imagen\": \"21783799752.jpeg\", \"nombre\": \"PRODUCTO 1\", \"precio\": \"200.00\", \"precio2\": \"290.00\", \"precio3\": \"300.00\", \"precio4\": null, \"marca_id\": 1, \"stock_min\": 3, \"created_at\": \"2026-07-11T19:55:52.000000Z\", \"updated_at\": \"2026-09-06T21:17:59.000000Z\", \"categoria_id\": 1, \"precio_compra\": \"120.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": 1}', '{\"id\": 2, \"activo\": \"1\", \"codigo\": \"F14242BAP\", \"imagen\": \"21783799752.jpeg\", \"nombre\": \"BARRO COPINO\", \"precio\": \"95\", \"precio2\": \"97\", \"precio3\": \"98\", \"precio4\": null, \"marca_id\": \"1\", \"stock_min\": \"3\", \"created_at\": \"2026-07-11T19:55:52.000000Z\", \"updated_at\": \"2026-10-15T14:32:06.000000Z\", \"categoria_id\": \"1\", \"precio_compra\": \"90\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": \"1\"}', 'PRODUCTOS', '2026-10-15', '10:32:06', '2026-10-15 14:32:06', '2026-10-15 14:32:06'),
+(212, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA PRODUCTO', '{\"id\": 2, \"activo\": 1, \"codigo\": \"F14242BAP\", \"imagen\": \"21783799752.jpeg\", \"nombre\": \"BARRO COPINO\", \"precio\": \"95.00\", \"precio2\": \"97.00\", \"precio3\": \"98.00\", \"precio4\": null, \"marca_id\": 1, \"stock_min\": 3, \"created_at\": \"2026-07-11T19:55:52.000000Z\", \"updated_at\": \"2026-10-15T14:32:06.000000Z\", \"categoria_id\": 1, \"precio_compra\": \"90.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": 1}', '{\"id\": 2, \"activo\": \"1\", \"codigo\": \"F14242BAP\", \"imagen\": \"21783799752.jpeg\", \"nombre\": \"BARRO COPINO\", \"precio\": \"95.00\", \"precio2\": \"97.00\", \"precio3\": \"98.00\", \"precio4\": null, \"marca_id\": \"1\", \"stock_min\": \"3\", \"created_at\": \"2026-07-11T19:55:52.000000Z\", \"updated_at\": \"2026-10-15T14:33:05.000000Z\", \"categoria_id\": \"1\", \"precio_compra\": \"90.00\", \"fecha_registro\": \"2026-07-11\", \"unidad_medida_id\": \"3\"}', 'PRODUCTOS', '2026-10-15', '10:33:05', '2026-10-15 14:33:05', '2026-10-15 14:33:05'),
+(213, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA PRODUCTO', '{\"id\": 41, \"activo\": 1, \"codigo\": \"P039\", \"imagen\": null, \"nombre\": \"PRODUCTO 39\", \"precio\": \"377.00\", \"calidad\": \"\", \"formato\": null, \"precio2\": null, \"precio3\": null, \"precio4\": null, \"marca_id\": 2, \"cobertura\": null, \"stock_min\": 1, \"created_at\": null, \"updated_at\": null, \"categoria_id\": 1, \"precio_compra\": \"266.00\", \"fecha_registro\": \"2026-09-16\", \"caracteristicas\": null, \"unidad_medida_id\": 1}', '{\"id\": 41, \"activo\": \"1\", \"codigo\": \"P039\", \"imagen\": null, \"nombre\": \"PRODUCTO 39\", \"precio\": \"377.00\", \"calidad\": \"EXTRA\", \"formato\": \"42x42\", \"precio2\": null, \"precio3\": null, \"precio4\": null, \"marca_id\": \"2\", \"cobertura\": \"1.77\", \"stock_min\": \"1\", \"created_at\": null, \"updated_at\": \"2026-10-17T14:16:22.000000Z\", \"categoria_id\": \"1\", \"precio_compra\": \"266.00\", \"fecha_registro\": \"2026-09-16\", \"caracteristicas\": \"\", \"unidad_medida_id\": \"1\"}', 'PRODUCTOS', '2026-10-17', '10:16:22', '2026-10-17 14:16:22', '2026-10-17 14:16:22'),
+(214, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA PRODUCTO', '{\"id\": 41, \"activo\": 1, \"codigo\": \"P039\", \"imagen\": null, \"nombre\": \"PRODUCTO 39\", \"precio\": \"377.00\", \"calidad\": \"EXTRA\", \"formato\": \"42x42\", \"precio2\": null, \"precio3\": null, \"precio4\": null, \"marca_id\": 2, \"cobertura\": \"1.77\", \"stock_min\": 1, \"created_at\": null, \"updated_at\": \"2026-10-17T14:16:22.000000Z\", \"categoria_id\": 1, \"precio_compra\": \"266.00\", \"fecha_registro\": \"2026-09-16\", \"caracteristicas\": \"\", \"unidad_medida_id\": 1}', '{\"id\": 41, \"activo\": \"1\", \"codigo\": \"P039\", \"imagen\": null, \"nombre\": \"PRODUCTO 39\", \"precio\": \"377.00\", \"calidad\": \"EXTRA\", \"formato\": \"42x42\", \"precio2\": null, \"precio3\": null, \"precio4\": null, \"marca_id\": \"2\", \"cobertura\": \"1.77\", \"stock_min\": \"1\", \"created_at\": null, \"updated_at\": \"2026-10-17T14:18:15.000000Z\", \"categoria_id\": \"1\", \"precio_compra\": \"266.00\", \"fecha_registro\": \"2026-09-16\", \"caracteristicas\": \"NEQUE PORRO QUISQUAM EST QUI DOLOREM IPSUM QUIA DOLOR SIT AMET, CONSECTETUR, ADIPISCI VELIT\", \"unidad_medida_id\": \"1\"}', 'PRODUCTOS', '2026-10-17', '10:18:15', '2026-10-17 14:18:15', '2026-10-17 14:18:15');
 
 -- --------------------------------------------------------
 
@@ -441,7 +450,10 @@ INSERT INTO `ingreso_detalles` (`id`, `ingreso_producto_id`, `tipo_ingreso_id`, 
 (17, 16, 1, 2, 2, NULL, NULL, 0.00, NULL, NULL, 120.00, 240.00, '2026-09-16 21:08:19', '2026-09-16 21:08:19'),
 (18, 17, 2, 4, 2, NULL, NULL, 0.00, NULL, NULL, 300.00, 600.00, '2026-09-16 21:09:03', '2026-09-16 21:09:03'),
 (19, 18, 1, 2, 10, 5.00, 0, 5.00, NULL, 10.00, 120.00, 1200.00, '2026-09-20 18:46:22', '2026-09-21 01:13:09'),
-(20, 18, 1, 3, 10, 5.00, 0, 5.00, NULL, 10.00, 300.00, 3000.00, '2026-09-20 18:46:22', '2026-09-21 01:13:09');
+(20, 18, 1, 3, 10, 5.00, 0, 5.00, NULL, 10.00, 300.00, 3000.00, '2026-09-20 18:46:22', '2026-09-21 01:13:09'),
+(21, 19, 1, 2, 1, NULL, NULL, 0.00, NULL, NULL, 120.00, 120.00, '2026-10-15 14:15:19', '2026-10-15 14:15:19'),
+(22, 19, 1, 3, 1, NULL, NULL, 0.00, NULL, NULL, 300.00, 300.00, '2026-10-15 14:15:19', '2026-10-15 14:15:19'),
+(23, 19, 1, 4, 1, NULL, NULL, 0.00, NULL, NULL, 300.00, 300.00, '2026-10-15 14:15:19', '2026-10-15 14:15:19');
 
 -- --------------------------------------------------------
 
@@ -554,7 +566,27 @@ INSERT INTO `ingreso_productos` (`id`, `codigo`, `sucursal_id`, `almacen_id`, `t
 (14, 'L-00014', 1, 1, 1, 1, '', 600.00, 0.00, 0.00, 0.00, 600.00, 'CRÉDITO', '2026-09-16', 1, 'VERIFICADO', 'SIN FALTANTES', 1, '2026-09-16 18:47:03', '2026-09-16 18:47:18'),
 (16, 'L-00016', 1, 1, 1, 3, '', 240.00, 200.00, 40.00, 240.00, 0.00, 'CONTADO,', '2026-09-16', 1, 'PENDIENTE', NULL, 1, '2026-09-16 21:08:19', '2026-09-16 21:08:19'),
 (17, 'L-00017', 1, 1, 2, 1, '', 600.00, 0.00, 0.00, 0.00, 600.00, 'CRÉDITO', '2026-09-16', 1, 'PENDIENTE', NULL, 1, '2026-09-16 21:09:03', '2026-09-16 21:09:03'),
-(18, 'L-00018', 1, 1, 1, 1, '', 4200.00, 0.00, 0.00, 0.00, 4200.00, 'CRÉDITO', '2026-09-20', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-09-20 18:46:22', '2026-09-21 01:13:09');
+(18, 'L-00018', 1, 1, 1, 1, '', 4200.00, 0.00, 0.00, 0.00, 4200.00, 'CRÉDITO', '2026-09-20', 1, 'VERIFICADO', 'COMPLETO', 1, '2026-09-20 18:46:22', '2026-09-21 01:13:09'),
+(19, 'L-00019', 1, 1, 1, 1, '', 720.00, 0.00, 0.00, 0.00, 720.00, 'CRÉDITO', '2026-10-15', 1, 'PENDIENTE', NULL, 1, '2026-10-15 14:15:19', '2026-10-15 14:15:19');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ingreso_recepcions`
+--
+
+CREATE TABLE `ingreso_recepcions` (
+  `id` bigint UNSIGNED NOT NULL,
+  `ingreso_producto_id` bigint UNSIGNED NOT NULL,
+  `ingreso_detalle_id` bigint UNSIGNED NOT NULL,
+  `sucursal_id` bigint UNSIGNED NOT NULL,
+  `almacen_id` bigint UNSIGNED NOT NULL,
+  `producto_id` bigint UNSIGNED NOT NULL,
+  `cantidad` double NOT NULL,
+  `tipo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -809,7 +841,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (34, '2026_09_09_152725_create_proformas_table', 10),
 (35, '2026_09_09_152745_create_proforma_detalles_table', 10),
 (36, '2026_09_20_145902_create_ingreso_faltantes_table', 11),
-(37, '2026_09_21_095110_create_cliente_productos_table', 12);
+(37, '2026_09_21_095110_create_cliente_productos_table', 12),
+(38, '2026_10_17_103418_create_ingreso_recepcions_table', 13),
+(39, '2026_10_17_103904_create_notificacions_table', 13),
+(40, '2026_10_17_103913_create_notificacion_users_table', 13);
 
 -- --------------------------------------------------------
 
@@ -907,6 +942,38 @@ INSERT INTO `movimiento_cajas` (`id`, `sucursal_id`, `almacen_id`, `tipo`, `modu
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `notificacions`
+--
+
+CREATE TABLE `notificacions` (
+  `id` bigint UNSIGNED NOT NULL,
+  `modulo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `registro_id` bigint UNSIGNED DEFAULT NULL,
+  `descripcion` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `notificacion_users`
+--
+
+CREATE TABLE `notificacion_users` (
+  `id` bigint UNSIGNED NOT NULL,
+  `notificacion_id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `visto` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `permisos`
 --
 
@@ -931,6 +998,10 @@ CREATE TABLE `productos` (
   `categoria_id` bigint UNSIGNED NOT NULL,
   `marca_id` bigint UNSIGNED NOT NULL,
   `unidad_medida_id` bigint UNSIGNED NOT NULL,
+  `caracteristicas` text COLLATE utf8mb4_unicode_ci,
+  `calidad` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cobertura` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `formato` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `precio` decimal(24,2) NOT NULL,
   `precio2` decimal(24,2) DEFAULT NULL,
   `precio3` decimal(24,2) DEFAULT NULL,
@@ -948,47 +1019,47 @@ CREATE TABLE `productos` (
 -- Volcado de datos para la tabla `productos`
 --
 
-INSERT INTO `productos` (`id`, `codigo`, `nombre`, `categoria_id`, `marca_id`, `unidad_medida_id`, `precio`, `precio2`, `precio3`, `precio4`, `precio_compra`, `stock_min`, `imagen`, `activo`, `fecha_registro`, `created_at`, `updated_at`) VALUES
-(2, 'P001', 'PRODUCTO 1', 1, 1, 1, 200.00, 290.00, 300.00, NULL, 120.00, 3, '21783799752.jpeg', 1, '2026-07-11', '2026-07-11 19:55:52', '2026-09-06 21:17:59'),
-(3, 'P002', 'PRODUCTO 2', 1, 1, 1, 350.00, 400.00, 420.00, 450.00, 300.00, 3, NULL, 1, '2026-07-11', '2026-07-11 20:00:05', '2026-09-06 21:18:15'),
-(4, 'P003', 'PRODUCTO 3', 2, 2, 1, 390.00, NULL, NULL, NULL, 300.00, 5, NULL, 1, '2026-07-13', '2026-07-13 20:15:16', '2026-07-15 20:02:46'),
-(5, 'CODP', 'PRODUCTO NUEVO', 3, 3, 1, 300.00, 200.00, NULL, NULL, 240.00, 1, NULL, 1, '2026-09-11', NULL, NULL),
-(6, 'P004', 'PRODUCTO 4', 2, 4, 1, 200.00, 190.00, NULL, NULL, 120.00, 1, NULL, 1, '2026-09-13', NULL, NULL),
-(7, 'P005', 'PRODUCTO 5', 1, 2, 1, 343.00, NULL, NULL, NULL, 300.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(8, 'P006', 'PRODUCTO 6', 1, 2, 1, 344.00, NULL, NULL, NULL, 299.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(9, 'P007', 'PRODUCTO 7', 1, 2, 1, 345.00, NULL, NULL, NULL, 298.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(10, 'P008', 'PRODUCTO 8', 1, 2, 1, 346.00, NULL, NULL, NULL, 297.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(11, 'P009', 'PRODUCTO 9', 1, 2, 1, 347.00, NULL, NULL, NULL, 296.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(12, 'P010', 'PRODUCTO 10', 1, 2, 1, 348.00, NULL, NULL, NULL, 295.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(13, 'P011', 'PRODUCTO 11', 1, 2, 1, 349.00, NULL, NULL, NULL, 294.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(14, 'P012', 'PRODUCTO 12', 1, 2, 1, 350.00, NULL, NULL, NULL, 293.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(15, 'P013', 'PRODUCTO 13', 1, 2, 1, 351.00, NULL, NULL, NULL, 292.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(16, 'P014', 'PRODUCTO 14', 1, 2, 1, 352.00, NULL, NULL, NULL, 291.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(17, 'P015', 'PRODUCTO 15', 1, 2, 1, 353.00, NULL, NULL, NULL, 290.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(18, 'P016', 'PRODUCTO 16', 1, 2, 1, 354.00, NULL, NULL, NULL, 289.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(19, 'P017', 'PRODUCTO 17', 1, 2, 1, 355.00, NULL, NULL, NULL, 288.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(20, 'P018', 'PRODUCTO 18', 1, 2, 1, 356.00, NULL, NULL, NULL, 287.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(21, 'P019', 'PRODUCTO 19', 1, 2, 1, 357.00, NULL, NULL, NULL, 286.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(22, 'P020', 'PRODUCTO 20', 1, 2, 1, 358.00, NULL, NULL, NULL, 285.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(23, 'P021', 'PRODUCTO 21', 1, 2, 1, 359.00, NULL, NULL, NULL, 284.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(24, 'P022', 'PRODUCTO 22', 1, 2, 1, 360.00, NULL, NULL, NULL, 283.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(25, 'P023', 'PRODUCTO 23', 1, 2, 1, 361.00, NULL, NULL, NULL, 282.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(26, 'P024', 'PRODUCTO 24', 1, 2, 1, 362.00, NULL, NULL, NULL, 281.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(27, 'P025', 'PRODUCTO 25', 1, 2, 1, 363.00, NULL, NULL, NULL, 280.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(28, 'P026', 'PRODUCTO 26', 1, 2, 1, 364.00, NULL, NULL, NULL, 279.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(29, 'P027', 'PRODUCTO 27', 1, 2, 1, 365.00, NULL, NULL, NULL, 278.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(30, 'P028', 'PRODUCTO 28', 1, 2, 1, 366.00, NULL, NULL, NULL, 277.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(31, 'P029', 'PRODUCTO 29', 1, 2, 1, 367.00, NULL, NULL, NULL, 276.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(32, 'P030', 'PRODUCTO 30', 1, 2, 1, 368.00, NULL, NULL, NULL, 275.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(33, 'P031', 'PRODUCTO 31', 1, 2, 1, 369.00, NULL, NULL, NULL, 274.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(34, 'P032', 'PRODUCTO 32', 1, 2, 1, 370.00, NULL, NULL, NULL, 273.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(35, 'P033', 'PRODUCTO 33', 1, 2, 1, 371.00, NULL, NULL, NULL, 272.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(36, 'P034', 'PRODUCTO 34', 1, 2, 1, 372.00, NULL, NULL, NULL, 271.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(37, 'P035', 'PRODUCTO 35', 1, 2, 1, 373.00, NULL, NULL, NULL, 270.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(38, 'P036', 'PRODUCTO 36', 1, 2, 1, 374.00, NULL, NULL, NULL, 269.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(39, 'P037', 'PRODUCTO 37', 1, 2, 1, 375.00, NULL, NULL, NULL, 268.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(40, 'P038', 'PRODUCTO 38', 1, 2, 1, 376.00, NULL, NULL, NULL, 267.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
-(41, 'P039', 'PRODUCTO 39', 1, 2, 1, 377.00, NULL, NULL, NULL, 266.00, 1, NULL, 1, '2026-09-16', NULL, NULL);
+INSERT INTO `productos` (`id`, `codigo`, `nombre`, `categoria_id`, `marca_id`, `unidad_medida_id`, `caracteristicas`, `calidad`, `cobertura`, `formato`, `precio`, `precio2`, `precio3`, `precio4`, `precio_compra`, `stock_min`, `imagen`, `activo`, `fecha_registro`, `created_at`, `updated_at`) VALUES
+(2, 'F14242BAP', 'BARRO COPINO', 1, 1, 3, NULL, '', NULL, NULL, 95.00, 97.00, 98.00, NULL, 90.00, 3, '21783799752.jpeg', 1, '2026-07-11', '2026-07-11 19:55:52', '2026-10-15 14:33:05'),
+(3, 'P002', 'PRODUCTO 2', 1, 1, 1, NULL, '', NULL, NULL, 350.00, 400.00, 420.00, 450.00, 300.00, 3, NULL, 1, '2026-07-11', '2026-07-11 20:00:05', '2026-09-06 21:18:15'),
+(4, 'P003', 'PRODUCTO 3', 2, 2, 1, NULL, '', NULL, NULL, 390.00, NULL, NULL, NULL, 300.00, 5, NULL, 1, '2026-07-13', '2026-07-13 20:15:16', '2026-07-15 20:02:46'),
+(5, 'CODP', 'PRODUCTO NUEVO', 3, 3, 1, NULL, '', NULL, NULL, 300.00, 200.00, NULL, NULL, 240.00, 1, NULL, 1, '2026-09-11', NULL, NULL),
+(6, 'P004', 'PRODUCTO 4', 2, 4, 1, NULL, '', NULL, NULL, 200.00, 190.00, NULL, NULL, 120.00, 1, NULL, 1, '2026-09-13', NULL, NULL),
+(7, 'P005', 'PRODUCTO 5', 1, 2, 1, NULL, '', NULL, NULL, 343.00, NULL, NULL, NULL, 300.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(8, 'P006', 'PRODUCTO 6', 1, 2, 1, NULL, '', NULL, NULL, 344.00, NULL, NULL, NULL, 299.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(9, 'P007', 'PRODUCTO 7', 1, 2, 1, NULL, '', NULL, NULL, 345.00, NULL, NULL, NULL, 298.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(10, 'P008', 'PRODUCTO 8', 1, 2, 1, NULL, '', NULL, NULL, 346.00, NULL, NULL, NULL, 297.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(11, 'P009', 'PRODUCTO 9', 1, 2, 1, NULL, '', NULL, NULL, 347.00, NULL, NULL, NULL, 296.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(12, 'P010', 'PRODUCTO 10', 1, 2, 1, NULL, '', NULL, NULL, 348.00, NULL, NULL, NULL, 295.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(13, 'P011', 'PRODUCTO 11', 1, 2, 1, NULL, '', NULL, NULL, 349.00, NULL, NULL, NULL, 294.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(14, 'P012', 'PRODUCTO 12', 1, 2, 1, NULL, '', NULL, NULL, 350.00, NULL, NULL, NULL, 293.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(15, 'P013', 'PRODUCTO 13', 1, 2, 1, NULL, '', NULL, NULL, 351.00, NULL, NULL, NULL, 292.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(16, 'P014', 'PRODUCTO 14', 1, 2, 1, NULL, '', NULL, NULL, 352.00, NULL, NULL, NULL, 291.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(17, 'P015', 'PRODUCTO 15', 1, 2, 1, NULL, '', NULL, NULL, 353.00, NULL, NULL, NULL, 290.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(18, 'P016', 'PRODUCTO 16', 1, 2, 1, NULL, '', NULL, NULL, 354.00, NULL, NULL, NULL, 289.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(19, 'P017', 'PRODUCTO 17', 1, 2, 1, NULL, '', NULL, NULL, 355.00, NULL, NULL, NULL, 288.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(20, 'P018', 'PRODUCTO 18', 1, 2, 1, NULL, '', NULL, NULL, 356.00, NULL, NULL, NULL, 287.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(21, 'P019', 'PRODUCTO 19', 1, 2, 1, NULL, '', NULL, NULL, 357.00, NULL, NULL, NULL, 286.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(22, 'P020', 'PRODUCTO 20', 1, 2, 1, NULL, '', NULL, NULL, 358.00, NULL, NULL, NULL, 285.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(23, 'P021', 'PRODUCTO 21', 1, 2, 1, NULL, '', NULL, NULL, 359.00, NULL, NULL, NULL, 284.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(24, 'P022', 'PRODUCTO 22', 1, 2, 1, NULL, '', NULL, NULL, 360.00, NULL, NULL, NULL, 283.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(25, 'P023', 'PRODUCTO 23', 1, 2, 1, NULL, '', NULL, NULL, 361.00, NULL, NULL, NULL, 282.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(26, 'P024', 'PRODUCTO 24', 1, 2, 1, NULL, '', NULL, NULL, 362.00, NULL, NULL, NULL, 281.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(27, 'P025', 'PRODUCTO 25', 1, 2, 1, NULL, '', NULL, NULL, 363.00, NULL, NULL, NULL, 280.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(28, 'P026', 'PRODUCTO 26', 1, 2, 1, NULL, '', NULL, NULL, 364.00, NULL, NULL, NULL, 279.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(29, 'P027', 'PRODUCTO 27', 1, 2, 1, NULL, '', NULL, NULL, 365.00, NULL, NULL, NULL, 278.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(30, 'P028', 'PRODUCTO 28', 1, 2, 1, NULL, '', NULL, NULL, 366.00, NULL, NULL, NULL, 277.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(31, 'P029', 'PRODUCTO 29', 1, 2, 1, NULL, '', NULL, NULL, 367.00, NULL, NULL, NULL, 276.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(32, 'P030', 'PRODUCTO 30', 1, 2, 1, NULL, '', NULL, NULL, 368.00, NULL, NULL, NULL, 275.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(33, 'P031', 'PRODUCTO 31', 1, 2, 1, NULL, '', NULL, NULL, 369.00, NULL, NULL, NULL, 274.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(34, 'P032', 'PRODUCTO 32', 1, 2, 1, NULL, '', NULL, NULL, 370.00, NULL, NULL, NULL, 273.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(35, 'P033', 'PRODUCTO 33', 1, 2, 1, NULL, '', NULL, NULL, 371.00, NULL, NULL, NULL, 272.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(36, 'P034', 'PRODUCTO 34', 1, 2, 1, NULL, '', NULL, NULL, 372.00, NULL, NULL, NULL, 271.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(37, 'P035', 'PRODUCTO 35', 1, 2, 1, NULL, '', NULL, NULL, 373.00, NULL, NULL, NULL, 270.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(38, 'P036', 'PRODUCTO 36', 1, 2, 1, NULL, '', NULL, NULL, 374.00, NULL, NULL, NULL, 269.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(39, 'P037', 'PRODUCTO 37', 1, 2, 1, NULL, '', NULL, NULL, 375.00, NULL, NULL, NULL, 268.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(40, 'P038', 'PRODUCTO 38', 1, 2, 1, NULL, '', NULL, NULL, 376.00, NULL, NULL, NULL, 267.00, 1, NULL, 1, '2026-09-16', NULL, NULL),
+(41, 'P039', 'PRODUCTO 39', 1, 2, 1, 'NEQUE PORRO QUISQUAM EST QUI DOLOREM IPSUM QUIA DOLOR SIT AMET, CONSECTETUR, ADIPISCI VELIT', 'EXTRA', '1.77', '42x42', 377.00, NULL, NULL, NULL, 266.00, 1, NULL, 1, '2026-09-16', NULL, '2026-10-17 14:18:15');
 
 -- --------------------------------------------------------
 
@@ -1307,8 +1378,8 @@ CREATE TABLE `tipo_ingresos` (
 --
 
 INSERT INTO `tipo_ingresos` (`id`, `nombre`, `descripcion`, `created_at`, `updated_at`) VALUES
-(1, 'INGRESO 1', 'DESC INGRESO 1', '2026-07-13 19:57:24', '2026-07-13 19:57:24'),
-(2, 'INGRESO 2', '', '2026-07-13 19:57:34', '2026-07-13 19:57:34'),
+(1, 'POR COMPRAS', 'DESC INGRESO 1', '2026-07-13 19:57:24', '2026-10-15 14:10:35'),
+(2, 'INGRESO 2', '', '2026-07-13 19:57:34', '2026-10-15 14:14:14'),
 (3, 'INGRESO 3', 'DESC ING 3', '2026-07-13 20:00:47', '2026-07-13 20:01:31');
 
 -- --------------------------------------------------------
@@ -1412,7 +1483,8 @@ CREATE TABLE `unidad_medidas` (
 
 INSERT INTO `unidad_medidas` (`id`, `nombre`, `created_at`, `updated_at`) VALUES
 (1, 'UNIDAD', '2026-07-11 19:53:50', '2026-07-11 19:53:50'),
-(2, 'KILOS', '2026-07-11 19:54:00', '2026-07-11 19:54:00');
+(2, 'KILOS', '2026-07-11 19:54:00', '2026-07-11 19:54:00'),
+(3, 'CAJAS', '2026-10-15 14:24:30', '2026-10-15 14:24:30');
 
 -- --------------------------------------------------------
 
@@ -1676,6 +1748,17 @@ ALTER TABLE `ingreso_productos`
   ADD KEY `ingreso_productos_almacen_id` (`almacen_id`);
 
 --
+-- Indices de la tabla `ingreso_recepcions`
+--
+ALTER TABLE `ingreso_recepcions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ingreso_recepcions_ingreso_producto_id_foreign` (`ingreso_producto_id`),
+  ADD KEY `ingreso_recepcions_ingreso_detalle_id_foreign` (`ingreso_detalle_id`),
+  ADD KEY `ingreso_recepcions_sucursal_id_foreign` (`sucursal_id`),
+  ADD KEY `ingreso_recepcions_almacen_id_foreign` (`almacen_id`),
+  ADD KEY `ingreso_recepcions_producto_id_foreign` (`producto_id`);
+
+--
 -- Indices de la tabla `kardex_productos`
 --
 ALTER TABLE `kardex_productos`
@@ -1712,6 +1795,20 @@ ALTER TABLE `movimiento_cajas`
   ADD KEY `movimiento_cajas_sucursal_id_foreign` (`sucursal_id`),
   ADD KEY `movimiento_cajas_user_id_foreign` (`user_id`),
   ADD KEY `movimiento_cajas_almacen_id` (`almacen_id`);
+
+--
+-- Indices de la tabla `notificacions`
+--
+ALTER TABLE `notificacions`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `notificacion_users`
+--
+ALTER TABLE `notificacion_users`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `notificacion_users_notificacion_id_foreign` (`notificacion_id`),
+  ADD KEY `notificacion_users_user_id_foreign` (`user_id`);
 
 --
 -- Indices de la tabla `permisos`
@@ -1918,13 +2015,13 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=206;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
 --
 ALTER TABLE `ingreso_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_faltantes`
@@ -1942,7 +2039,13 @@ ALTER TABLE `ingreso_pagos`
 -- AUTO_INCREMENT de la tabla `ingreso_productos`
 --
 ALTER TABLE `ingreso_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT de la tabla `ingreso_recepcions`
+--
+ALTER TABLE `ingreso_recepcions`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `kardex_productos`
@@ -1960,7 +2063,7 @@ ALTER TABLE `marcas`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT de la tabla `modulos`
@@ -1973,6 +2076,18 @@ ALTER TABLE `modulos`
 --
 ALTER TABLE `movimiento_cajas`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+
+--
+-- AUTO_INCREMENT de la tabla `notificacions`
+--
+ALTER TABLE `notificacions`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `notificacion_users`
+--
+ALTER TABLE `notificacion_users`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
@@ -2068,7 +2183,7 @@ ALTER TABLE `traspaso_detalles`
 -- AUTO_INCREMENT de la tabla `unidad_medidas`
 --
 ALTER TABLE `unidad_medidas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
@@ -2153,6 +2268,16 @@ ALTER TABLE `ingreso_productos`
   ADD CONSTRAINT `ingreso_productos_tipo_ingreso_id_foreign` FOREIGN KEY (`tipo_ingreso_id`) REFERENCES `tipo_ingresos` (`id`);
 
 --
+-- Filtros para la tabla `ingreso_recepcions`
+--
+ALTER TABLE `ingreso_recepcions`
+  ADD CONSTRAINT `ingreso_recepcions_almacen_id_foreign` FOREIGN KEY (`almacen_id`) REFERENCES `almacens` (`id`),
+  ADD CONSTRAINT `ingreso_recepcions_ingreso_detalle_id_foreign` FOREIGN KEY (`ingreso_detalle_id`) REFERENCES `ingreso_detalles` (`id`),
+  ADD CONSTRAINT `ingreso_recepcions_ingreso_producto_id_foreign` FOREIGN KEY (`ingreso_producto_id`) REFERENCES `ingreso_productos` (`id`),
+  ADD CONSTRAINT `ingreso_recepcions_producto_id_foreign` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`),
+  ADD CONSTRAINT `ingreso_recepcions_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`);
+
+--
 -- Filtros para la tabla `kardex_productos`
 --
 ALTER TABLE `kardex_productos`
@@ -2168,6 +2293,13 @@ ALTER TABLE `movimiento_cajas`
   ADD CONSTRAINT `movimiento_cajas_almacen_id` FOREIGN KEY (`almacen_id`) REFERENCES `almacens` (`id`),
   ADD CONSTRAINT `movimiento_cajas_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`),
   ADD CONSTRAINT `movimiento_cajas_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Filtros para la tabla `notificacion_users`
+--
+ALTER TABLE `notificacion_users`
+  ADD CONSTRAINT `notificacion_users_notificacion_id_foreign` FOREIGN KEY (`notificacion_id`) REFERENCES `notificacions` (`id`),
+  ADD CONSTRAINT `notificacion_users_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Filtros para la tabla `permisos`

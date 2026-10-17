@@ -115,6 +115,16 @@ const cerrarFormulario = () => {
     document.getElementsByTagName("body")[0].classList.remove("modal-open");
 };
 
+const listCalidads = ref([
+    {
+        value: "EXTRA",
+        label: "EXTRA",
+    },
+    {
+        value: "COMERCIAL",
+        label: "COMERCIAL",
+    },
+]);
 const listCategorias = ref([]);
 const listMarcas = ref([]);
 const listUnidadMedidas = ref([]);
@@ -283,6 +293,77 @@ onMounted(() => {
                         </ul>
                     </div>
                     <div class="col-md-4 mt-2">
+                        <label>Caracteristicas</label>
+                        <el-input
+                            type="textarea"
+                            v-model="form.caracteristicas"
+                            autosize
+                        ></el-input>
+                        <ul
+                            v-if="form.errors?.caracteristicas"
+                            class="d-block text-danger list-unstyled"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.caracteristicas }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="required">Calidad </label>
+                        <el-select
+                            v-model="form.calidad"
+                            placeholder="Calidad"
+                            filterable
+                        >
+                            <el-option
+                                v-for="item in listCalidads"
+                                :key="item.value"
+                                :value="item.value"
+                                :label="item.label"
+                            ></el-option>
+                        </el-select>
+                        <ul
+                            v-if="form.errors?.calidad"
+                            class="d-block text-danger list-unstyled"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.calidad }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="">Cobertura</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            v-model="form.cobertura"
+                        />
+                        <ul
+                            v-if="form.errors?.cobertura"
+                            class="d-block text-danger list-unstyled"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.cobertura }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="">Formato</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            v-model="form.formato"
+                        />
+                        <ul
+                            v-if="form.errors?.formato"
+                            class="d-block text-danger list-unstyled"
+                        >
+                            <li class="parsley-required">
+                                {{ form.errors?.formato }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mt-2">
                         <label class="required">Precio de Compra Bs.</label>
                         <input
                             type="number"
@@ -291,11 +372,11 @@ onMounted(() => {
                             v-model="form.precio_compra"
                         />
                         <ul
-                            v-if="form.errors?.precio"
+                            v-if="form.errors?.precio_compra"
                             class="d-block text-danger list-unstyled"
                         >
                             <li class="parsley-required">
-                                {{ form.errors?.precio }}
+                                {{ form.errors?.precio_compra }}
                             </li>
                         </ul>
                     </div>
@@ -341,8 +422,8 @@ onMounted(() => {
                         <label class="required">Estado</label>
                         <br />
                         <small class="text-muted text-xs"
-                            >(Si está activo, se podrá realizar ventas y
-                            movimientos en estaproducto)</small
+                            >(Podrá realizar ventas y movimientos con este
+                            producto)</small
                         >
                         <br />
                         <el-switch
