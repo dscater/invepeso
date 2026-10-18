@@ -34,4 +34,9 @@ class IngresoDetalle extends Model
     {
         return $this->belongsTo(Producto::class, 'producto_id');
     }
+
+    public function ingreso_recepcions()
+    {
+        return $this->hasMany(IngresoRecepcion::class, 'ingreso_detalle_id');
+    }
 }

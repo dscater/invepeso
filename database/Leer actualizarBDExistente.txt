@@ -1,6 +1,0 @@
-
-1) Crear tabla ingreso_faltantes.sql
-2) Actualizar los registros ingreso_detalles con el archivo queryFaltantes.txt
-3) Crear tabla cliente_productos.sql
-4) actualizar tabla migrations registro tabla ingreso_faltantes y cliente_productos migrations.sql
-

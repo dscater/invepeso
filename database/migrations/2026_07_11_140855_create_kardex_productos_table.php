@@ -23,9 +23,9 @@ return new class extends Migration
             $table->text("detalle");
             $table->decimal("precio", 24, 2)->nullable();
             $table->string("tipo_is");
-            $table->double("cantidad_ingreso")->nullable();
-            $table->double("cantidad_salida")->nullable();
-            $table->double("cantidad_saldo");
+            $table->double("cantidad_ingreso", 8, 2)->nullable();
+            $table->double("cantidad_salida", 8, 2)->nullable();
+            $table->double("cantidad_saldo", 8, 2);
             $table->decimal("cu", 24, 2);
             $table->decimal("monto_ingreso", 24, 2)->nullable();
             $table->decimal("monto_salida", 24, 2)->nullable();

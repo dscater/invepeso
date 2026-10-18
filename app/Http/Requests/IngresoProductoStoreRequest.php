@@ -24,6 +24,7 @@ class IngresoProductoStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "codigo" => "required|unique:ingreso_productos,codigo",
             "almacen_id" => "required",
             "tipo_ingreso_id" => "required",
             "proveedor_id" => "required",
@@ -39,6 +40,8 @@ class IngresoProductoStoreRequest extends FormRequest
     public function messages()
     {
         return [
+            "codigo.required" => "Debes ingresar el código de ingreso",
+            "codigo.unique" => "Este código de ingreso ya fue registrado",
             "almacen_id.required" => "Debes indicar el almacén",
             "tipo_ingreso_id.required" => "Debes seleccionar el tipo de ingreso",
             "proveedor_id.required" => "Debes seleccionar un proveedor",

@@ -67,4 +67,9 @@ class IngresoProducto extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function ingreso_recepcions()
+    {
+        return $this->hasMany(IngresoRecepcion::class, 'ingreso_producto_id');
+    }
 }

@@ -18,4 +18,9 @@ class Almacen extends Model
     {
         return $this->belongsTo(Sucursal::class, 'sucursal_id');
     }
+
+    public function ingreso_recepcions()
+    {
+        return $this->hasMany(IngresoRecepcion::class, 'almacen_id');
+    }
 }

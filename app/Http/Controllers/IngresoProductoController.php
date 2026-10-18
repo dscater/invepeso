@@ -289,6 +289,17 @@ class IngresoProductoController extends Controller
         return Inertia::render("Admin/IngresoProductos/VerificacionIngresos");
     }
 
+    public function verificacion_create(IngresoProducto $ingreso_producto)
+    {
+        $ingreso_producto = $ingreso_producto->load(["proveedor", "sucursal", "almacen", "ingreso_detalles.producto", "ingreso_detalles.ingreso_recepcions"]);
+        return Inertia::render("Admin/IngresoProductos/VerificacionCreate", compact("ingreso_producto"));
+    }
+
+    public function verificacion_edit(IngresoProducto $ingreso_producto)
+    {
+        $ingreso_producto = $ingreso_producto->load(["proveedor", "sucursal", "almacen", "ingreso_detalles"]);
+        return Inertia::render("Admin/IngresoProductos/VerificacionEdit", compact("ingreso_producto"));
+    }
 
     public function verificar(IngresoProductoVerificarRequest $request, IngresoProducto $ingreso_producto)
     {

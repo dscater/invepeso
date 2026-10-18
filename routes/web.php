@@ -212,6 +212,8 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("ingreso_productos/lista_faltantes", [IngresoProductoController::class, 'lista_faltantes'])->name("ingreso_productos.lista_faltantes");
     Route::get("ingreso_productos/lista_para_reponer", [IngresoProductoController::class, 'lista_para_reponer'])->name("ingreso_productos.lista_para_reponer");
     Route::get("ingreso_productos/verificacion_ingresos", [IngresoProductoController::class, 'verificacion_ingresos'])->name("ingreso_productos.verificacion_ingresos");
+    Route::get("ingreso_productos/verificacion_create/{ingreso_producto}", [IngresoProductoController::class, 'verificacion_create'])->name("ingreso_productos.verificacion_create");
+    Route::get("ingreso_productos/verificacion_edit/{ingreso_producto}", [IngresoProductoController::class, 'verificacion_edit'])->name("ingreso_productos.verificacion_edit");
     Route::put("ingreso_productos/verificar/{ingreso_producto}", [IngresoProductoController::class, 'verificar'])->name("ingreso_productos.verificar");
     Route::get("ingreso_productos/faltantes_ingresos", [IngresoProductoController::class, 'faltantes_ingresos'])->name("ingreso_productos.faltantes_ingresos");
     Route::put("ingreso_productos/faltante/{ingreso_producto}", [IngresoProductoController::class, 'faltante'])->name("ingreso_productos.faltante");

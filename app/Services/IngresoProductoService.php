@@ -113,7 +113,7 @@ class IngresoProductoService
         $total_cancelado = (float)($datos["cancelado_efectivo"] ?? 0) + (float)($datos["cancelado_qr"] ?? 0);
 
         $ingreso_producto = IngresoProducto::create([
-            "codigo" => "",
+            "codigo" => mb_strtoupper($datos["codigo"]),
             "sucursal_id" => $almacen->sucursal_id,
             "almacen_id" => $almacen->id,
             "tipo_ingreso_id" => $datos["tipo_ingreso_id"],
@@ -129,8 +129,10 @@ class IngresoProductoService
             "user_id" => Auth::user()->id,
         ]);
 
-        $ingreso_producto->codigo = $this->generarCodigoIngreso($ingreso_producto->id);
-        $ingreso_producto->save();
+        if (!$ingreso_producto->codigo) {
+            $ingreso_producto->codigo = $this->generarCodigoIngreso($ingreso_producto->id);
+            $ingreso_producto->save();
+        }
 
         foreach ($datos["ingreso_detalles"] as $item) {
             $dato_ingreso_detalle = [
@@ -208,35 +210,64 @@ class IngresoProductoService
     {
         $count_faltantes = 0;
 
-        foreach ($datos["ingreso_detalles"] as $item) {
+        foreach ($datos["ingreso_detalles"] as $detalle) {
+            $producto = Producto::findOrFail($detalle["producto_id"]);
+            $total_verificado = 0;
+            // recorrer las recepciones
+            $array_recepcions = [];
+            foreach ($detalle["ingreso_recepcions"] as $key_detalle => $recepcion) {
+                $almacen = Almacen::find($recepcion["almacen_id"]);
+                if (!$recepcion["cantidad"] || (float)$recepcion["cantidad"] <= 0) {
+                    throw new Exception("La cantidad ingresada del producto {$producto->nombre}, en el almacén {$almacen->nombre} es invalida");
+                }
+                $total_verificado += (float)$recepcion["cantidad"];
+                $array_recepcions[] = [
+                    "ingreso_producto_id" => $ingreso_producto->id,
+                    "ingreso_detalle_id" => 0,
+                    "sucursal_id" => $almacen->sucursal_id,
+                    "almacen_id" => $almacen->id,
+                    "producto_id" => $detalle["producto_id"],
+                    "cantidad" => $recepcion["cantidad"],
+                    "tipo" => "RECEPCION"
+                ];
+            }
+
+            $total_faltantes = (float)$detalle["cantidad"] - (float)$total_verificado;
+            $total_faltantes = number_format($total_faltantes, 2, ".", "");
+
             $dato_ingreso_detalle = [
-                "verificado" => $item["verificado"],
-                "faltantes" => $item["faltantes"],
-                "observacion" => $item["observacion"] ?? NULL,
-                "cantidad_fisica" => $item["verificado"],
+                "verificado" => $total_verificado,
+                "faltantes" => $total_faltantes,
+                "observacion" => $detalle["observacion"] ?? NULL,
+                "cantidad_fisica" => $total_verificado,
             ];
-            if ((float)$item["faltantes"] > 0) {
+
+            if ((float)$total_faltantes > 0) {
                 $count_faltantes++;
             }
 
-            $ingreso_detalle = IngresoDetalle::findOrFail($item["id"]);
-            $producto = Producto::findOrFail($ingreso_detalle->producto_id);
-            // ACTUALIZAR CANTIDAD
+            $ingreso_detalle = IngresoDetalle::findOrFail($detalle["id"]);
+            // ACTUALIZAR CANTIDADES DEL DETALLE
             $ingreso_detalle->update($dato_ingreso_detalle);
-            // REGISTRAR INGRESO STOCK
-            $this->kardex_producto_service->registrarMovimiento(
-                $ingreso_producto->sucursal_id,
-                $ingreso_producto->almacen_id,
-                "INGRESO DE PRODUCTO",
-                "INGRESO",
-                $ingreso_detalle->id,
-                $producto,
-                $ingreso_detalle->verificado,
-                $ingreso_detalle->costo,
-                $ingreso_producto->tipo_ingreso->nombre,
-                "IngresoDetalle",
-                $ingreso_detalle->id
-            );
+
+            $ingreso_detalle->ingreso_recepcions()->createMany($array_recepcions);
+
+            // REGISTRAR STOCKS
+            foreach ($ingreso_detalle->ingreso_recepcions as $recepcion) {
+                $this->kardex_producto_service->registrarMovimiento(
+                    $recepcion->sucursal_id,
+                    $recepcion->almacen_id,
+                    "INGRESO DE PRODUCTO",
+                    "INGRESO",
+                    $ingreso_detalle->id,
+                    $producto,
+                    $recepcion->cantidad,
+                    $ingreso_detalle->costo,
+                    $ingreso_producto->tipo_ingreso->nombre,
+                    "IngresoRecepcion",
+                    $recepcion->id
+                );
+            }
         }
         $ingreso_producto->estado_faltantes = $count_faltantes > 0 ? 'PENDIENTE' : 'SIN FALTANTES';
         $ingreso_producto->estado_ingreso = 'VERIFICADO';
@@ -315,6 +346,7 @@ class IngresoProductoService
         $old_ingreso_producto = clone $ingreso_producto;
         $old_ingreso_producto->loadMissing(["ingreso_detalles"]);
         $ingreso_producto->update([
+            "codigo" => mb_strtoupper($datos["codigo"]),
             "sucursal_id" => $datos["sucursal_id"],
             "tipo_ingreso_id" => $datos["tipo_ingreso_id"],
             "proveedor_id" => $datos["proveedor_id"],
@@ -324,6 +356,11 @@ class IngresoProductoService
             "saldo" => $datos["saldo"],
             "user_id" => Auth::user()->id,
         ]);
+
+        if (!$ingreso_producto->codigo) {
+            $ingreso_producto->codigo = $this->generarCodigoIngreso($ingreso_producto->id);
+            $ingreso_producto->save();
+        }
 
         foreach ($datos["ingreso_detalles"] as $item) {
             $dato_ingreso_detalle = [

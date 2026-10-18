@@ -631,6 +631,24 @@ onMounted(() => {
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-12">
+                                <label class="required"
+                                    >Código de Ingreso</label
+                                >
+                                <input
+                                    v-model="form.codigo"
+                                    placeholder="Código de Ingreso"
+                                    class="form-control"
+                                />
+                                <ul
+                                    v-if="form.errors?.codigo"
+                                    class="d-block text-danger list-unstyled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.codigo }}
+                                    </li>
+                                </ul>
+                            </div>
                             <div class="col-md-6 mt-2">
                                 <label class="required">Proveedor</label>
                                 <el-select

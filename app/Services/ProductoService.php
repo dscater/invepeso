@@ -226,7 +226,7 @@ class ProductoService
         return true;
     }
 
-    public function incrementarStock(int $sucursal_id, int $almacen_id, int $producto_id, int $cantidad = 1)
+    public function incrementarStock(int $sucursal_id, int $almacen_id, int $producto_id, float $cantidad = 1)
     {
         $producto = ProductoSucursal::where("producto_id", $producto_id)
             ->where("sucursal_id", $sucursal_id)
@@ -247,7 +247,7 @@ class ProductoService
         $producto->save();
         return $producto;
     }
-    public function decrementarStock(int $sucursal_id, int $almacen_id, int $producto_id, int $cantidad = 1)
+    public function decrementarStock(int $sucursal_id, int $almacen_id, int $producto_id, float $cantidad = 1)
     {
         $producto = ProductoSucursal::where("producto_id", $producto_id)
             ->where("sucursal_id", $sucursal_id)

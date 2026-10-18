@@ -14,6 +14,26 @@ table .bg-principal,
     color: white;
 }
 
+.bg1 {
+    background-color: var(--bg1);
+}
+
+.bg2 {
+    background-color: var(--bg2);
+}
+
+.bg3 {
+    background-color: var(--bg3);
+}
+
+.bg4 {
+    background-color: var(--bg4);
+}
+
+.bg5 {
+    background-color: var(--bg5);
+}
+
 .bg6 {
     background-color: var(--bg6);
 }
@@ -34,12 +54,40 @@ table .bg-principal,
     background-color: var(--bgPrecargado);
 }
 
+.txtPrimary {
+    color: var(--bgPrimary) !important;
+}
+
+.txtActivo {
+    color: var(--bgActivo) !important;
+}
+
+.txtInactivo {
+    color: var(--bgInactivo) !important;
+}
+
+.bgPrimary {
+    background-color: var(--bgPrimary);
+}
+
+.bgPrimary2 {
+    background-color: var(--bgPrimary2);
+}
+
 .bgActivo {
     background-color: var(--bgActivo);
 }
 
+.bgActivo2 {
+    background-color: var(--bgActivo2);
+}
+
 .bgInactivo {
     background-color: var(--bgInactivo);
+}
+
+.bgInactivo2 {
+    background-color: var(--bgInactivo2);
 }
 
 .bgWhite {
@@ -92,6 +140,14 @@ table .bg-dark-principal,
 
 .modal .modal-header button.close {
     color: white;
+}
+
+.border-dashed {
+    border: dashed 1.3px var(--bgDarkGray) !important;
+}
+
+.border-dotted {
+    border: dotted 1.3px var(--bgDarkGray) !important;
 }
 
 /* LOGIN */

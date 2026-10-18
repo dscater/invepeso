@@ -25,4 +25,9 @@ class Sucursal extends Model
     {
         return $this->hasMany(Caja::class, 'sucursal_id');
     }
+
+    public function ingreso_recepcions()
+    {
+        return $this->hasMany(IngresoRecepcion::class, 'sucursal_id');
+    }
 }

@@ -20,6 +20,8 @@ export const useIngresoProductos = () => {
         user_id: "",
         status: "",
         ingreso_detalles: [],
+        ingreso_recepcions: [],
+        eliminados_recepcions: [],
         eliminados: [],
         _method: "POST",
     };

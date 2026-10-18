@@ -6,7 +6,6 @@ import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
-import Verificar from "./Verificar.vue";
 import { buttonProps } from "element-plus";
 import { useDate } from "@/composables/useDate.js";
 import axios from "axios";
@@ -71,19 +70,6 @@ onBeforeMount(() => {
 onMounted(() => {
     appStore.stopLoading();
 });
-
-const verificar = (item) => {
-    setIngresoProducto(item);
-    muestra_formulario.value = true;
-};
-
-const updateIngresos = () => {
-    muestra_formulario.value = false;
-    limpiarIngresoProducto();
-    cargarIngresosSinVerificar();
-};
-
-const muestra_formulario = ref(false);
 </script>
 <template>
     <Head title="Recepción de Compras"></Head>
@@ -261,13 +247,18 @@ const muestra_formulario = ref(false);
                     <div class="card-footer">
                         <div class="row">
                             <div class="col-12">
-                                <button
+                                <Link
                                     class="btn btn-sm btn-primary float-end"
-                                    @click="verificar(item)"
+                                    :href="
+                                        route(
+                                            'ingreso_productos.verificacion_create',
+                                            item.id,
+                                        )
+                                    "
                                 >
-                                    <i class="fa fa-external-link-alt"></i>
-                                    Verificar
-                                </button>
+                                    <i class="fa fa-clipboard-check"></i>
+                                    Registrar Recepción
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -282,12 +273,5 @@ const muestra_formulario = ref(false);
                 </h4>
             </div>
         </div>
-        <Verificar
-            v-if="muestra_formulario"
-            :muestra_formulario="muestra_formulario"
-            :form="form"
-            @envio-formulario="updateIngresos"
-            @cerrar-formulario="muestra_formulario = false"
-        ></Verificar>
     </Content>
 </template>

@@ -1,1 +1,0 @@
-UPDATE ingreso_detalles SET faltantes = faltantes - repuesto WHERE faltantes > 0;
