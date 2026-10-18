@@ -20,6 +20,8 @@ return new class extends Migration
             $table->unsignedBigInteger("producto_id");
             $table->double("cantidad", 8, 2);
             $table->string("tipo"); // RECEPCION, FALTANTE
+            $table->date("fecha")->nullable();
+            $table->time("hora")->nullable();
             $table->timestamps();
 
             $table->foreign("ingreso_producto_id")->on("ingreso_productos")->references("id");

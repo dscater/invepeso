@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 18-10-2026 a las 15:53:53
+-- Tiempo de generación: 18-10-2026 a las 22:33:31
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -180,15 +180,6 @@ CREATE TABLE `historial_accions` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `historial_accions`
---
-
-INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `datos_original`, `datos_nuevo`, `modulo`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
-(1, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 1, \"saldo\": \"4860.00\", \"total\": \"4860.00\", \"codigo\": \"F001\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-10-18T15:46:53.000000Z\", \"updated_at\": \"2026-10-18T15:46:53.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-10-18\", \"tipo_ingreso_id\": \"1\", \"total_cancelado\": 0, \"ingreso_detalles\": [{\"id\": 1, \"costo\": \"120.00\", \"cantidad\": 10, \"repuesto\": 0, \"subtotal\": \"1200.00\", \"faltantes\": null, \"created_at\": \"2026-10-18T15:46:53.000000Z\", \"updated_at\": \"2026-10-18T15:46:53.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 1, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 1}, {\"id\": 2, \"costo\": \"121.00\", \"cantidad\": 10, \"repuesto\": 0, \"subtotal\": \"1210.00\", \"faltantes\": null, \"created_at\": \"2026-10-18T15:46:53.000000Z\", \"updated_at\": \"2026-10-18T15:46:53.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 2, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 1}, {\"id\": 3, \"costo\": \"122.00\", \"cantidad\": 10, \"repuesto\": 0, \"subtotal\": \"1220.00\", \"faltantes\": null, \"created_at\": \"2026-10-18T15:46:53.000000Z\", \"updated_at\": \"2026-10-18T15:46:53.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 3, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 1}, {\"id\": 4, \"costo\": \"123.00\", \"cantidad\": 10, \"repuesto\": 0, \"subtotal\": \"1230.00\", \"faltantes\": null, \"created_at\": \"2026-10-18T15:46:53.000000Z\", \"updated_at\": \"2026-10-18T15:46:53.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 4, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 1}], \"cancelado_efectivo\": \"0\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-10-18', '11:46:53', '2026-10-18 15:46:53', '2026-10-18 15:46:53'),
-(2, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 2, \"saldo\": \"120.00\", \"total\": \"120.00\", \"codigo\": \"F002\", \"user_id\": 1, \"almacen_id\": 2, \"created_at\": \"2026-10-18T15:50:27.000000Z\", \"updated_at\": \"2026-10-18T15:50:27.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 2, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-10-18\", \"tipo_ingreso_id\": \"1\", \"total_cancelado\": 0, \"ingreso_detalles\": [{\"id\": 5, \"costo\": \"120.00\", \"cantidad\": 1, \"repuesto\": 0, \"subtotal\": \"120.00\", \"faltantes\": null, \"created_at\": \"2026-10-18T15:50:27.000000Z\", \"updated_at\": \"2026-10-18T15:50:27.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 1, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 2}], \"cancelado_efectivo\": \"0\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-10-18', '11:50:27', '2026-10-18 15:50:27', '2026-10-18 15:50:27'),
-(3, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 3, \"saldo\": \"121.00\", \"total\": \"121.00\", \"codigo\": \"F033\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-10-18T15:52:30.000000Z\", \"updated_at\": \"2026-10-18T15:52:30.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-10-18\", \"tipo_ingreso_id\": \"1\", \"total_cancelado\": 0, \"ingreso_detalles\": [{\"id\": 6, \"costo\": \"121.00\", \"cantidad\": 1, \"repuesto\": 0, \"subtotal\": \"121.00\", \"faltantes\": null, \"created_at\": \"2026-10-18T15:52:30.000000Z\", \"updated_at\": \"2026-10-18T15:52:30.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 2, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 3}], \"cancelado_efectivo\": \"0\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-10-18', '11:52:30', '2026-10-18 15:52:30', '2026-10-18 15:52:30');
-
 -- --------------------------------------------------------
 
 --
@@ -296,6 +287,8 @@ CREATE TABLE `ingreso_recepcions` (
   `producto_id` bigint UNSIGNED NOT NULL,
   `cantidad` double NOT NULL,
   `tipo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fecha` date DEFAULT NULL,
+  `hora` time DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1317,7 +1310,7 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`

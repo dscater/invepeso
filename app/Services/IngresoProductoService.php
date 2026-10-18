@@ -6,6 +6,7 @@ use App\Models\Almacen;
 use App\Models\IngresoDetalle;
 use App\Services\HistorialAccionService;
 use App\Models\IngresoProducto;
+use App\Models\IngresoRecepcion;
 use App\Models\Producto;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -210,6 +211,8 @@ class IngresoProductoService
     {
         $count_faltantes = 0;
 
+        $fecha_actual  = date("Y-m-d");
+        $hora_actual  = date("H:i:s");
         foreach ($datos["ingreso_detalles"] as $detalle) {
             $producto = Producto::findOrFail($detalle["producto_id"]);
             $total_verificado = 0;
@@ -223,12 +226,14 @@ class IngresoProductoService
                 $total_verificado += (float)$recepcion["cantidad"];
                 $array_recepcions[] = [
                     "ingreso_producto_id" => $ingreso_producto->id,
-                    "ingreso_detalle_id" => 0,
+                    "ingreso_detalle_id" => $detalle["id"],
                     "sucursal_id" => $almacen->sucursal_id,
                     "almacen_id" => $almacen->id,
                     "producto_id" => $detalle["producto_id"],
                     "cantidad" => $recepcion["cantidad"],
-                    "tipo" => "RECEPCION"
+                    "tipo" => "RECEPCION",
+                    "fecha" => $fecha_actual,
+                    "hora" => $hora_actual,
                 ];
             }
 
@@ -250,22 +255,22 @@ class IngresoProductoService
             // ACTUALIZAR CANTIDADES DEL DETALLE
             $ingreso_detalle->update($dato_ingreso_detalle);
 
-            $ingreso_detalle->ingreso_recepcions()->createMany($array_recepcions);
-
             // REGISTRAR STOCKS
-            foreach ($ingreso_detalle->ingreso_recepcions as $recepcion) {
+            foreach ($array_recepcions as $recepcion) {
+                $ingreso_recepcion = IngresoRecepcion::create($recepcion);
+
                 $this->kardex_producto_service->registrarMovimiento(
-                    $recepcion->sucursal_id,
-                    $recepcion->almacen_id,
+                    $ingreso_recepcion->sucursal_id,
+                    $ingreso_recepcion->almacen_id,
                     "INGRESO DE PRODUCTO",
                     "INGRESO",
                     $ingreso_detalle->id,
                     $producto,
-                    $recepcion->cantidad,
+                    $ingreso_recepcion->cantidad,
                     $ingreso_detalle->costo,
                     $ingreso_producto->tipo_ingreso->nombre,
                     "IngresoRecepcion",
-                    $recepcion->id
+                    $ingreso_recepcion->id
                 );
             }
         }
@@ -279,56 +284,85 @@ class IngresoProductoService
     public function faltante(array $datos, IngresoProducto $ingreso_producto)
     {
         $count_faltantes = 0;
-        foreach ($datos["ingreso_detalles"] as $item) {
-            // Log::debug($item["repuesto_actual"]);
-            // Log::debug($item["faltantes_aux"]);
-            if ((float)$item["repuesto_actual"] > (float)$item["faltantes_aux"]) {
-                $producto = Producto::findOrFail($item["producto_id"]);
-                throw new Exception("La cantidad repuesta del producto {$producto->nombre} no puede ser mayor a los faltantes");
+
+        $fecha_actual  = date("Y-m-d");
+        $hora_actual  = date("H:i:s");
+        foreach ($datos["ingreso_detalles"] as $detalle) {
+            $producto = Producto::findOrFail($detalle["producto_id"]);
+            $total_verificado = 0;
+            // recorrer las recepciones
+            $array_recepcions = [];
+            if (!isset($detalle["ingreso_recepcions_faltantes"]))
+                continue;
+
+            foreach ($detalle["ingreso_recepcions_faltantes"] as $key_detalle => $recepcion) {
+                $almacen = Almacen::find($recepcion["almacen_id"]);
+                if (!$recepcion["cantidad"] || (float)$recepcion["cantidad"] <= 0) {
+                    continue;
+                }
+                $total_verificado += (float)$recepcion["cantidad"];
+                $array_recepcions[] = [
+                    "ingreso_producto_id" => $ingreso_producto->id,
+                    "ingreso_detalle_id" => $detalle["id"],
+                    "sucursal_id" => $almacen->sucursal_id,
+                    "almacen_id" => $almacen->id,
+                    "producto_id" => $detalle["producto_id"],
+                    "cantidad" => $recepcion["cantidad"],
+                    "tipo" => "FALTANTE",
+                    "fecha" => $fecha_actual,
+                    "hora" => $hora_actual,
+                ];
             }
 
-            $ingreso_detalle = IngresoDetalle::findOrFail($item["id"]);
-            $faltantes_iniciales = (float)$ingreso_detalle->cantidad - (float)$ingreso_detalle->verificado;
-            $faltantes = (float)$faltantes_iniciales - (float)$item["repuesto"];
-            $cantidad_fisica = $ingreso_detalle->cantidad_fisica + (float)$item["repuesto_actual"];
+            $ingreso_detalle = IngresoDetalle::findOrFail($detalle["id"]);
+            $total_repuesto = $total_verificado + (float)$ingreso_detalle->repuesto;
+
+            $total_verificado = (float)$ingreso_detalle->verificado + (float)$total_repuesto;
+            $total_faltantes = (float)$ingreso_detalle->cantidad - (float)$total_verificado;
+            $total_faltantes = number_format($total_faltantes, 2, ".", "");
+
             $dato_ingreso_detalle = [
-                "faltantes" => $faltantes,
-                "repuesto" => $item["repuesto"],
+                "faltantes" => $total_faltantes,
+                "repuesto" => $total_repuesto,
                 "observacion" => $item["observacion"] ?? NULL,
-                "cantidad_fisica" => $cantidad_fisica,
+                "cantidad_fisica" => $total_verificado,
             ];
-            if ((float)$faltantes > 0) {
+            if ((float)$total_faltantes > 0) {
                 $count_faltantes++;
             }
 
-            if (!isset($item["repuesto_actual"]) || (float)$item["repuesto_actual"] == 0 || !$item["repuesto_actual"]) {
-                continue;
-            }
-
-            $producto = Producto::findOrFail($ingreso_detalle->producto_id);
             // ACTUALIZAR CANTIDAD
             $ingreso_detalle->update($dato_ingreso_detalle);
-            // REGISTRAR INGRESO STOCK
-            $this->kardex_producto_service->registrarMovimiento(
-                $ingreso_producto->sucursal_id,
-                $ingreso_producto->almacen_id,
-                "INGRESO DE PRODUCTO",
-                "INGRESO",
-                $ingreso_detalle->id,
-                $producto,
-                (float)$item["repuesto_actual"],
-                $ingreso_detalle->costo,
-                "INGRESO POR RECEPCIÓN DE FALTANTE DE COMPRA",
-                "IngresoDetalle",
-                $ingreso_detalle->id
-            );
+
+            // REGISTRAR STOCKS
+            foreach ($array_recepcions as $recepcion) {
+                $ingreso_recepcion = IngresoRecepcion::create($recepcion);
+
+                $this->kardex_producto_service->registrarMovimiento(
+                    $ingreso_recepcion->sucursal_id,
+                    $ingreso_recepcion->almacen_id,
+                    "INGRESO DE PRODUCTO",
+                    "INGRESO",
+                    $ingreso_detalle->id,
+                    $producto,
+                    $ingreso_recepcion->cantidad,
+                    $ingreso_detalle->costo,
+                    $ingreso_producto->tipo_ingreso->nombre,
+                    "IngresoRecepcion",
+                    $ingreso_recepcion->id
+                );
+            }
 
             // HISTORIAL REPOSICIÓN faltantes
             $this->ingreso_faltante_service->crear([
                 "ingreso_producto_id" => $ingreso_detalle->ingreso_producto_id,
                 "ingreso_detalle_id" => $ingreso_detalle->id,
-                "cantidad" => $item["repuesto_actual"],
+                "cantidad" => $total_repuesto,
             ]);
+        }
+        if ($count_faltantes == 0) {
+            // VOLVER A VERIFICAR POR CONSULTA
+            $count_faltantes = $ingreso_producto->ingreso_detalles_faltantes()->count();
         }
         $ingreso_producto->estado_faltantes = $count_faltantes > 0 ? 'PENDIENTE' : 'COMPLETO';
         $ingreso_producto->save();

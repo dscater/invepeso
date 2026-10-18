@@ -18,9 +18,9 @@ const textBtn = computed(() => {
         return `<i class="fa fa-spin fa-spinner"></i> Enviando...`;
     }
     if (form.id == 0) {
-        return `<i class="fa fa-save"></i> Registrar Compra`;
+        return `<i class="fa fa-save"></i> Registrar Orden de Compra`;
     }
-    return `<i class="fa fa-edit"></i> Actualizar`;
+    return `<i class="fa fa-edit"></i> Actualizar Orden de Compra`;
 });
 
 const enviarFormulario = () => {

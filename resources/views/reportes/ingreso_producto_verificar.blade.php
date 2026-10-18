@@ -213,7 +213,10 @@
                     <td>{{ $item->producto->codigo }}</td>
                     <td>{{ $item->producto->nombre }}</td>
                     <td class="centreado">{{ $item->cantidad }}</td>
-                    <td class="centreado">{{ $item->verificado }}</td>
+                    @php
+                        $total_recibido = (float) $item->verificado + (float) $item->repuesto;
+                    @endphp
+                    <td class="centreado">{{ $total_recibido }}</td>
                     <td class="centreado">{{ $item->faltantes }}</td>
                     <td class="">{{ $item->observacion }}</td>
                 </tr>

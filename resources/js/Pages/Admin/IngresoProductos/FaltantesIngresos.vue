@@ -6,8 +6,6 @@ import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
-import Faltante from "./Faltante.vue";
-import { buttonProps } from "element-plus";
 import { useDate } from "@/composables/useDate.js";
 import axios from "axios";
 // const { mobile, identificaDispositivo } = useMenu();
@@ -71,19 +69,6 @@ onBeforeMount(() => {
 onMounted(() => {
     appStore.stopLoading();
 });
-
-const recepcionar = (item) => {
-    setIngresoProducto(item);
-    muestra_formulario.value = true;
-};
-
-const updateIngresos = () => {
-    muestra_formulario.value = false;
-    limpiarIngresoProducto();
-    cargarIngresosFaltantes();
-};
-
-const muestra_formulario = ref(false);
 </script>
 <template>
     <Head title="Recepción de Faltantes"></Head>
@@ -166,7 +151,7 @@ const muestra_formulario = ref(false);
                             {{ item.codigo }}
                         </h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body pb-0">
                         <div class="row">
                             <div class="col-6 text-end border-end">
                                 <div class="row">
@@ -232,15 +217,21 @@ const muestra_formulario = ref(false);
                             </div>
                         </div>
                         <div class="row border-top mt-1">
-                            <div class="col-6 pt-1 border-end">
+                            <div
+                                class="col-6 pt-1 pb-2 border-end bgInactivo2 text-center text-danger fw-bold"
+                            >
                                 <div class="row">
-                                    <div class="col-12 text-md text-center">
-                                        {{ item.ingreso_detalles.length }}
+                                    <div class="col-12 text-md">
+                                        {{
+                                            item.ingreso_detalles_faltantes
+                                                .length
+                                        }}
                                     </div>
                                     <div
-                                        class="col-12 text-xs text-muted text-center"
+                                        class="col-12 text-xs text-danger text-center"
                                     >
                                         <i class="fa fa-boxes"></i> Productos
+                                        con Faltantes
                                     </div>
                                 </div>
                             </div>
@@ -261,13 +252,18 @@ const muestra_formulario = ref(false);
                     <div class="card-footer">
                         <div class="row">
                             <div class="col-12">
-                                <button
+                                <a
                                     class="btn btn-sm btn-primary float-end"
-                                    @click="recepcionar(item)"
+                                    :href="
+                                        route(
+                                            'ingreso_productos.faltantes_create',
+                                            item.id,
+                                        )
+                                    "
                                 >
                                     <i class="fa fa-external-link-alt"></i>
-                                    Recepcionar
-                                </button>
+                                    Recepcionar Faltantes
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -282,12 +278,5 @@ const muestra_formulario = ref(false);
                 </h4>
             </div>
         </div>
-        <Faltante
-            v-if="muestra_formulario"
-            :muestra_formulario="muestra_formulario"
-            :form="form"
-            @envio-formulario="updateIngresos"
-            @cerrar-formulario="muestra_formulario = false"
-        ></Faltante>
     </Content>
 </template>

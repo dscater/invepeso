@@ -16,7 +16,10 @@ const textBtn = computed(() => {
     if (enviando.value) {
         return `<i class="fa fa-spin fa-spinner"></i> Enviando...`;
     }
-    return `<i class="fa fa-edit"></i> Registrar verificación`;
+    // editar
+    // return `<i class="fa fa-edit"></i> Actualizar verificación`;
+
+    return `<i class="fa fa-save"></i> Registrar verificación`;
 });
 
 const enviarFormulario = () => {
@@ -93,7 +96,6 @@ const enviarFormulario = () => {
 const emits = defineEmits(["envio-formulario"]);
 
 const agregarAlmacen = (detalle) => {
-    console.log(detalle);
     if (!detalle.ingreso_recepcions) detalle.ingreso_recepcions = [];
 
     detalle.ingreso_recepcions.push({
@@ -104,6 +106,7 @@ const agregarAlmacen = (detalle) => {
         almacen_id: "",
         producto_id: detalle.producto_id,
         cantidad: 0,
+        tipo: "RECEPCION",
     });
 };
 

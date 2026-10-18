@@ -2,9 +2,12 @@
 
 namespace App\Rules;
 
+use App\Models\Almacen;
 use App\Models\IngresoDetalle;
+use App\Models\Producto;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Translation\PotentiallyTranslatedString;
 
 class IngresoDetalleFaltantesRule implements ValidationRule
@@ -23,21 +26,24 @@ class IngresoDetalleFaltantesRule implements ValidationRule
 
         foreach ($value as $index => $detalle) {
             $item = IngresoDetalle::findOrFail($detalle["id"]);
+            $producto = Producto::find($detalle["producto_id"]);
             if ($item->faltantes <= 0) {
                 continue;
             }
-            // repuesto
-            if ($detalle['repuesto'] != "" && (float)$detalle["repuesto_actual"] > (float) $detalle['faltantes_aux']) {
-                $fail("La cantidad repuesta del producto " . ($index + 1) . " no puede ser superior a los faltantes.");
+            if (!isset($detalle["ingreso_recepcions_faltantes"]))
+                continue;
+
+            foreach ($detalle["ingreso_recepcions_faltantes"] as $key_recepcion => $recepcion) {
+                // almacen_id
+                if ($recepcion['almacen_id'] === "" || $recepcion['almacen_id'] === null) {
+                    $fail("El almacén del producto {$producto->nombre} es obligatorio.");
+                }
+                $almacen = Almacen::find($recepcion["almacen_id"]);
+                // cantidad
+                if (!is_numeric($recepcion['cantidad']) || $recepcion['cantidad'] <= 0) {
+                    $fail("La cantidad del producto {$producto->nombre}, en el almacén {$almacen->nombre} es obligatorio.");
+                }
             }
-
-            // if ($detalle['repuesto'] === "" || $detalle['repuesto'] === null) {
-            //     $fail("La cantidad repuesta del producto " . ($index + 1) . " es obligatorio.");
-            // }
-
-            // if (!is_numeric($detalle['repuesto']) || $detalle['repuesto'] < 1) {
-            //     $fail("La cantidad repuesta del producto " . ($index + 1) . " debe ser mayor a 0.");
-            // }
         }
     }
 }

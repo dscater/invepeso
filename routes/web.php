@@ -216,6 +216,8 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("ingreso_productos/verificacion_edit/{ingreso_producto}", [IngresoProductoController::class, 'verificacion_edit'])->name("ingreso_productos.verificacion_edit");
     Route::put("ingreso_productos/verificar/{ingreso_producto}", [IngresoProductoController::class, 'verificar'])->name("ingreso_productos.verificar");
     Route::get("ingreso_productos/faltantes_ingresos", [IngresoProductoController::class, 'faltantes_ingresos'])->name("ingreso_productos.faltantes_ingresos");
+    Route::get("ingreso_productos/faltantes_create/{ingreso_producto}", [IngresoProductoController::class, 'faltantes_create'])->name("ingreso_productos.faltantes_create");
+    Route::get("ingreso_productos/faltantes_edit/{ingreso_producto}", [IngresoProductoController::class, 'faltantes_edit'])->name("ingreso_productos.faltantes_edit");
     Route::put("ingreso_productos/faltante/{ingreso_producto}", [IngresoProductoController::class, 'faltante'])->name("ingreso_productos.faltante");
     Route::get("ingreso_productos/pagos", [IngresoProductoController::class, 'pagos'])->name("ingreso_productos.pagos");
     Route::get("ingreso_productos/pagos/lista_pagos_pendientes", [IngresoProductoController::class, 'lista_pagos_pendientes'])->name("ingreso_productos.lista_pagos_pendientes");

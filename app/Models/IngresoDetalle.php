@@ -39,4 +39,9 @@ class IngresoDetalle extends Model
     {
         return $this->hasMany(IngresoRecepcion::class, 'ingreso_detalle_id');
     }
+
+    public function ingreso_recepcions_faltantes()
+    {
+        return $this->hasMany(IngresoRecepcion::class, 'ingreso_detalle_id')->where("tipo", "FALTANTE");
+    }
 }

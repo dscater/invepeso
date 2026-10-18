@@ -62,7 +62,11 @@ const sincronizarMenus = () => {
         route_current.value == "ingreso_productos.create" ||
         route_current.value == "ingreso_productos.edit" ||
         route_current.value == "ingreso_productos.verificacion_ingresos" ||
+        route_current.value == "ingreso_productos.verificacion_create" ||
+        route_current.value == "ingreso_productos.verificacion_edit" ||
         route_current.value == "ingreso_productos.faltantes_ingresos" ||
+        route_current.value == "ingreso_productos.faltantes_create" ||
+        route_current.value == "ingreso_productos.faltantes_edit" ||
         route_current.value == "salida_productos.create" ||
         route_current.value == "salida_productos.edit" ||
         route_current.value == "traspasos.index" ||
@@ -369,6 +373,15 @@ onUnmounted(() => {});
                             permisos.includes(
                                 'ingreso_productos.verificacion_ingresos',
                             ) ||
+                            permisos.includes(
+                                'ingreso_productos.faltantes_ingresos',
+                            ) ||
+                            permisos.includes(
+                                'ingreso_productos.faltantes_create',
+                            ) ||
+                            permisos.includes(
+                                'ingreso_productos.faltantes_edit',
+                            ) ||
                             permisos.includes('salida_productos.index') ||
                             permisos.includes('salida_productos.create') ||
                             permisos.includes('traspasos.index')
@@ -384,6 +397,16 @@ onUnmounted(() => {});
                                 route_current == 'ingreso_productos.create' ||
                                 route_current ==
                                     'ingreso_productos.verificacion_ingresos' ||
+                                route_current ==
+                                    'ingreso_productos.verificacion_create' ||
+                                route_current ==
+                                    'ingreso_productos.verificacion_edit' ||
+                                route_current ==
+                                    'ingreso_productos.faltantes_ingresos' ||
+                                route_current ==
+                                    'ingreso_productos.faltantes_create' ||
+                                route_current ==
+                                    'ingreso_productos.faltantes_edit' ||
                                 route_current == 'salida_productos.index' ||
                                 route_current == 'salida_productos.create' ||
                                 route_current == 'traspasos.index' ||
@@ -426,6 +449,11 @@ onUnmounted(() => {});
                                 "
                                 :label="'Recepción de Compras'"
                                 :ruta="'ingreso_productos.verificacion_ingresos'"
+                                :array-ruta-class-active="[
+                                    'ingreso_productos.verificacion_ingresos',
+                                    'ingreso_productos.verificacion_create',
+                                    'ingreso_productos.verificacion_edit',
+                                ]"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                             <ItemMenu
@@ -437,6 +465,11 @@ onUnmounted(() => {});
                                 "
                                 :label="'Recepción de Faltantes'"
                                 :ruta="'ingreso_productos.faltantes_ingresos'"
+                                :array-ruta-class-active="[
+                                    'ingreso_productos.faltantes_ingresos',
+                                    'ingreso_productos.faltantes_create',
+                                    'ingreso_productos.faltantes_edit',
+                                ]"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                             <ItemMenu

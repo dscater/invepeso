@@ -58,6 +58,12 @@ class IngresoProducto extends Model
         return $this->hasMany(IngresoDetalle::class, 'ingreso_producto_id');
     }
 
+    public function ingreso_detalles_faltantes()
+    {
+        return $this->hasMany(IngresoDetalle::class, 'ingreso_producto_id')->where("faltantes", ">", 0);
+    }
+
+
     public function ingreso_pagos()
     {
         return $this->hasMany(IngresoPago::class, 'ingreso_producto_id');

@@ -14,6 +14,8 @@ class IngresoRecepcion extends Model
         "producto_id",
         "cantidad",
         "tipo", // RECEPCION: lo que se recibio y distribuyo a los almacenes, FALTANTE: lo que se recibio segun faltantes de RECEPCION
+        "fecha",
+        "hora"
     ];
 
     public function ingreso_producto()

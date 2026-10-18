@@ -8,6 +8,7 @@ use App\Http\Requests\IngresoProductoStoreRequest;
 use App\Http\Requests\IngresoProductoUpdateRequest;
 use App\Http\Requests\IngresoProductoVerificarRequest;
 use App\Models\Almacen;
+use App\Models\IngresoDetalle;
 use App\Models\IngresoPago;
 use App\Models\IngresoProducto;
 use App\Models\User;
@@ -269,7 +270,7 @@ class IngresoProductoController extends Controller
         $fecha_fin = $request->input("fecha_fin", null);
         $almacen_id = $request->input("almacen_id", null);
 
-        $ingreso_productos = IngresoProducto::with(["sucursal", "almacen", "tipo_ingreso", "proveedor", "ingreso_detalles.producto"])
+        $ingreso_productos = IngresoProducto::with(["sucursal", "almacen", "tipo_ingreso", "proveedor", "ingreso_detalles.producto", "ingreso_detalles_faltantes"])
             ->where("estado_faltantes", "PENDIENTE");
 
         if ($almacen_id && $almacen_id != 'todos') {
@@ -321,6 +322,28 @@ class IngresoProductoController extends Controller
     public function faltantes_ingresos()
     {
         return Inertia::render("Admin/IngresoProductos/FaltantesIngresos");
+    }
+
+
+    public function faltantes_create(IngresoProducto $ingreso_producto)
+    {
+        $ingreso_producto = $ingreso_producto->load(["proveedor", "sucursal", "almacen"]);
+
+        $ingreso_producto->ingreso_detalles = IngresoDetalle::with(["producto",  "ingreso_recepcions"])
+            ->where("ingreso_producto_id", $ingreso_producto->id)
+            ->where("faltantes", ">", 0)
+            ->get();
+
+        return Inertia::render("Admin/IngresoProductos/FaltantesCreate", compact("ingreso_producto"));
+    }
+    public function faltantes_edit(IngresoProducto $ingreso_producto)
+    {
+        $ingreso_producto = $ingreso_producto->load(["proveedor", "sucursal", "almacen"]);
+        $ingreso_producto->ingreso_detalles = IngresoDetalle::with(["producto", "ingreso_recepcions_faltantes", "ingreso_recepcions"])
+            ->where("ingreso_producto_id", $ingreso_producto->id)
+            ->where("faltantes", ">", 0)
+            ->get();
+        return Inertia::render("Admin/IngresoProductos/FaltantesEdit", compact("ingreso_producto"));
     }
 
     public function faltante(IngresoProductoFaltantesRequest $request, IngresoProducto $ingreso_producto)
