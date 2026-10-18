@@ -22,8 +22,9 @@ const { setVenta, limpiarVenta, form } = useVentas();
 
 const listAlmacens = ref([]);
 const almacen_id = ref("todos");
-const fecha_ini = ref(getFechaActual());
-const fecha_fin = ref(getFechaActual());
+const cliente = ref("");
+const fecha_ini = ref("");
+const fecha_fin = ref("");
 const ventas = ref([]);
 
 const cargarAlmacens = async () => {
@@ -44,9 +45,10 @@ const cargarVentasFormularioCobros = () => {
     axios
         .get(route("ventas.lista_cobros_pendientes"), {
             params: {
+                almacen_id: almacen_id.value,
+                cliente: cliente.value,
                 fecha_ini: fecha_ini.value,
                 fecha_fin: fecha_fin.value,
-                almacen_id: almacen_id.value,
             },
         })
         .then((response) => {
@@ -111,7 +113,7 @@ const muestra_formulario = ref(false);
             <!-- /.row -->
         </template>
         <div class="row mb-2">
-            <div class="col-md-4 col-sm-12">
+            <div class="col-md-3 col-sm-12">
                 <span class="text-muted text-sm">Almacén</span>
                 <el-select
                     v-model="almacen_id"
@@ -130,7 +132,18 @@ const muestra_formulario = ref(false);
                     ></el-option>
                 </el-select>
             </div>
-            <div class="col-md-4 col-sm-6">
+            <div class="col-md-3 col-sm-6">
+                <span class="text-muted text-sm">Cliente</span>
+                <input
+                    type="text"
+                    v-model="cliente"
+                    class="form-control"
+                    placeholder="Cliente"
+                    @keyup="cargaListado"
+                    @change="cargarVentasFormularioCobros"
+                />
+            </div>
+            <div class="col-md-3 col-sm-6">
                 <span class="text-muted text-sm">Desde</span>
                 <input
                     type="date"
@@ -140,7 +153,7 @@ const muestra_formulario = ref(false);
                     @change="cargarVentasFormularioCobros"
                 />
             </div>
-            <div class="col-md-4 col-sm-6">
+            <div class="col-md-3 col-sm-6">
                 <span class="text-muted text-sm">Hasta</span>
                 <input
                     type="date"
@@ -149,6 +162,11 @@ const muestra_formulario = ref(false);
                     @keyup="cargaListado"
                     @change="cargarVentasFormularioCobros"
                 />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-md">
+                Total registros: {{ ventas.length }}
             </div>
         </div>
         <div class="row" v-if="ventas.length > 0">
@@ -166,7 +184,7 @@ const muestra_formulario = ref(false);
                             {{ item.codigo_venta }}
                         </h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body pb-0">
                         <div class="row">
                             <div class="col-6 text-end border-end">
                                 <div class="row">
@@ -233,7 +251,9 @@ const muestra_formulario = ref(false);
                             </div>
                         </div>
                         <div class="row border-top mt-1">
-                            <div class="col-6 pt-1 fw-bold text-success">
+                            <div
+                                class="col-6 pt-1 fw-bold text-success bgActivo2"
+                            >
                                 <div class="row">
                                     <div class="col-12 text-md text-center">
                                         {{ item.total }}
@@ -245,7 +265,9 @@ const muestra_formulario = ref(false);
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6 pt-1 fw-bold text-danger">
+                            <div
+                                class="col-6 pt-1 fw-bold text-danger bgInactivo2"
+                            >
                                 <div class="row">
                                     <div class="col-12 text-md text-center">
                                         {{ item.saldo }}

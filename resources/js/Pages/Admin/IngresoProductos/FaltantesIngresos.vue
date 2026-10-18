@@ -20,8 +20,9 @@ const { setIngresoProducto, limpiarIngresoProducto, form } =
 
 const listAlmacens = ref([]);
 const almacen_id = ref("todos");
-const fecha_ini = ref(getFechaActual());
-const fecha_fin = ref(getFechaActual());
+const codigo = ref("");
+const fecha_ini = ref("");
+const fecha_fin = ref("");
 const ingreso_productos = ref([]);
 
 const cargarAlmacens = async () => {
@@ -42,9 +43,10 @@ const cargarIngresosFaltantes = () => {
     axios
         .get(route("ingreso_productos.lista_faltantes"), {
             params: {
+                almacen_id: almacen_id.value,
+                codigo: codigo.value,
                 fecha_ini: fecha_ini.value,
                 fecha_fin: fecha_fin.value,
-                almacen_id: almacen_id.value,
             },
         })
         .then((response) => {
@@ -96,7 +98,7 @@ onMounted(() => {
             <!-- /.row -->
         </template>
         <div class="row mb-2">
-            <div class="col-md-4 col-sm-12">
+            <div class="col-md-3 col-sm-12">
                 <span class="text-muted text-sm">Almacén</span>
                 <el-select
                     v-model="almacen_id"
@@ -115,7 +117,18 @@ onMounted(() => {
                     ></el-option>
                 </el-select>
             </div>
-            <div class="col-md-4 col-sm-6">
+            <div class="col-md-3 col-sm-6">
+                <span class="text-muted text-sm">Código</span>
+                <input
+                    type="text"
+                    v-model="codigo"
+                    class="form-control"
+                    placeholder="Ingresar Código"
+                    @keyup="cargaListado"
+                    @change="cargarIngresosFaltantes"
+                />
+            </div>
+            <div class="col-md-3 col-sm-6">
                 <span class="text-muted text-sm">Desde</span>
                 <input
                     type="date"
@@ -125,7 +138,7 @@ onMounted(() => {
                     @change="cargarIngresosFaltantes"
                 />
             </div>
-            <div class="col-md-4 col-sm-6">
+            <div class="col-md-3 col-sm-6">
                 <span class="text-muted text-sm">Hasta</span>
                 <input
                     type="date"
@@ -134,6 +147,11 @@ onMounted(() => {
                     @keyup="cargaListado"
                     @change="cargarIngresosFaltantes"
                 />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-md">
+                Total registros: {{ ingreso_productos.length }}
             </div>
         </div>
         <div class="row" v-if="ingreso_productos.length > 0">

@@ -57,16 +57,40 @@ class MovimientoCajaService
             ->where("tipo_movimiento", "INGRESO")
             ->sum("monto_total");
 
+        $ingresos_qr = (clone $movimientos)
+            ->where("tipo_movimiento", "INGRESO")
+            ->sum("monto_qr");
+
+        $ingresos_efectivo = (clone $movimientos)
+            ->where("tipo_movimiento", "INGRESO")
+            ->sum("monto_efectivo");
+
         $egresos = (clone $movimientos)
             ->where("tipo_movimiento", "EGRESO")
             ->sum("monto_total");
 
+        $egresos_qr = (clone $movimientos)
+            ->where("tipo_movimiento", "EGRESO")
+            ->sum("monto_qr");
+
+        $egresos_efectivo = (clone $movimientos)
+            ->where("tipo_movimiento", "EGRESO")
+            ->sum("monto_efectivo");
+
         $total_caja = $ingresos - $egresos;
+        $total_caja_qr = $ingresos_qr - $egresos_qr;
+        $total_caja_efectivo = $ingresos_efectivo - $egresos_efectivo;
 
         return [
             "ingresos" => $ingresos,
+            "ingresos_qr" => $ingresos_qr,
+            "ingresos_efectivo" => $ingresos_efectivo,
             "egresos" => $egresos,
+            "egresos_qr" => $egresos_qr,
+            "egresos_efectivo" => $egresos_efectivo,
             "total_caja" => $total_caja,
+            "total_caja_qr" => $total_caja_qr,
+            "total_caja_efectivo" => $total_caja_efectivo,
         ];
     }
 

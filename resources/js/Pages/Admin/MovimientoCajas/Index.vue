@@ -40,8 +40,14 @@ const cargarUsers = async () => {
 };
 const resumen = ref({
     ingresos: 0,
+    ingresos_qr: 0,
+    ingresos_efectivo: 0,
     egresos: 0,
+    egresos_qr: 0,
+    egresos_efectivo: 0,
     total_caja: 0,
+    total_caja_qr: 0,
+    total_caja_efectivo: 0,
 });
 
 const cargarResumen = async () => {
@@ -306,55 +312,95 @@ const eliminarMovimientoCaja = (item) => {
                         <div class="row">
                             <div class="col-md-4 mb-2">
                                 <div class="card">
-                                    <div class="card-header bgActivo">
-                                        <h4
-                                            class="card-title fs-7 fw-bold text-white"
-                                        >
-                                            Ingresos
-                                        </h4>
+                                    <div
+                                        class="card-header bgActivo2 text-success"
+                                    >
+                                        <div class="row">
+                                            <div class="col-6 fw-bold">
+                                                Ingresos
+                                            </div>
+                                            <div
+                                                class="col-6 text-end fw-bold fs-5"
+                                            >
+                                                {{ resumen.ingresos }}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <h4
-                                            class="fw-bold fs-6 w-100 text-center text-success"
-                                        >
-                                            Bs. {{ resumen.ingresos }}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <div class="card card-danger">
-                                    <div class="card-header">
-                                        <h4
-                                            class="card-title fs-7 fw-bold text-white"
-                                        >
-                                            Egresos
-                                        </h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <h4
-                                            class="fw-bold fs-6 w-100 text-center text-danger"
-                                        >
-                                            Bs. {{ resumen.egresos }}
-                                        </h4>
+                                    <div class="card-body text-success">
+                                        <div class="row">
+                                            <div class="col-6 text-center">
+                                                {{ resumen.ingresos_qr }}<br />
+                                                <i class="fa fa-qrcode"></i>
+                                            </div>
+                                            <div class="col-6 text-center">
+                                                {{ resumen.ingresos_efectivo
+                                                }}<br />
+                                                <i class="fa fa-money-bill"></i>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-2">
-                                <div class="card card-primary">
-                                    <div class="card-header">
-                                        <h4
-                                            class="card-title fs-7 fw-bold text-white"
-                                        >
-                                            Total Caja
-                                        </h4>
+                                <div class="card">
+                                    <div
+                                        class="card-header bgInactivo2 text-danger"
+                                    >
+                                        <div class="row">
+                                            <div class="col-6 fw-bold">
+                                                Egresos
+                                            </div>
+                                            <div
+                                                class="col-6 text-end fw-bold fs-5"
+                                            >
+                                                {{ resumen.egresos }}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <h4
-                                            class="fw-bold fs-6 w-100 text-center text-primary"
-                                        >
-                                            Bs. {{ resumen.total_caja }}
-                                        </h4>
+                                    <div class="card-body text-danger">
+                                        <div class="row">
+                                            <div class="col-6 text-center">
+                                                {{ resumen.egresos_qr }}<br />
+                                                <i class="fa fa-qrcode"></i>
+                                            </div>
+                                            <div class="col-6 text-center">
+                                                {{ resumen.egresos_efectivo
+                                                }}<br />
+                                                <i class="fa fa-money-bill"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="card">
+                                    <div
+                                        class="card-header bgPrimary2 text-primary"
+                                    >
+                                        <div class="row">
+                                            <div class="col-6 fw-bold">
+                                                Total Caja
+                                            </div>
+                                            <div
+                                                class="col-6 text-end fw-bold fs-5"
+                                            >
+                                                {{ resumen.total_caja }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body text-primary">
+                                        <div class="row">
+                                            <div class="col-6 text-center">
+                                                {{ resumen.total_caja_qr
+                                                }}<br />
+                                                <i class="fa fa-qrcode"></i>
+                                            </div>
+                                            <div class="col-6 text-center">
+                                                {{ resumen.total_caja_efectivo
+                                                }}<br />
+                                                <i class="fa fa-money-bill"></i>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

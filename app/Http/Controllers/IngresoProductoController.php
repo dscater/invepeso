@@ -52,6 +52,7 @@ class IngresoProductoController extends Controller
     public function lista_pagos_pendientes(Request $request): JsonResponse
     {
         $almacen_id = $request->input("almacen_id", null);
+        $codigo = $request->input("codigo", null);
         $fecha_ini = $request->input("fecha_ini", null);
         $fecha_fin = $request->input("fecha_fin", null);
         $ingreso_productos = IngresoProducto::with([
@@ -71,6 +72,10 @@ class IngresoProductoController extends Controller
 
         if ($almacen_id && $almacen_id != 'todos') {
             $ingreso_productos->where("almacen_id", $almacen_id);
+        }
+
+        if ($codigo) {
+            $ingreso_productos->where("codigo", $codigo);
         }
 
         if ($fecha_ini && $fecha_fin) {
@@ -244,15 +249,20 @@ class IngresoProductoController extends Controller
     }
     public function lista_sin_verificar(Request $request)
     {
+        $almacen_id = $request->input("almacen_id", null);
+        $codigo = $request->input("codigo", null);
         $fecha_ini = $request->input("fecha_ini", null);
         $fecha_fin = $request->input("fecha_fin", null);
-        $almacen_id = $request->input("almacen_id", null);
 
         $ingreso_productos = IngresoProducto::with(["sucursal", "almacen", "tipo_ingreso", "proveedor", "ingreso_detalles.producto"])
             ->where("estado_ingreso", "PENDIENTE");
 
         if ($almacen_id && $almacen_id != 'todos') {
             $ingreso_productos->where("almacen_id", $almacen_id);
+        }
+
+        if ($codigo) {
+            $ingreso_productos->where("codigo", $codigo);
         }
 
         if ($fecha_ini && $fecha_fin) {
@@ -266,15 +276,20 @@ class IngresoProductoController extends Controller
 
     public function lista_faltantes(Request $request)
     {
+        $almacen_id = $request->input("almacen_id", null);
+        $codigo = $request->input("codigo", null);
         $fecha_ini = $request->input("fecha_ini", null);
         $fecha_fin = $request->input("fecha_fin", null);
-        $almacen_id = $request->input("almacen_id", null);
 
         $ingreso_productos = IngresoProducto::with(["sucursal", "almacen", "tipo_ingreso", "proveedor", "ingreso_detalles.producto", "ingreso_detalles_faltantes"])
             ->where("estado_faltantes", "PENDIENTE");
 
         if ($almacen_id && $almacen_id != 'todos') {
             $ingreso_productos->where("almacen_id", $almacen_id);
+        }
+
+        if ($codigo) {
+            $ingreso_productos->where("codigo", $codigo);
         }
 
         if ($fecha_ini && $fecha_fin) {

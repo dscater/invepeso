@@ -55,12 +55,13 @@ class VentaController extends Controller
     public function lista_cobros_pendientes(Request $request): JsonResponse
     {
         $almacen_id = $request->input("almacen_id", null);
+        $cliente = $request->input("cliente", null);
         $fecha_ini = $request->input("fecha_ini", null);
         $fecha_fin = $request->input("fecha_fin", null);
         $ventas = Venta::with([
             "sucursal:id,nombre",
             "almacen:id,nombre",
-            "cliente:id,nombre",
+            "cliente:id,nombre,nro_documento",
             "tipo_documento:id,nombre",
             "user:id,nombre,paterno,materno",
             "venta_detalles",
@@ -74,6 +75,12 @@ class VentaController extends Controller
 
         if ($almacen_id && $almacen_id != 'todos') {
             $ventas->where("almacen_id", $almacen_id);
+        }
+
+        if ($cliente) {
+            $ventas->whereHas("cliente", function ($query) use ($cliente) {
+                $query->buscarNombre($cliente);
+            });
         }
 
         if ($fecha_ini && $fecha_fin) {
