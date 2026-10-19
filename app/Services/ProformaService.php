@@ -39,6 +39,12 @@ class ProformaService
         ])
             ->select("proformas.*")
             ->where("status", 1);
+
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $proformas->where("sucursal_id", Auth::user()->sucursal_id);
+        }
+
         if ($fecha_ini && $fecha_fin) {
             $proformas->whereBetween("fecha_registro", [$fecha_ini, $fecha_fin]);
         }
@@ -65,6 +71,11 @@ class ProformaService
         ])
             ->select("proformas.*")
             ->where("status", 1);
+
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $proformas->where("sucursal_id", Auth::user()->sucursal_id);
+        }
 
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {

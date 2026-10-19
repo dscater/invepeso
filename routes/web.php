@@ -235,7 +235,6 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("ingreso_pagos/listaByIngreso/{ingreso_producto}", [IngresoPagoController::class, 'listaByIngreso'])->name("ingreso_pagos.listaByIngreso");
 
     // INGRESO DE FALTANTES
-
     Route::get("ingreso_faltantes/paginado", [IngresoFaltanteController::class, 'paginado'])->name("ingreso_faltantes.paginado");
     Route::get("ingreso_faltantes/listado", [IngresoFaltanteController::class, 'listado'])->name("ingreso_faltantes.listado");
     Route::resource("ingreso_faltantes", IngresoFaltanteController::class)->only(
@@ -307,5 +306,11 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");
     Route::get('reportes/r_usuarios', [ReporteController::class, 'r_usuarios'])->name("reportes.r_usuarios");
+
+    Route::get('reportes/clientes', [ReporteController::class, 'clientes'])->name("reportes.clientes");
+    Route::get('reportes/r_clientes', [ReporteController::class, 'r_clientes'])->name("reportes.r_clientes");
+
+    Route::get('reportes/stock_productos', [ReporteController::class, 'stock_productos'])->name("reportes.stock_productos");
+    Route::get('reportes/r_stock_productos', [ReporteController::class, 'r_stock_productos'])->name("reportes.r_stock_productos");
 });
 require __DIR__ . '/auth.php';

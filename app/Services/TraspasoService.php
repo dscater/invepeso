@@ -28,7 +28,13 @@ class TraspasoService
 
     public function listado(): Collection
     {
-        $traspasos = Traspaso::select("traspasos.*")->get();
+        $traspasos = Traspaso::select("traspasos.*");
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $traspasos->where("sucursal_id", Auth::user()->sucursal_id);
+        }
+
+        $traspasos = $traspasos->get();
         return $traspasos;
     }
     /**
@@ -51,6 +57,10 @@ class TraspasoService
             "user:id,nombre,paterno,materno"
         ])
             ->select("traspasos.*");
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $traspasos->where("sucursal_id", Auth::user()->sucursal_id);
+        }
 
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {

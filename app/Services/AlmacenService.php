@@ -12,9 +12,9 @@ use App\Models\User;
 use App\Models\Venta;
 use Illuminate\Http\UploadedFile;
 use Exception;
-use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class AlmacenService
@@ -30,6 +30,10 @@ class AlmacenService
 
         if ($activo && $activo == 1) {
             $almacens->where("activo", 1);
+        }
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $almacens->where("sucursal_id", Auth::user()->sucursal_id);
         }
 
         $almacens = $almacens->get();
@@ -48,6 +52,10 @@ class AlmacenService
     public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
         $almacens = Almacen::with(["sucursal:id,nombre"])->select("almacens.*");
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $almacens->where("sucursal_id", Auth::user()->sucursal_id);
+        }
 
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {

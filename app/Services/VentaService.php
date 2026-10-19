@@ -44,6 +44,13 @@ class VentaService
         if ($fecha_ini && $fecha_fin) {
             $ventas->whereBetween("fecha_registro", [$fecha_ini, $fecha_fin]);
         }
+
+
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $ventas->where("sucursal_id", Auth::user()->sucursal_id);
+        }
+
         $ventas = $ventas->get();
         return $ventas;
     }
@@ -67,6 +74,11 @@ class VentaService
         ])
             ->select("ventas.*")
             ->where("status", 1);
+
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $ventas->where("sucursal_id", Auth::user()->sucursal_id);
+        }
 
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {

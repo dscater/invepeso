@@ -320,6 +320,9 @@ const reasignarPreciosPorClienteProductos = () => {
         elem.precio_final = con_descuento - elem.descuento_total;
         elem.total = elem.cantidad * elem.precio_final;
     });
+    toast.success("Precios reasignados por cliente", {
+        autoClose: 220,
+    });
 };
 
 const agregarProductoVenta = async (item) => {
@@ -401,7 +404,9 @@ const agregarProductoVenta = async (item) => {
         }
         // console.log(item);
         item.cantidad = 1;
-        toast.success("Producto Agregado!!!");
+        toast.success("Producto Agregado!!!", {
+            autoClose: 250,
+        });
         item.stock_total = stock_total - cantidad;
     } catch (e) {
         console.log(e);
@@ -1140,8 +1145,8 @@ onMounted(() => {
                             <div>No hay productos</div>
                         </div>
                     </div>
-                    <div class="card-body bg6">
-                        <div class="row border-bottom pb-2 mb-2">
+                    <div class="card-body bg6 py-0">
+                        <div class="row border-bottom py-2 mb-2">
                             <div class="col-4 d-flex align-items-center">
                                 <label class="fw-bold fs-6"
                                     >Tipo de Venta:</label
@@ -1163,14 +1168,16 @@ onMounted(() => {
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-12 fw-bolder text-nuevo fs-5">
+                            <div
+                                class="col-12 py-1 fw-bolder text-success fs-5"
+                            >
                                 Subtotal Bs.
                                 <div class="float-end">
                                     {{ subTotalVenta.toFixed(2) }}
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="row fw-bolder text-precargado fs-5">
+                            <div class="col-12 py-1">
+                                <div class="row fw-bolder text-dark fs-5">
                                     <div class="col-6 h-100">Descuento Bs.</div>
                                     <div class="col-6">
                                         <input
@@ -1181,7 +1188,9 @@ onMounted(() => {
                                         />
                                     </div>
                                 </div>
-                                <div class="row border-top pt-2 mt-2">
+                                <div
+                                    class="row border-top pt-2 mt-2 pb-2 bgActivo2"
+                                >
                                     <div
                                         class="col-12 fw-bolder text-success fs-5"
                                     >
@@ -1191,12 +1200,17 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row fw-bolder fs-5">
-                                    <div class="col-6 h-100" title="Efectivo">
-                                        Cancelado
-                                        <i class="fa fa-money-bill"></i> Bs.
+                                <div class="row fw-bolder fs-5 bgPrimary2 pt-2">
+                                    <div
+                                        class="d-flex align-items-center gap-1 col-6 h-100"
+                                        title="Efectivo"
+                                    >
+                                        Cancelado Bs.
+                                        <i class="fa fa-money-bill"></i>
                                     </div>
-                                    <div class="col-6">
+                                    <div
+                                        class="d-flex align-items-center gap-1 col-6"
+                                    >
                                         <input
                                             type="number"
                                             class="form-control text-end fs-6"
@@ -1204,12 +1218,17 @@ onMounted(() => {
                                         />
                                     </div>
                                 </div>
-                                <div class="row fw-bolder fs-5">
-                                    <div class="col-6 h-100" title="QR">
-                                        Cancelado
-                                        <i class="fa fa-qrcode"></i> Bs.
+                                <div class="row fw-bolder fs-5 bgPrimary2 pb-2">
+                                    <div
+                                        class="d-flex align-items-center gap-1 col-6 h-100"
+                                        title="QR"
+                                    >
+                                        Cancelado Bs.
+                                        <i class="fa fa-qrcode"></i>
                                     </div>
-                                    <div class="col-6">
+                                    <div
+                                        class="d-flex align-items-center gap-1 col-6"
+                                    >
                                         <input
                                             type="number"
                                             class="form-control text-end fs-6"
@@ -1243,10 +1262,14 @@ onMounted(() => {
                                         </el-radio-group>
                                     </div>
                                 </div> -->
-                                <div class="col-12 fw-bolder text-danger fs-5">
-                                    Saldo Bs.
-                                    <div class="float-end">
-                                        {{ saldoVenta.toFixed(2) }}
+                                <div class="row bgInactivo2 py-2">
+                                    <div
+                                        class="col-12 fw-bolder text-danger fs-5"
+                                    >
+                                        Saldo Bs.
+                                        <div class="float-end">
+                                            {{ saldoVenta.toFixed(2) }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -37,6 +37,7 @@ class IngresoPagoService
         if ($ingreso_producto_id) {
             $ingreso_pagos->where("ingreso_producto_id", $ingreso_producto_id);
         }
+
         $ingreso_pagos = $ingreso_pagos->get();
         return $ingreso_pagos;
     }

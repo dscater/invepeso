@@ -281,7 +281,9 @@ const agregarProductoCompra = async (item) => {
         }
         // console.log(item);
         item.cantidad = 1;
-        toast.success("Producto Agregado!!!");
+        toast.success("Producto Agregado!!!", {
+            autoClose: 200,
+        });
     } catch (e) {
         console.log(e);
         toast.error(
@@ -805,46 +807,52 @@ onMounted(() => {
                             <div>No hay productos</div>
                         </div>
                     </div>
-                    <div class="card-body bg6">
-                        <div class="row">
+                    <div class="card-body bg6 py-0">
+                        <div class="row border-top pt-2 pb-2 bgActivo2">
                             <div class="col-12 fw-bolder text-success fs-5">
                                 Total Bs.
                                 <div class="float-end">
                                     {{ totalCompra.toFixed(2) }}
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="row fw-bolder fs-5">
-                                    <div class="col-6 h-100" title="Efectivo">
-                                        Cancelado
-                                        <i class="fa fa-money-bill"></i> Bs.
-                                    </div>
-                                    <div class="col-6">
-                                        <input
-                                            type="number"
-                                            class="form-control text-end fs-6"
-                                            v-model="form.cancelado_efectivo"
-                                        />
-                                    </div>
-                                </div>
-                                <div class="row fw-bolder fs-5">
-                                    <div class="col-6 h-100" title="QR">
-                                        Cancelado
-                                        <i class="fa fa-qrcode"></i> Bs.
-                                    </div>
-                                    <div class="col-6">
-                                        <input
-                                            type="number"
-                                            class="form-control text-end fs-6"
-                                            v-model="form.cancelado_qr"
-                                        />
-                                    </div>
-                                </div>
-                                <div class="col-12 fw-bolder text-danger fs-5">
-                                    Saldo Bs.
-                                    <div class="float-end">
-                                        {{ saldoCompra.toFixed(2) }}
-                                    </div>
+                        </div>
+                        <div class="row py-2 bgPrimary2 fw-bolder fs-5">
+                            <div
+                                class="d-flex align-items-center gap-1 col-6 h-100"
+                                title="Efectivo"
+                            >
+                                Cancelado Bs.
+                                <i class="fa fa-money-bill"></i>
+                            </div>
+                            <div class="d-flex align-items-center gap-1 col-6">
+                                <input
+                                    type="number"
+                                    class="form-control text-end fs-6"
+                                    v-model="form.cancelado_efectivo"
+                                />
+                            </div>
+                        </div>
+                        <div class="row py-2 bgPrimary2 fw-bolder fs-5">
+                            <div
+                                class="d-flex align-items-center gap-1 col-6 h-100"
+                                title="QR"
+                            >
+                                Cancelado Bs.
+                                <i class="fa fa-qrcode"></i>
+                            </div>
+                            <div class="d-flex align-items-center gap-1 col-6">
+                                <input
+                                    type="number"
+                                    class="form-control text-end fs-6"
+                                    v-model="form.cancelado_qr"
+                                />
+                            </div>
+                        </div>
+                        <div class="row bgInactivo2 py-2">
+                            <div class="col-12 fw-bolder text-danger fs-5">
+                                Saldo Bs.
+                                <div class="float-end">
+                                    {{ saldoCompra.toFixed(2) }}
                                 </div>
                             </div>
                         </div>
@@ -859,12 +867,12 @@ onMounted(() => {
                                     @click.prevent="enviarFormulario"
                                     v-html="textBtn"
                                 ></button>
-                                <button
+                                <!-- <button
                                     type="button"
                                     class="btn btn-default btn-sm w-100 mt-2 border"
                                 >
                                     <i class="fa fa-times"></i> Cancelar Compra
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </div>

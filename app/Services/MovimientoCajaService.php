@@ -27,8 +27,9 @@ class MovimientoCajaService
         $movimiento_cajas = MovimientoCaja::select("movimiento_cajas.*")
             ->where("status", 1);
 
-
-
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $movimiento_cajas->where("sucursal_id", Auth::user()->sucursal_id);
+        }
         $movimiento_cajas = $movimiento_cajas->get();
         return $movimiento_cajas;
     }
@@ -40,6 +41,11 @@ class MovimientoCajaService
     ) {
         $movimientos = MovimientoCaja::select("movimiento_cajas.*")
             ->where("status", 1);
+
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $movimientos->where("sucursal_id", Auth::user()->sucursal_id);
+        }
 
         if ($user_id) {
             $movimientos->where("user_id", $user_id);
@@ -122,6 +128,9 @@ class MovimientoCajaService
             ->select("movimiento_cajas.*")
             ->where("status", 1);
 
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $movimiento_cajas->where("sucursal_id", Auth::user()->sucursal_id);
+        }
 
         if ($user_id) {
             $movimiento_cajas->where("user_id", $user_id);

@@ -124,6 +124,10 @@ table .bg-dark-principal,
     color: white;
 }
 
+.bgDarkPrincipal {
+    background-color: var(--bgDarkPrincipal);
+}
+
 .modal-body.bg-principal b,
 .modal-body.bg-principal .fot-weight-bold {
     color: var(--bg6);

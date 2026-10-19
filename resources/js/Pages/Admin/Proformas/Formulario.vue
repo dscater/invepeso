@@ -1007,13 +1007,13 @@ onMounted(() => {
                                     @click.prevent="enviarFormulario"
                                     v-html="textBtn"
                                 ></button>
-                                <button
+                                <!-- <button
                                     type="button"
                                     class="btn btn-default btn-sm w-100 mt-2 border"
                                 >
                                     <i class="fa fa-times"></i> Cancelar
                                     Proforma
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </div>

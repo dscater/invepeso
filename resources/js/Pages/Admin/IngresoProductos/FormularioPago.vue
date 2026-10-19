@@ -16,6 +16,7 @@ const props = defineProps({
         type: Object,
     },
 });
+const { props: props_page } = usePage();
 
 const muestra_form = ref(props.muestra_formulario);
 const enviando = ref(false);
@@ -194,6 +195,9 @@ const toggleFormulario = (sw = true) => {
         formPago.proveedor_id = form.proveedor_id;
         formPago.sucursal_id = form.sucursal_id;
         formPago.almacen_id = form.almacen_id;
+
+        if (props_page.auth.user.tipo != "ADMINISTRACIÓN")
+            formPago.almacen_id = "";
     }
 };
 

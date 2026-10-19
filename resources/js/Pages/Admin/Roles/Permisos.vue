@@ -2,7 +2,7 @@
 import Content from "@/Components/Content.vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 import { Head, Link } from "@inertiajs/vue3";
-import { ref, onMounted, onBeforeMount } from "vue";
+import { ref, onMounted, onBeforeMount, computed } from "vue";
 // TOAST
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -40,24 +40,24 @@ const verificaDisabled = (modulo, accion) => {
     if (props.role.id == 1) {
         disabled = true;
     }
-    if (props.role.id != 2) {
-        if (modulo == "Solicitud de productos") {
-            if (accion == "CREAR") {
-                disabled = true;
-            }
-        }
-        if (modulo == "Orden de venta") {
-            if (accion == "CREAR") {
-                disabled = true;
-            }
-        }
-    }
+    // if (props.role.id != 2) {
+    //     if (modulo == "Solicitud de productos") {
+    //         if (accion == "CREAR") {
+    //             disabled = true;
+    //         }
+    //     }
+    //     if (modulo == "Orden de venta") {
+    //         if (accion == "CREAR") {
+    //             disabled = true;
+    //         }
+    //     }
+    // }
     return disabled;
 };
 
-const verificaPermiso = (modulo, accion) => {
+const verificaPermiso = (modulo, modulo_id) => {
     let existe = listPermisos.value[modulo].filter(
-        (elem) => elem.accion == accion,
+        (elem) => elem.modulo_id == modulo_id,
     );
 
     if (existe.length > 0) {
@@ -68,17 +68,19 @@ const verificaPermiso = (modulo, accion) => {
     return false;
 };
 
-const actualizaPermiso = (e, modulo, accion) => {
+const actualizaPermiso = (e, modulo, modulo_id) => {
     const checked = e.target.checked ? 1 : 0;
     let listPermisosBK = listPermisos.value;
     axios
         .post(route("roles.actualizaPermiso", props.role.id), {
             sw_cambio: checked,
             modulo: modulo,
-            accion: accion,
+            modulo_id: modulo_id,
         })
         .then((response) => {
-            toast.success("Operación completada correctamente!");
+            toast.success("Operación completada correctamente!", {
+                autoClose: 200,
+            });
             listPermisos.value[modulo] = response.data.array_permisos;
         })
         .catch((error) => {
@@ -90,6 +92,41 @@ const actualizaPermiso = (e, modulo, accion) => {
         });
 };
 
+const filtroModulo = ref("");
+
+const listModulosGroup = computed(() => {
+    const filtro = (filtroModulo.value ?? "").toLowerCase().trim();
+
+    if (filtro == "") return props.modulos_group;
+
+    return props.modulos_group.filter(
+        (elem) => elem.toLowerCase().trim() == filtro,
+    );
+});
+
+const listModulosRole = computed(() => {
+    const filtro = (filtroModulo.value ?? "").toLowerCase().trim();
+
+    return Object.fromEntries(
+        Object.entries(props.array_modulos).filter(
+            ([nombreModulo, elementos]) => {
+                // Buscar por el nombre del grupo
+                const coincideGrupo = nombreModulo
+                    .toLowerCase()
+                    .includes(filtro);
+
+                // Buscar también por nombre o acción de los elementos
+                const coincideElemento = elementos.some(
+                    (elem) =>
+                        (elem.nombre ?? "").toLowerCase().includes(filtro) ||
+                        (elem.accion ?? "").toLowerCase().includes(filtro),
+                );
+
+                return coincideGrupo || coincideElemento;
+            },
+        ),
+    );
+});
 onMounted(() => {
     appStore.stopLoading();
 });
@@ -100,9 +137,9 @@ onMounted(() => {
         <template #header>
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">
+                    <h4 class="m-0">
                         <i class="fa fa-list"></i> Roles y Permisos
-                    </h1>
+                    </h4>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
@@ -130,56 +167,103 @@ onMounted(() => {
                 <!-- BEGIN card -->
                 <div class="card">
                     <!-- BEGIN card-body -->
-                    <div class="card-body">
+                    <div class="card-header bg1">
                         <div class="row">
-                            <div class="col-12">
-                                <h3 class="text-dark">
-                                    <span class="fw-normal"
-                                        >Permisos asignados a </span
-                                    >{{ props.role.nombre }}
+                            <div class="col-8">
+                                <h3 class="text-white">
+                                    <span class="fw-normal fs-5"
+                                        >PERMISOS DE </span
+                                    ><span class="fw-bold fs-5">{{
+                                        props.role.nombre
+                                    }}</span>
                                 </h3>
                             </div>
-                            <div
-                                class="col-12 fila_seccion p-0"
-                                v-for="item in modulos_group"
-                            >
-                                <p
-                                    class="font-weight-bold mb-2 nomModulo bg-principal"
+                            <div class="col-4">
+                                <el-select
+                                    v-model="filtroModulo"
+                                    placeholder="Filtrar Módulo"
+                                    no-data-text="Sin datos"
+                                    no-match-text="Sin resultados"
+                                    filterable
+                                    clearable
                                 >
-                                    {{ item }}
-                                </p>
-                                <div class="row mb-3 px-3">
-                                    <div
-                                        class="col-md-3"
-                                        v-for="item_permiso in props
-                                            .array_modulos[item]"
-                                    >
-                                        <label class="check_permiso">
-                                            {{ item_permiso.accion }}
-                                            <input
-                                                type="checkbox"
-                                                :checked="
-                                                    verificaPermiso(
-                                                        item,
-                                                        item_permiso.accion,
-                                                    )
-                                                "
-                                                @change="
-                                                    actualizaPermiso(
-                                                        $event,
-                                                        item,
-                                                        item_permiso.accion,
-                                                    )
-                                                "
-                                                :disabled="
-                                                    verificaDisabled(
-                                                        item,
-                                                        item_permiso.accion,
-                                                    )
-                                                "
-                                                verificaPermiso
-                                            />
-                                        </label>
+                                    <el-option
+                                        v-for="item in modulos_group"
+                                        :key="item"
+                                        :value="item"
+                                        :label="item"
+                                    ></el-option>
+                                </el-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div
+                                class="col-md-4 mt-2"
+                                v-for="item in listModulosGroup"
+                            >
+                                <div class="card">
+                                    <div class="card-header bg-dark">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h4
+                                                    class="text-white fs-7 text-uppercase"
+                                                >
+                                                    {{ item }}
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-1">
+                                        <div class="row">
+                                            <div
+                                                class="col-12"
+                                                v-for="item_modulo in listModulosRole[
+                                                    item
+                                                ]"
+                                            >
+                                                <div class="list-group">
+                                                    <label
+                                                        class="list-group-item fs-8"
+                                                        :class="{
+                                                            checked:
+                                                                verificaPermiso(
+                                                                    item,
+                                                                    item_modulo.id,
+                                                                ),
+                                                        }"
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            class="form-check-input me-1"
+                                                            :checked="
+                                                                verificaPermiso(
+                                                                    item,
+                                                                    item_modulo.id,
+                                                                )
+                                                            "
+                                                            @change="
+                                                                actualizaPermiso(
+                                                                    $event,
+                                                                    item,
+                                                                    item_modulo.id,
+                                                                )
+                                                            "
+                                                            :disabled="
+                                                                verificaDisabled(
+                                                                    item,
+                                                                    item_modulo.accion,
+                                                                )
+                                                            "
+                                                        />
+                                                        {{
+                                                            item_modulo.descripcion
+                                                        }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -193,45 +277,21 @@ onMounted(() => {
     </Content>
 </template>
 <style>
-.nomModulo {
-    font-size: 1.1em;
-    background-color: var(--bg6);
-    color: white !important;
-    padding-left: 10px;
-}
-.nomModulo.bg-principal {
-    background-color: var(--bg3);
-}
-.fila_seccion {
-    margin-bottom: 15px;
-    box-shadow:
-        0px 2px 3px black,
-        2px 0px 3px black;
-}
-
-.check_permiso {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    gap: 4px;
-    padding: 5px;
-    cursor: pointer;
-    font-size: 0.8em;
-    padding: 10px;
-}
-
-.check_permiso:hover {
-    background-color: beige;
-}
-.check_permiso input {
-    cursor: pointer;
-    font-size: 20px;
-    height: 18px;
-    width: 18px;
-    margin-bottom: 3px;
-}
-
 input:disabled {
     cursor: not-allowed;
+}
+
+.list-group-item:hover {
+    background-color: var(--bgActivo2);
+}
+
+.list-group-item.checked,
+.list-group-item.checked:hover {
+    background-color: var(--bgActivo2);
+}
+
+.list-group-item {
+    cursor: pointer;
+    border-radius: 0 !important;
 }
 </style>

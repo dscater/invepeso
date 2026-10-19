@@ -31,7 +31,13 @@ class IngresoProductoService
 
     public function listado(): Collection
     {
-        $ingreso_productos = IngresoProducto::select("ingreso_productos.*")->get();
+        $ingreso_productos = IngresoProducto::select("ingreso_productos.*");
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $ingreso_productos->where("sucursal_id", Auth::user()->sucursal_id);
+        }
+
+        $ingreso_productos = $ingreso_productos->get();
         return $ingreso_productos;
     }
     /**
@@ -54,6 +60,10 @@ class IngresoProductoService
         ])
             ->select("ingreso_productos.*")
             ->where("status", 1);
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $ingreso_productos->where("sucursal_id", Auth::user()->sucursal_id);
+        }
 
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {

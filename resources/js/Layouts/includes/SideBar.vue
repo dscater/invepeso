@@ -24,7 +24,8 @@ const sincronizarMenus = () => {
 
     if (
         route_current.value == "usuarios.index" ||
-        route_current.value == "roles.index"
+        route_current.value == "roles.index" ||
+        route_current.value == "roles.edit"
     ) {
         openMenus.usuarios = true;
     }
@@ -355,7 +356,7 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('ingresos.pagos')
+                                    permisos.includes('ingreso_productos.pagos')
                                 "
                                 :label="'Pago de Compras'"
                                 :ruta="'ingreso_productos.pagos'"
@@ -445,7 +446,9 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('ingresos.create')
+                                    permisos.includes(
+                                        'ingresos.verificacion_ingresos',
+                                    )
                                 "
                                 :label="'Recepción de Compras'"
                                 :ruta="'ingreso_productos.verificacion_ingresos'"
@@ -460,7 +463,7 @@ onUnmounted(() => {});
                                 v-if="
                                     permisos == '*' ||
                                     permisos.includes(
-                                        'ingresos.faltantes_ingresos',
+                                        'ingreso_productos.faltantes_ingresos',
                                     )
                                 "
                                 :label="'Recepción de Faltantes'"
@@ -666,7 +669,8 @@ onUnmounted(() => {});
                         v-if="
                             permisos == '*' ||
                             permisos.includes('usuarios.index') ||
-                            permisos.includes('roles.index')
+                            permisos.includes('roles.index') ||
+                            permisos.includes('roles.edit')
                         "
                         :class="{ 'menu-open': openMenus.usuarios }"
                     >
@@ -675,7 +679,8 @@ onUnmounted(() => {});
                             class="nav-link"
                             :class="[
                                 route_current == 'usuarios.index' ||
-                                route_current == 'roles.index'
+                                route_current == 'roles.index' ||
+                                route_current == 'roles.edit'
                                     ? 'active menu-is-opening menu-open'
                                     : '',
                             ]"
@@ -698,7 +703,9 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('usuarios.index')
+                                    permisos.includes('usuarios.index') ||
+                                    permisos.includes('roles.index') ||
+                                    permisos.includes('roles.edit')
                                 "
                                 :label="'Lista de Usuarios'"
                                 :ruta="'usuarios.index'"
@@ -711,6 +718,10 @@ onUnmounted(() => {});
                                 "
                                 :label="'Roles y Permisos'"
                                 :ruta="'roles.index'"
+                                :array-ruta-class-active="[
+                                    'roles.index',
+                                    'roles.edit',
+                                ]"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                         </ul>

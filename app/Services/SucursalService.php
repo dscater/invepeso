@@ -12,9 +12,9 @@ use App\Models\User;
 use App\Models\Venta;
 use Illuminate\Http\UploadedFile;
 use Exception;
-use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class SucursalService
@@ -29,6 +29,11 @@ class SucursalService
 
         if ($activo && $activo == 1) {
             $sucursals->where("activo", 1);
+        }
+
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $sucursals->where("id", Auth::user()->sucursal_id);
         }
 
         $sucursals = $sucursals->get();
@@ -47,6 +52,11 @@ class SucursalService
     public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
         $sucursals = Sucursal::select("sucursals.*");
+
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $sucursals->where("id", Auth::user()->sucursal_id);
+        }
 
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {

@@ -130,7 +130,13 @@ class RoleController extends Controller
         $array_permisos = [];
         foreach ($modulos_group as $value) {
             $array_modulos[$value] = Modulo::where("modulo", $value)->get();
-            $array_permisos[$value] = Permiso::select("modulos.nombre", "modulos.accion")->join("modulos", "modulos.id", "=", "permisos.modulo_id")
+            $array_permisos[$value] = Permiso::select(
+                "permisos.id",
+                "permisos.role_id",
+                "permisos.modulo_id",
+                "modulos.nombre",
+                "modulos.accion"
+            )->join("modulos", "modulos.id", "=", "permisos.modulo_id")
                 ->where("role_id", $role->id)
                 ->where("modulo", $value)->get();
         }
@@ -141,9 +147,8 @@ class RoleController extends Controller
     public function actualizaPermiso(Role $role, Request $request)
     {
         $sw_cambio = $request->sw_cambio;
-        $modulo = $request->modulo;
-        $accion = $request->accion;
-        $o_modulo = Modulo::where("modulo", $modulo)->where("accion", $accion)->get()->first();
+        $modulo_id = $request->modulo_id;
+        $o_modulo = Modulo::find($modulo_id);
         $permiso = Permiso::where("role_id", $role->id)
             ->where("modulo_id", $o_modulo->id)
             ->get()->first();
@@ -159,7 +164,13 @@ class RoleController extends Controller
             }
         }
 
-        $array_permisos = Permiso::select("modulos.nombre", "modulos.accion")
+        $array_permisos = Permiso::select(
+            "permisos.id",
+            "permisos.role_id",
+            "permisos.modulo_id",
+            "modulos.nombre",
+            "modulos.accion"
+        )
             ->join("modulos", "modulos.id", "=", "permisos.modulo_id")
             ->where("role_id", $role->id)
             ->where("modulos.modulo", $o_modulo->modulo)->get();

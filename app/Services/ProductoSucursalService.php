@@ -13,9 +13,9 @@ use App\Models\UnidadMedida;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Exception;
-use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -46,6 +46,10 @@ class ProductoSucursalService
                 $join->on('productos.id', '=', 'producto_sucursals.producto_id');
                 if (!empty($almacen_id) && $almacen_id != 'todos') {
                     $join->where('producto_sucursals.almacen_id', $almacen_id);
+                }
+
+                if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+                    $join->where("producto_sucursals.sucursal_id", Auth::user()->sucursal_id);
                 }
             });
 
@@ -106,6 +110,10 @@ class ProductoSucursalService
                 $join->on('productos.id', '=', 'producto_sucursals.producto_id');
                 if (!empty($almacen_id) && $almacen_id != 'todos') {
                     $join->where('producto_sucursals.almacen_id', $almacen_id);
+                }
+
+                if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+                    $join->where("producto_sucursals.sucursal_id", Auth::user()->sucursal_id);
                 }
             });
 

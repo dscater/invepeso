@@ -33,6 +33,7 @@ class UserStoreRequest extends FormRequest
             "acceso" => "required",
             "tipo" => "required",
             "foto" => "nullable|image|mimes:jpeg,png,jpg,gif,svg|max:4096",
+            "role_id" => "required",
             "sucursal_id" => "required",
         ];
 

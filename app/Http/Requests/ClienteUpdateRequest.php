@@ -41,6 +41,7 @@ class ClienteUpdateRequest extends FormRequest
         return [
             "nombre.required" => "Debes completar este campo",
             "nombre.string" => "Debes ingresar un texto valido",
+            "tipo_documento_id.required" => "Debes completar el tipo de documento",
             "tipo_documento_id.string" => "Debes ingresar un texto valido",
             "nro_documento.required" => "Debes completar este campo",
         ];
