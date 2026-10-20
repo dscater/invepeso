@@ -273,7 +273,7 @@ class VentaController extends Controller
             DB::commit();
             return redirect()->route("ventas.index")
                 ->with("bien", "Registro realizado")
-                ->with("url_blank", route('ventas.pdf', $venta->id));
+                ->with("url_blank", route('ventas.pdf_rollo', $venta->id));
         } catch (\Exception $e) {
             DB::rollBack();
             throw ValidationException::withMessages([
@@ -362,7 +362,7 @@ class VentaController extends Controller
             DB::commit();
             return redirect()->route("ventas.index")
                 ->with("bien", "Registro actualizado")
-                ->with("url_blank", route('ventas.pdf', $venta->id));
+                ->with("url_blank", route('ventas.pdf_rollo', $venta->id));
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());
