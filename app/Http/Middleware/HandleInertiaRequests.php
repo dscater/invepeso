@@ -29,15 +29,24 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
+        if ($user) {
+            $user->loadMissing(['sucursal', 'role']);
+        }
+
         return [
             ...parent::share($request),
+
             'auth' => [
-                'user' => $request->user() ? $request->user()->load(["sucursal", "role"]) : null,
+                'user' => $user,
             ],
+
             'flash' => [
                 'bien' => fn() => $request->session()->get('bien'),
                 'error' => fn() => $request->session()->get('error'),
             ],
+
             'url_app' => url('/'),
             'url_blank' => fn() => $request->session()->get('url_blank'),
         ];
