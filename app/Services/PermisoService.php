@@ -18,25 +18,41 @@ class PermisoService
      *
      * @return array
      */
+
     public function getPermisosUser(): array|string
     {
-        if (!Auth::check()) {
+        $user = Auth::user();
+
+        if (!$user) {
             return [];
         }
-        $tipo = Auth::user()->tipo;
-        if ($tipo == 'POSTULANTE') {
-            return $this->arrayPermisos[$tipo];
+
+        $tipo = $user->tipo;
+
+        if ($tipo === 'TIPO_USUARIO') {
+            // declarar un array dentro dela clase
+            // para permisos especificos por tipo de usuario
+            return $this->arrayPermisos[$tipo] ?? [];
         }
-        $role_id = Auth::user()->role_id;
-        $role = Role::find($role_id);
+
+        $role = $user->role;
+
+        if (!$role) {
+            return [];
+        }
+
         if ($role->permisos == 1) {
-            // todos los permisos
-            return "*";
+            return '*';
         }
-        $permisos = Permiso::join("modulos", "modulos.id", "=", "permisos.modulo_id")
-            ->where("permisos.role_id", $role->id)
-            ->pluck("modulos.nombre")
+
+        return Permiso::join(
+            'modulos',
+            'modulos.id',
+            '=',
+            'permisos.modulo_id'
+        )
+            ->where('permisos.role_id', $role->id)
+            ->pluck('modulos.nombre')
             ->toArray();
-        return $permisos;
     }
 }

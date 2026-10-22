@@ -19,49 +19,48 @@ class PermisoUsuarioMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check()) {
+        $user = $request->user();
+
+        if (!$user) {
             if ($request->inertia()) {
-                return redirect()->url('/');
+                return redirect('/');
             }
+
             abort(403);
         }
 
-        if (Auth::check()) {
+        $prefijo = $request->route()?->getPrefix();
+        $nom_ruta = $request->route()?->getName();
 
-            $permisoService = new PermisoService();
-            $permisos = $permisoService->getPermisosUser();
-            // Log::debug($request->route()->getName());
-            // Log::debug($request->route()->getPrefix());
-            $prefijo = $request->route()->getPrefix();
-            $nom_ruta = $request->route()->getName();
-            $continuar = true;
+        $excepciones = [
+            'inicio',
+            'profile.edit',
+            'profile.update',
+            'profile.update_foto',
+            'users.getUser',
+        ];
 
-            $exepciones = [
-                "inicio",
+        // Las rutas que no son de administración continúan normalmente.
+        if ($prefijo !== 'admin') {
+            return $next($request);
+        }
 
-                "profile.edit",
-                "profile.update",
-                "profile.update_foto",
+        // Las rutas exceptuadas no necesitan comprobar permisos.
+        if (in_array($nom_ruta, $excepciones, true)) {
+            return $next($request);
+        }
 
-                "users.getUser",
-            ];
+        $permisoService = app(PermisoService::class);
+        $permisos = $permisoService->getPermisosUser();
 
-            if ($prefijo == 'admin') {
-                if (is_array($permisos)) {
-                    // ADMINITRACIÓN
-                    $modulos = Modulo::pluck("nombre")->toArray();
-                    if (in_array($nom_ruta, $modulos)) {
-                        if (!in_array($nom_ruta, $permisos)) {
-                            $continuar = false;
-                        }
-                    }
-                    if (in_array($nom_ruta, $exepciones)) {
-                        $continuar = true;
-                    }
-                }
-            }
-            if (!$continuar) {
-                abort(401, "Acceso denegado");
+        if (is_array($permisos)) {
+            $modulos = Modulo::pluck('nombre')->toArray();
+
+            if (
+                in_array($nom_ruta, $modulos, true) &&
+                !in_array($nom_ruta, $permisos, true)
+            ) {
+                abort(401, 'Acceso denegado');
             }
         }
 
