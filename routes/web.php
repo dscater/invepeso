@@ -1,7 +1,27 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+
+Route::get('/prueba-db', function () {
+    $inicio = microtime(true);
+
+    DB::connection()->getPdo();
+
+    $conexionMs = (microtime(true) - $inicio) * 1000;
+
+    $inicio = microtime(true);
+
+    DB::table('users')->where('id', 1)->first();
+
+    $consultaMs = (microtime(true) - $inicio) * 1000;
+
+    return response()->json([
+        'conexion_ms' => round($conexionMs, 2),
+        'consulta_ms' => round($consultaMs, 2),
+    ]);
+});
+
 use App\Http\Controllers\AlmacenController;
-use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ClienteProductoController;
