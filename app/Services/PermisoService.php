@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Permiso;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class PermisoService
 {
@@ -35,24 +36,54 @@ class PermisoService
             return $this->arrayPermisos[$tipo] ?? [];
         }
 
-        $role = $user->role;
+        $roleId = $user->role_id;
 
-        if (!$role) {
+        if (!$roleId) {
             return [];
         }
 
-        if ($role->permisos == 1) {
-            return '*';
-        }
+        // Versión para invalidar todos los permisos sin recorrer
+        // todas las claves de caché.
+        $version = Cache::get('permisos_cache_version', 1);
 
-        return Permiso::join(
-            'modulos',
-            'modulos.id',
-            '=',
-            'permisos.modulo_id'
-        )
-            ->where('permisos.role_id', $role->id)
-            ->pluck('modulos.nombre')
-            ->toArray();
+        $cacheKey = "permisos_role_v{$version}_{$roleId}";
+
+        return Cache::remember(
+            $cacheKey,
+            now()->addHours(8),
+            function () use ($roleId) {
+                $role = Role::find($roleId);
+
+                if (!$role) {
+                    return [];
+                }
+
+                // El rol tiene acceso a todos los módulos
+                if ($role->permisos == 1) {
+                    return '*';
+                }
+
+                return Permiso::join(
+                    'modulos',
+                    'modulos.id',
+                    '=',
+                    'permisos.modulo_id'
+                )
+                    ->where('permisos.role_id', $roleId)
+                    ->pluck('modulos.nombre')
+                    ->toArray();
+            }
+        );
+    }
+
+    public function limpiarCachePermisos(): void
+    {
+        $version = (int) Cache::get('permisos_cache_version', 1);
+
+        // Invalida las claves de permisos de todos los roles.
+        Cache::forever('permisos_cache_version', $version + 1);
+
+        // Invalida la lista de módulos.
+        Cache::forget('modulos_nombres');
     }
 }

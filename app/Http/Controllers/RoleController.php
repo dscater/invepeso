@@ -9,6 +9,7 @@ use App\Models\Modulo;
 use App\Models\Permiso;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\PermisoService;
 use App\Services\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -24,7 +25,7 @@ use Inertia\Response as ResponseInertia;
 class RoleController extends Controller
 {
 
-    public function __construct(private RoleService $roleService) {}
+    public function __construct(private RoleService $roleService, private PermisoService $permiso_service) {}
 
     /**
      * Página index
@@ -174,6 +175,10 @@ class RoleController extends Controller
             ->join("modulos", "modulos.id", "=", "permisos.modulo_id")
             ->where("role_id", $role->id)
             ->where("modulos.modulo", $o_modulo->modulo)->get();
+
+        // REINICIAR CACHE DE PERMISOS Y MODULOS
+        Log::debug("Reinicia cache permisos");
+        $this->permiso_service->limpiarCachePermisos();
 
         return response()->JSON([
             "array_permisos" => $array_permisos

@@ -157,6 +157,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::post("clientes/nuevo", [ClienteController::class, 'nuevo'])->name("clientes.nuevo");
     Route::get("clientes/paginado", [ClienteController::class, 'paginado'])->name("clientes.paginado");
     Route::get("clientes/listado", [ClienteController::class, 'listado'])->name("clientes.listado");
+    Route::get('clientes/buscar', [ClienteController::class, 'buscar'])->name('clientes.buscar');
     Route::get("clientes/byCi", [ClienteController::class, 'byCi'])->name("clientes.byCi");
     Route::get("clientes/formato", [ClienteController::class, 'formato'])->name("clientes.formato");
     Route::post("clientes/cargaClientes", [ClienteController::class, 'cargaClientes'])->name("clientes.cargaClientes");

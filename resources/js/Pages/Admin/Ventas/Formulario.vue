@@ -141,7 +141,6 @@ const listAlmacens = ref([]);
 const listTipoVentas = ref([]);
 const listTipoPagos = ref([]);
 const tipo_venta_id_default = ref("");
-const listClientes = ref([]);
 const listCategorias = ref([]);
 const listMarcas = ref([]);
 const listProductoAlmacens = ref([]);
@@ -285,9 +284,52 @@ const cargarListas = () => {
     cargarTipoVentas();
     cargarTipoPagos();
     cargarAlmacens();
-    cargarClientes();
+    // cargarClientes();
     cargarCategorias();
     cargarMarcas();
+};
+
+const listClientes = ref([]);
+const cargandoClientes = ref(false);
+
+let temporizadorClientes = null;
+let ultimaBusqueda = 0;
+
+const buscarClientes = (texto) => {
+    clearTimeout(temporizadorClientes);
+
+    const busqueda = texto?.trim() ?? "";
+    const peticion = ++ultimaBusqueda;
+
+    if (busqueda.length < 2) {
+        listClientes.value = [];
+        cargandoClientes.value = false;
+        return;
+    }
+
+    temporizadorClientes = setTimeout(async () => {
+        cargandoClientes.value = true;
+
+        try {
+            const response = await axios.get("/admin/clientes/buscar", {
+                params: { q: busqueda },
+            });
+
+            // Ignorar respuestas de búsquedas anteriores.
+            if (peticion === ultimaBusqueda) {
+                listClientes.value = response.data;
+            }
+        } catch (error) {
+            if (peticion === ultimaBusqueda) {
+                listClientes.value = [];
+                console.error("Error al buscar clientes:", error);
+            }
+        } finally {
+            if (peticion === ultimaBusqueda) {
+                cargandoClientes.value = false;
+            }
+        }
+    }, 300);
 };
 
 const obtenerPrecioClienteProducto = (producto_id) => {
@@ -471,7 +513,9 @@ const quitarFila = (item, index) => {
         Number(form.venta_detalles[index].cantidad),
     );
     form.venta_detalles.splice(index, 1);
-    toast.success("Se quitó el producto!!!");
+    toast.success("Se quitó el producto!!!", {
+        autoClose: 250,
+    });
 };
 
 const sumarDetalleEliminado = (producto_id, cantidad) => {
@@ -575,7 +619,8 @@ const buscarClienteProductos = () => {
             })
             .then((response) => {
                 listClienteProductos.value = response.data.cliente_productos;
-                reasignarPreciosPorClienteProductos();
+                if (listClienteProductos.value.length > 0)
+                    reasignarPreciosPorClienteProductos();
             });
     }
 };
@@ -672,13 +717,14 @@ onMounted(() => {
                                 </el-select>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-6 mt-2">
-                                <input
+                                <el-input
                                     type="text"
-                                    class="form-control"
-                                    placeholder="Producto"
+                                    placeholder="Código o Nombre del Producto"
                                     v-model="nombreProducto"
                                     @keyup="filtrarNombres"
-                                />
+                                    @clear="cargarProductos"
+                                    clearable
+                                ></el-input>
                             </div>
                         </div>
                     </div>
@@ -974,17 +1020,23 @@ onMounted(() => {
                                             class="el-select-input-group-left"
                                             no-data-text="Sin datos"
                                             no-match-text="Sin resultados"
-                                            placeholder="Cliente"
+                                            loading-text="Buscando..."
+                                            placeholder="Escribe el nombre o documento del cliente"
                                             size="large"
                                             filterable
+                                            remote
+                                            clearable
+                                            :remote-method="buscarClientes"
+                                            :loading="cargandoClientes"
+                                            :reserve-keyword="true"
                                             @change="buscarClienteProductos()"
                                         >
                                             <el-option
                                                 v-for="item in listClientes"
                                                 :key="item.id"
                                                 :value="item.id"
-                                                :label="`${item.nombre} - ${item.tipo_documento.nombre}: ${item.nro_documento}`"
-                                            ></el-option>
+                                                :label="`${item.nombre} - ${item.tipo_documento?.nombre ?? ''}: ${item.nro_documento}`"
+                                            />
                                         </el-select>
                                     </div>
                                     <span class="input-button">

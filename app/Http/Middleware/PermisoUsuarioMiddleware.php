@@ -6,6 +6,7 @@ use App\Models\Modulo;
 use App\Services\PermisoService;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,8 +55,14 @@ class PermisoUsuarioMiddleware
         $permisos = $permisoService->getPermisosUser();
 
         if (is_array($permisos)) {
-            $modulos = Modulo::pluck('nombre')->toArray();
+            // $modulos = Modulo::pluck('nombre')->toArray();
+            $modulos = Cache::remember(
+                'modulos_nombres',
+                now()->addHours(8),
+                fn() => Modulo::pluck('nombre')->toArray()
+            );
 
+            // Log::debug($modulos);
             if (
                 in_array($nom_ruta, $modulos, true) &&
                 !in_array($nom_ruta, $permisos, true)

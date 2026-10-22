@@ -45,6 +45,32 @@ class ClienteController extends Controller
         ]);
     }
 
+    public function buscar(Request $request)
+    {
+        $request->validate([
+            'q' => ['required', 'string', 'min:2', 'max:100'],
+        ]);
+
+        $busqueda = trim($request->input('q'));
+
+        return Cliente::query()
+            ->select([
+                'id',
+                'nombre',
+                'tipo_documento_id',
+                'nro_documento',
+            ])
+            ->with('tipo_documento:id,nombre')
+            ->where('status', 1)
+            ->where(function ($query) use ($busqueda) {
+                $query->where('nombre', 'like', "%{$busqueda}%")
+                    ->orWhere('nro_documento', 'like', "%{$busqueda}%");
+            })
+            ->orderBy('nombre')
+            ->limit(20)
+            ->get();
+    }
+
     public function byCi(Request $request)
     {
         $ci = $request->input("ci", "");
@@ -61,7 +87,8 @@ class ClienteController extends Controller
         $orderAsc = $request->orderAsc;
 
         $columnsSerachLike = [
-            "ci",
+            "nombre",
+            "nro_documento",
         ];
         $columnsFilter = [];
         $columnsBetweenFilter = [];

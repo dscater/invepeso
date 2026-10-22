@@ -25,7 +25,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ConfiguracionTableSeeder::class,
             RoleTableSeeder::class,
-            UserTableSeeder::class
+            UserTableSeeder::class,
+            ClientesPruebaSeeder::class,
+            ProductosPruebaSeeder::class,
         ]);
     }
 }
