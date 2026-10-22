@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 19-10-2026 a las 14:46:44
+-- Tiempo de generación: 22-10-2026 a las 00:21:29
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -189,7 +189,8 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (2, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 1, \"saldo\": \"48600.00\", \"total\": \"48600.00\", \"codigo\": \"F001\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-10-19T14:24:00.000000Z\", \"updated_at\": \"2026-10-19T14:24:00.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-10-19\", \"tipo_ingreso_id\": \"1\", \"total_cancelado\": 0, \"ingreso_detalles\": [{\"id\": 1, \"costo\": \"120.00\", \"cantidad\": 100, \"repuesto\": 0, \"subtotal\": \"12000.00\", \"faltantes\": null, \"created_at\": \"2026-10-19T14:24:00.000000Z\", \"updated_at\": \"2026-10-19T14:24:00.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 1, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 1}, {\"id\": 2, \"costo\": \"121.00\", \"cantidad\": 100, \"repuesto\": 0, \"subtotal\": \"12100.00\", \"faltantes\": null, \"created_at\": \"2026-10-19T14:24:00.000000Z\", \"updated_at\": \"2026-10-19T14:24:00.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 2, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 1}, {\"id\": 3, \"costo\": \"122.00\", \"cantidad\": 100, \"repuesto\": 0, \"subtotal\": \"12200.00\", \"faltantes\": null, \"created_at\": \"2026-10-19T14:24:00.000000Z\", \"updated_at\": \"2026-10-19T14:24:00.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 3, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 1}, {\"id\": 4, \"costo\": \"123.00\", \"cantidad\": 100, \"repuesto\": 0, \"subtotal\": \"12300.00\", \"faltantes\": null, \"created_at\": \"2026-10-19T14:24:00.000000Z\", \"updated_at\": \"2026-10-19T14:24:00.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 4, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 1}], \"cancelado_efectivo\": \"0\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-10-19', '10:24:00', '2026-10-19 14:24:00', '2026-10-19 14:24:00'),
 (3, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 1, \"hora\": \"10:26:57\", \"fecha\": \"2026-10-19\", \"saldo\": \"1362.00\", \"total\": \"1362.00\", \"nit_ci\": \"56565656\", \"user_id\": 1, \"subtotal\": \"1362.00\", \"descuento\": \"0\", \"tipo_pago\": \"\", \"almacen_id\": 1, \"cliente_id\": 13, \"created_at\": \"2026-10-19T14:26:57.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-10-19T14:26:57.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"0\", \"codigo_venta\": \"V1\", \"fecha_registro\": \"2026-10-19\", \"venta_detalles\": [{\"id\": 1, \"total\": \"597.00\", \"precio\": \"199.00\", \"status\": 1, \"cantidad\": 3, \"venta_id\": 1, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"597.00\", \"created_at\": \"2026-10-19T14:26:57.000000Z\", \"updated_at\": \"2026-10-19T14:26:57.000000Z\", \"producto_id\": 1, \"precio_final\": \"199.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 2, \"total\": \"765.00\", \"precio\": \"255.00\", \"status\": 1, \"cantidad\": 3, \"venta_id\": 1, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"765.00\", \"created_at\": \"2026-10-19T14:26:57.000000Z\", \"updated_at\": \"2026-10-19T14:26:57.000000Z\", \"producto_id\": 2, \"precio_final\": \"255.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 0, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"0\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-10-19', '10:26:57', '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
 (4, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 199 EN LA SUCURSAL SUCURSAL 1; almacén ALMACEN 1', '{\"id\": 1, \"hora\": \"10:29:08\", \"tipo\": \"VENTA\", \"fecha\": \"2026-10-19\", \"modulo\": \"Venta\", \"user_id\": 1, \"monto_qr\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 2, \"created_at\": \"2026-10-19T14:29:08.000000Z\", \"updated_at\": \"2026-10-19T14:29:08.000000Z\", \"descripcion\": \"INGRESO POR VENTA\", \"monto_total\": 199, \"registro_id\": 2, \"sucursal_id\": 2, \"monto_efectivo\": \"199\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-10-19', '10:29:08', '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
-(5, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 2, \"hora\": \"10:29:08\", \"fecha\": \"2026-10-19\", \"saldo\": \"0.00\", \"total\": \"199.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"199.00\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 2, \"cliente_id\": 1, \"created_at\": \"2026-10-19T14:29:08.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-10-19T14:29:08.000000Z\", \"sucursal_id\": 2, \"cancelado_qr\": \"0\", \"codigo_venta\": \"V2\", \"fecha_registro\": \"2026-10-19\", \"venta_detalles\": [{\"id\": 3, \"total\": \"199.00\", \"precio\": \"199.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 2, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"199.00\", \"created_at\": \"2026-10-19T14:29:08.000000Z\", \"updated_at\": \"2026-10-19T14:29:08.000000Z\", \"producto_id\": 1, \"precio_final\": \"199.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 199, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"199\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-10-19', '10:29:08', '2026-10-19 14:29:08', '2026-10-19 14:29:08');
+(5, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 2, \"hora\": \"10:29:08\", \"fecha\": \"2026-10-19\", \"saldo\": \"0.00\", \"total\": \"199.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"199.00\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 2, \"cliente_id\": 1, \"created_at\": \"2026-10-19T14:29:08.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-10-19T14:29:08.000000Z\", \"sucursal_id\": 2, \"cancelado_qr\": \"0\", \"codigo_venta\": \"V2\", \"fecha_registro\": \"2026-10-19\", \"venta_detalles\": [{\"id\": 3, \"total\": \"199.00\", \"precio\": \"199.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 2, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"199.00\", \"created_at\": \"2026-10-19T14:29:08.000000Z\", \"updated_at\": \"2026-10-19T14:29:08.000000Z\", \"producto_id\": 1, \"precio_final\": \"199.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 199, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"199\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-10-19', '10:29:08', '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
+(6, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 3, \"hora\": \"22:53:59\", \"fecha\": \"2026-10-19\", \"saldo\": \"199.00\", \"total\": \"199.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"199.00\", \"descuento\": \"0\", \"tipo_pago\": \"\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-10-20T02:53:59.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-10-20T02:53:59.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"0\", \"codigo_venta\": \"V3\", \"fecha_registro\": \"2026-10-19\", \"venta_detalles\": [{\"id\": 4, \"total\": \"199.00\", \"precio\": \"199.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 3, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"199.00\", \"created_at\": \"2026-10-20T02:53:59.000000Z\", \"updated_at\": \"2026-10-20T02:53:59.000000Z\", \"producto_id\": 1, \"precio_final\": \"199.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 0, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"0\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-10-19', '22:53:59', '2026-10-20 02:54:00', '2026-10-20 02:54:00');
 
 -- --------------------------------------------------------
 
@@ -379,7 +380,8 @@ INSERT INTO `kardex_productos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_deta
 (7, 1, 1, 4, 'INGRESO DE PRODUCTO', 7, 'IngresoRecepcion', 4, 'POR COMPRAS', 123.00, 'INGRESO', 50.00, NULL, 50.00, 123.00, 6150.00, NULL, 6150.00, '2026-10-19', 1, '2026-10-19 14:24:52', '2026-10-19 14:24:52'),
 (8, 1, 1, NULL, 'VENTA DE PRODUCTO', 1, 'VentaDetalle', 1, 'SALIDA POR VENTA', 199.00, 'EGRESO', NULL, 3.00, 37.00, 199.00, NULL, 597.00, 4203.00, '2026-10-19', 1, '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
 (9, 1, 1, NULL, 'VENTA DE PRODUCTO', 2, 'VentaDetalle', 2, 'SALIDA POR VENTA', 255.00, 'EGRESO', NULL, 3.00, 47.00, 255.00, NULL, 765.00, 5285.00, '2026-10-19', 1, '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
-(10, 2, 2, NULL, 'VENTA DE PRODUCTO', 3, 'VentaDetalle', 1, 'SALIDA POR VENTA', 199.00, 'EGRESO', NULL, 1.00, 29.00, 199.00, NULL, 199.00, 3401.00, '2026-10-19', 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08');
+(10, 2, 2, NULL, 'VENTA DE PRODUCTO', 3, 'VentaDetalle', 1, 'SALIDA POR VENTA', 199.00, 'EGRESO', NULL, 1.00, 29.00, 199.00, NULL, 199.00, 3401.00, '2026-10-19', 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
+(11, 1, 1, NULL, 'VENTA DE PRODUCTO', 4, 'VentaDetalle', 1, 'SALIDA POR VENTA', 199.00, 'EGRESO', NULL, 1.00, 36.00, 199.00, NULL, 199.00, 4004.00, '2026-10-19', 1, '2026-10-20 02:53:59', '2026-10-20 02:53:59');
 
 -- --------------------------------------------------------
 
@@ -458,7 +460,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (37, '2026_09_21_095110_create_cliente_productos_table', 12),
 (38, '2026_10_17_103418_create_ingreso_recepcions_table', 13),
 (39, '2026_10_17_103904_create_notificacions_table', 13),
-(40, '2026_10_17_103913_create_notificacion_users_table', 13);
+(40, '2026_10_17_103913_create_notificacion_users_table', 13),
+(41, '2026_10_21_201740_create_telescope_entries_table', 14);
 
 -- --------------------------------------------------------
 
@@ -663,6 +666,19 @@ CREATE TABLE `permisos` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `permisos`
+--
+
+INSERT INTO `permisos` (`id`, `role_id`, `modulo_id`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, '2026-10-19 15:14:11', '2026-10-19 15:14:11'),
+(2, 2, 2, '2026-10-19 15:14:12', '2026-10-19 15:14:12'),
+(3, 2, 3, '2026-10-19 15:14:12', '2026-10-19 15:14:12'),
+(4, 2, 4, '2026-10-19 15:14:15', '2026-10-19 15:14:15'),
+(5, 2, 5, '2026-10-19 15:14:16', '2026-10-19 15:14:16'),
+(6, 2, 6, '2026-10-19 15:14:17', '2026-10-19 15:14:17'),
+(9, 2, 7, '2026-10-19 15:14:58', '2026-10-19 15:14:58');
+
 -- --------------------------------------------------------
 
 --
@@ -725,7 +741,7 @@ CREATE TABLE `producto_sucursals` (
 --
 
 INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `almacen_id`, `producto_id`, `stock_actual`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 1, 37.00, '2026-10-19 14:24:52', '2026-10-19 14:26:57'),
+(1, 1, 1, 1, 36.00, '2026-10-19 14:24:52', '2026-10-20 02:53:59'),
 (2, 2, 2, 1, 29.00, '2026-10-19 14:24:52', '2026-10-19 14:29:08'),
 (3, 3, 3, 1, 30.30, '2026-10-19 14:24:52', '2026-10-19 14:24:52'),
 (4, 1, 1, 2, 47.00, '2026-10-19 14:24:52', '2026-10-19 14:26:57'),
@@ -895,6 +911,121 @@ INSERT INTO `sucursals` (`id`, `nombre`, `descripcion`, `activo`, `ventas`, `fec
 (1, 'SUCURSAL CENTRAL', '', 1, 0, '2026-07-11', '2026-07-11 15:33:24', '2026-08-28 15:41:04'),
 (2, 'SUCURSAL 1', '', 1, 1, '2026-07-11', '2026-07-11 15:33:34', '2026-07-11 15:33:34'),
 (3, 'SUCURSAL 2', '', 1, 1, '2026-07-11', '2026-07-11 15:33:42', '2026-09-16 20:21:56');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `telescope_entries`
+--
+
+CREATE TABLE `telescope_entries` (
+  `sequence` bigint UNSIGNED NOT NULL,
+  `uuid` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch_id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `family_hash` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `should_display_on_index` tinyint(1) NOT NULL DEFAULT '1',
+  `type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `content` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `telescope_entries`
+--
+
+INSERT INTO `telescope_entries` (`sequence`, `uuid`, `batch_id`, `family_hash`, `should_display_on_index`, `type`, `content`, `created_at`) VALUES
+(1, 'a309e116-2157-4882-a07b-35cd1dc05895', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select exists (select 1 from information_schema.tables where table_schema = schema() and table_name = \'migrations\' and table_type in (\'BASE TABLE\', \'SYSTEM VERSIONED\')) as `exists`\",\"time\":\"7.53\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\artisan\",\"line\":16,\"hash\":\"472343cbf78736393ab995dc1735b75f\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(2, 'a309e116-252e-4122-b77a-21b5e30f34cb', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select exists (select 1 from information_schema.tables where table_schema = schema() and table_name = \'migrations\' and table_type in (\'BASE TABLE\', \'SYSTEM VERSIONED\')) as `exists`\",\"time\":\"1.53\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\artisan\",\"line\":16,\"hash\":\"472343cbf78736393ab995dc1735b75f\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(3, 'a309e116-2851-48ca-99fa-91dea2b99773', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select `migration` from `migrations` order by `batch` asc, `migration` asc\",\"time\":\"3.49\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\artisan\",\"line\":16,\"hash\":\"ed08a59c7f0b8851f0fd2291ca94d5c7\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(4, 'a309e116-2976-44aa-b8f9-1a22c044119d', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select `migration` from `migrations` order by `batch` asc, `migration` asc\",\"time\":\"0.41\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\artisan\",\"line\":16,\"hash\":\"ed08a59c7f0b8851f0fd2291ca94d5c7\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(5, 'a309e116-29f7-42ce-94ef-1ee3d7592802', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select max(`batch`) as aggregate from `migrations`\",\"time\":\"0.26\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\artisan\",\"line\":16,\"hash\":\"06e60d7b3d1a0c2de504de4e6f27735e\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(6, 'a309e116-346b-48c1-a34b-c1fc49ea283a', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"create table `telescope_entries` (`sequence` bigint unsigned not null auto_increment primary key, `uuid` char(36) not null, `batch_id` char(36) not null, `family_hash` varchar(255) null, `should_display_on_index` tinyint(1) not null default \'1\', `type` varchar(20) not null, `content` longtext not null, `created_at` datetime null) default character set utf8mb4 collate \'utf8mb4_unicode_ci\'\",\"time\":\"11.69\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\database\\\\migrations\\\\2026_10_21_201740_create_telescope_entries_table.php\",\"line\":24,\"hash\":\"d9429550f8856c1af1c89f24a6440cb5\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(7, 'a309e116-3a9d-42e8-844f-475ce70de70c', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"alter table `telescope_entries` add unique `telescope_entries_uuid_unique`(`uuid`)\",\"time\":\"15.07\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\database\\\\migrations\\\\2026_10_21_201740_create_telescope_entries_table.php\",\"line\":24,\"hash\":\"9fb859ae1faff74c6b9e0b70dfd8eea9\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(8, 'a309e116-3e4c-40e1-b9a4-38dcdb15eb23', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"alter table `telescope_entries` add index `telescope_entries_batch_id_index`(`batch_id`)\",\"time\":\"8.72\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\database\\\\migrations\\\\2026_10_21_201740_create_telescope_entries_table.php\",\"line\":24,\"hash\":\"2b075509a9242d6e3f622536c5ccca07\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(9, 'a309e116-4199-40f1-b74e-95ab7fb7676d', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"alter table `telescope_entries` add index `telescope_entries_family_hash_index`(`family_hash`)\",\"time\":\"7.88\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\database\\\\migrations\\\\2026_10_21_201740_create_telescope_entries_table.php\",\"line\":24,\"hash\":\"3d25a2a244bd2028dfa0326d3dbf7f4c\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(10, 'a309e116-44d0-4c55-a595-5d7c799bb897', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"alter table `telescope_entries` add index `telescope_entries_created_at_index`(`created_at`)\",\"time\":\"7.55\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\database\\\\migrations\\\\2026_10_21_201740_create_telescope_entries_table.php\",\"line\":24,\"hash\":\"7352e7f84460fb7ffc450e7ea4de9dc7\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(11, 'a309e116-4833-42bf-bd3a-5b14f578ce09', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"alter table `telescope_entries` add index `telescope_entries_type_should_display_on_index_index`(`type`, `should_display_on_index`)\",\"time\":\"7.96\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\database\\\\migrations\\\\2026_10_21_201740_create_telescope_entries_table.php\",\"line\":24,\"hash\":\"7317a4cad2dfa1a5167548a6acd0b6a5\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(12, 'a309e116-4c07-4a74-8e75-44cc0fa34832', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"create table `telescope_entries_tags` (`entry_uuid` char(36) not null, `tag` varchar(255) not null, primary key (`entry_uuid`, `tag`)) default character set utf8mb4 collate \'utf8mb4_unicode_ci\'\",\"time\":\"8.58\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\database\\\\migrations\\\\2026_10_21_201740_create_telescope_entries_table.php\",\"line\":41,\"hash\":\"f8c7e1e3c3d557b70e7a918609f839f2\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(13, 'a309e116-524f-45d2-b2d1-18bdbc78b208', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"alter table `telescope_entries_tags` add index `telescope_entries_tags_tag_index`(`tag`)\",\"time\":\"15.51\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\database\\\\migrations\\\\2026_10_21_201740_create_telescope_entries_table.php\",\"line\":41,\"hash\":\"0bdb35d17e876d6225a7774a2c17647d\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(14, 'a309e116-5fcd-4456-bfa1-8f80af45e7aa', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"alter table `telescope_entries_tags` add constraint `telescope_entries_tags_entry_uuid_foreign` foreign key (`entry_uuid`) references `telescope_entries` (`uuid`) on delete cascade\",\"time\":\"33.96\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\database\\\\migrations\\\\2026_10_21_201740_create_telescope_entries_table.php\",\"line\":41,\"hash\":\"662a818f80a3a9ba2570081fd7a6af2f\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(15, 'a309e116-637b-4179-a5f8-4497854d2e0f', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"create table `telescope_monitoring` (`tag` varchar(255) not null, primary key (`tag`)) default character set utf8mb4 collate \'utf8mb4_unicode_ci\'\",\"time\":\"8.76\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\database\\\\migrations\\\\2026_10_21_201740_create_telescope_entries_table.php\",\"line\":54,\"hash\":\"18d1fa09eade84a80848982d91caec5c\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(16, 'a309e116-6669-40ad-94e8-ae947b50cb4b', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"insert into `migrations` (`migration`, `batch`) values (\'2026_10_21_201740_create_telescope_entries_table\', 14)\",\"time\":\"2.16\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\artisan\",\"line\":16,\"hash\":\"f2b8e8e4266db16aec6db940c643eb68\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(17, 'a309e116-6726-4d14-ba54-e76a2d2a7ee6', 'a309e116-6815-405c-b44c-43d50f2f9949', NULL, 1, 'command', '{\"command\":\"migrate\",\"exit_code\":0,\"arguments\":{\"command\":\"migrate\"},\"options\":{\"database\":null,\"force\":false,\"path\":[],\"realpath\":false,\"schema-path\":null,\"pretend\":false,\"seed\":false,\"seeder\":null,\"step\":false,\"graceful\":false,\"isolated\":false,\"help\":false,\"silent\":false,\"quiet\":false,\"verbose\":false,\"version\":false,\"ansi\":null,\"no-interaction\":false,\"env\":null},\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:17:43'),
+(18, 'a309e20a-adf5-42e6-a7a3-5b5b1f47bf4f', 'a309e20a-b8d5-49a3-9c25-d532132c4205', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select * from `users` where `id` = 1 limit 1\",\"time\":\"2.76\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Http\\\\Middleware\\\\HandleInertiaRequests.php\",\"line\":35,\"hash\":\"082e27d9c4fc4a40315cae2c646c0509\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:20:23'),
+(19, 'a309e20a-b13a-4fa0-9c96-f2d4e4d7a6b1', 'a309e20a-b8d5-49a3-9c25-d532132c4205', NULL, 1, 'model', '{\"action\":\"retrieved\",\"model\":\"App\\\\Models\\\\User\",\"count\":1,\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:20:23'),
+(20, 'a309e20a-b388-4f6f-92dc-578a5eeaa02b', 'a309e20a-b8d5-49a3-9c25-d532132c4205', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select * from `roles` where `roles`.`id` in (1)\",\"time\":\"0.79\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Http\\\\Middleware\\\\HandleInertiaRequests.php\",\"line\":35,\"hash\":\"b3f8b4044886bea1e3a43637c51979c9\",\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:23'),
+(21, 'a309e20a-b3bf-4821-9bce-c463ab497395', 'a309e20a-b8d5-49a3-9c25-d532132c4205', NULL, 1, 'model', '{\"action\":\"retrieved\",\"model\":\"App\\\\Models\\\\Role\",\"count\":1,\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:23'),
+(22, 'a309e20a-b78f-4737-b046-891d92a3f803', 'a309e20a-b8d5-49a3-9c25-d532132c4205', NULL, 1, 'request', '{\"ip_address\":\"127.0.0.1\",\"uri\":\"\\/\",\"method\":\"GET\",\"controller_action\":\"Closure\",\"middleware\":[\"web\"],\"headers\":{\"cookie\":\"XSRF-TOKEN=eyJpdiI6IitySUVTbjRiMVlaeWx1dEJ4SVJpMEE9PSIsInZhbHVlIjoia29GdkhBMTN0SWVXbVdMenQ4R3ZNWmRiZXhwV1Z3N0ROalN4ZWkrcGFYYWdWOGIyRHU1dk4zWHlQVTZjU1grNDA1dENrQm9VUmpSZ0pqdXZqM2NSVnRaNFpMNEpwOGxISnpNckdyZ0tNOHpuWlZRUG1sbmdMNGJzblBBbTlHMUIiLCJtYWMiOiIzNTAwNTMxMWJlYWE4MTNkN2YwMWIxMzJjYjA1Y2U3MzAwZmE2ZjU0YzliZjA4NDAzZTJiNmYyODY3MWNiNThlIiwidGFnIjoiIn0%3D; invepeso-session=eyJpdiI6IjlqZDZJbUZTVGF4aVY1b3lHY3NVNWc9PSIsInZhbHVlIjoiZDZncWFPVHF3Si9EbHVoYmtXTEdHTXRJNE55RThRWUVpckcxQlRzQ0NwSUhscW9qNmNlL09HeGF0YlBjV01HbHVXZlphS1NLa1NGc2IxREhCVExoN2FUVHhCNHpUTHEzQVE5YUtJbFAvVUQvQUJyTzQ3MmlxejIvaUF3Vml0SE8iLCJtYWMiOiJmZDNkNDA5MDMyZDZiOWVhYzQ2ZDFjZDkxYzk0MzUxMTJmZGNhZGNkNzc0MTExZmJiZTVjOWEyZjY3ZDk3YjYxIiwidGFnIjoiIn0%3D\",\"accept-language\":\"es-419,es-US;q=0.9,es;q=0.8,en-US;q=0.7,en;q=0.6,gl;q=0.5,es-MX;q=0.4,ru;q=0.3\",\"accept-encoding\":\"gzip, deflate\",\"accept\":\"text\\/html,application\\/xhtml+xml,application\\/xml;q=0.9,image\\/jxl,image\\/avif,image\\/webp,image\\/apng,*\\/*;q=0.8,application\\/signed-exchange;v=b3;q=0.7\",\"sec-purpose\":\"prefetch;prerender\",\"user-agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/155.0.0.0 Safari\\/537.36\",\"upgrade-insecure-requests\":\"1\",\"connection\":\"close\",\"host\":\"invepeso.test\"},\"payload\":[],\"session\":{\"_token\":\"2ANsA2CrdvKueXme9XRmhictWKVj1tXhLpTAvsJm\",\"_previous\":{\"url\":\"http:\\/\\/invepeso.test\",\"route\":\"generated::IBMzkZUqbkto0b1S\"},\"_flash\":{\"old\":[],\"new\":[]},\"login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d\":1},\"response_headers\":{\"cache-control\":\"no-cache, private\",\"date\":\"Thu, 22 Oct 2026 00:20:23 GMT\",\"location\":\"http:\\/\\/invepeso.test\\/admin\\/inicio\",\"content-type\":\"text\\/html; charset=utf-8\",\"vary\":\"X-Inertia\",\"set-cookie\":\"XSRF-TOKEN=eyJpdiI6Iks1S1hacUV3WmRBbDBQbUIwWU1oZ0E9PSIsInZhbHVlIjoiNVZla242V29HQkUyTnRFbWQ3aUVUWWxscGp1bUFmTHlOVWpKV3BzdTNZdUk4cUdQcVRseU91SVE1V0xWdlhWWFNaMURLVzBXMEFJNGdEeEtCKzZPQ1dBU0RoTE1zelltR2x0b29yQVZlYWhidnlxMFR5SWx6QTZjRmdQVXBOcS8iLCJtYWMiOiJhNDA5ZjY4OWE0YWZkOTdjMDQ4MzExOWU4MDViMGRjYjlmNWUzYmFmYThlYzM4MTljYzRkNzdiYzUwODdhMDA4IiwidGFnIjoiIn0%3D; expires=Thu, 22 Oct 2026 02:20:23 GMT; Max-Age=7200; path=\\/; samesite=lax, invepeso-session=eyJpdiI6IjNPTWdWbkpIWnVIVksxbHFJSFc4cEE9PSIsInZhbHVlIjoiZ0Q3emxXUUxRbkowZ0ZYdkF2dDdtOUZBWTFLR2NMRSt5UThvbHhlT1VibkwzYmpGK2FWVFVZYUZsWmV1ZWEycmlZM09sOEkvSk9RZlR2alJYYW1XSG9tN3QxYTBpUklCcnZDTGxGSk1FK2YvTTNtYVIzMDdPNG9jcXBMT1VacEQiLCJtYWMiOiIxNzVhNDYwYjNlNjI0YzM2NGU4MWZmNzQxZGZmZGVlNDE1Yzc1NDJlNWQ5MmQ3OWQyNmJlZjM3OTc0NjZmZGUyIiwidGFnIjoiIn0%3D; expires=Thu, 22 Oct 2026 02:20:23 GMT; Max-Age=7200; path=\\/; httponly; samesite=lax\"},\"response_status\":302,\"response\":\"Redirected to http:\\/\\/invepeso.test\\/admin\\/inicio\",\"duration\":362,\"memory\":28,\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:23'),
+(23, 'a309e20b-1828-4ef6-be0b-9ade86aaa18b', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select * from `users` where `id` = 1 limit 1\",\"time\":\"3.32\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\public\\\\index.php\",\"line\":20,\"hash\":\"082e27d9c4fc4a40315cae2c646c0509\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:20:24'),
+(24, 'a309e20b-19ff-48bc-a0d8-42fd17da0865', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'model', '{\"action\":\"retrieved\",\"model\":\"App\\\\Models\\\\User\",\"count\":1,\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:20:24'),
+(25, 'a309e20b-1ced-4bb2-80af-1a06097a224f', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select * from `roles` where `roles`.`id` in (1)\",\"time\":\"0.80\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Http\\\\Middleware\\\\HandleInertiaRequests.php\",\"line\":35,\"hash\":\"b3f8b4044886bea1e3a43637c51979c9\",\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:24'),
+(26, 'a309e20b-1d17-46d7-9802-2e226eadd882', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'model', '{\"action\":\"retrieved\",\"model\":\"App\\\\Models\\\\Role\",\"count\":4,\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:24'),
+(27, 'a309e20b-1e8e-4cd6-86c7-9f9bf1d8f4c9', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select * from `roles` where `roles`.`id` = 1 limit 1\",\"time\":\"0.47\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Services\\\\PermisoService.php\",\"line\":31,\"hash\":\"e82548a4d7797eb2fee09ff1d76cb50f\",\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:24'),
+(28, 'a309e20b-1f58-4443-ae11-460e13e90736', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select * from `roles` where `roles`.`id` = 1 limit 1\",\"time\":\"0.39\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Services\\\\PermisoService.php\",\"line\":31,\"hash\":\"e82548a4d7797eb2fee09ff1d76cb50f\",\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:24'),
+(29, 'a309e20b-2014-40d3-857e-acc60f6ae528', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select count(*) as aggregate from `users` where `id` != 1\",\"time\":\"0.65\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Http\\\\Controllers\\\\UserController.php\",\"line\":47,\"hash\":\"34050ad612855260ccc4f0cd6474481b\",\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:24'),
+(30, 'a309e20b-20ac-4afc-a90b-61cf0b3a939d', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select count(*) as aggregate from `clientes` where `status` = 1\",\"time\":\"0.45\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Http\\\\Controllers\\\\UserController.php\",\"line\":56,\"hash\":\"867e6ebac7a292e7511cfe08cb5d9bcc\",\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:24'),
+(31, 'a309e20b-2365-4bf0-8f9f-d5b52708327d', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select * from `roles` where `roles`.`id` = 1 limit 1\",\"time\":\"0.65\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Services\\\\PermisoService.php\",\"line\":31,\"hash\":\"e82548a4d7797eb2fee09ff1d76cb50f\",\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:24'),
+(32, 'a309e20b-2847-404b-8cee-d3faf4e63282', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'view', '{\"name\":\"app\",\"path\":\"\\\\resources\\\\views\\/app.blade.php\",\"data\":[\"page\"],\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:24'),
+(33, 'a309e20b-3be5-419d-868f-d4fd9d773f62', 'a309e20b-3d58-498a-a254-a86f12c930fa', NULL, 1, 'request', '{\"ip_address\":\"127.0.0.1\",\"uri\":\"\\/admin\\/inicio\",\"method\":\"GET\",\"controller_action\":\"App\\\\Http\\\\Controllers\\\\InicioController@inicio\",\"middleware\":[\"web\",\"auth\",\"permisoUsuario\"],\"headers\":{\"cookie\":\"XSRF-TOKEN=eyJpdiI6Iks1S1hacUV3WmRBbDBQbUIwWU1oZ0E9PSIsInZhbHVlIjoiNVZla242V29HQkUyTnRFbWQ3aUVUWWxscGp1bUFmTHlOVWpKV3BzdTNZdUk4cUdQcVRseU91SVE1V0xWdlhWWFNaMURLVzBXMEFJNGdEeEtCKzZPQ1dBU0RoTE1zelltR2x0b29yQVZlYWhidnlxMFR5SWx6QTZjRmdQVXBOcS8iLCJtYWMiOiJhNDA5ZjY4OWE0YWZkOTdjMDQ4MzExOWU4MDViMGRjYjlmNWUzYmFmYThlYzM4MTljYzRkNzdiYzUwODdhMDA4IiwidGFnIjoiIn0%3D; invepeso-session=eyJpdiI6IjNPTWdWbkpIWnVIVksxbHFJSFc4cEE9PSIsInZhbHVlIjoiZ0Q3emxXUUxRbkowZ0ZYdkF2dDdtOUZBWTFLR2NMRSt5UThvbHhlT1VibkwzYmpGK2FWVFVZYUZsWmV1ZWEycmlZM09sOEkvSk9RZlR2alJYYW1XSG9tN3QxYTBpUklCcnZDTGxGSk1FK2YvTTNtYVIzMDdPNG9jcXBMT1VacEQiLCJtYWMiOiIxNzVhNDYwYjNlNjI0YzM2NGU4MWZmNzQxZGZmZGVlNDE1Yzc1NDJlNWQ5MmQ3OWQyNmJlZjM3OTc0NjZmZGUyIiwidGFnIjoiIn0%3D\",\"accept-language\":\"es-419,es-US;q=0.9,es;q=0.8,en-US;q=0.7,en;q=0.6,gl;q=0.5,es-MX;q=0.4,ru;q=0.3\",\"accept-encoding\":\"gzip, deflate\",\"accept\":\"text\\/html,application\\/xhtml+xml,application\\/xml;q=0.9,image\\/jxl,image\\/avif,image\\/webp,image\\/apng,*\\/*;q=0.8,application\\/signed-exchange;v=b3;q=0.7\",\"sec-purpose\":\"prefetch;prerender\",\"user-agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/155.0.0.0 Safari\\/537.36\",\"upgrade-insecure-requests\":\"1\",\"connection\":\"close\",\"host\":\"invepeso.test\"},\"payload\":[],\"session\":{\"_token\":\"2ANsA2CrdvKueXme9XRmhictWKVj1tXhLpTAvsJm\",\"_previous\":{\"url\":\"http:\\/\\/invepeso.test\\/admin\\/inicio\",\"route\":\"inicio\"},\"_flash\":{\"old\":[],\"new\":[]},\"login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d\":1},\"response_headers\":{\"cache-control\":\"no-cache, private\",\"date\":\"Thu, 22 Oct 2026 00:20:24 GMT\",\"content-type\":\"text\\/html; charset=utf-8\",\"vary\":\"X-Inertia\",\"set-cookie\":\"XSRF-TOKEN=eyJpdiI6IkJ0NkJMVkFjUlR2a09DUWZNTUM2NWc9PSIsInZhbHVlIjoicmhHUlYweVdCOUZDK2pPUEN6dzB1TTdtUk1DSWZLOXlXSnN6YTZYY3pTM2N2eU51cGg0YW5xVVJLWGV5cEJ1TDg0UytSMHBIV3NrL2JGaFRqMHU5RmpsUEdHaXM3VEtjd1VDckZSUXpaYklQK3U3OWluT1YvSlZycGFuMnVDM0kiLCJtYWMiOiIyMjA3OTFjNjNhYmNjY2I0ZWMyNzMwNzBmYTZmMWVkM2JkZjk3MGE3MTNjZGIwOWI4YTZiYTU4ZDI3YTc0Yjg0IiwidGFnIjoiIn0%3D; expires=Thu, 22 Oct 2026 02:20:24 GMT; Max-Age=7200; path=\\/; samesite=lax, invepeso-session=eyJpdiI6IisrOWVuNzJDTkcwTkpRdXcyZVZEOGc9PSIsInZhbHVlIjoiQTlVeEovbWNBSWVLNk9kQWV6MTVXczhXYk9QcmhmSWljOXRtY3ZiSVUvRmJzMkkyb2FzNi9DTlp3T1VBS1ZSbjdXaWZXMHVkOC9WMG5FZ1RiVHJJUGhFZEpkN09xTTdZbUVwN08xVkRicldZcmNJckFaTHVhT2d4NHhxclkxN28iLCJtYWMiOiJkNmQzMGE3ZWYyZWJjNDY0OWY5NmNlOTE2ZjJlMDQ4MDEzYTRiMDMxZDI3NDA4MjlmYWNiZjI1MjJjNmI4NDFmIiwidGFnIjoiIn0%3D; expires=Thu, 22 Oct 2026 02:20:24 GMT; Max-Age=7200; path=\\/; httponly; samesite=lax\"},\"response_status\":200,\"response\":{\"view\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\resources\\\\views\\/app.blade.php\",\"data\":{\"page\":{\"component\":\"Admin\\/Home\",\"props\":{\"errors\":[],\"auth\":{\"user\":{\"id\":1,\"usuario\":\"admin\",\"nombre\":\"admin\",\"paterno\":\"admin\",\"materno\":\"\",\"ci\":\"0\",\"ci_exp\":\"\",\"dir\":\"\",\"correo\":\"\",\"fono\":\"\",\"foto\":null,\"tipo\":\"ADMINISTRACI\\u00d3N\",\"role_id\":1,\"acceso\":1,\"sucursal_id\":null,\"sucursal_todos\":1,\"fecha_registro\":\"2026-05-12\",\"status\":1,\"created_at\":\"2026-05-12T14:41:08.000000Z\",\"updated_at\":\"2026-05-12T14:41:08.000000Z\",\"permisos\":\"*\",\"url_foto\":\"http:\\/\\/invepeso.test\\/imgs\\/users\\/default.png\",\"foto_b64\":\"data:image\\/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIAAgMAAACJFjxpAAAADFBMVEXFxcX\\/\\/\\/\\/p6enW1tbAmiBwAAAFiElEQVR4AezAgQAAAACAoP2pF6kAAAAAAAAAAAAAAIDbu2MkvY0jiuMWWQoUmI50BB+BgRTpCAz4G6C8CJDrC3AEXGKPoMTlYA\\/gAJfwETawI8cuBs5Nk2KtvfiLW+gLfK9m+r3X82G653+JP\\/zjF8afP1S\\/\\/y+An4\\/i51\\/\\/AsB4aH+\\/QPD6EQAY\\/zwZwN8BAP50bh786KP4+VT+3fs4\\/noigEc+jnHeJrzxX+NWMDDh4g8+EXcnLcC9T8U5S\\/CdT8bcUeBEIrwBOiI8ki7Ba5+NrePgWUy89\\/nYyxQ8Iw3f+pWY4h1gb3eAW7sDTPEOsLc7wK1TIeDuDB+I\\/OA1QOUHv\\/dFsZQkhKkh4QlEfOULYz2nGj2\\/Nn1LmwR\\/86VxlCoAW6kCsHRGANx1RgCMo5Qh2EsZgrXNQZZShp5Liv7Il8eIc5C91EHY2hxk6bwYmNscZIReDBwtCdhbErC1JGBpScBcOgFMLQsZMQs5Whayd+UQsLYsZGlZyNyykKllISNmIUfAwifw8NXvTojAjGFrdYi11SGWVoeYWx1i6lmQCiEjFkKOVgjZ+xxIhZCtFULWHkCqxCw9gNQKmP9vNHzipdEPrRcxtVbAeDkAvve0iM2QozVD9hfjhp4YP\\/UrkJYDbD2AtBxgfSkAvvHEeNcDSAsilgtAWxIy91J8AXgZAJ5e33+4tuACcAG4AFwALgBXRXQB6AFcB5MXAuA6nl9\\/0Vx\\/011\\/1V5\\/1\\/dfTPJvRtdnu\\/zL6beeFO\\/7r+fXBYbrEkt\\/j+i6ytXfpuvvE\\/ZXOnsA\\/a3a\\/l5xf7O6v1t+Xe\\/vOyz6HpO8yyboM8o7rfJes77bru83THk48p7TvOs27zvOO6\\/73vO++z7l4cgnMPQzKPopHC0N9noSSz6LJp\\/Gk88jyicy5TOp6qlc+VyyfDJbPpuuns6XzyfMJzTmMyrrKZ35nNJ8Ums+q7af1tvPK+4nNodEnPKp3fnc8npyez67\\/qVP7+\\/fL8hfcMjfsOhf8cjfMclfcnn9+BkOnLECP8Q58OYeyJ40eoyF6Ee\\/En\\/JHlP6mIlRVXprF4BxtAvArV0AxtEuALd2ARhHuwDc2gVgHPX\\/hFv9fMBddjIGeKg\\/WCxlCsI46u+Ga5mCcJd+sIG9UkGAW32ZbApFAHhod4Bb3eo04h3god0BbiUHYApVCNjbHeBW+QDAXT4a7qg7r7e214057vg0QhkEHkoSwq0kIdydXw4\\/Q3H8hjYJ3vL0WConBJhCHQaOToeBrU0BljYFmEoVgHGUKgAPnREAt84IgLuqFgAYSUEOAHszDwuAtSkHAZhLGYIpdCLgKGUIHtocZG1zkLmUIRhxDnJU1RDA1uYga5uDzKUOwhTnIEfnxcDe5iBrcyQAYGlzkKkUYhhxDrKXQgxbSwLWUohhbknA1JKAEZOAvSUBW0sC1pYEzC0JmFoSMMJyCDhaFrK3JGDtyiFgaVnI3LKQqWUhI2YhR8tC9paFrC0LWVoWMrcsZGpZyIhZyNGykL2rSIGtlQHWVgZYWhlgbmWAqZUBRiwDHK0MsLcywNbKAGsOoNUhllaHmFsdYmp1iBHrEEerQ+w5gFYI2VodYm11iKXVIeYcQCuETK0QMmIh5MgBtELI3gohWyuErDmAVolZWiFkzgG0SszUKjGjfj6gVmKOVonZcwCtFbB9HQC+ozWDbz1bvGu9iKW1AuYcQOtFTLEX1GbIaFegN0OOHEBrhuw5gNYM2XIArRuz5gDacoB3bTnAEktxXQ4wfw0AvveM8b4tiJjSJOwLIsbXsAKeNeKCiOO3D+AVbUl0AfjGs8ZPbUnIdgFoa1LWC0BblfMuB9AeC1j6gqQE0J9LmC8AOYD2ZMb7i4bt2ZTpWoHfPoB7Tj2fXzT8N1X41vkq\\/QHOAAAAAElFTkSuQmCC\",\"full_name\":\"admin admin\",\"full_ci\":\"0 \",\"fecha_registro_t\":\"12\\/05\\/2026\",\"usuario_abrev\":\"admin\",\"sucursal\":null,\"role\":{\"id\":1,\"nombre\":\"SUPER USUARIO\",\"permisos\":1,\"usuarios\":0,\"status\":1,\"created_at\":\"2026-05-12T14:41:08.000000Z\",\"updated_at\":\"2026-05-12T14:41:08.000000Z\"}}},\"flash\":{\"bien\":null,\"error\":null},\"url_app\":\"http:\\/\\/invepeso.test\",\"url_blank\":null,\"array_infos\":[{\"label\":\"USUARIOS\",\"cantidad\":2,\"color\":\"bgWhite\",\"icon\":\"fa-users\",\"url\":\"usuarios.index\"},{\"label\":\"CLIENTES\",\"cantidad\":13,\"color\":\"bgWhite\",\"icon\":\"fa-user-friends\",\"url\":\"clientes.index\"}]},\"url\":\"\\/admin\\/inicio\",\"version\":\"b55fb785720c9276ba699daf226c51da\",\"clearHistory\":false,\"encryptHistory\":false}}},\"duration\":323,\"memory\":32,\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:24'),
+(34, 'a309e20e-9273-4ebf-8040-17e4d62da562', 'a309e20e-9aa9-4ccd-903b-f08d2b74516b', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select * from `users` where `id` = 1 limit 1\",\"time\":\"3.22\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Http\\\\Middleware\\\\HandleInertiaRequests.php\",\"line\":35,\"hash\":\"082e27d9c4fc4a40315cae2c646c0509\",\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:20:26'),
+(35, 'a309e20e-93fe-4dbc-8eb0-a1c36d0b8e19', 'a309e20e-9aa9-4ccd-903b-f08d2b74516b', NULL, 1, 'model', '{\"action\":\"retrieved\",\"model\":\"App\\\\Models\\\\User\",\"count\":1,\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:20:26'),
+(36, 'a309e20e-958a-4703-9e31-272565fb042c', 'a309e20e-9aa9-4ccd-903b-f08d2b74516b', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select * from `roles` where `roles`.`id` in (1)\",\"time\":\"0.46\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Http\\\\Middleware\\\\HandleInertiaRequests.php\",\"line\":35,\"hash\":\"b3f8b4044886bea1e3a43637c51979c9\",\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:26'),
+(37, 'a309e20e-95a8-41fa-883a-a85d8b9d63dc', 'a309e20e-9aa9-4ccd-903b-f08d2b74516b', NULL, 1, 'model', '{\"action\":\"retrieved\",\"model\":\"App\\\\Models\\\\Role\",\"count\":1,\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:26'),
+(38, 'a309e20e-970c-4221-a9bf-d2ee037cd537', 'a309e20e-9aa9-4ccd-903b-f08d2b74516b', NULL, 1, 'query', '{\"connection\":\"mysql\",\"driver\":\"mysql\",\"bindings\":[],\"sql\":\"select * from `configuracions` limit 1\",\"time\":\"1.08\",\"slow\":false,\"file\":\"C:\\\\laragon\\\\www\\\\invepeso\\\\app\\\\Http\\\\Controllers\\\\ConfiguracionController.php\",\"line\":25,\"hash\":\"0d0916704818083d6135a46d41f14da1\",\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:26'),
+(39, 'a309e20e-972b-4b69-9264-5e26aa61bad1', 'a309e20e-9aa9-4ccd-903b-f08d2b74516b', NULL, 1, 'model', '{\"action\":\"retrieved\",\"model\":\"App\\\\Models\\\\Configuracion\",\"count\":1,\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:26'),
+(40, 'a309e20e-99c5-48a2-b648-4214a0cd166a', 'a309e20e-9aa9-4ccd-903b-f08d2b74516b', NULL, 1, 'request', '{\"ip_address\":\"127.0.0.1\",\"uri\":\"\\/configuracions\\/getConfiguracion\",\"method\":\"GET\",\"controller_action\":\"App\\\\Http\\\\Controllers\\\\ConfiguracionController@getConfiguracion\",\"middleware\":[\"web\"],\"headers\":{\"cookie\":\"XSRF-TOKEN=eyJpdiI6IkJ0NkJMVkFjUlR2a09DUWZNTUM2NWc9PSIsInZhbHVlIjoicmhHUlYweVdCOUZDK2pPUEN6dzB1TTdtUk1DSWZLOXlXSnN6YTZYY3pTM2N2eU51cGg0YW5xVVJLWGV5cEJ1TDg0UytSMHBIV3NrL2JGaFRqMHU5RmpsUEdHaXM3VEtjd1VDckZSUXpaYklQK3U3OWluT1YvSlZycGFuMnVDM0kiLCJtYWMiOiIyMjA3OTFjNjNhYmNjY2I0ZWMyNzMwNzBmYTZmMWVkM2JkZjk3MGE3MTNjZGIwOWI4YTZiYTU4ZDI3YTc0Yjg0IiwidGFnIjoiIn0%3D; invepeso-session=eyJpdiI6IisrOWVuNzJDTkcwTkpRdXcyZVZEOGc9PSIsInZhbHVlIjoiQTlVeEovbWNBSWVLNk9kQWV6MTVXczhXYk9QcmhmSWljOXRtY3ZiSVUvRmJzMkkyb2FzNi9DTlp3T1VBS1ZSbjdXaWZXMHVkOC9WMG5FZ1RiVHJJUGhFZEpkN09xTTdZbUVwN08xVkRicldZcmNJckFaTHVhT2d4NHhxclkxN28iLCJtYWMiOiJkNmQzMGE3ZWYyZWJjNDY0OWY5NmNlOTE2ZjJlMDQ4MDEzYTRiMDMxZDI3NDA4MjlmYWNiZjI1MjJjNmI4NDFmIiwidGFnIjoiIn0%3D\",\"accept-language\":\"es-419,es-US;q=0.9,es;q=0.8,en-US;q=0.7,en;q=0.6,gl;q=0.5,es-MX;q=0.4,ru;q=0.3\",\"accept-encoding\":\"gzip, deflate\",\"referer\":\"http:\\/\\/invepeso.test\\/admin\\/inicio\",\"sec-purpose\":\"prefetch;prerender\",\"accept\":\"application\\/json, text\\/plain, *\\/*\",\"user-agent\":\"Mozilla\\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\/537.36 (KHTML, like Gecko) Chrome\\/155.0.0.0 Safari\\/537.36\",\"x-requested-with\":\"XMLHttpRequest\",\"connection\":\"close\",\"host\":\"invepeso.test\",\"x-xsrf-token\":\"eyJpdiI6IkJ0NkJMVkFjUlR2a09DUWZNTUM2NWc9PSIsInZhbHVlIjoicmhHUlYweVdCOUZDK2pPUEN6dzB1TTdtUk1DSWZLOXlXSnN6YTZYY3pTM2N2eU51cGg0YW5xVVJLWGV5cEJ1TDg0UytSMHBIV3NrL2JGaFRqMHU5RmpsUEdHaXM3VEtjd1VDckZSUXpaYklQK3U3OWluT1YvSlZycGFuMnVDM0kiLCJtYWMiOiIyMjA3OTFjNjNhYmNjY2I0ZWMyNzMwNzBmYTZmMWVkM2JkZjk3MGE3MTNjZGIwOWI4YTZiYTU4ZDI3YTc0Yjg0IiwidGFnIjoiIn0=\"},\"payload\":[],\"session\":{\"_token\":\"2ANsA2CrdvKueXme9XRmhictWKVj1tXhLpTAvsJm\",\"_previous\":{\"url\":\"http:\\/\\/invepeso.test\\/admin\\/inicio\",\"route\":\"inicio\"},\"_flash\":{\"old\":[],\"new\":[]},\"login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d\":1},\"response_headers\":{\"cache-control\":\"no-cache, private\",\"date\":\"Thu, 22 Oct 2026 00:20:26 GMT\",\"content-type\":\"application\\/json\",\"vary\":\"X-Inertia\",\"set-cookie\":\"XSRF-TOKEN=eyJpdiI6IjF3QW5aY3ZvV1o3QSswYmxVVGR1K2c9PSIsInZhbHVlIjoibC9IV0hoTkdlbmJpNEZGOUh3Vm5vZTZjUjRrcktreU1qWHJ2MFNHc3Z2TDBxV2pwWWpaYXl3bjAreXBOU1lsOVh0ZWVyZnBaQzZnTngvamtKS1VjSUo2RnQ4M2pjOWFZTE5wallPdGVEVWVaWkFOOEI3aTZEbmdOeFFNZlA3bjMiLCJtYWMiOiI4NzE0MmUxMGRkNWNmZWEyMDhiZmRiMzdjODA2ODIwYmViMWU3ZTE3MzRiYzUzYzU5Mzk1OGNiMWFjNDMwNjgwIiwidGFnIjoiIn0%3D; expires=Thu, 22 Oct 2026 02:20:26 GMT; Max-Age=7200; path=\\/; samesite=lax, invepeso-session=eyJpdiI6ImFTZ0N2VnBXbG12ZHZHRTN5RVk2aUE9PSIsInZhbHVlIjoiVFBwYThCK1pCZkVxcElBandFczlWVEo3QmVHZktLRkdiL0VRK3V5cEd1L3E5NkdwWkp1U2V3Sjkyd2Fhd2w0OGdPU0JPeFRDMG9BWEdDNHFqZ2Y4aEhaZ2tUajRkdXNqd2h1YzlPWllTNUF4T3VWWUR2ekhDb3NHTS9uSkNDaTkiLCJtYWMiOiIyZGYyODM2NTMxZDMyMzBiNDM2ZmI1MzU4ODYxNjBhNzYyOWNjMDAxNWM1ZmE2MDUxMWI2MTk4NTNlMzRmNmIyIiwidGFnIjoiIn0%3D; expires=Thu, 22 Oct 2026 02:20:26 GMT; Max-Age=7200; path=\\/; httponly; samesite=lax\"},\"response_status\":200,\"response\":{\"configuracion\":{\"id\":1,\"nombre_sistema\":\"INVEPESO\",\"alias\":\"INVEPESO\",\"razon_social\":\"IMPORTADORA PESO\",\"nit\":\"11111111111\",\"dir\":\"LOS PEDREGALES #223\",\"fono\":\"2323232 - 7776666\",\"actividad\":\"ACTIVIDAD EMPRESA\",\"correo\":\"invepeso@gmail.com\",\"logo\":\"11783783341.jpg\",\"created_at\":\"2026-05-12T14:41:08.000000Z\",\"updated_at\":\"2026-08-21T14:19:06.000000Z\",\"url_logo\":\"http:\\/\\/invepeso.test\\/imgs\\/11783783341.jpg\"}},\"duration\":218,\"memory\":28,\"hostname\":\"DESKTOP-M0TID9S\",\"user\":{\"id\":1,\"name\":null,\"email\":null}}', '2026-10-21 20:20:26'),
+(41, 'a309e214-b0cb-47c1-8a13-31f50231ec72', 'a309e214-b52f-46d4-9d13-d0fb970210ba', NULL, 1, 'command', '{\"command\":\"optimize\",\"exit_code\":0,\"arguments\":{\"command\":\"optimize\"},\"options\":{\"except\":null,\"help\":false,\"silent\":false,\"quiet\":false,\"verbose\":false,\"version\":false,\"ansi\":null,\"no-interaction\":false,\"env\":null},\"hostname\":\"DESKTOP-M0TID9S\"}', '2026-10-21 20:20:30');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `telescope_entries_tags`
+--
+
+CREATE TABLE `telescope_entries_tags` (
+  `entry_uuid` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tag` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `telescope_entries_tags`
+--
+
+INSERT INTO `telescope_entries_tags` (`entry_uuid`, `tag`) VALUES
+('a309e20e-972b-4b69-9264-5e26aa61bad1', 'App\\Models\\Configuracion'),
+('a309e20a-b3bf-4821-9bce-c463ab497395', 'App\\Models\\Role'),
+('a309e20b-1d17-46d7-9802-2e226eadd882', 'App\\Models\\Role'),
+('a309e20e-95a8-41fa-883a-a85d8b9d63dc', 'App\\Models\\Role'),
+('a309e20a-b13a-4fa0-9c96-f2d4e4d7a6b1', 'App\\Models\\User'),
+('a309e20b-19ff-48bc-a0d8-42fd17da0865', 'App\\Models\\User'),
+('a309e20e-93fe-4dbc-8eb0-a1c36d0b8e19', 'App\\Models\\User'),
+('a309e20a-b388-4f6f-92dc-578a5eeaa02b', 'Auth:1'),
+('a309e20a-b3bf-4821-9bce-c463ab497395', 'Auth:1'),
+('a309e20a-b78f-4737-b046-891d92a3f803', 'Auth:1'),
+('a309e20b-1ced-4bb2-80af-1a06097a224f', 'Auth:1'),
+('a309e20b-1d17-46d7-9802-2e226eadd882', 'Auth:1'),
+('a309e20b-1e8e-4cd6-86c7-9f9bf1d8f4c9', 'Auth:1'),
+('a309e20b-1f58-4443-ae11-460e13e90736', 'Auth:1'),
+('a309e20b-2014-40d3-857e-acc60f6ae528', 'Auth:1'),
+('a309e20b-20ac-4afc-a90b-61cf0b3a939d', 'Auth:1'),
+('a309e20b-2365-4bf0-8f9f-d5b52708327d', 'Auth:1'),
+('a309e20b-2847-404b-8cee-d3faf4e63282', 'Auth:1'),
+('a309e20b-3be5-419d-868f-d4fd9d773f62', 'Auth:1'),
+('a309e20e-958a-4703-9e31-272565fb042c', 'Auth:1'),
+('a309e20e-95a8-41fa-883a-a85d8b9d63dc', 'Auth:1'),
+('a309e20e-970c-4221-a9bf-d2ee037cd537', 'Auth:1'),
+('a309e20e-972b-4b69-9264-5e26aa61bad1', 'Auth:1'),
+('a309e20e-99c5-48a2-b648-4214a0cd166a', 'Auth:1');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `telescope_monitoring`
+--
+
+CREATE TABLE `telescope_monitoring` (
+  `tag` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1097,7 +1228,8 @@ CREATE TABLE `ventas` (
 
 INSERT INTO `ventas` (`id`, `codigo_venta`, `sucursal_id`, `almacen_id`, `cliente_id`, `tipo_documento_id`, `nit_ci`, `tipo_venta`, `tipo_pago`, `subtotal`, `descuento`, `porcentaje_descuento`, `total`, `cancelado_efectivo`, `cancelado_qr`, `total_cancelado`, `saldo`, `fecha`, `hora`, `fecha_registro`, `status`, `user_id`, `created_at`, `updated_at`) VALUES
 (1, 'V1', 1, 1, 13, 1, '56565656', 'CRÉDITO', '', 1362.00, 0.00, 0.00, 1362.00, 0.00, 0.00, 0.00, 1362.00, '2026-10-19', '10:26:57', '2026-10-19', 1, 1, '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
-(2, 'V2', 2, 2, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 199.00, 0.00, 0.00, 199.00, 199.00, 0.00, 199.00, 0.00, '2026-10-19', '10:29:08', '2026-10-19', 1, 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08');
+(2, 'V2', 2, 2, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 199.00, 0.00, 0.00, 199.00, 199.00, 0.00, 199.00, 0.00, '2026-10-19', '10:29:08', '2026-10-19', 1, 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
+(3, 'V3', 1, 1, 1, 1, '123456-CM', 'CRÉDITO', '', 199.00, 0.00, 0.00, 199.00, 0.00, 0.00, 0.00, 199.00, '2026-10-19', '22:53:59', '2026-10-19', 1, 1, '2026-10-20 02:53:59', '2026-10-20 02:53:59');
 
 -- --------------------------------------------------------
 
@@ -1154,7 +1286,8 @@ CREATE TABLE `venta_detalles` (
 INSERT INTO `venta_detalles` (`id`, `venta_id`, `producto_id`, `cantidad`, `precio`, `descuento_uni`, `porcen_du`, `descuento_total`, `porcen_dt`, `precio_final`, `total`, `total_uni`, `status`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, 3, 199.00, 0.00, 0.00, 0.00, 0.00, 199.00, 597.00, 597.00, 1, '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
 (2, 1, 2, 3, 255.00, 0.00, 0.00, 0.00, 0.00, 255.00, 765.00, 765.00, 1, '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
-(3, 2, 1, 1, 199.00, 0.00, 0.00, 0.00, 0.00, 199.00, 199.00, 199.00, 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08');
+(3, 2, 1, 1, 199.00, 0.00, 0.00, 0.00, 0.00, 199.00, 199.00, 199.00, 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
+(4, 3, 1, 1, 199.00, 0.00, 0.00, 0.00, 0.00, 199.00, 199.00, 199.00, 1, '2026-10-20 02:53:59', '2026-10-20 02:53:59');
 
 --
 -- Índices para tablas volcadas
@@ -1390,6 +1523,30 @@ ALTER TABLE `sucursals`
   ADD UNIQUE KEY `sucursals_nombre_unique` (`nombre`);
 
 --
+-- Indices de la tabla `telescope_entries`
+--
+ALTER TABLE `telescope_entries`
+  ADD PRIMARY KEY (`sequence`),
+  ADD UNIQUE KEY `telescope_entries_uuid_unique` (`uuid`),
+  ADD KEY `telescope_entries_batch_id_index` (`batch_id`),
+  ADD KEY `telescope_entries_family_hash_index` (`family_hash`),
+  ADD KEY `telescope_entries_created_at_index` (`created_at`),
+  ADD KEY `telescope_entries_type_should_display_on_index_index` (`type`,`should_display_on_index`);
+
+--
+-- Indices de la tabla `telescope_entries_tags`
+--
+ALTER TABLE `telescope_entries_tags`
+  ADD PRIMARY KEY (`entry_uuid`,`tag`),
+  ADD KEY `telescope_entries_tags_tag_index` (`tag`);
+
+--
+-- Indices de la tabla `telescope_monitoring`
+--
+ALTER TABLE `telescope_monitoring`
+  ADD PRIMARY KEY (`tag`);
+
+--
 -- Indices de la tabla `tipo_documentos`
 --
 ALTER TABLE `tipo_documentos`
@@ -1509,7 +1666,7 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
@@ -1545,7 +1702,7 @@ ALTER TABLE `ingreso_recepcions`
 -- AUTO_INCREMENT de la tabla `kardex_productos`
 --
 ALTER TABLE `kardex_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -1557,7 +1714,7 @@ ALTER TABLE `marcas`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT de la tabla `modulos`
@@ -1587,7 +1744,7 @@ ALTER TABLE `notificacion_users`
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -1644,6 +1801,12 @@ ALTER TABLE `sucursals`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT de la tabla `telescope_entries`
+--
+ALTER TABLE `telescope_entries`
+  MODIFY `sequence` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+
+--
 -- AUTO_INCREMENT de la tabla `tipo_documentos`
 --
 ALTER TABLE `tipo_documentos`
@@ -1689,7 +1852,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `venta_cobros`
@@ -1701,7 +1864,7 @@ ALTER TABLE `venta_cobros`
 -- AUTO_INCREMENT de la tabla `venta_detalles`
 --
 ALTER TABLE `venta_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
@@ -1851,6 +2014,12 @@ ALTER TABLE `salida_productos`
   ADD CONSTRAINT `salida_productos_sucursal_id_foreign` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursals` (`id`),
   ADD CONSTRAINT `salida_productos_tipo_salida_id` FOREIGN KEY (`tipo_salida_id`) REFERENCES `tipo_salidas` (`id`),
   ADD CONSTRAINT `salida_productos_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Filtros para la tabla `telescope_entries_tags`
+--
+ALTER TABLE `telescope_entries_tags`
+  ADD CONSTRAINT `telescope_entries_tags_entry_uuid_foreign` FOREIGN KEY (`entry_uuid`) REFERENCES `telescope_entries` (`uuid`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `traspasos`
