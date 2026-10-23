@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Almacen;
 use App\Models\Certificado;
 use App\Models\CertificadoDetalle;
 use App\Models\Cliente;
 use App\Models\Configuracion;
 use App\Models\HistorialAccion;
+use App\Models\IngresoProducto;
 use App\Models\Inscripcion;
 use App\Models\Pago;
+use App\Models\Producto;
 use App\Models\TipoCertificado;
 use App\Models\User;
+use App\Services\MovimientoCajaService;
 use App\Services\PagoService;
 use App\Services\ReporteService;
 use App\Services\ReporteServiceTcpdf;
@@ -176,7 +180,7 @@ class ReporteController extends Controller
     ];
 
     private $configuracion = null;
-    public function __construct(private PagoService $pagoService, private TipoPagoService $tipo_pago_service)
+    public function __construct(private MovimientoCajaService $movimiento_caja_service, private TipoPagoService $tipo_pago_service)
     {
         $this->configuracion = Configuracion::first();
         if (!$this->configuracion) {
@@ -199,16 +203,23 @@ class ReporteController extends Controller
     {
         ini_set('memory_limit', '1024M');
         set_time_limit(-1);
+        $role_id =  $request->role_id;
         $tipo =  $request->tipo;
+        $sucursal_id =  $request->sucursal_id;
         $formato =  $request->formato;
         $usuarios = User::select("users.*")
             ->where('id', '!=', 1);
 
         if ($tipo != 'todos') {
-            $request->validate([
-                'tipo' => 'required',
-            ]);
             $usuarios->where('tipo', $tipo);
+        }
+
+        if ($role_id != 'todos') {
+            $usuarios->where('role_id', $role_id);
+        }
+
+        if ($sucursal_id != 'todos') {
+            $usuarios->where('sucursal_id', $sucursal_id);
         }
 
         $usuarios = $usuarios->get();
@@ -255,14 +266,14 @@ class ReporteController extends Controller
 
             $fila = 2;
             $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
-            $sheet->mergeCells("A" . $fila . ":K" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':K' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':K' . $fila)->applyFromArray($this->titulo);
+            $sheet->mergeCells("A" . $fila . ":M" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':M' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->titulo);
             $fila++;
             $sheet->setCellValue('A' . $fila, "LISTA DE USUARIOS");
-            $sheet->mergeCells("A" . $fila . ":K" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':K' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':K' . $fila)->applyFromArray($this->titulo);
+            $sheet->mergeCells("A" . $fila . ":M" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':M' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->titulo);
             $fila++;
             $fila++;
             $sheet->setCellValue('A' . $fila, 'N°');
@@ -275,8 +286,10 @@ class ReporteController extends Controller
             $sheet->setCellValue('H' . $fila, 'CORREO');
             $sheet->setCellValue('I' . $fila, 'TELÉFONO/CELULAR');
             $sheet->setCellValue('J' . $fila, 'TIPO');
-            $sheet->setCellValue('K' . $fila, 'ACCESO');
-            $sheet->getStyle('A' . $fila . ':K' . $fila)->applyFromArray($this->headerTabla);
+            $sheet->setCellValue('K' . $fila, 'ROLE');
+            $sheet->setCellValue('L' . $fila, 'SUCURSAL');
+            $sheet->setCellValue('M' . $fila, 'ACCESO');
+            $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->headerTabla);
             $fila++;
 
             foreach ($usuarios as $key => $item) {
@@ -290,8 +303,10 @@ class ReporteController extends Controller
                 $sheet->setCellValue('H' . $fila, $item->correo);
                 $sheet->setCellValue('I' . $fila, $item->fono);
                 $sheet->setCellValue('J' . $fila, $item->tipo);
-                $sheet->setCellValue('K' . $fila, $item->acceso == 1 ? 'HABILITADO' : 'DENEGADO');
-                $sheet->getStyle('A' . $fila . ':K' . $fila)->applyFromArray($this->bodyTabla);
+                $sheet->setCellValue('K' . $fila, $item->role->nombre);
+                $sheet->setCellValue('L' . $fila, $item->sucursal?->nombre);
+                $sheet->setCellValue('M' . $fila, $item->acceso == 1 ? 'HABILITADO' : 'DENEGADO');
+                $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->bodyTabla);
                 $fila++;
             }
 
@@ -306,8 +321,10 @@ class ReporteController extends Controller
             $sheet->getColumnDimension('I')->setWidth(15);
             $sheet->getColumnDimension('J')->setWidth(15);
             $sheet->getColumnDimension('K')->setWidth(15);
+            $sheet->getColumnDimension('L')->setWidth(15);
+            $sheet->getColumnDimension('M')->setWidth(15);
 
-            foreach (range('A', 'K') as $columnID) {
+            foreach (range('A', 'M') as $columnID) {
                 $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
             }
 
@@ -316,7 +333,7 @@ class ReporteController extends Controller
             $sheet->getPageMargins()->setRight(0.1);
             $sheet->getPageMargins()->setLeft(0.1);
             $sheet->getPageMargins()->setBottom(0.1);
-            $sheet->getPageSetup()->setPrintArea('A:K');
+            $sheet->getPageSetup()->setPrintArea('A:M');
             $sheet->getPageSetup()->setFitToWidth(1);
             $sheet->getPageSetup()->setFitToHeight(0);
 
@@ -333,6 +350,883 @@ class ReporteController extends Controller
         }
     }
 
+
+    public function clientes()
+    {
+        return Inertia::render("Admin/Reportes/Clientes");
+    }
+
+    public function r_clientes(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+        $clientes = Cliente::select("clientes.*");
+
+        if ($fecha_ini && $fecha_fin) {
+            $clientes->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+        }
+
+        $clientes = $clientes->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Lista de Clientes');
+            $pdf->setMargins(10, 5, 5);
+            $pdf->AddPage();
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "LISTA DE CLIENTES", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 10;
+            $font_size = 8;
+            $font_size2 = 9;
+
+            $pdf->setFont("helvetica", "B", $font_size2);
+            $pdf->cellAutoFontSize($pdf, 12, $alto, 'NRO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 35, $alto, 'NOMBRE', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'DOCUMENTO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'NRO. DOCUMENTO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'TELÉFONO/CELULAR', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 45, $alto, 'CORREO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'FECHA DE REGISTRO', $font_size, 5, 'B');
+            $pdf->Ln();
+            $cont = 1;
+            foreach ($clientes as $item) {
+                $pdf->cellAutoFontSize($pdf, 12, $alto, $cont++, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 35, $alto, $item->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->tipo_documento->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->full_ci, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->fono, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 45, $alto, $item->correo, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->fecha_registro_t, $font_size, 5, 'N', 'L');
+                $pdf->Ln();
+            }
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="clientes' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":G" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTA DE CLIENTES");
+            $sheet->mergeCells("A" . $fila . ":G" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'NRO');
+            $sheet->setCellValue('B' . $fila, 'NOMBRE');
+            $sheet->setCellValue('C' . $fila, 'DOCUMENTO');
+            $sheet->setCellValue('D' . $fila, 'NRO. DOCUMENTO');
+            $sheet->setCellValue('E' . $fila, 'TELÉFONO/CELULAR');
+            $sheet->setCellValue('F' . $fila, 'CORREO');
+            $sheet->setCellValue('G' . $fila, 'FECHA DE REGISTRO');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+
+            foreach ($clientes as $key => $item) {
+                $sheet->setCellValue('A' . $fila, $key + 1);
+                $sheet->setCellValue('B' . $fila, $item->nombre);
+                $sheet->setCellValue('C' . $fila, $item->tipo_documento->nombre);
+                $sheet->setCellValue('D' . $fila, $item->nro_documento);
+                $sheet->setCellValue('E' . $fila, $item->fono);
+                $sheet->setCellValue('F' . $fila, $item->correo);
+                $sheet->setCellValue('G' . $fila, $item->fecha_registro_t);
+                $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+            }
+
+            $sheet->getColumnDimension('A')->setWidth(6);
+            $sheet->getColumnDimension('B')->setWidth(25);
+            $sheet->getColumnDimension('C')->setWidth(10);
+            $sheet->getColumnDimension('D')->setWidth(25);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(39);
+            $sheet->getColumnDimension('G')->setWidth(10);
+
+            foreach (range('A', 'G') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_DEFAULT);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:G');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'clientes_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
+    public function productos()
+    {
+        return Inertia::render("Admin/Reportes/Productos");
+    }
+
+    public function r_productos(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $categoria_id =  $request->categoria_id;
+        $marca_id =  $request->marca_id;
+        $unidad_medida_id =  $request->unidad_medida_id;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+        $productos = Producto::select("productos.*");
+
+        if ($categoria_id && $categoria_id != 'todos') {
+            $productos->where('categoria_id', $categoria_id);
+        }
+
+        if ($marca_id && $marca_id != 'todos') {
+            $productos->where('marca_id', $marca_id);
+        }
+
+        if ($unidad_medida_id && $unidad_medida_id != 'todos') {
+            $productos->where('unidad_medida_id', $unidad_medida_id);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $productos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+        }
+
+        $productos = $productos->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Lista de Productos');
+            $pdf->setMargins(1, 2, 2);
+            $pdf->AddPage('L', 'LEGAL');
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "LISTA DE PRODUCTOS", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 10;
+            $font_size = 8;
+            $font_size2 = 9;
+
+            $pdf->setFont("helvetica", "B", $font_size2);
+            $pdf->cellAutoFontSize($pdf, 10, $alto, 'NRO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, 'CÓDIGO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 45, $alto, 'NOMBRE', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'CATEGORÍA', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'MARCA', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 10, $alto, 'U. M.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 55, $alto, 'CARACTERISTICAS', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 15, $alto, 'CALIDAD', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 15, $alto, 'COBERTURA', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 15, $alto, 'FORMATO', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 17, $alto, 'P. 1', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 17, $alto, 'P. 2', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 17, $alto, 'P. 3', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 17, $alto, 'P. 4', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 17, $alto, 'P. COMPRA', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 8, $alto, 'S. M.', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 10, $alto, 'ACTIVO', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 16, $alto, 'FECHA REGISTRO', $font_size, 5, 'B');
+            $pdf->Ln();
+            $cont = 1;
+            foreach ($productos as $item) {
+                $pdf->cellAutoFontSize($pdf, 10, $alto, $cont++, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 20, $alto, $item->codigo, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 45, $alto, $item->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->categoria->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->marca->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 10, $alto, $item->unidad_medida->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 55, $alto, $item->caracteristicas, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 15, $alto, $item->calidad, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 15, $alto, $item->cobertura, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 15, $alto, $item->formato, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 17, $alto, $item->precio, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 17, $alto, $item->precio2, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 17, $alto, $item->precio3, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 17, $alto, $item->precio4, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 17, $alto, $item->precio_compra, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 8, $alto, $item->stock_min, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 10, $alto, $item->activo == 1 ? 'SI' : 'NO', $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 16, $alto, $item->fecha_registro_t, $font_size, 5, 'N', 'L');
+                $pdf->Ln();
+            }
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="productos' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":R" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':R' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':R' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTA DE PRODUCTOS");
+            $sheet->mergeCells("A" . $fila . ":R" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':R' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':R' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'NRO');
+            $sheet->setCellValue('B' . $fila, 'CÓDIGO');
+            $sheet->setCellValue('C' . $fila, 'NOMBRE');
+            $sheet->setCellValue('D' . $fila, 'CATEGORÍA');
+            $sheet->setCellValue('E' . $fila, 'MARCA');
+            $sheet->setCellValue('F' . $fila, 'UNIDAD MEDIDA');
+            $sheet->setCellValue('G' . $fila, 'CARACTERISTICAS');
+            $sheet->setCellValue('H' . $fila, 'CALIDAD');
+            $sheet->setCellValue('I' . $fila, 'COBERTURA');
+            $sheet->setCellValue('J' . $fila, 'FORMATO');
+            $sheet->setCellValue('K' . $fila, 'P. 1');
+            $sheet->setCellValue('L' . $fila, 'P. 2');
+            $sheet->setCellValue('M' . $fila, 'P. 3');
+            $sheet->setCellValue('N' . $fila, 'P. 4');
+            $sheet->setCellValue('O' . $fila, 'P. COMPRA');
+            $sheet->setCellValue('P' . $fila, 'STOCK MINIMO');
+            $sheet->setCellValue('Q' . $fila, 'ACTIVO');
+            $sheet->setCellValue('R' . $fila, 'FECHA REGISTRO');
+            $sheet->getStyle('A' . $fila . ':R' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+
+            foreach ($productos as $key => $item) {
+                $sheet->setCellValue('A' . $fila, $key + 1);
+                $sheet->setCellValue('B' . $fila, $item->codigo);
+                $sheet->setCellValue('C' . $fila, $item->nombre);
+                $sheet->setCellValue('D' . $fila, $item->categoria->nombre);
+                $sheet->setCellValue('E' . $fila, $item->marca->nombre);
+                $sheet->setCellValue('F' . $fila, $item->unidad_medida->nombre);
+                $sheet->setCellValue('G' . $fila, $item->caracteristicas);
+                $sheet->setCellValue('H' . $fila, $item->calidad);
+                $sheet->setCellValue('I' . $fila, $item->cobertura);
+                $sheet->setCellValue('J' . $fila, $item->formato);
+                $sheet->setCellValue('K' . $fila, $item->precio);
+                $sheet->setCellValue('L' . $fila, $item->precio2);
+                $sheet->setCellValue('M' . $fila, $item->precio3);
+                $sheet->setCellValue('N' . $fila, $item->precio4);
+                $sheet->setCellValue('O' . $fila, $item->precio_compra);
+                $sheet->setCellValue('P' . $fila, $item->stock_min);
+                $sheet->setCellValue('Q' . $fila, $item->activo == 1 ? 'SI' : 'NO');
+                $sheet->setCellValue('R' . $fila, $item->fecha_registro_t);
+                $sheet->getStyle('A' . $fila . ':R' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+            }
+
+            $sheet->getColumnDimension('A')->setWidth(6);
+            $sheet->getColumnDimension('B')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(30);
+            $sheet->getColumnDimension('D')->setWidth(25);
+            $sheet->getColumnDimension('E')->setWidth(20);
+            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('G')->setWidth(30);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(15);
+            $sheet->getColumnDimension('J')->setWidth(15);
+            $sheet->getColumnDimension('K')->setWidth(10);
+            $sheet->getColumnDimension('L')->setWidth(10);
+            $sheet->getColumnDimension('M')->setWidth(10);
+            $sheet->getColumnDimension('N')->setWidth(10);
+            $sheet->getColumnDimension('O')->setWidth(10);
+            $sheet->getColumnDimension('P')->setWidth(10);
+            $sheet->getColumnDimension('Q')->setWidth(10);
+            $sheet->getColumnDimension('R')->setWidth(15);
+
+            foreach (range('A', 'R') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:R');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'productos_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
+
+    public function stock_productos()
+    {
+        return Inertia::render("Admin/Reportes/StockProductos");
+    }
+
+    public function r_stock_productos(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $categoria_id =  $request->categoria_id;
+        $marca_id =  $request->marca_id;
+        $unidad_medida_id =  $request->unidad_medida_id;
+        $almacen_id =  $request->almacen_id;
+        $formato =  $request->formato;
+        $productos = Producto::select(
+            'productos.*',
+            DB::raw('COALESCE(SUM(producto_sucursals.stock_actual),0) as stock_total')
+
+        )->with(["categoria:id,nombre", "marca:id,nombre"])
+            ->leftJoin('producto_sucursals', function ($join) use ($almacen_id) {
+                $join->on('productos.id', '=', 'producto_sucursals.producto_id');
+                if (!empty($almacen_id) && $almacen_id != 'todos') {
+                    $join->where('producto_sucursals.almacen_id', $almacen_id);
+                }
+
+                if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+                    $join->where("producto_sucursals.sucursal_id", Auth::user()->sucursal_id);
+                }
+            });
+
+        if (!empty($categoria_id) && $categoria_id != 'todos') {
+            $productos->where('productos.categoria_id', $categoria_id);
+        }
+
+        if (!empty($marca_id) && $marca_id != 'todos') {
+            $productos->where('productos.marca_id', $marca_id);
+        }
+
+        if (!empty($unidad_medida_id) && $unidad_medida_id != 'todos') {
+            $productos->where('productos.unidad_medida_id', $unidad_medida_id);
+        }
+
+        $productos = $productos
+            ->groupBy('productos.id')
+            ->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Stock de Productos');
+            $pdf->setMargins(1, 2, 2);
+            $pdf->AddPage('L', 'LETTER');
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "STOCK DE PRODUCTOS", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 11);
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $pdf->Cell(0, 6, $titulo, 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 10;
+            $font_size = 8;
+            $font_size2 = 9;
+
+            $pdf->setFont("helvetica", "B", $font_size2);
+            $pdf->cellAutoFontSize($pdf, 10, $alto, 'NRO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, 'CÓDIGO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 45, $alto, 'NOMBRE', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'CATEGORÍA', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'MARCA', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 12, $alto, 'U. M.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 55, $alto, 'CARACTERISTICAS', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, 'CALIDAD', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 15, $alto, 'COBERTURA', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 15, $alto, 'FORMATO', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'STOCK ACTUAL', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 10, $alto, 'ACTIVO', $font_size, 5, 'B');
+            $pdf->Ln();
+            $cont = 1;
+            foreach ($productos as $item) {
+                $pdf->cellAutoFontSize($pdf, 10, $alto, $cont++, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 20, $alto, $item->codigo, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 45, $alto, $item->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->categoria->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->marca->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 12, $alto, $item->unidad_medida->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 55, $alto, $item->caracteristicas, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 20, $alto, $item->calidad, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 15, $alto, $item->cobertura, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 15, $alto, $item->formato, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->stock_total, $font_size, 5, 'N', 'C');
+                $pdf->cellAutoFontSize($pdf, 10, $alto, $item->activo == 1 ? 'SI' : 'NO', $font_size, 5, 'N', 'L');
+                $pdf->Ln();
+            }
+
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="stock_productos' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":L" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':L' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':L' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "STOCK DE PRODUCTOS");
+            $sheet->mergeCells("A" . $fila . ":L" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':L' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':L' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $sheet->setCellValue('A' . $fila, $titulo);
+            $sheet->mergeCells("A" . $fila . ":L" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':L' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':L' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'NRO');
+            $sheet->setCellValue('B' . $fila, 'CÓDIGO');
+            $sheet->setCellValue('C' . $fila, 'NOMBRE');
+            $sheet->setCellValue('D' . $fila, 'CATEGORÍA');
+            $sheet->setCellValue('E' . $fila, 'MARCA');
+            $sheet->setCellValue('F' . $fila, 'UNIDAD MEDIDA');
+            $sheet->setCellValue('G' . $fila, 'CARACTERISTICAS');
+            $sheet->setCellValue('H' . $fila, 'CALIDAD');
+            $sheet->setCellValue('I' . $fila, 'COBERTURA');
+            $sheet->setCellValue('J' . $fila, 'FORMATO');
+            $sheet->setCellValue('K' . $fila, 'STOCK ACTUAL');
+            $sheet->setCellValue('L' . $fila, 'ACTIVO');
+            $sheet->getStyle('A' . $fila . ':L' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+
+            foreach ($productos as $key => $item) {
+                $sheet->setCellValue('A' . $fila, $key + 1);
+                $sheet->setCellValue('B' . $fila, $item->codigo);
+                $sheet->setCellValue('C' . $fila, $item->nombre);
+                $sheet->setCellValue('D' . $fila, $item->categoria->nombre);
+                $sheet->setCellValue('E' . $fila, $item->marca->nombre);
+                $sheet->setCellValue('F' . $fila, $item->unidad_medida->nombre);
+                $sheet->setCellValue('G' . $fila, $item->caracteristicas);
+                $sheet->setCellValue('H' . $fila, $item->calidad);
+                $sheet->setCellValue('I' . $fila, $item->cobertura);
+                $sheet->setCellValue('J' . $fila, $item->formato);
+                $sheet->setCellValue('K' . $fila, $item->stock_total);
+                $sheet->setCellValue('L' . $fila,  $item->activo == 1 ? 'SI' : 'NO');
+                $sheet->getStyle('A' . $fila . ':L' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+            }
+
+            $sheet->getColumnDimension('A')->setWidth(6);
+            $sheet->getColumnDimension('B')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(30);
+            $sheet->getColumnDimension('D')->setWidth(25);
+            $sheet->getColumnDimension('E')->setWidth(20);
+            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('G')->setWidth(30);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(15);
+            $sheet->getColumnDimension('J')->setWidth(15);
+            $sheet->getColumnDimension('K')->setWidth(10);
+            $sheet->getColumnDimension('L')->setWidth(10);
+
+            foreach (range('A', 'R') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:L');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'stock_productos_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
+    public function orden_compras()
+    {
+        return Inertia::render("Admin/Reportes/OrdenCompras");
+    }
+
+    public function r_orden_compras(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $almacen_id =  $request->almacen_id;
+        $tipo_ingreso_id =  $request->tipo_ingreso_id;
+        $proveedor_id =  $request->proveedor_id;
+        $tipo_compra =  $request->tipo_compra;
+        $estado_ingreso =  $request->estado_ingreso;
+        $estado_faltantes =  $request->estado_faltantes;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+        $ingreso_productos = IngresoProducto::select("ingreso_productos.*");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $ingreso_productos->where('almacen_id', $almacen_id);
+        }
+
+        if ($tipo_ingreso_id && $tipo_ingreso_id != 'todos') {
+            $ingreso_productos->where('tipo_ingreso_id', $tipo_ingreso_id);
+        }
+
+        if ($proveedor_id && $proveedor_id != 'todos') {
+            $ingreso_productos->where('proveedor_id', $proveedor_id);
+        }
+
+        if ($tipo_compra && $tipo_compra != 'todos') {
+            $ingreso_productos->where('tipo_compra', $tipo_compra);
+        }
+
+        if ($estado_ingreso && $estado_ingreso != 'todos') {
+            $ingreso_productos->where('estado_ingreso', $estado_ingreso);
+        }
+
+        if ($estado_faltantes && $estado_faltantes != 'todos') {
+            $ingreso_productos->where('estado_faltantes', $estado_faltantes);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $ingreso_productos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+        }
+
+        $ingreso_productos = $ingreso_productos->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Lista de Productos');
+            $pdf->setMargins(1, 2, 2);
+            $pdf->AddPage('L', 'LEGAL');
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "LISTADO DE ORDENES DE COMPRA", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 11);
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $pdf->Cell(0, 6, $titulo, 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 10;
+            $font_size = 8;
+            $font_size2 = 9;
+            $font_size3 = 10;
+
+            $pdf->setFont("helvetica", "B", $font_size2);
+            $pdf->cellAutoFontSize($pdf, 20, $alto, 'CÓDIGO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'SUCURSAL', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'ALMACÉN', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'TIPO INGRESO', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'PROVEEDOR', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 55, $alto, 'DESCRIPCIÓN', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 23.5, $alto, 'TOTAL', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 23.5, $alto, 'CANCELADO', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 23.5, $alto, 'SALDO', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 17, $alto, 'TIPO COMPRA', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'RESPONSABLE', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 22, $alto, 'ESTADO COMPRA', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 22, $alto, 'FALTANTES', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 22, $alto, 'FECHA REGISTRO', $font_size, 5, 'B');
+            $pdf->Ln();
+            $s_total = 0;
+            $s_cancelado = 0;
+            $s_saldo = 0;
+            foreach ($ingreso_productos as $item) {
+                $pdf->cellAutoFontSize($pdf, 20, $alto, $item->codigo, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->sucursal->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->almacen->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->tipo_ingreso->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->proveedor->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 55, $alto, $item->descripcion, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 23.5, $alto, $item->total, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 23.5, $alto, $item->total_cancelado, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 23.5, $alto, $item->saldo, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 17, $alto, $item->tipo_compra, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->user->full_name, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 22, $alto, $item->estado_ingreso, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 22, $alto, $item->estado_faltantes, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 22, $alto, $item->fecha_registro_t, $font_size, 5, 'N', 'L');
+
+                $s_total += (float)$item->total;
+                $s_cancelado += (float)$item->total_cancelado;
+                $s_saldo += (float)$item->saldo;
+                $pdf->Ln();
+            }
+            $pdf->cellAutoFontSize($pdf, 175, $alto, 'TOTALES', $font_size3, 5, 'B', 'R');
+            $pdf->cellAutoFontSize($pdf, 23.5, $alto, number_format($s_total, 2, ".", ""), $font_size2, 5, 'B', 'L');
+            $pdf->cellAutoFontSize($pdf, 23.5, $alto, number_format($s_cancelado, 2, ".", ""), $font_size2, 5, 'B', 'L');
+            $pdf->cellAutoFontSize($pdf, 23.5, $alto, number_format($s_saldo, 2, ".", ""), $font_size2, 5, 'B', 'L');
+
+
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="orden_compras' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTADO DE ORDENES DE COMPRA");
+            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $sheet->setCellValue('A' . $fila, $titulo);
+            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'CÓDIGO');
+            $sheet->setCellValue('B' . $fila, 'SUCURSAL');
+            $sheet->setCellValue('C' . $fila, 'ALMACÉN');
+            $sheet->setCellValue('D' . $fila, 'TIPO INGRESO');
+            $sheet->setCellValue('E' . $fila, 'PROVEEDOR');
+            $sheet->setCellValue('F' . $fila, 'DESCRIPCIÓN');
+            $sheet->setCellValue('G' . $fila, 'TOTAL');
+            $sheet->setCellValue('H' . $fila, 'CANCELADO');
+            $sheet->setCellValue('I' . $fila, 'SALDO');
+            $sheet->setCellValue('J' . $fila, 'TIPO COMPRA');
+            $sheet->setCellValue('K' . $fila, 'RESPONSABLE');
+            $sheet->setCellValue('L' . $fila, 'ESTADO COMPRA');
+            $sheet->setCellValue('M' . $fila, 'FALTANTES');
+            $sheet->setCellValue('N' . $fila, 'FECHA REGISTRO');
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $s_total = 0;
+            $s_cancelado = 0;
+            $s_saldo = 0;
+            foreach ($ingreso_productos as $key => $item) {
+                $sheet->setCellValue('A' . $fila, $item->codigo);
+                $sheet->setCellValue('B' . $fila, $item->sucursal->nombre);
+                $sheet->setCellValue('C' . $fila, $item->almacen->nombre);
+                $sheet->setCellValue('D' . $fila, $item->tipo_ingreso->nombre);
+                $sheet->setCellValue('E' . $fila, $item->proveedor->nombre);
+                $sheet->setCellValue('F' . $fila, $item->descripcion);
+                $sheet->setCellValue('G' . $fila, $item->total);
+                $sheet->setCellValue('H' . $fila, $item->total_cancelado);
+                $sheet->setCellValue('I' . $fila, $item->saldo);
+                $sheet->setCellValue('J' . $fila, $item->tipo_compra);
+                $sheet->setCellValue('K' . $fila, $item->user->full_name);
+                $sheet->setCellValue('L' . $fila, $item->estado_ingreso);
+                $sheet->setCellValue('M' . $fila, $item->estado_faltantes);
+                $sheet->setCellValue('N' . $fila, $item->fecha_registro_t);
+                $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->bodyTabla);
+
+                $s_total += (float)$item->total;
+                $s_cancelado += (float)$item->total_cancelado;
+                $s_saldo += (float)$item->saldo;
+                $fila++;
+            }
+            $sheet->setCellValue('A' . $fila, "TOTALES");
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->setCellValue('G' . $fila, number_format($s_total, 2, ".", ""));
+            $sheet->setCellValue('H' . $fila, number_format($s_cancelado, 2, ".", ""));
+            $sheet->setCellValue('I' . $fila, number_format($s_saldo, 2, ".", ""));
+            $sheet->getStyle('A' . $fila . ':I' . $fila)->applyFromArray($this->headerTabla);
+
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(30);
+            $sheet->getColumnDimension('G')->setWidth(15);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(15);
+            $sheet->getColumnDimension('J')->setWidth(10);
+            $sheet->getColumnDimension('K')->setWidth(25);
+            $sheet->getColumnDimension('L')->setWidth(15);
+            $sheet->getColumnDimension('M')->setWidth(15);
+            $sheet->getColumnDimension('N')->setWidth(10);
+
+            foreach (range('A', 'N') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:N');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'orden_compras_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
+
     public function exportarCaja(Request $request)
     {
         ini_set('memory_limit', '1024M');
@@ -340,10 +1234,15 @@ class ReporteController extends Controller
         $fecha_ini = $request->fecha_ini;
         $fecha_fin = $request->fecha_fin;
         $sucursal_id = $request->sucursal_id;
-        $medico_id = $request->medico_id;
+        $user_id = $request->user_id;
         $formato = $request->formato;
 
-        $array_res = $this->pagoService->reporteArqueo($fecha_ini, $fecha_fin, $sucursal_id, $medico_id);
+        $array_res = $this->movimiento_caja_service->reporteMovimientos(
+            $fecha_ini,
+            $fecha_fin,
+            $sucursal_id,
+            $user_id
+        );
         $pagos = $array_res[0];
         $suma_tipos = $array_res[1];
         $pagos_sin_verificar = $array_res[2];
@@ -940,656 +1839,6 @@ class ReporteController extends Controller
     }
 
 
-    public function clientes()
-    {
-        return Inertia::render("Admin/Reportes/Clientes");
-    }
-
-    public function r_clientes(Request $request)
-    {
-        ini_set('memory_limit', '1024M');
-        set_time_limit(-1);
-        $fecha_ini =  $request->fecha_ini;
-        $fecha_fin =  $request->fecha_fin;
-        $formato =  $request->formato;
-        $clientes = Cliente::select("clientes.*");
-
-        if ($fecha_ini && $fecha_fin) {
-            $clientes->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
-        }
-
-        $clientes = $clientes->get();
-        if ($formato == 'pdf') {
-            $pdf = PDF::loadView('reportes.clientes', compact('clientes'))->setPaper('letter', 'portrait');
-
-            // ENUMERAR LAS PÁGINAS USANDO CANVAS
-            $pdf->output();
-            $dom_pdf = $pdf->getDomPDF();
-            $canvas = $dom_pdf->get_canvas();
-            $alto = $canvas->get_height();
-            $ancho = $canvas->get_width();
-            $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-
-            return $pdf->stream('clientes.pdf');
-        } else {
-            $spreadsheet = new Spreadsheet();
-            $spreadsheet->getProperties()
-                ->setCreator("ADMIN")
-                ->setLastModifiedBy('Administración')
-                ->setTitle('Registros')
-                ->setSubject('Registros')
-                ->setDescription('Registros')
-                ->setKeywords('PHPSpreadsheet')
-                ->setCategory('Listado');
-
-            $sheet = $spreadsheet->getActiveSheet();
-
-            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
-
-            $fila = 1;
-            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
-                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                $drawing->setName('logo');
-                $drawing->setDescription('logo');
-                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
-                $drawing->setCoordinates('A' . $fila);
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(0);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
-
-            $fila = 2;
-            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
-            $sheet->mergeCells("A" . $fila . ":H" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':H' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->titulo);
-            $fila++;
-            $sheet->setCellValue('A' . $fila, "LISTA DE CLIENTES");
-            $sheet->mergeCells("A" . $fila . ":H" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':H' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->titulo);
-            $fila++;
-            $fila++;
-            $sheet->setCellValue('A' . $fila, 'N°');
-            $sheet->setCellValue('B' . $fila, 'PATERNO');
-            $sheet->setCellValue('C' . $fila, 'MATERNO');
-            $sheet->setCellValue('D' . $fila, 'NOMBRE(S)');
-            $sheet->setCellValue('E' . $fila, 'C.I.');
-            $sheet->setCellValue('F' . $fila, 'FECHA NACIMIENTO');
-            $sheet->setCellValue('G' . $fila, 'CELULAR');
-            $sheet->setCellValue('H' . $fila, 'FECHA REGISTRO');
-            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->headerTabla);
-            $fila++;
-
-            foreach ($clientes as $key => $item) {
-                $sheet->setCellValue('A' . $fila, $key + 1);
-                $sheet->setCellValue('B' . $fila, $item->paterno);
-                $sheet->setCellValue('C' . $fila, $item->materno);
-                $sheet->setCellValue('D' . $fila, $item->nombre);
-                $sheet->setCellValue('E' . $fila, $item->full_ci);
-                $sheet->setCellValue('F' . $fila, $item->fecha_nact_t);
-                $sheet->setCellValue('G' . $fila, $item->cel);
-                $sheet->setCellValue('H' . $fila, $item->fecha_registro_t);
-                $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->bodyTabla);
-                $fila++;
-            }
-
-            $sheet->getColumnDimension('A')->setWidth(6);
-            $sheet->getColumnDimension('B')->setWidth(20);
-            $sheet->getColumnDimension('C')->setWidth(15);
-            $sheet->getColumnDimension('D')->setWidth(10);
-            $sheet->getColumnDimension('E')->setWidth(15);
-            $sheet->getColumnDimension('F')->setWidth(20);
-            $sheet->getColumnDimension('G')->setWidth(15);
-            $sheet->getColumnDimension('H')->setWidth(15);
-
-            foreach (range('A', 'H') as $columnID) {
-                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
-            }
-
-            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
-            $sheet->getPageMargins()->setTop(0.5);
-            $sheet->getPageMargins()->setRight(0.1);
-            $sheet->getPageMargins()->setLeft(0.1);
-            $sheet->getPageMargins()->setBottom(0.1);
-            $sheet->getPageSetup()->setPrintArea('A:H');
-            $sheet->getPageSetup()->setFitToWidth(1);
-            $sheet->getPageSetup()->setFitToHeight(0);
-
-            return response()->streamDownload(
-                function () use ($spreadsheet) {
-                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-                    $writer->save('php://output');
-                },
-                'clientes_' . time() . '.xlsx',
-                [
-                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                ]
-            );
-        }
-    }
-
-    public function certificados()
-    {
-        return Inertia::render("Admin/Reportes/Certificados");
-    }
-
-    public function r_certificados(Request $request)
-    {
-        ini_set('memory_limit', '1024M');
-        set_time_limit(-1);
-        $cliente_id =  $request->cliente_id;
-        $sucursal_id =  $request->sucursal_id;
-        $user_id =  $request->user_id;
-        $tipo_certificado_id =  $request->tipo_certificado_id;
-        $fecha_ini =  $request->fecha_ini;
-        $fecha_fin =  $request->fecha_fin;
-        $formato =  $request->formato;
-        $certificado_detalles = CertificadoDetalle::select("certificado_detalles.*");
-
-        if ($cliente_id != 'todos') {
-            $certificado_detalles->whereHas('certificado', function ($q) use ($cliente_id) {
-                $q->where("cliente_id", $cliente_id);
-            });
-        }
-
-        if ($sucursal_id != 'todos') {
-            // $certificado_detalles->whereHas('certificado', function ($q) use ($sucursal_id) {
-            //     $q->where("sucursal_id", $sucursal_id);
-            // });
-            $certificado_detalles->where("sucursal_id", $sucursal_id);
-        }
-
-        if ($user_id != 'todos') {
-            // $certificado_detalles->whereHas('certificado', function ($q) use ($user_id) {
-            //     $q->where("user_id", $user_id);
-            // });
-            $certificado_detalles->where("user_id", $user_id);
-        }
-
-        if ($tipo_certificado_id != 'todos') {
-            $certificado_detalles->where("tipo_certificado_id", $tipo_certificado_id);
-        }
-
-        if ($fecha_ini && $fecha_fin) {
-            // $certificado_detalles->whereHas('certificado', function ($q) use ($fecha_ini, $fecha_fin) {
-            //     $q->whereBetween('fecha_inicio', [$fecha_ini, $fecha_fin]);
-            // });
-            $certificado_detalles->whereBetween('fecha_inicio', [$fecha_ini, $fecha_fin]);
-        }
-
-        $certificado_detalles->whereHas('certificado', function ($q) use ($sucursal_id) {
-            // $q->where("estado", 1);
-            $q->where("status", 1);
-        });
-
-        $certificado_detalles->where("estado", 1);
-
-        $certificado_detalles = $certificado_detalles->get();
-
-        if ($formato == 'pdf') {
-            $pdf = PDF::loadView('reportes.certificados', compact('certificado_detalles'))->setPaper('letter', 'portrait');
-
-            // ENUMERAR LAS PÁGINAS USANDO CANVAS
-            $pdf->output();
-            $dom_pdf = $pdf->getDomPDF();
-            $canvas = $dom_pdf->get_canvas();
-            $alto = $canvas->get_height();
-            $ancho = $canvas->get_width();
-            $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-
-            return $pdf->stream('certificados.pdf');
-        } else {
-            $spreadsheet = new Spreadsheet();
-            $spreadsheet->getProperties()
-                ->setCreator("ADMIN")
-                ->setLastModifiedBy('Administración')
-                ->setTitle('Registros')
-                ->setSubject('Registros')
-                ->setDescription('Registros')
-                ->setKeywords('PHPSpreadsheet')
-                ->setCategory('Listado');
-
-            $sheet = $spreadsheet->getActiveSheet();
-
-            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
-
-            $fila = 1;
-            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
-                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                $drawing->setName('logo');
-                $drawing->setDescription('logo');
-                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
-                $drawing->setCoordinates('A' . $fila);
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(0);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
-
-            $fila = 2;
-            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
-            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
-            $fila++;
-            $sheet->setCellValue('A' . $fila, "CERTIFICADOS EMITIDOS");
-            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
-            $fila++;
-            $fila++;
-            $sheet->setCellValue('A' . $fila, 'N°');
-            $sheet->setCellValue('B' . $fila, 'NRO. C.I.');
-            $sheet->setCellValue('C' . $fila, 'NOMBRE');
-            $sheet->setCellValue('D' . $fila, 'AP. PATERNO');
-            $sheet->setCellValue('E' . $fila, 'AP. MATERNO');
-            $sheet->setCellValue('F' . $fila, 'EDAD');
-            $sheet->setCellValue('G' . $fila, 'CATEGORÍA');
-            $sheet->setCellValue('H' . $fila, 'MÉDICO');
-            $sheet->setCellValue('I' . $fila, 'FECHA Y HORA INICIO');
-            $sheet->setCellValue('J' . $fila, 'FECHA Y HORA FIN');
-            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->headerTabla);
-            $fila++;
-
-            foreach ($certificado_detalles as $key => $item) {
-                $sheet->setCellValue('A' . $fila, $key + 1);
-                $sheet->setCellValue('B' . $fila, $item->certificado->cliente->full_ci);
-                $sheet->setCellValue('C' . $fila, $item->certificado->cliente->nombre);
-                $sheet->setCellValue('D' . $fila, $item->certificado->cliente->paterno);
-                $sheet->setCellValue('E' . $fila, $item->certificado->cliente->materno);
-                $sheet->setCellValue('F' . $fila, $item->certificado->cliente->edad);
-                $sheet->setCellValue('G' . $fila, $item->categoria);
-                $sheet->setCellValue('H' . $fila, $item->user->full_name);
-                $sheet->setCellValue('I' . $fila, $item->certificado->fecha_inicio_t . ' ' . $item->certificado->hora_inicio);
-                $sheet->setCellValue('J' . $fila, $item->certificado->fecha_fin_t . ' ' . $item->certificado->hora_fin);
-                $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->bodyTabla);
-                $fila++;
-            }
-
-            $sheet->getColumnDimension('A')->setWidth(6);
-            $sheet->getColumnDimension('B')->setWidth(15);
-            $sheet->getColumnDimension('C')->setWidth(15);
-            $sheet->getColumnDimension('D')->setWidth(15);
-            $sheet->getColumnDimension('E')->setWidth(15);
-            $sheet->getColumnDimension('F')->setWidth(12);
-            $sheet->getColumnDimension('G')->setWidth(10);
-            $sheet->getColumnDimension('H')->setWidth(20);
-            $sheet->getColumnDimension('I')->setWidth(20);
-            $sheet->getColumnDimension('J')->setWidth(20);
-
-            foreach (range('A', 'J') as $columnID) {
-                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
-            }
-
-            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
-            $sheet->getPageMargins()->setTop(0.5);
-            $sheet->getPageMargins()->setRight(0.1);
-            $sheet->getPageMargins()->setLeft(0.1);
-            $sheet->getPageMargins()->setBottom(0.1);
-            $sheet->getPageSetup()->setPrintArea('A:J');
-            $sheet->getPageSetup()->setFitToWidth(1);
-            $sheet->getPageSetup()->setFitToHeight(0);
-
-            return response()->streamDownload(
-                function () use ($spreadsheet) {
-                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-                    $writer->save('php://output');
-                },
-                'certificados_' . time() . '.xlsx',
-                [
-                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                ]
-            );
-        }
-    }
-
-    public function certificados_interno()
-    {
-        return Inertia::render("Admin/Reportes/CertificadosInterno");
-    }
-
-    public function r_certificados_interno(Request $request)
-    {
-        ini_set('memory_limit', '1024M');
-        set_time_limit(-1);
-        $cliente_id =  $request->cliente_id;
-        $sucursal_id =  $request->sucursal_id;
-        $user_id =  $request->user_id;
-        $tipo_certificado_id =  $request->tipo_certificado_id;
-        $fecha_ini =  $request->fecha_ini;
-        $fecha_fin =  $request->fecha_fin;
-        $formato =  $request->formato;
-        $certificado_detalles = CertificadoDetalle::select("certificado_detalles.*");
-
-        if ($cliente_id != 'todos') {
-            $certificado_detalles->whereHas('certificado', function ($q) use ($cliente_id) {
-                $q->where("cliente_id", $cliente_id);
-            });
-        }
-
-        if ($sucursal_id != 'todos') {
-            // $certificado_detalles->whereHas('certificado', function ($q) use ($sucursal_id) {
-            //     $q->where("sucursal_id", $sucursal_id);
-            // });
-            $certificado_detalles->where("sucursal_id", $sucursal_id);
-        }
-
-        if ($user_id != 'todos') {
-            // $certificado_detalles->whereHas('certificado', function ($q) use ($user_id) {
-            //     $q->where("user_id", $user_id);
-            // });
-            $certificado_detalles->where("user_id", $user_id);
-        }
-
-        if ($tipo_certificado_id != 'todos') {
-            $certificado_detalles->where("tipo_certificado_id", $tipo_certificado_id);
-        }
-
-        if ($fecha_ini && $fecha_fin) {
-            // $certificado_detalles->whereHas('certificado', function ($q) use ($fecha_ini, $fecha_fin) {
-            //     $q->whereBetween('fecha_inicio', [$fecha_ini, $fecha_fin]);
-            // });
-            $certificado_detalles->whereBetween('fecha_inicio', [$fecha_ini, $fecha_fin]);
-        }
-
-        $certificado_detalles->whereHas('certificado', function ($q) use ($sucursal_id) {
-            // $q->where("estado", 1);
-            $q->where("status", 1);
-        });
-
-        $certificado_detalles->where("estado", 1);
-
-        $certificado_detalles = $certificado_detalles->get();
-
-        if ($formato == 'pdf') {
-            $pdf = PDF::loadView('reportes.certificados_interno', compact('certificado_detalles'))->setPaper('letter', 'portrait');
-
-            // ENUMERAR LAS PÁGINAS USANDO CANVAS
-            $pdf->output();
-            $dom_pdf = $pdf->getDomPDF();
-            $canvas = $dom_pdf->get_canvas();
-            $alto = $canvas->get_height();
-            $ancho = $canvas->get_width();
-            $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-
-            return $pdf->stream('certificados_interno.pdf');
-        } else {
-            $spreadsheet = new Spreadsheet();
-            $spreadsheet->getProperties()
-                ->setCreator("ADMIN")
-                ->setLastModifiedBy('Administración')
-                ->setTitle('Registros')
-                ->setSubject('Registros')
-                ->setDescription('Registros')
-                ->setKeywords('PHPSpreadsheet')
-                ->setCategory('Listado');
-
-            $sheet = $spreadsheet->getActiveSheet();
-
-            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
-
-            $fila = 1;
-            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
-                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                $drawing->setName('logo');
-                $drawing->setDescription('logo');
-                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
-                $drawing->setCoordinates('A' . $fila);
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(0);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
-
-            $fila = 2;
-            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
-            $sheet->mergeCells("A" . $fila . ":I" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':I' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':I' . $fila)->applyFromArray($this->titulo);
-            $fila++;
-            $sheet->setCellValue('A' . $fila, "CERTIFICADOS EMITIDOS INTERNO");
-            $sheet->mergeCells("A" . $fila . ":I" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':I' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':I' . $fila)->applyFromArray($this->titulo);
-            $fila++;
-            $fila++;
-            $sheet->setCellValue('A' . $fila, 'N°');
-            $sheet->setCellValue('B' . $fila, 'NRO. C.I.');
-            $sheet->setCellValue('C' . $fila, 'NOMBRE');
-            $sheet->setCellValue('D' . $fila, 'AP. PATERNO');
-            $sheet->setCellValue('E' . $fila, 'AP. MATERNO');
-            $sheet->setCellValue('F' . $fila, 'TELÉFONO');
-            $sheet->setCellValue('G' . $fila, 'EDAD');
-            $sheet->setCellValue('H' . $fila, 'CATEGORÍA');
-            $sheet->setCellValue('I' . $fila, 'MÉDICO');
-            $sheet->getStyle('A' . $fila . ':I' . $fila)->applyFromArray($this->headerTabla);
-            $fila++;
-
-            foreach ($certificado_detalles as $key => $item) {
-                $sheet->setCellValue('A' . $fila, $key + 1);
-                $sheet->setCellValue('B' . $fila, $item->certificado->cliente->full_ci);
-                $sheet->setCellValue('C' . $fila, $item->certificado->cliente->nombre);
-                $sheet->setCellValue('D' . $fila, $item->certificado->cliente->paterno);
-                $sheet->setCellValue('E' . $fila, $item->certificado->cliente->materno);
-                $sheet->setCellValue('F' . $fila, $item->certificado->cliente->cel);
-                $sheet->setCellValue('G' . $fila, $item->certificado->cliente->edad);
-                $sheet->setCellValue('H' . $fila, $item->categoria);
-                $sheet->setCellValue('I' . $fila, $item->user->full_name);
-                $sheet->getStyle('A' . $fila . ':I' . $fila)->applyFromArray($this->bodyTabla);
-                $fila++;
-            }
-
-            $sheet->getColumnDimension('A')->setWidth(6);
-            $sheet->getColumnDimension('B')->setWidth(15);
-            $sheet->getColumnDimension('C')->setWidth(15);
-            $sheet->getColumnDimension('D')->setWidth(15);
-            $sheet->getColumnDimension('E')->setWidth(15);
-            $sheet->getColumnDimension('F')->setWidth(12);
-            $sheet->getColumnDimension('G')->setWidth(10);
-            $sheet->getColumnDimension('H')->setWidth(20);
-            $sheet->getColumnDimension('I')->setWidth(20);
-
-            foreach (range('A', 'I') as $columnID) {
-                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
-            }
-
-            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
-            $sheet->getPageMargins()->setTop(0.5);
-            $sheet->getPageMargins()->setRight(0.1);
-            $sheet->getPageMargins()->setLeft(0.1);
-            $sheet->getPageMargins()->setBottom(0.1);
-            $sheet->getPageSetup()->setPrintArea('A:I');
-            $sheet->getPageSetup()->setFitToWidth(1);
-            $sheet->getPageSetup()->setFitToHeight(0);
-
-            return response()->streamDownload(
-                function () use ($spreadsheet) {
-                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-                    $writer->save('php://output');
-                },
-                'certificados_interno_' . time() . '.xlsx',
-                [
-                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                ]
-            );
-        }
-    }
-
-    public function r_certificados_diario(Request $request)
-    {
-        ini_set('memory_limit', '1024M');
-        set_time_limit(-1);
-        $sucursal_id =  $request->sucursal_id;
-        $user_id =  $request->user_id;
-        $fecha_ini =  $request->fecha_ini;
-        $fecha_fin =  $request->fecha_fin;
-        // $tipo_certificado_id =  $request->tipo_certificado_id;
-        $formato =  $request->formato;
-        $certificado_detalles = CertificadoDetalle::select("certificado_detalles.*");
-
-        if ($sucursal_id != 'todos') {
-            $certificado_detalles->whereHas('certificado', function ($q) use ($sucursal_id) {
-                $q->where("sucursal_id", $sucursal_id);
-            });
-        }
-
-        if (Auth::user()->tipo == 'MÉDICO') {
-            $certificado_detalles->where("user_id", Auth::user()->id);
-        } else {
-            if ($user_id != 'todos') {
-                $certificado_detalles->where("user_id", $user_id);
-            }
-        }
-
-        if ($fecha_ini && $fecha_fin) {
-            $certificado_detalles->whereBetween('fecha_inicio', [$fecha_ini, $fecha_fin]);
-        }
-
-        $certificado_detalles->whereHas('certificado', function ($q) {
-            $q->where("estado", 1);
-            $q->where("status", 1);
-        });
-
-        $certificado_detalles = $certificado_detalles->get();
-
-        $suma_cantidad = [];
-        $tipo_certificados = TipoCertificado::all();
-        foreach ($tipo_certificados as $tipo) {
-            $suma = $certificado_detalles->where('tipo_certificado_id', $tipo->id)->count();
-            $suma_cantidad[$tipo->id] = $suma;
-        }
-
-        if ($formato == 'pdf') {
-            $pdf = PDF::loadView('reportes.certificados_diario', compact('certificado_detalles', 'suma_cantidad', 'tipo_certificados'))->setPaper('letter', 'portrait');
-
-            // ENUMERAR LAS PÁGINAS USANDO CANVAS
-            $pdf->output();
-            $dom_pdf = $pdf->getDomPDF();
-            $canvas = $dom_pdf->get_canvas();
-            $alto = $canvas->get_height();
-            $ancho = $canvas->get_width();
-            $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-
-            return $pdf->stream('certificados.pdf');
-        } else {
-            $spreadsheet = new Spreadsheet();
-            $spreadsheet->getProperties()
-                ->setCreator("ADMIN")
-                ->setLastModifiedBy('Administración')
-                ->setTitle('Registros')
-                ->setSubject('Registros')
-                ->setDescription('Registros')
-                ->setKeywords('PHPSpreadsheet')
-                ->setCategory('Listado');
-
-            $sheet = $spreadsheet->getActiveSheet();
-
-            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
-
-            $fila = 1;
-            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
-                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                $drawing->setName('logo');
-                $drawing->setDescription('logo');
-                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
-                $drawing->setCoordinates('A' . $fila);
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(0);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
-
-            $fila = 2;
-            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
-            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
-            $fila++;
-            $sheet->setCellValue('A' . $fila, "DIARIO DE CERTIFICADOS EMITIDOS");
-            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
-            $fila++;
-            $fila++;
-            $sheet->setCellValue('A' . $fila, 'N°');
-            $sheet->setCellValue('B' . $fila, 'PACIENTE');
-            $sheet->setCellValue('C' . $fila, 'C.I.');
-            $sheet->setCellValue('D' . $fila, 'CATEGORÍA');
-            $sheet->setCellValue('E' . $fila, 'TIPO');
-            $sheet->setCellValue('F' . $fila, 'TIPO CERTIFICADO');
-            $sheet->setCellValue('G' . $fila, 'MÉDICO');
-            $sheet->setCellValue('H' . $fila, 'SUCURSAL');
-            $sheet->setCellValue('I' . $fila, 'FECHA Y HORA INICIO');
-            $sheet->setCellValue('J' . $fila, 'FECHA Y HORA FIN');
-            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->headerTabla);
-            $fila++;
-
-            foreach ($certificado_detalles as $key => $item) {
-                $sheet->setCellValue('A' . $fila, $key + 1);
-                $sheet->setCellValue('B' . $fila, $item->certificado->cliente->full_name);
-                $sheet->setCellValue('C' . $fila, $item->certificado->cliente->full_ci);
-                $sheet->setCellValue('D' . $fila, $item->categoria);
-                $sheet->setCellValue('E' . $fila, $item->certificado->tipo);
-                $sheet->setCellValue('F' . $fila, $item->tipo_certificado->nombre);
-                $sheet->setCellValue('G' . $fila, $item->user->full_name);
-                $sheet->setCellValue('H' . $fila, $item->sucursal->nombre);
-                $sheet->setCellValue('I' . $fila, $item->certificado->fecha_inicio_t . ' ' . $item->certificado->hora_inicio);
-                $sheet->setCellValue('J' . $fila, $item->certificado->fecha_fin_t . ' ' . $item->certificado->hora_fin);
-                $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->bodyTabla);
-                $fila++;
-            }
-            $fila++;
-            $sheet->setCellValue('D' . $fila, 'TIPO DE CERTIFICADO');
-            $sheet->mergeCells("D" . $fila . ":F" . $fila);  //COMBINAR CELDAS
-            $sheet->setCellValue('G' . $fila, 'TOTAL');
-            $sheet->getStyle('D' . $fila . ':G' . $fila)->applyFromArray($this->headerTabla);
-            foreach ($tipo_certificados as $tipo) {
-                $sheet->setCellValue('D' . ($fila + 1), $tipo->nombre);
-                $sheet->mergeCells("D" . ($fila + 1) . ":F" . ($fila + 1));  //COMBINAR CELDAS
-                $sheet->setCellValue('G' . ($fila + 1), $suma_cantidad[$tipo->id] ?? 0);
-                $sheet->getStyle('D' . ($fila + 1) . ':G' . ($fila + 1))->applyFromArray($this->bodyTabla);
-                $fila++;
-            }
-
-            $sheet->getColumnDimension('A')->setWidth(6);
-            $sheet->getColumnDimension('B')->setWidth(20);
-            $sheet->getColumnDimension('C')->setWidth(15);
-            $sheet->getColumnDimension('D')->setWidth(10);
-            $sheet->getColumnDimension('E')->setWidth(10);
-            $sheet->getColumnDimension('F')->setWidth(20);
-            $sheet->getColumnDimension('G')->setWidth(20);
-            $sheet->getColumnDimension('H')->setWidth(20);
-            $sheet->getColumnDimension('I')->setWidth(20);
-            $sheet->getColumnDimension('J')->setWidth(20);
-
-            foreach (range('A', 'J') as $columnID) {
-                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
-            }
-
-            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
-            $sheet->getPageMargins()->setTop(0.5);
-            $sheet->getPageMargins()->setRight(0.1);
-            $sheet->getPageMargins()->setLeft(0.1);
-            $sheet->getPageMargins()->setBottom(0.1);
-            $sheet->getPageSetup()->setPrintArea('A:J');
-            $sheet->getPageSetup()->setFitToWidth(1);
-            $sheet->getPageSetup()->setFitToHeight(0);
-
-            return response()->streamDownload(
-                function () use ($spreadsheet) {
-                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-                    $writer->save('php://output');
-                },
-                'certificados_diario_' . time() . '.xlsx',
-                [
-                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                ]
-            );
-        }
-    }
-
     public function historial_accions()
     {
         return Inertia::render("Admin/Reportes/HistorialAccions");
@@ -1722,136 +1971,5 @@ class ReporteController extends Controller
                 ]
             );
         }
-    }
-
-    public function gcemitidos()
-    {
-        return Inertia::render("Admin/Reportes/Gcemitidos");
-    }
-    public function r_gcemitidos(Request $request)
-    {
-        $cliente_id =  $request->cliente_id;
-        $sucursal_id =  $request->sucursal_id;
-        $user_id =  $request->user_id;
-        $tipo_certificado_id =  $request->tipo_certificado_id;
-        $fecha_ini = $request->fecha_ini;
-        $fecha_fin = $request->fecha_fin;
-
-        $users = User::select("users.*")
-            ->where("tipo", "MÉDICO");
-        if ($user_id != 'todos') {
-            $users->where("id", $user_id);
-        }
-
-        $users = $users->get();
-        $categorias = $users->map(function ($user) {
-            return $user->nombre . ' ' . $user->paterno . ' ' . $user->materno;
-        })->toArray();
-
-        $tipo_certificados = TipoCertificado::select("tipo_certificados.*");
-
-        if ($tipo_certificado_id != 'todos') {
-            $tipo_certificados->where("id", $tipo_certificado_id);
-        }
-
-        $tipo_certificados = $tipo_certificados->get();
-
-
-        $data = [];
-        $total_final = 0;
-        foreach ($tipo_certificados as $tipo_certificado) {
-            $cantidad_por_tipo = [];
-            foreach ($users as $key => $user) {
-                $total = CertificadoDetalle::whereHas("certificado", function ($q) use ($user, $fecha_ini, $fecha_fin, $sucursal_id, $cliente_id) {
-                    // $q->where("estado", 1);
-                    $q->where("status", 1);
-                    // $q->where("user_id", $user->id);
-                    if ($fecha_ini && $fecha_fin) {
-                        $q->whereBetween("fecha_registro", [$fecha_ini, $fecha_fin]);
-                    }
-                    if ($sucursal_id != 'todos') {
-                        $q->where("sucursal_id", $sucursal_id);
-                    }
-                    if ($cliente_id != 'todos') {
-                        $q->where("cliente_id", $cliente_id);
-                    }
-                })->where("tipo_certificado_id", $tipo_certificado->id);
-                $total->where("user_id", $user->id);
-                $total->where("estado", 1);
-                $total = $total->count();
-                $cantidad_por_tipo[] = $total;
-                $total_final += (int)$total;
-            }
-            $data[] = [
-                'name' => $tipo_certificado->nombre,
-                'data' => $cantidad_por_tipo,
-            ];
-        }
-
-        return response()->JSON([
-            "categories" => $categorias,
-            "data" => $data,
-            "total_final" => $total_final
-        ]);
-    }
-
-    public function gmemitidos()
-    {
-        return Inertia::render("Admin/Reportes/Gmemitidos");
-    }
-    public function r_gmemitidos(Request $request)
-    {
-        $cliente_id =  $request->cliente_id;
-        $sucursal_id =  $request->sucursal_id;
-        $user_id =  $request->user_id;
-        $tipo_pago =  $request->tipo_pago;
-        $fecha_ini = $request->fecha_ini;
-        $fecha_fin = $request->fecha_fin;
-
-        // Si no vienen fechas
-        if (!$request->fecha_ini || !$request->fecha_fin) {
-
-            $primerPago = Pago::orderBy('fecha_verificado', 'asc')
-                ->where("status", 1)->first();
-
-            $fecha_ini = $primerPago
-                ? Carbon::parse($primerPago->fecha_verificado)->startOfDay()
-                : Carbon::now()->startOfDay();
-
-            $fecha_fin = Carbon::now()->endOfDay();
-        } else {
-            $fecha_ini = Carbon::parse($request->fecha_ini)->startOfDay();
-            $fecha_fin = Carbon::parse($request->fecha_fin)->endOfDay();
-        }
-
-        $categories = [];
-        $data = [];
-
-        $periodo = Carbon::parse($fecha_ini);
-        $total_final = 0;
-        while ($periodo <= $fecha_fin) {
-            $fecha = $periodo->format('Y-m-d');
-            $categories[] = date("d/m/Y", strtotime($fecha));
-
-            $total_fecha = Pago::select("id,monto,fecha_verificado,verificado");
-            $total_fecha->when($sucursal_id != 'todos', fn($q) => $q->where("sucursal_id", $sucursal_id));
-            $total_fecha->when($user_id != 'todos', fn($q) => $q->where("user_id", $user_id));
-            $total_fecha->when($tipo_pago != 'todos', fn($q) => $q->where("tipo_pago", $tipo_pago));
-            $total_fecha->where("verificado", 1);
-            $total_fecha->where("status", 1);
-            $total_fecha->where("fecha_verificado", $fecha);
-            $total_fecha = $total_fecha->sum("monto");
-            $data[] = (float)$total_fecha;
-            $total_final += (float)$total_fecha;
-            $periodo->addDay();
-        }
-
-        $total_final = array_sum($data);
-
-        return response()->JSON([
-            "categories" => $categories,
-            "data" => $data,
-            "total_final" => number_format($total_final, 2, ".", ",")
-        ]);
     }
 }

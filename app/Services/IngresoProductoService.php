@@ -244,6 +244,7 @@ class IngresoProductoService
                     "tipo" => "RECEPCION",
                     "fecha" => $fecha_actual,
                     "hora" => $hora_actual,
+                    "user_id" => Auth::user()->id
                 ];
             }
 

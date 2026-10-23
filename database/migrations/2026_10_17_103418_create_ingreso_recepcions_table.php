@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string("tipo"); // RECEPCION, FALTANTE
             $table->date("fecha")->nullable();
             $table->time("hora")->nullable();
+            $table->unsignedBigInteger("user_id");
             $table->timestamps();
 
             $table->foreign("ingreso_producto_id")->on("ingreso_productos")->references("id");
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->foreign("sucursal_id")->on("sucursals")->references("id");
             $table->foreign("almacen_id")->on("almacens")->references("id");
             $table->foreign("producto_id")->on("productos")->references("id");
+            $table->foreign("user_id")->on("users")->references("id");
         });
     }
 

@@ -31,11 +31,11 @@
         }
 
         table thead tr th {
-            font-size: 7pt;
+            font-size: 8pt;
         }
 
         table tbody tr td {
-            font-size: 6pt;
+            font-size: 7.5pt;
         }
 
 
@@ -150,7 +150,6 @@
         <thead class="bg-principal">
             <tr>
                 <th width="3%">N°</th>
-                <th width="5%">FOTO</th>
                 <th>USUARIO</th>
                 <th>PATERNO</th>
                 <th>MATERNO</th>
@@ -160,6 +159,8 @@
                 <th>CORREO</th>
                 <th>TELÉFONO/CELULAR</th>
                 <th>TIPO</th>
+                <th>ROLE</th>
+                <th>SUCURSAL</th>
                 <th>ACCESO</th>
             </tr>
         </thead>
@@ -170,10 +171,6 @@
             @foreach ($usuarios as $user)
                 <tr>
                     <td class="centreado">{{ $cont++ }}</td>
-                    <td class="img_celda centreado">
-                        <img src="{{ $user->foto_b64 }}" alt="Foto">
-
-                    </td>
                     <td>{{ $user->usuario }}</td>
                     <td class="">{{ $user->paterno }}</td>
                     <td class="">{{ $user->materno }}</td>
@@ -183,6 +180,8 @@
                     <td class="">{{ $user->correo }}</td>
                     <td class="">{{ $user->fono }}</td>
                     <td class="">{{ $user->tipo }}</td>
+                    <td class="">{{ $user->role->nombre }}</td>
+                    <td class="">{{ $user->sucursal?->nombre }}</td>
                     <td class="centreado">{{ $user->acceso == 1 ? 'HABILITADO' : 'DENEGADO' }}</td>
                 </tr>
             @endforeach

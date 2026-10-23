@@ -223,12 +223,6 @@ const cargarAlmacens = async () => {
     }
 };
 
-const cargarClientes = () => {
-    axios.get(route("clientes.listado")).then((response) => {
-        listClientes.value = response.data.clientes;
-    });
-};
-
 const cargarCategorias = async () => {
     try {
         const res = await axios.get(route("categorias.listado"));
@@ -284,7 +278,6 @@ const cargarListas = () => {
     cargarTipoVentas();
     cargarTipoPagos();
     cargarAlmacens();
-    // cargarClientes();
     cargarCategorias();
     cargarMarcas();
 };

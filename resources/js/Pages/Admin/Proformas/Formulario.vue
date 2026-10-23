@@ -5,6 +5,8 @@ import "vue3-toastify/dist/index.css";
 import { watch, ref, computed, onMounted, nextTick } from "vue";
 import FormularioCliente from "../Clientes/FormularioCliente.vue";
 import { useClientes } from "@/composables/clientes/useClientes";
+import MiPaginacion from "@/Components/MiPaginacion.vue";
+import ListaPorCliente from "../ClienteProductos/ListaPorCliente.vue";
 
 const props = defineProps({
     form: {
@@ -24,6 +26,43 @@ const textBtn = computed(() => {
     }
     return `<i class="fa fa-edit"></i> Actualizar Proforma`;
 });
+
+const txtBtnCancelar = computed(() => {
+    if (form.id == 0) {
+        return `<i class="fa fa-times"></i> Cancelar Proforma`;
+    }
+    return `<i class="fa fa-times"></i> Cancelar Actualización`;
+});
+
+const cancelarProforma = () => {
+    const message =
+        form.id == 0
+            ? `Se cancelará la PROFORMA`
+            : `Se cancelará la ACTUALIZACIÓN DE PROFORMA ${form.codigo_proforma}`;
+
+    Swal.fire({
+        // icon: "question",
+        title: "¿Cancelar regitro?",
+        html: `${message}`,
+        showCancelButton: true,
+        confirmButtonText: "Si, Cancelar",
+        cancelButtonText: "No, cancelar",
+        denyButtonText: `No, cancelar`,
+        customClass: {
+            confirmButton: "btn-danger",
+        },
+    }).then(async (result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+            if (form.id != 0) {
+                router.get(route("proformas.index"));
+            } else {
+                form.reset();
+                cargarProductos();
+            }
+        }
+    });
+};
 
 const enviarFormulario = () => {
     enviando.value = true;
@@ -99,10 +138,8 @@ const enviarFormulario = () => {
 const emits = defineEmits(["envio-formulario"]);
 
 const listAlmacens = ref([]);
-const listTipoProformas = ref([]);
 const listTipoPagos = ref([]);
 const tipo_proforma_id_default = ref("");
-const listClientes = ref([]);
 const listCategorias = ref([]);
 const listMarcas = ref([]);
 const listProductoAlmacens = ref([]);
@@ -111,32 +148,48 @@ const almacen_id = ref("");
 const categoria_id = ref("todos");
 const marca_id = ref("todos");
 const nombreProducto = ref("");
+const currentPage = ref(1);
+const perPage = ref(24);
+const total_registros = ref(0);
+const cambioDePagina = async (value) => {
+    loadingLista.value = true;
+    currentPage.value = value;
+    cargarProductos();
+};
 const cargarProductos = async () => {
     loadingLista.value = true;
     try {
-        const res = await axios.get(route("producto_sucursals.listado"), {
+        const res = await axios.get(route("producto_sucursals.paginado"), {
             params: {
+                perPage: perPage.value,
+                page: currentPage.value,
                 almacen_id: almacen_id.value,
                 categoria_id: categoria_id.value,
                 marca_id: marca_id.value,
                 nombreProducto: nombreProducto.value,
+                activo: 1,
             },
         });
-        listProductoAlmacens.value = res.data.producto_sucursals.map(
-            (item) => ({
-                ...item,
-                cantidad: 1,
-                precio_proforma: item.precio,
-                stock_aux: item.stock_total,
-                tipo_proforma_id: tipo_proforma_id_default,
-            }),
-        );
+        listProductoAlmacens.value = res.data.data.map((item) => ({
+            ...item,
+            cantidad: 1,
+            precio_proforma: item.precio,
+            stock_aux: item.stock_total,
+            tipo_proforma_id: tipo_proforma_id_default,
+        }));
+        total_registros.value = res.data.total;
     } catch (e) {
         console.log(e);
     } finally {
         loadingLista.value = false;
     }
 };
+
+const detectarCambioSelect = () => {
+    currentPage.value = 1;
+    cargarProductos();
+};
+
 const intervalNombre = ref(null);
 const filtrarNombres = () => {
     clearInterval(intervalNombre.value);
@@ -157,12 +210,6 @@ const cargarAlmacens = async () => {
         console.log(e);
     } finally {
     }
-};
-
-const cargarClientes = () => {
-    axios.get(route("clientes.listado")).then((response) => {
-        listClientes.value = response.data.clientes;
-    });
 };
 
 const cargarCategorias = async () => {
@@ -193,19 +240,6 @@ const cargarMarcas = async () => {
     }
 };
 
-// const cargarTipoProformas = async () => {
-//     try {
-//         const res = await axios.get(route("tipo_proformas.listado"));
-//         listTipoProformas.value = res.data.tipo_proformas;
-//         // tipo_proforma_id_default.value = listTipoProformas.value[0]
-//         //     ? listTipoProformas.value[0].id
-//         //     : "";
-//     } catch (e) {
-//         console.log(e);
-//     } finally {
-//     }
-// };
-
 const cargarTipoPagos = async () => {
     try {
         const res = await axios.get(route("tipo_pagos.listado"));
@@ -217,18 +251,98 @@ const cargarTipoPagos = async () => {
 };
 
 const cargarListas = () => {
-    // cargarTipoProformas();
     cargarTipoPagos();
     cargarProductos();
     cargarAlmacens();
-    cargarClientes();
     cargarCategorias();
     cargarMarcas();
 };
 
+const listClientes = ref([]);
+const cargandoClientes = ref(false);
+
+let temporizadorClientes = null;
+let ultimaBusqueda = 0;
+
+const buscarClientes = (texto) => {
+    clearTimeout(temporizadorClientes);
+
+    const busqueda = texto?.trim() ?? "";
+    const peticion = ++ultimaBusqueda;
+
+    if (busqueda.length < 2) {
+        listClientes.value = [];
+        cargandoClientes.value = false;
+        return;
+    }
+
+    temporizadorClientes = setTimeout(async () => {
+        cargandoClientes.value = true;
+
+        try {
+            const response = await axios.get("/admin/clientes/buscar", {
+                params: { q: busqueda },
+            });
+
+            // Ignorar respuestas de búsquedas anteriores.
+            if (peticion === ultimaBusqueda) {
+                listClientes.value = response.data;
+            }
+        } catch (error) {
+            if (peticion === ultimaBusqueda) {
+                listClientes.value = [];
+                console.error("Error al buscar clientes:", error);
+            }
+        } finally {
+            if (peticion === ultimaBusqueda) {
+                cargandoClientes.value = false;
+            }
+        }
+    }, 300);
+};
+
+const obtenerPrecioClienteProducto = (producto_id) => {
+    const cliente_producto = listClienteProductos.value.filter(
+        (item) => item.producto_id == producto_id,
+    )[0];
+    if (cliente_producto) {
+        return Number(parseFloat(cliente_producto.precio));
+    }
+    return -1;
+};
+
+const reasignarPreciosPorClienteProductos = () => {
+    const porcentaje = form.porcentaje_descuento;
+    form.proforma_detalles.map((elem) => {
+        let cliente_producto_precio = obtenerPrecioClienteProducto(
+            elem.producto_id,
+        );
+        if (cliente_producto_precio > -1) {
+            elem.precio = cliente_producto_precio;
+        }
+
+        const con_descuento = elem.precio - elem.descuento_uni;
+        elem.porcen_dt = porcentaje;
+        elem.descuento_total = con_descuento * (porcentaje / 100);
+        elem.total_uni = elem.cantidad * con_descuento;
+        elem.total_uni = parseFloat(elem.total_uni).toFixed(2);
+
+        // TOTAL PARA CALCULAR GANANCIA BRUTA
+        elem.precio_final = con_descuento - elem.descuento_total;
+        elem.total = elem.cantidad * elem.precio_final;
+    });
+    toast.success("Precios reasignados por cliente", {
+        autoClose: 220,
+    });
+};
+
 const agregarProductoProforma = async (item) => {
     const stock_total = Number(item.stock_total);
-    const precio = Number(item.precio_proforma);
+    let precio = Number(item.precio_proforma);
+    let cliente_producto_precio = obtenerPrecioClienteProducto(item.id);
+    if (cliente_producto_precio > -1) {
+        precio = cliente_producto_precio;
+    }
     const cantidad = Number(item.cantidad);
 
     // if (!stock_total || stock_total < cantidad) {
@@ -304,7 +418,7 @@ const agregarProductoProforma = async (item) => {
         }
         // console.log(item);
         item.cantidad = 1;
-        toast.success("Producto Agregado!!!");
+        toast.success("Producto Agregado!!!", { autoClose: 250 });
         // item.stock_total = stock_total - cantidad;
     } catch (e) {
         console.log(e);
@@ -369,7 +483,9 @@ const quitarFila = (item, index) => {
         Number(form.proforma_detalles[index].cantidad),
     );
     form.proforma_detalles.splice(index, 1);
-    toast.success("Se quitó el producto!!!");
+    toast.success("Se quitó el producto!!!", {
+        autoClose: 250,
+    });
 };
 
 const sumarDetalleEliminado = (producto_id, cantidad) => {
@@ -431,13 +547,6 @@ watch([subTotalProforma, totalProforma, saldoProforma], () => {
     form.saldo = saldoProforma.value.toFixed(2);
 });
 
-const cambiarTipoProforma = () => {
-    form.cancelado = form.total;
-    if (form.tipo_proforma == "CRÉDITO") {
-        form.cancelado = 0;
-    }
-};
-
 // CLIENTE
 const muestra_form_cliente = ref(false);
 const { setCliente, limpiarCliente, form: formCliente } = useClientes();
@@ -456,6 +565,25 @@ const actualizarClientes = (cliente) => {
 const nuevoCliente = () => {
     limpiarCliente();
     muestra_form_cliente.value = true;
+};
+
+const listClienteProductos = ref([]);
+const muestra_cliente_productos = ref(false);
+const buscarClienteProductos = () => {
+    listClienteProductos.value = [];
+    if (form.cliente_id) {
+        axios
+            .get(route("cliente_productos.listado"), {
+                params: {
+                    cliente_id: form.cliente_id,
+                },
+            })
+            .then((response) => {
+                listClienteProductos.value = response.data.cliente_productos;
+                if (listClienteProductos.value.length > 0)
+                    reasignarPreciosPorClienteProductos();
+            });
+    }
 };
 
 onMounted(() => {
@@ -494,7 +622,7 @@ onMounted(() => {
                                             no-match-text="Sin resultados"
                                             placeholder="Seleccionar Almacén"
                                             filterable
-                                            @change="cargarProductos"
+                                            @change="detectarCambioSelect"
                                         >
                                             <el-option
                                                 v-for="item in listAlmacens"
@@ -522,7 +650,7 @@ onMounted(() => {
                                     no-data-text="Sin Datos"
                                     no-match-text="Sin Resultados"
                                     filterable
-                                    @change="cargarProductos"
+                                    @change="detectarCambioSelect"
                                 >
                                     <el-option
                                         v-for="item in listCategorias"
@@ -538,7 +666,7 @@ onMounted(() => {
                                     no-data-text="Sin Datos"
                                     no-match-text="Sin Resultados"
                                     filterable
-                                    @change="cargarProductos"
+                                    @change="detectarCambioSelect"
                                 >
                                     <el-option
                                         v-for="item in listMarcas"
@@ -549,13 +677,14 @@ onMounted(() => {
                                 </el-select>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-6 mt-2">
-                                <input
+                                <el-input
                                     type="text"
-                                    class="form-control"
-                                    placeholder="Producto"
+                                    placeholder="Código o Nombre del Producto"
                                     v-model="nombreProducto"
                                     @keyup="filtrarNombres"
-                                />
+                                    @clear="cargarProductos"
+                                    clearable
+                                ></el-input>
                             </div>
                         </div>
                     </div>
@@ -589,11 +718,6 @@ onMounted(() => {
                                                 <div class="row">
                                                     <div class="col-12 pb-1">
                                                         <span
-                                                            class="fw-bold h6"
-                                                        >
-                                                            {{ item.nombre }}
-                                                        </span>
-                                                        <span
                                                             class="float-end text-sm"
                                                         >
                                                             Stock:
@@ -616,6 +740,17 @@ onMounted(() => {
                                                                 }}
                                                             </span>
                                                         </span>
+                                                        <span
+                                                            class="fw-bold h6"
+                                                        >
+                                                            {{ item.nombre }}
+                                                        </span>
+                                                        <span
+                                                            class="text-muted text-xs d-block"
+                                                            >{{
+                                                                item.codigo
+                                                            }}</span
+                                                        >
                                                     </div>
                                                     <div
                                                         class="col-12 border-top"
@@ -692,7 +827,7 @@ onMounted(() => {
                                                                     <select
                                                                         class="p-1 form-select fs-7"
                                                                         v-model="
-                                                                            item.precio_proforma
+                                                                            item.precio_venta
                                                                         "
                                                                     >
                                                                         <option
@@ -802,6 +937,18 @@ onMounted(() => {
                             <div>Selecciona una almacén</div>
                         </div>
                     </div>
+                    <div class="card-footer" v-if="almacen_id">
+                        <div class="col-12">
+                            Total registros: {{ total_registros }}
+                            <MiPaginacion
+                                :pagination-class="'float-end mb-0'"
+                                :total-data="total_registros"
+                                :current-page="currentPage"
+                                :per-page="perPage"
+                                @updatePage="cambioDePagina"
+                            ></MiPaginacion>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-5">
@@ -812,6 +959,9 @@ onMounted(() => {
                                 <h4 class="card-title text-white pt-1">
                                     <i class="fa fa-clipboard-check"></i> Datos
                                     de la Proforma
+                                    <span v-if="form.id != 0" class="fw-bold"
+                                        >- ACTUALIZACIÓN</span
+                                    >
                                 </h4>
                                 <div
                                     class="float-end badge bgActivo rounded-circle fs-6"
@@ -830,16 +980,23 @@ onMounted(() => {
                                             class="el-select-input-group-left"
                                             no-data-text="Sin datos"
                                             no-match-text="Sin resultados"
-                                            placeholder="Cliente"
+                                            loading-text="Buscando..."
+                                            placeholder="Escribe el nombre o documento del cliente"
                                             size="large"
                                             filterable
+                                            remote
+                                            clearable
+                                            :remote-method="buscarClientes"
+                                            :loading="cargandoClientes"
+                                            :reserve-keyword="true"
+                                            @change="buscarClienteProductos()"
                                         >
                                             <el-option
                                                 v-for="item in listClientes"
                                                 :key="item.id"
                                                 :value="item.id"
-                                                :label="`${item.nombre} - ${item.tipo_documento.nombre}: ${item.nro_documento}`"
-                                            ></el-option>
+                                                :label="`${item.nombre} - ${item.tipo_documento?.nombre ?? ''}: ${item.nro_documento}`"
+                                            />
                                         </el-select>
                                     </div>
                                     <span class="input-button">
@@ -861,6 +1018,58 @@ onMounted(() => {
                                         {{ form.errors?.cliente_id }}
                                     </li>
                                 </ul>
+                            </div>
+                            <div class="col-12 mt-1">
+                                <div
+                                    class="input-group"
+                                    v-if="listClienteProductos.length > 0"
+                                >
+                                    <ListaPorCliente
+                                        v-if="muestra_cliente_productos"
+                                        :muestra_formulario="
+                                            muestra_cliente_productos
+                                        "
+                                        :cliente_productos="
+                                            listClienteProductos
+                                        "
+                                        @cerrar-formulario="
+                                            muestra_cliente_productos = false
+                                        "
+                                    ></ListaPorCliente>
+                                    <div class="form-control p-0 border-0">
+                                        <button
+                                            type="button"
+                                            class="btn btn-info w-100"
+                                            title="Ver Productos"
+                                            @click.prevent="
+                                                muestra_cliente_productos = true
+                                            "
+                                        >
+                                            <i class="fa fa-boxes"></i>
+                                            {{ listClienteProductos.length }}
+                                            Productos Asignados
+                                        </button>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="btn btn-light bg-white border"
+                                        title="Asignar Precios"
+                                        @click.prevent="
+                                            reasignarPreciosPorClienteProductos
+                                        "
+                                    >
+                                        <i class="fa fa-sync"></i>
+                                    </button>
+                                </div>
+                                <div class="w-100" v-else>
+                                    <button
+                                        class="btn btn-light w-100"
+                                        disabled
+                                    >
+                                        <i class="fa fa-boxes"></i> Sin
+                                        Productos Asignados
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

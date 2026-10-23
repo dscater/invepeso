@@ -746,6 +746,42 @@ onUnmounted(() => {});
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
+                            permisos.includes('reportes.orden_compras')
+                        "
+                        :label="'Listado de Ordenes de Compra'"
+                        :ruta="'reportes.orden_compras'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.stock_productos')
+                        "
+                        :label="'Stock de Productos'"
+                        :ruta="'reportes.stock_productos'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.productos')
+                        "
+                        :label="'Lista de Productos'"
+                        :ruta="'reportes.productos'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.clientes')
+                        "
+                        :label="'Lista de Clientes'"
+                        :ruta="'reportes.clientes'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
                             permisos.includes('reportes.usuarios')
                         "
                         :label="'Lista de Usuarios'"

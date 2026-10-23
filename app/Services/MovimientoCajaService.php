@@ -33,6 +33,24 @@ class MovimientoCajaService
         $movimiento_cajas = $movimiento_cajas->get();
         return $movimiento_cajas;
     }
+
+
+    public function reporteMovimientos(
+        $fecha_ini,
+        $fecha_fin,
+        $sucursal_id,
+        $user_id,
+
+    ) {
+        $movimiento_cajas = MovimientoCaja::select("movimiento_cajas.*")
+            ->where("status", 1);
+
+        if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
+            $movimiento_cajas->where("sucursal_id", Auth::user()->sucursal_id);
+        }
+        $movimiento_cajas = $movimiento_cajas->get();
+        return [];
+    }
     public function resumen_movimientos(
         $user_id = "",
         $almacen_id = "",

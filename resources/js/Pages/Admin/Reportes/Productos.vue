@@ -9,76 +9,24 @@ onBeforeMount(() => {
     appStore.startLoading();
 });
 
-const cargarListas = async () => {
-    await Promise.all([
-        cargarSucursals(),
-        cargarUsers(),
-        cargarTipoCertificados(),
-        // cargarClientes(),
-        // cargarTipoPagos(),
-    ]);
+const cargarListas = () => {
+    cargarCategorias();
+    cargarMarcas();
+    cargarUnidadMedidas();
 };
 
-const listClientes = ref([]);
-const listSucursals = ref([]);
-const listUsers = ref([]);
-const listTipoPagos = ref([]);
-const listTipoCertificados = ref([]);
-
-const cargarClientes = async () => {
-    const response = await axios.get(route("clientes.listado"));
-    listClientes.value = response.data.clientes;
-    listClientes.value.unshift({
-        id: "todos",
-        full_name: "TODOS",
-        full_ci: "",
-    });
-};
-
-const cargarSucursals = async () => {
-    const response = await axios.get(route("sucursals.listado"));
-    listSucursals.value = response.data.sucursals;
-    listSucursals.value.unshift({
-        id: "todos",
-        nombre: "TODOS",
-    });
-};
-const cargarUsers = async () => {
-    const response = await axios.get(route("usuarios.byTipo"), {
-        params: {
-            tipo: "MÉDICO",
-        },
-    });
-    listUsers.value = response.data.usuarios;
-    listUsers.value.unshift({
-        id: "todos",
-        full_name: "TODOS",
-    });
-};
-const cargarTipoPagos = async () => {
-    const response = await axios.get(route("tipo_pagos.listado"));
-    listTipoPagos.value = response.data;
-    listTipoPagos.value.unshift({
-        value: "todos",
-        label: "TODOS",
-    });
-};
-const cargarTipoCertificados = async () => {
-    const response = await axios.get(route("tipo_certificados.listado"));
-    listTipoCertificados.value = response.data.tipo_certificados;
-    listTipoCertificados.value.unshift({
-        id: "todos",
-        nombre: "TODOS",
-    });
-};
-
-onMounted(async () => {
-    await cargarListas();
+onMounted(() => {
+    cargarListas();
     appStore.stopLoading();
 });
 
-onBeforeMount(() => {});
-
+const getFechaAtual = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
 const listFormatos = ref([
     {
         icon: "fa fa-file-pdf",
@@ -92,24 +40,18 @@ const listFormatos = ref([
     },
 ]);
 
-const obtenerFechaActual = () => {
-    const fecha = new Date();
-    const anio = fecha.getFullYear();
-    const mes = String(fecha.getMonth() + 1).padStart(2, "0"); // Mes empieza desde 0
-    const dia = String(fecha.getDate()).padStart(2, "0"); // Día del mes
-    return `${anio}-${mes}-${dia}`;
-};
-
 const form = ref({
-    cliente_id: "todos",
-    sucursal_id: "todos",
-    user_id: "todos",
-    tipo_pago: "todos",
-    tipo_certificado_id: "todos",
-    fecha_ini: obtenerFechaActual(),
-    fecha_fin: obtenerFechaActual(),
+    categoria_id: "todos",
+    marca_id: "todos",
+    unidad_medida_id: "todos",
+    fecha_ini: getFechaAtual(),
+    fecha_fin: getFechaAtual(),
     formato: "pdf",
 });
+
+const listCategorias = ref([]);
+const listMarcas = ref([]);
+const listUnidadMedidas = ref([]);
 
 const generando = ref(false);
 const txtBtn = computed(() => {
@@ -121,29 +63,61 @@ const txtBtn = computed(() => {
 
 const generarReporte = () => {
     generando.value = true;
-    const url = route("reportes.r_certificados_interno", form.value);
+    const url = route("reportes.r_productos", form.value);
     window.open(url, "_blank");
     setTimeout(() => {
         generando.value = false;
     }, 500);
 };
+
+const cargarCategorias = () => {
+    axios.get(route("categorias.listado")).then((response) => {
+        listCategorias.value = response.data.categorias;
+        listCategorias.value.unshift({
+            id: "todos",
+            nombre: "TODOS",
+        });
+    });
+};
+
+const cargarMarcas = () => {
+    axios.get(route("marcas.listado")).then((response) => {
+        listMarcas.value = response.data.marcas;
+        listMarcas.value.unshift({
+            id: "todos",
+            nombre: "TODOS",
+        });
+    });
+};
+
+const cargarUnidadMedidas = () => {
+    axios.get(route("unidad_medidas.listado")).then((response) => {
+        listUnidadMedidas.value = response.data.unidad_medidas;
+        listUnidadMedidas.value.unshift({
+            id: "todos",
+            nombre: "TODOS",
+        });
+    });
+};
 </script>
 <template>
-    <Head title="Reporte Certificados Emitidos Interno"></Head>
+    <Head title="Reporte Productos"></Head>
     <Content>
         <template #header>
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Certificados Emitidos Interno</h1>
+                    <h4 class="m-0">
+                        <i class="fa fa-file-pdf"></i> Lista de Productos
+                    </h4>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
+                    <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
                         <li class="breadcrumb-item active">
-                            Reportes - Certificados Emitidos Interno
+                            Reportes - Lista de Productos
                         </li>
                     </ol>
                 </div>
@@ -157,30 +131,16 @@ const generarReporte = () => {
                     <div class="card-body">
                         <form @submit.prevent="generarReporte">
                             <div class="row">
-                                <!-- <div class="col-md-12">
-                                    <label>Seleccionar Cliente*</label>
-                                    <el-select
-                                        v-model="form.cliente_id"
-                                        filterable
-                                    >
-                                        <el-option
-                                            v-for="item in listClientes"
-                                            :key="item.id"
-                                            :value="item.id"
-                                            :label="`${item.full_name} ${item.full_ci ? ' - ' + item.full_ci : ''}`"
-                                        >
-                                        </el-option>
-                                    </el-select>
-                                </div> -->
                                 <div class="col-md-12">
-                                    <label>Sucursal*</label>
+                                    <label>Seleccionar Categoría*</label>
                                     <el-select
-                                        v-model="form.sucursal_id"
+                                        v-model="form.categoria_id"
+                                        no-data-text="Sin datos"
+                                        no-match-text="Sin resultados"
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listSucursals"
-                                            :key="item.id"
+                                            v-for="item in listCategorias"
                                             :value="item.id"
                                             :label="item.nombre"
                                         >
@@ -188,69 +148,63 @@ const generarReporte = () => {
                                     </el-select>
                                 </div>
                                 <div class="col-md-12">
-                                    <label>Seleccionar Médico*</label>
+                                    <label>Seleccionar Marca*</label>
                                     <el-select
-                                        v-model="form.user_id"
+                                        v-model="form.marca_id"
+                                        no-data-text="Sin datos"
+                                        no-match-text="Sin resultados"
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listUsers"
-                                            :key="item.id"
-                                            :value="item.id"
-                                            :label="item.full_name"
-                                        >
-                                        </el-option>
-                                    </el-select>
-                                </div>
-                                <!-- <div class="col-md-12">
-                                    <label>Seleccionar Tipo de Pago*</label>
-                                    <el-select
-                                        v-model="form.tipo_pago"
-                                        filterable
-                                    >
-                                        <el-option
-                                            v-for="item in listTipoPagos"
-                                            :key="item.value"
-                                            :value="item.value"
-                                            :label="item.label"
-                                        >
-                                        </el-option>
-                                    </el-select>
-                                </div> -->
-                                <div class="col-md-12">
-                                    <label>Tipo de Certificado*</label>
-                                    <el-select
-                                        v-model="form.tipo_certificado_id"
-                                        filterable
-                                    >
-                                        <el-option
-                                            v-for="item in listTipoCertificados"
-                                            :key="item.id"
+                                            v-for="item in listMarcas"
                                             :value="item.id"
                                             :label="item.nombre"
                                         >
                                         </el-option>
                                     </el-select>
                                 </div>
-                                <div class="col-12 mt-1">
-                                    <label>Rango de Fechas</label>
+                                <div class="col-md-12">
+                                    <label>Seleccionar Unidad de Medida*</label>
+                                    <el-select
+                                        v-model="form.unidad_medida_id"
+                                        no-data-text="Sin datos"
+                                        no-match-text="Sin resultados"
+                                        filterable
+                                    >
+                                        <el-option
+                                            v-for="item in listUnidadMedidas"
+                                            :value="item.id"
+                                            :label="item.nombre"
+                                        >
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label>Rango de fechas</label>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <input
                                                 type="date"
-                                                class="form-control"
                                                 v-model="form.fecha_ini"
+                                                class="form-control"
                                             />
                                         </div>
                                         <div class="col-md-6">
                                             <input
                                                 type="date"
-                                                class="form-control"
                                                 v-model="form.fecha_fin"
+                                                class="form-control"
                                             />
                                         </div>
                                     </div>
+                                    <div
+                                        class="text-xs text-muted w-100 text-center"
+                                    >
+                                        Para listar todos los productos dejar
+                                        vacío
+                                    </div>
                                 </div>
+
                                 <div class="col-md-12 text-center mt-2">
                                     <el-radio-group v-model="form.formato">
                                         <el-radio

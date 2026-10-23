@@ -15,7 +15,8 @@ class IngresoRecepcion extends Model
         "cantidad",
         "tipo", // RECEPCION: lo que se recibio y distribuyo a los almacenes, FALTANTE: lo que se recibio segun faltantes de RECEPCION
         "fecha",
-        "hora"
+        "hora",
+        "user_id",
     ];
 
     public function ingreso_producto()
@@ -41,5 +42,10 @@ class IngresoRecepcion extends Model
     public function producto()
     {
         return $this->belongsTo(Producto::class, 'producto_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(Producto::class, 'user_id');
     }
 }

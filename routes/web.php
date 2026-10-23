@@ -41,6 +41,7 @@ use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalidaProductoController;
 use App\Http\Controllers\SucursalController;
+use App\Http\Controllers\TipoCompraController;
 use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\TipoIngresoController;
 use App\Http\Controllers\TipoPagoController;
@@ -99,6 +100,9 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     // TIPO VENTA
     Route::get("tipo_ventas/listado", [TipoVentaController::class, 'listado'])->name("tipo_ventas.listado");
+
+    // TIPO COMPRA
+    Route::get("tipo_compras/listado", [TipoCompraController::class, 'listado'])->name("tipo_compras.listado");
 
     // USUARIO
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -331,7 +335,19 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get('reportes/clientes', [ReporteController::class, 'clientes'])->name("reportes.clientes");
     Route::get('reportes/r_clientes', [ReporteController::class, 'r_clientes'])->name("reportes.r_clientes");
 
+    Route::get('reportes/productos', [ReporteController::class, 'productos'])->name("reportes.productos");
+    Route::get('reportes/r_productos', [ReporteController::class, 'r_productos'])->name("reportes.r_productos");
+
     Route::get('reportes/stock_productos', [ReporteController::class, 'stock_productos'])->name("reportes.stock_productos");
     Route::get('reportes/r_stock_productos', [ReporteController::class, 'r_stock_productos'])->name("reportes.r_stock_productos");
+
+    Route::get('reportes/orden_compras', [ReporteController::class, 'orden_compras'])->name("reportes.orden_compras");
+    Route::get('reportes/r_orden_compras', [ReporteController::class, 'r_orden_compras'])->name("reportes.r_orden_compras");
+
+    Route::get('reportes/ventas', [ReporteController::class, 'ventas'])->name("reportes.ventas");
+    Route::get('reportes/r_ventas', [ReporteController::class, 'r_ventas'])->name("reportes.r_ventas");
+
+    Route::get('reportes/proformas', [ReporteController::class, 'proformas'])->name("reportes.proformas");
+    Route::get('reportes/r_proformas', [ReporteController::class, 'r_proformas'])->name("reportes.r_proformas");
 });
 require __DIR__ . '/auth.php';

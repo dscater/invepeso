@@ -11,8 +11,11 @@ onBeforeMount(() => {
 
 const cargarListas = () => {
     cargarTipos();
+    cargarRoles();
+    cargarSucursals();
 };
 
+const listRoles = ref([]);
 const listSucursals = ref([]);
 
 onMounted(() => {
@@ -35,6 +38,8 @@ const listFormatos = ref([
 
 const form = ref({
     tipo: "todos",
+    role_id: "todos",
+    sucursal_id: "todos",
     formato: "pdf",
 });
 
@@ -56,17 +61,35 @@ const generarReporte = () => {
         generando.value = false;
     }, 500);
 };
+const cargarRoles = () => {
+    axios.get(route("roles.listado")).then((response) => {
+        listRoles.value = response.data.roles;
+        listRoles.value.unshift({
+            id: "todos",
+            nombre: "TODOS",
+        });
+    });
+};
+const cargarSucursals = () => {
+    axios
+        .get(route("sucursals.listado"), {
+            params: { activo: 1 },
+        })
+        .then((response) => {
+            listSucursals.value = response.data.sucursals;
+            listSucursals.value.unshift({
+                id: "todos",
+                nombre: "TODOS",
+            });
+        });
+};
 
 const cargarTipos = () => {
     axios.get(route("tipo_usuarios.listado")).then((response) => {
-        listTipos.value = response.data.map((item) => ({
-            id: item,
-            nombre: item,
-        }));
-
+        listTipos.value = response.data;
         listTipos.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
+            value: "todos",
+            label: "TODOS",
         });
     });
 };
@@ -77,11 +100,13 @@ const cargarTipos = () => {
         <template #header>
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Usuarios</h1>
+                    <h4 class="m-0">
+                        <i class="fa fa-file-pdf"></i> Lista de Usuarios
+                    </h4>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
+                    <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>
@@ -101,18 +126,49 @@ const cargarTipos = () => {
                         <form @submit.prevent="generarReporte">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label>Seleccionar tipo de usuario*</label>
+                                    <label>Seleccionar Role*</label>
+                                    <el-select
+                                        v-model="form.role_id"
+                                        no-data-text="Sin datos"
+                                        no-match-text="Sin resultados"
+                                        filterable
+                                    >
+                                        <el-option
+                                            v-for="item in listRoles"
+                                            :value="item.id"
+                                            :label="item.nombre"
+                                        >
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label>Seleccionar Tipo de Usuario*</label>
                                     <select
                                         v-model="form.tipo"
                                         class="form-control"
                                     >
                                         <option
                                             v-for="item in listTipos"
-                                            :value="item.id"
+                                            :value="item.value"
                                         >
-                                            {{ item.nombre }}
+                                            {{ item.label }}
                                         </option>
                                     </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label>Seleccionar Sucursal*</label>
+                                    <el-select
+                                        v-model="form.sucursal_id"
+                                        no-data-text="Sin datos"
+                                        no-match-text="Sin resultados"
+                                        filterable
+                                    >
+                                        <el-option
+                                            v-for="item in listSucursals"
+                                            :value="item.id"
+                                            :label="item.nombre"
+                                        ></el-option>
+                                    </el-select>
                                 </div>
                                 <div class="col-md-12 text-center mt-2">
                                     <el-radio-group v-model="form.formato">
