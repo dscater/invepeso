@@ -144,4 +144,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Sucursal::class, 'sucursal_id');
     }
+    public function notificacion_users()
+    {
+        return $this->hasMany(NotificacionUser::class, 'user_id');
+    }
 }

@@ -4,6 +4,7 @@ import { computed, onBeforeMount, onMounted, ref } from "vue";
 import { Head, usePage, Link } from "@inertiajs/vue3";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 const appStore = useAppStore();
+const { props: props_page } = usePage();
 
 onBeforeMount(() => {
     appStore.startLoading();
@@ -45,7 +46,10 @@ const getFechaAtual = () => {
 const form = ref({
     almacen_id: "todos",
     cliente_id: "",
-    user_id: "todos",
+    user_id:
+        props_page.auth.user.tipo == "EMPLEADO"
+            ? props_page.auth.user.id
+            : "todos",
     tipo_venta: "todos",
     tipo_pago: "todos",
     fecha_ini: getFechaAtual(),
@@ -248,7 +252,12 @@ const cargarTipoPagos = async () => {
                                         vacío
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                <div
+                                    class="col-md-12"
+                                    v-if="
+                                        props_page.auth.user.tipo != 'EMPLEADO'
+                                    "
+                                >
                                     <label>Seleccionar Usuario*</label>
                                     <el-select
                                         v-model="form.user_id"

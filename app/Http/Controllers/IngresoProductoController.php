@@ -43,6 +43,32 @@ class IngresoProductoController extends Controller
     {
         return Inertia::render("Admin/IngresoProductos/Index");
     }
+    public function buscar(Request $request)
+    {
+        $request->validate([
+            'q' => ['required', 'string', 'min:2', 'max:100'],
+        ]);
+
+        $busqueda = trim($request->input('q'));
+
+        return IngresoProducto::query()
+            ->select([
+                'id',
+                'codigo',
+                'fecha_registro',
+                'proveedor_id',
+                'sucursal_id',
+                'almacen_id',
+            ])
+            ->with(['proveedor:id,nombre', "sucursal:id,nombre", "almacen:id,nombre"])
+            ->where('status', 1)
+            ->where(function ($query) use ($busqueda) {
+                $query->where('codigo', 'like', "%{$busqueda}%");
+            })
+            ->orderBy('codigo')
+            ->limit(20)
+            ->get();
+    }
 
     public function pagos(): ResponseInertia
     {

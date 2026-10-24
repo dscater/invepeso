@@ -13,4 +13,19 @@ class SalidaDetalle extends Model
         "cantidad",
         "observacion",
     ];
+
+    public function salida_producto()
+    {
+        return $this->belongsTo(SalidaProducto::class, 'salida_producto_id');
+    }
+
+    public function tipo_salida()
+    {
+        return $this->belongsTo(TipoSalida::class, 'tipo_salida_id');
+    }
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'producto_id');
+    }
 }

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('notificacions', function (Blueprint $table) {
             $table->id();
+            $table->string("tipo");
             $table->string("modulo");
             $table->unsignedBigInteger("registro_id")->nullable();
             $table->text("descripcion");

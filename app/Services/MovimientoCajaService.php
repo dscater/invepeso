@@ -38,7 +38,7 @@ class MovimientoCajaService
     public function reporteMovimientos(
         $fecha_ini,
         $fecha_fin,
-        $sucursal_id,
+        $almacen_id,
         $user_id,
 
     ) {
@@ -48,9 +48,22 @@ class MovimientoCajaService
         if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
             $movimiento_cajas->where("sucursal_id", Auth::user()->sucursal_id);
         }
+        if ($fecha_ini && $fecha_fin) {
+            $movimiento_cajas->whereBetween("fecha", [$fecha_ini, $fecha_fin]);
+        }
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $movimiento_cajas->where("almacen_id", $almacen_id);
+        }
+
+        if ($user_id && $user_id != 'todos') {
+            $movimiento_cajas->where("user_id", $user_id);
+        }
+
         $movimiento_cajas = $movimiento_cajas->get();
-        return [];
+        return $movimiento_cajas;
     }
+
     public function resumen_movimientos(
         $user_id = "",
         $almacen_id = "",
@@ -62,7 +75,7 @@ class MovimientoCajaService
 
 
         if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
-            $movimientos->where("sucursal_id", Auth::user()->sucursal_id);
+            $movimientos->where("almacen_id", Auth::user()->almacen_id);
         }
 
         if ($user_id) {

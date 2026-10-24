@@ -26,7 +26,11 @@ class ProductoService
 {
     private $modulo = "PRODUCTOS";
 
-    public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
+    public function __construct(
+        private  CargarArchivoService $cargarArchivoService,
+        private HistorialAccionService $historialAccionService,
+        private NotificacionService $notificacion_service,
+    ) {}
 
     public function listado($activo = null): Collection
     {
@@ -245,6 +249,11 @@ class ProductoService
 
         $producto->stock_actual = (float)$producto->stock_actual + $cantidad;
         $producto->save();
+
+
+        // verificar notificacion
+        $this->crearNotificacionStock($producto);
+
         return $producto;
     }
     public function decrementarStock(int $sucursal_id, int $almacen_id, int $producto_id, float $cantidad = 1)
@@ -261,6 +270,9 @@ class ProductoService
 
         $producto->stock_actual = (float)$producto->stock_actual - $cantidad;
         $producto->save();
+
+        // verificar notificacion
+        $this->crearNotificacionStock($producto);
 
         return $producto;
     }
@@ -316,6 +328,68 @@ class ProductoService
         return true;
     }
 
+    public function crearNotificacionStock($producto_sucursal)
+    {
+
+        $descripcion = "";
+        $modulo = "ProductoSucursal";
+        $tipo = "STOCK";
+        $registro_id = $producto_sucursal->id;
+        $fecha = date("Y-m-d");
+        $hora = date("H:i");
+        if ($producto_sucursal->stock_actual > $producto_sucursal->producto->stock_min && $producto_sucursal->stock_actual <= (float)$producto_sucursal->producto->stock_min + 5) {
+            // STOCK CERCA DE 5
+            $descripcion = "EL PRODUCTO {$producto_sucursal->producto->nombre}, DEL ALMACÉN {$producto_sucursal->almacen->nombre}, ESTA CERCA DE LLEGAR AL STOCK MÍNIMO DE {$producto_sucursal->producto->stock_min}; STOCK ACTUAL DE " . $producto_sucursal->stock_actual;
+            $tipo = "STOCK CERCA DEL MINIMO";
+            $this->notificacion_service->crear([
+                "descripcion" => $descripcion,
+                "modulo" => $modulo,
+                "registro_id" => $registro_id,
+                "tipo" => $tipo,
+                "fecha" => $fecha,
+                "hora" => $hora,
+            ]);
+        }
+        if ($producto_sucursal->stock_actual == $producto_sucursal->producto->stock_min) {
+            // STOCK MINIMO
+            $descripcion = "EL PRODUCTO {$producto_sucursal->producto->nombre}, DEL ALMACÉN {$producto_sucursal->almacen->nombre}, LLEGO AL STOCK MÍNIMO DE {$producto_sucursal->producto->stock_min}; STOCK ACTUAL DE " . $producto_sucursal->stock_actual;
+            $tipo = "STOCK IGUAL AL MINIMO";
+            $this->notificacion_service->crear([
+                "descripcion" => $descripcion,
+                "modulo" => $modulo,
+                "registro_id" => $registro_id,
+                "tipo" => $tipo,
+                "fecha" => $fecha,
+                "hora" => $hora,
+            ]);
+        }
+        if ($producto_sucursal->stock_actual < $producto_sucursal->producto->stock_min && $producto_sucursal->stock_actual > 0) {
+            // STOCK POR DEBAJO DEL MINIMO
+            $tipo = "STOCK POR DEBAJO";
+            $descripcion = "EL PRODUCTO {$producto_sucursal->producto->nombre}, DEL ALMACÉN {$producto_sucursal->almacen->nombre}, ESTA POR DEBAJO DEL STOCK MÍNIMO DE {$producto_sucursal->producto->stock_min}; STOCK ACTUAL DE " . $producto_sucursal->stock_actual;
+            $this->notificacion_service->crear([
+                "descripcion" => $descripcion,
+                "modulo" => $modulo,
+                "registro_id" => $registro_id,
+                "tipo" => $tipo,
+                "fecha" => $fecha,
+                "hora" => $hora,
+            ]);
+        }
+        if ($producto_sucursal->stock_actual == 0) {
+            // SIN STOCK
+            $tipo = "SIN STOCK";
+            $descripcion = "EL PRODUCTO {$producto_sucursal->producto->nombre}, DEL ALMACÉN {$producto_sucursal->almacen->nombre}, SE QUEDO SIN STOCK; STOCK ACTUAL DE " . $producto_sucursal->stock_actual;
+            $this->notificacion_service->crear([
+                "descripcion" => $descripcion,
+                "modulo" => $modulo,
+                "registro_id" => $registro_id,
+                "tipo" => $tipo,
+                "fecha" => $fecha,
+                "hora" => $hora,
+            ]);
+        }
+    }
 
     public function cargarProductos($datos)
     {

@@ -51,7 +51,7 @@ class ReporteServiceTcpdf extends TCPDF
         );
     }
 
-    function cellAutoFontSize($pdf, $width, $height, $text, $fontSize = 8, $minFontSize = 5, $fw = "N", $al = "C", $border = 1)
+    function cellAutoFontSize($pdf, $width, $height, $text, $fontSize = 8, $minFontSize = 5, $fw = "N", $al = "C", $border = 1, $fill = 0)
     {
         while ($fontSize >= $minFontSize) {
 
@@ -65,6 +65,6 @@ class ReporteServiceTcpdf extends TCPDF
         }
 
         $pdf->SetFont('helvetica', $fw, $fontSize);
-        $pdf->Cell($width, $height, $text, $border, 0, $al, 0, '', 0, false);
+        $pdf->Cell($width, $height, $text, $border, 0, $al, $fill, '', 0, false);
     }
 }

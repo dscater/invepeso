@@ -714,7 +714,7 @@ class ModuloTableSeeder extends Seeder
         // NOTIFICACIONES
         Modulo::create([
             "modulo" => "Gestión de notificaciones",
-            "nombre" => "notificacions.index",
+            "nombre" => "notificacion_users.index",
             "accion" => "RECIBIR Y VER NOTIFICACIONES",
             "descripcion" => "RECIBIR Y VER NOTIFICACIONES"
         ]);
@@ -743,9 +743,100 @@ class ModuloTableSeeder extends Seeder
 
         Modulo::create([
             "modulo" => "Reportes",
+            "nombre" => "reportes.proveedors",
+            "accion" => "REPORTE LISTA DE PROVEEDORES",
+            "descripcion" => "GENERAR REPORTES DE LISTA DE PROVEEDORES"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
             "nombre" => "reportes.stock_productos",
             "accion" => "REPORTE LISTA DE STOCK POR PRODUCTOS",
             "descripcion" => "GENERAR REPORTES DE LISTA DE STOCK PRODUCTOS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.orden_compras",
+            "accion" => "REPORTE LISTA DE ORDENES DE COMPRA",
+            "descripcion" => "GENERAR LISTADO DE ORDENES DE COMPRA"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.salida_productos",
+            "accion" => "REPORTE LISTA DE SALIDAS DE PRODUCTOS",
+            "descripcion" => "GENERAR LISTADO DE SALIDAS DE PRODUCTOS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.ventas",
+            "accion" => "REPORTE LISTA DE VENTAS",
+            "descripcion" => "GENERAR LISTADO DE VENTAS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.venta_detalles",
+            "accion" => "REPORTE LISTA DE VENTAS",
+            "descripcion" => "GENERAR VENTAS CON DETALLES"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.proformas",
+            "accion" => "REPORTE LISTA DE PROFORMAS",
+            "descripcion" => "GENERAR LISTADO DE PROFORMAS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.recepcions",
+            "accion" => "REPORTE DE RECEPCIÓN DE PRODUCTOS",
+            "descripcion" => "GENERAR REPORTE DE LA RECEPCIÓN DE PRODUCTOS POR COMPRAS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.faltantes",
+            "accion" => "REPORTE DE RECEPCIÓN DE FALTANTES",
+            "descripcion" => "GENERAR REPORTE DE RECEPCIÓN DE FALTANTES POR COMPRAS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.pago_compras",
+            "accion" => "REPORTE DE PAGOS REALIZADOS POR COMPRAS",
+            "descripcion" => "GENERAR REPORTE DE LOS PAGOS REALIZADOS POR COMPRAS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.compras_credito",
+            "accion" => "REPORTE DE COMPRAS A CRÉDITO",
+            "descripcion" => "GENERAR REPORTE DE COMPRAS A CRÉDITO"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.cobro_creditos",
+            "accion" => "REPORTE DE COBROS REALIZADOS POR VENTAS A CRÉDITO",
+            "descripcion" => "GENERAR REPORTE DE COBROS REALIZADOS POR VENTAS A CRÉDITO"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.ventas_creditos",
+            "accion" => "REPORTE DE VENTAS A CRÉDITO",
+            "descripcion" => "GENERAR REPORTE DE VENTAS A CRÉDITO"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.movimiento_cajas",
+            "accion" => "REPORTE DE MOVIMIENTOS DE CAJA",
+            "descripcion" => "GENERAR REPORTE DE LOS MOVIMIENTOS DE CAJA"
         ]);
     }
 }

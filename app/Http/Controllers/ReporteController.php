@@ -8,15 +8,19 @@ use App\Models\CertificadoDetalle;
 use App\Models\Cliente;
 use App\Models\Configuracion;
 use App\Models\HistorialAccion;
+use App\Models\IngresoPago;
 use App\Models\IngresoProducto;
 use App\Models\Inscripcion;
 use App\Models\Pago;
 use App\Models\Producto;
 use App\Models\Proforma;
 use App\Models\Proveedor;
+use App\Models\SalidaDetalle;
+use App\Models\SalidaProducto;
 use App\Models\TipoCertificado;
 use App\Models\User;
 use App\Models\Venta;
+use App\Models\VentaCobro;
 use App\Services\MovimientoCajaService;
 use App\Services\PagoService;
 use App\Services\ReporteService;
@@ -1361,6 +1365,199 @@ class ReporteController extends Controller
         }
     }
 
+    public function salida_productos()
+    {
+        return Inertia::render("Admin/Reportes/SalidaProductos");
+    }
+
+    public function r_salida_productos(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $almacen_id =  $request->almacen_id;
+        $tipo_salida_id =  $request->tipo_salida_id;
+        $proveedor_id =  $request->proveedor_id;
+        $tipo_compra =  $request->tipo_compra;
+        $estado_ingreso =  $request->estado_ingreso;
+        $estado_faltantes =  $request->estado_faltantes;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+        $salida_detalles = SalidaDetalle::select("salida_detalles.*");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $salida_detalles->where('almacen_id', $almacen_id);
+        }
+
+        if ($tipo_salida_id && $tipo_salida_id != 'todos') {
+            $salida_detalles->where('tipo_salida_id', $tipo_salida_id);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $salida_detalles->whereHas("salida_producto", function ($q) use ($fecha_ini, $fecha_fin) {
+                $q->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+            });
+        }
+
+        $salida_detalles = $salida_detalles->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Lista de Salida de Productos');
+            $pdf->setMargins(1, 2, 2);
+            $pdf->AddPage('P', 'LETTER');
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "LISTADO DE SALIDA DE PRODUCTOS", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 11);
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $pdf->Cell(0, 6, $titulo, 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 10;
+            $font_size = 8;
+            $font_size2 = 9;
+            $font_size3 = 10;
+
+            $pdf->setFont("helvetica", "B", $font_size2);
+            $pdf->cellAutoFontSize($pdf, 12, $alto, 'NRO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 40, $alto, 'SUCURSAL', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 40, $alto, 'ALMACÉN', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 40, $alto, 'TIPO SALIDA', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 19, $alto, 'CANTIDAD', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 30, $alto, 'RESPONSABLE', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 30, $alto, 'FECHA REGISTRO', $font_size, 5, 'B');
+            $pdf->Ln();
+            $cont = 1;
+            foreach ($salida_detalles as $item) {
+                $pdf->cellAutoFontSize($pdf, 12, $alto, $cont++, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 40, $alto, $item->salida_producto->sucursal->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 40, $alto, $item->salida_producto->almacen->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 40, $alto, $item->tipo_salida->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 19, $alto, $item->cantidad, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 30, $alto, $item->salida_producto->user->full_name, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 30, $alto, $item->salida_producto->fecha_registro_t, $font_size, 5, 'N', 'L');
+                $pdf->Ln();
+            }
+
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="salida_productos' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":G" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTADO DE SALIDA DE PRODUCTOS");
+            $sheet->mergeCells("A" . $fila . ":G" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $sheet->setCellValue('A' . $fila, $titulo);
+            $sheet->mergeCells("A" . $fila . ":G" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'NRO');
+            $sheet->setCellValue('B' . $fila, 'SUCURSAL');
+            $sheet->setCellValue('C' . $fila, 'ALMACÉN');
+            $sheet->setCellValue('D' . $fila, 'TIPO SALIDA');
+            $sheet->setCellValue('E' . $fila, 'CANTIDAD');
+            $sheet->setCellValue('F' . $fila, 'RESPONSABLE');
+            $sheet->setCellValue('G' . $fila, 'FECHA REGISTRO');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $cont = 1;
+            foreach ($salida_detalles as $key => $item) {
+                $sheet->setCellValue('A' . $fila, $cont++);
+                $sheet->setCellValue('B' . $fila, $item->salida_producto->sucursal->nombre);
+                $sheet->setCellValue('C' . $fila, $item->salida_producto->almacen->nombre);
+                $sheet->setCellValue('D' . $fila, $item->tipo_salida->nombre);
+                $sheet->setCellValue('E' . $fila, $item->cantidad);
+                $sheet->setCellValue('F' . $fila, $item->salida_producto->user->full_name);
+                $sheet->setCellValue('G' . $fila, $item->salida_producto->fecha_registro_t);
+                $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->bodyTabla);
+
+                $fila++;
+            }
+
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(30);
+            $sheet->getColumnDimension('G')->setWidth(15);
+
+            foreach (range('A', 'G') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:G');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'salida_productos_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
     public function ventas()
     {
         return Inertia::render("Admin/Reportes/Ventas");
@@ -1760,7 +1957,7 @@ class ReporteController extends Controller
                     $pdf->cellAutoFontSize($pdf, 162, $alto, 'CANCELADO BS.', $font_size, 5, 'B', 'R');
                     $pdf->cellAutoFontSize($pdf, 35, $alto, number_format($item->total_cancelado, 2, ".", ""), $font_size2, 5, 'B', 'R');
                     $pdf->Ln();
-                    $pdf->cellAutoFontSize($pdf, 162, $alto, 'CANCELADO BS.', $font_size, 5, 'B', 'R');
+                    $pdf->cellAutoFontSize($pdf, 162, $alto, 'SALDO BS.', $font_size, 5, 'B', 'R');
                     $pdf->cellAutoFontSize($pdf, 35, $alto, number_format($item->saldo, 2, ".", ""), $font_size2, 5, 'B', 'R');
                 }
 
@@ -1826,14 +2023,14 @@ class ReporteController extends Controller
 
             $fila = 2;
             $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
-            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->titulo);
             $fila++;
-            $sheet->setCellValue('A' . $fila, "LISTADO DE VENTAS");
-            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $sheet->setCellValue('A' . $fila, "VENTA DETALLES");
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->titulo);
             $fila++;
             $titulo = '"TODOS LOS ALMACENES"';
             if ($almacen_id != "todos") {
@@ -1841,48 +2038,102 @@ class ReporteController extends Controller
                 $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
             }
             $sheet->setCellValue('A' . $fila, $titulo);
-            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->titulo);
             $fila++;
             $fila++;
-            $sheet->setCellValue('A' . $fila, 'CÓDIGO');
-            $sheet->setCellValue('B' . $fila, 'SUCURSAL');
-            $sheet->setCellValue('C' . $fila, 'ALMACÉN');
-            $sheet->setCellValue('D' . $fila, 'CLIENTE');
-            $sheet->setCellValue('E' . $fila, 'DOCUMENTO');
-            $sheet->setCellValue('F' . $fila, 'TIPO VENTA');
-            $sheet->setCellValue('G' . $fila, 'MODO PAGO');
-            $sheet->setCellValue('H' . $fila, 'SUBTOTAL');
-            $sheet->setCellValue('I' . $fila, 'DESCUENTO');
-            $sheet->setCellValue('J' . $fila, 'TOTAL');
-            $sheet->setCellValue('K' . $fila, 'CANCELADO');
-            $sheet->setCellValue('L' . $fila, 'SALDO');
-            $sheet->setCellValue('M' . $fila, 'RESPONSABLE');
-            $sheet->setCellValue('N' . $fila, 'FECHA Y HORA');
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->headerTabla);
-            $fila++;
+
+
             $s_subtotal = 0;
             $s_descuento = 0;
             $s_total = 0;
             $s_total_cancelado = 0;
             $s_saldo = 0;
-            foreach ($ventas as $key => $item) {
-                $sheet->setCellValue('A' . $fila, $item->codigo_venta);
-                $sheet->setCellValue('B' . $fila, $item->sucursal->nombre);
-                $sheet->setCellValue('C' . $fila, $item->almacen->nombre);
-                $sheet->setCellValue('D' . $fila, $item->cliente->nombre);
-                $sheet->setCellValue('E' . $fila, $item->tipo_documento->nombre . ' ' . $item->nit_ci);
-                $sheet->setCellValue('F' . $fila, $item->tipo_venta);
-                $sheet->setCellValue('G' . $fila, $item->tipo_pago);
-                $sheet->setCellValue('H' . $fila, $item->subtotal);
-                $sheet->setCellValue('I' . $fila, $item->descuento);
-                $sheet->setCellValue('J' . $fila, $item->total);
-                $sheet->setCellValue('K' . $fila, $item->total_cancelado);
-                $sheet->setCellValue('L' . $fila, $item->saldo);
-                $sheet->setCellValue('M' . $fila, $item->user->full_name);
-                $sheet->setCellValue('N' . $fila, $item->fecha_hora_t);
-                $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->bodyTabla);
+
+            foreach ($ventas as $item) {
+                $sheet->setCellValue('A' . $fila, "Código Venta:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->codigo_venta);
+                $sheet->setCellValue('D' . $fila, "Fecha:");
+                $sheet->setCellValue('E' . $fila, $item->fecha_hora_t);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Cliente:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->cliente->nombre);
+                $sheet->setCellValue('D' . $fila, $item->tipo_documento->nombre . ':');
+                $sheet->setCellValue('E' . $fila, $item->nit_ci);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Tipo de Venta:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->tipo_venta);
+                $sheet->setCellValue('D' . $fila, "Tipo de Pago");
+                $sheet->setCellValue('F' . $fila, $item->tipo_pago);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Usuario:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->user->full_name);
+                $sheet->setCellValue('D' . $fila, "Almacén-Sucursal");
+                $sheet->setCellValue('F' . $fila, $item->almacen->nombre . ' - ' . $item->sucursal->nombre);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $cant_total = 0;
+                $cont = 1;
+                $sheet->setCellValue('A' . $fila, 'NRO');
+                $sheet->setCellValue('B' . $fila, 'CÓDIGO');
+                $sheet->setCellValue('C' . $fila, 'PRODUCTO');
+                $sheet->setCellValue('D' . $fila, 'C/U BS.');
+                $sheet->setCellValue('E' . $fila, 'CANT.');
+                $sheet->setCellValue('F' . $fila, 'TOTAL BS.');
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                $fila++;
+                $cont = 1;
+                foreach ($item->venta_detalles as $key => $item_detalle) {
+                    $sheet->setCellValue('A' . $fila, $cont++);
+                    $sheet->setCellValue('B' . $fila, $item_detalle->producto->codigo);
+                    $sheet->setCellValue('C' . $fila, $item_detalle->producto->nombre);
+                    $sheet->setCellValue('D' . $fila, $item_detalle->precio);
+                    $sheet->setCellValue('E' . $fila, $item_detalle->cantidad);
+                    $sheet->setCellValue('F' . $fila, $item_detalle->total_uni);
+                    $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+
+                    $cant_total += (float)$item_detalle->cantidad;
+                    $fila++;
+                }
+                $sheet->setCellValue('A' . $fila, "TOTAL BS.");
+                $sheet->mergeCells("A" . $fila . ":E" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('F' . $fila, number_format($item->subtotal, 2, ".", ""));
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "DESCUENTO BS.");
+                $sheet->mergeCells("A" . $fila . ":E" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('F' . $fila, number_format($item->descuento, 2, ".", ""));
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "TOTAL FINAL BS.");
+                $sheet->mergeCells("A" . $fila . ":E" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('F' . $fila, number_format($item->total, 2, ".", ""));
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                $fila++;
+                if ($item->tipo_venta == 'CRÉDITO') {
+                    $sheet->setCellValue('A' . $fila, "CANCELADO BS.");
+                    $sheet->mergeCells("A" . $fila . ":E" . $fila);  //COMBINAR CELDAS
+                    $sheet->setCellValue('F' . $fila, number_format($item->total_cancelado, 2, ".", ""));
+                    $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                    $fila++;
+                    $sheet->setCellValue('A' . $fila, "SALDO BS.");
+                    $sheet->mergeCells("A" . $fila . ":E" . $fila);  //COMBINAR CELDAS
+                    $sheet->setCellValue('F' . $fila, number_format($item->saldo, 2, ".", ""));
+                    $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                    $fila++;
+                }
 
                 $s_subtotal += (float)$item->subtotal;
                 $s_descuento += (float)$item->descuento;
@@ -1890,15 +2141,30 @@ class ReporteController extends Controller
                 $s_total_cancelado += (float)$item->total_cancelado;
                 $s_saldo += (float)$item->saldo;
                 $fila++;
+                $fila++;
+                $fila++;
             }
-            $sheet->setCellValue('A' . $fila, "TOTALES");
-            $sheet->mergeCells("A" . $fila . ":G" . $fila);  //COMBINAR CELDAS
-            $sheet->setCellValue('H' . $fila, number_format($s_subtotal, 2, ".", ""));
-            $sheet->setCellValue('I' . $fila, number_format($s_descuento, 2, ".", ""));
-            $sheet->setCellValue('J' . $fila, number_format($s_total, 2, ".", ""));
-            $sheet->setCellValue('K' . $fila, number_format($s_total_cancelado, 2, ".", ""));
-            $sheet->setCellValue('L' . $fila, number_format($s_saldo, 2, ".", ""));
-            $sheet->getStyle('A' . $fila . ':L' . $fila)->applyFromArray($this->headerTabla);
+
+            $sheet->setCellValue('A' . $fila, "RESUMEN DE VENTAS");
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'SUBTOTALES BS.');
+            $sheet->setCellValue('B' . $fila, 'DESCUENTOS BS.');
+            $sheet->setCellValue('C' . $fila, 'TOTALES BS.');
+            $sheet->setCellValue('D' . $fila, 'CANCELADOS BS.');
+            $sheet->setCellValue('E' . $fila, 'SALDOS BS.');
+            $sheet->setCellValue('F' . $fila, 'DIFERENCIA BS.');
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, number_format($s_subtotal, 2, ".", ""));
+            $sheet->setCellValue('B' . $fila, number_format($s_descuento, 2, ".", ""));
+            $sheet->setCellValue('C' . $fila, number_format($s_total, 2, ".", ""));
+            $sheet->setCellValue('D' . $fila, number_format($s_total_cancelado, 2, ".", ""));
+            $sheet->setCellValue('E' . $fila, number_format($s_saldo, 2, ".", ""));
+            $diferencia = (float)$s_total_cancelado - (float)($s_saldo);
+            $sheet->setCellValue('F' . $fila, number_format($diferencia, 2, ".", ""));
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
 
             $sheet->getColumnDimension('A')->setWidth(12);
             $sheet->getColumnDimension('B')->setWidth(20);
@@ -1906,16 +2172,8 @@ class ReporteController extends Controller
             $sheet->getColumnDimension('D')->setWidth(20);
             $sheet->getColumnDimension('E')->setWidth(15);
             $sheet->getColumnDimension('F')->setWidth(30);
-            $sheet->getColumnDimension('G')->setWidth(15);
-            $sheet->getColumnDimension('H')->setWidth(15);
-            $sheet->getColumnDimension('I')->setWidth(15);
-            $sheet->getColumnDimension('J')->setWidth(10);
-            $sheet->getColumnDimension('K')->setWidth(25);
-            $sheet->getColumnDimension('L')->setWidth(15);
-            $sheet->getColumnDimension('M')->setWidth(15);
-            $sheet->getColumnDimension('N')->setWidth(10);
 
-            foreach (range('A', 'N') as $columnID) {
+            foreach (range('A', 'F') as $columnID) {
                 $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
             }
 
@@ -1924,7 +2182,7 @@ class ReporteController extends Controller
             $sheet->getPageMargins()->setRight(0.1);
             $sheet->getPageMargins()->setLeft(0.1);
             $sheet->getPageMargins()->setBottom(0.1);
-            $sheet->getPageSetup()->setPrintArea('A:N');
+            $sheet->getPageSetup()->setPrintArea('A:F');
             $sheet->getPageSetup()->setFitToWidth(1);
             $sheet->getPageSetup()->setFitToHeight(0);
 
@@ -2172,197 +2430,1624 @@ class ReporteController extends Controller
         }
     }
 
+    public function recepcions()
+    {
+        return Inertia::render("Admin/Reportes/Recepcions");
+    }
 
-    public function exportarCaja(Request $request)
+    public function r_recepcions(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $almacen_id =  $request->almacen_id;
+        $ingreso_producto_id =  $request->ingreso_producto_id;
+        $proveedor_id =  $request->proveedor_id;
+        $user_id =  $request->user_id;
+        $tipo_compra =  $request->tipo_compra;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+        $ingreso_productos = IngresoProducto::select("ingreso_productos.*");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $ingreso_productos->where('almacen_id', $almacen_id);
+        }
+
+        if ($ingreso_producto_id) {
+            $ingreso_productos->where('id', $ingreso_producto_id);
+        }
+
+        if ($proveedor_id && $proveedor_id != 'todos') {
+            $ingreso_productos->where('proveedor_id', $proveedor_id);
+        }
+
+        if ($user_id && $user_id != 'todos') {
+            $ingreso_productos->where('user_id', $user_id);
+        }
+
+        if ($tipo_compra && $tipo_compra != 'todos') {
+            $ingreso_productos->where('tipo_compra', $tipo_compra);
+        }
+
+        if ($fecha_ini && $fecha_fin && !$ingreso_producto_id) {
+            $ingreso_productos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+        }
+
+        $ingreso_productos = $ingreso_productos->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Recepción Compras');
+            $pdf->setMargins(10, 2, 2);
+            $pdf->AddPage('P', 'LETTER');
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "RECEPCIÓN DE COMPRAS", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 11);
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $pdf->Cell(0, 6, $titulo, 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 7;
+            $font_size = 8;
+            $font_size2 = 9;
+            $font_size3 = 10;
+
+            foreach ($ingreso_productos as $item) {
+                $pdf->setFont("helvetica", "B", $font_size2);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Código Compra: ' . $item->codigo, $font_size2, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Fecha: ' . $item->fecha_registro_t, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Proveedor: ' . $item->proveedor->nombre, $font_size2, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Tipo de Ingreso: ' . $item->tipo_ingreso->nombre, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Tipo de Compra: ' . $item->tipo_compra, $font_size, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Responsable: ' .  $item->user->full_name, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Almacén-Sucursal: ' . $item->user->full_name, $font_size, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Descripción: ' . $item->descripcion, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Total Compra Bs.: ' . $item->total, $font_size, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Total Cancelado Bs.: '  . $item->total_cancelado, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Saldo Bs.: ' . $item->saldo, $font_size, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Estado Compra: ' .  $item->estado_ingreso, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Faltantes:  '
+                    . $item->faltantes, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $cant_total = 0;
+                $cont = 1;
+                $alto = 8;
+                foreach ($item->ingreso_detalles as $item_detalle) {
+                    $pdf->SetFillColor(239, 239, 239);
+                    $pdf->setFont("helvetica", "B", $font_size2);
+                    $pdf->cellAutoFontSize($pdf, 196, $alto, $cont++ . ') ' . $item_detalle->producto->codigo . ' - ' . $item_detalle->producto->nombre, $font_size2, 5, 'B', 'L', 1, 1);
+                    $pdf->Ln();
+                    $pdf->cellAutoFontSize($pdf, 40, $alto, 'Solicitado: ' . $item_detalle->cantidad, $font_size2, 5, 'B', 'L', 1, 1);
+                    $pdf->cellAutoFontSize($pdf, 40, $alto, 'Recibido: ' . $item_detalle->verificado, $font_size2, 5, 'B', 'L', 1, 1);
+                    $pdf->cellAutoFontSize($pdf, 116, $alto, 'Faltantes: ' . $item_detalle->faltantes, $font_size2, 5, 'B', 'L', 1, 1);
+                    $pdf->Ln();
+                    $cant_total += (float)$item_detalle->cantidad;
+                    $pdf->cellAutoFontSize($pdf, 20, $alto, 'NRO', $font_size2, 5, 'B', 'C');
+                    $pdf->cellAutoFontSize($pdf, 100, $alto, 'ALMACÉN', $font_size2, 5, 'B', 'C');
+                    $pdf->cellAutoFontSize($pdf, 25, $alto, 'CANTIDAD', $font_size2, 5, 'B', 'C');
+                    $pdf->cellAutoFontSize($pdf, 51, $alto, 'RESPONSABLE', $font_size2, 5, 'B', 'C');
+                    $pdf->Ln();
+                    $cont_recep = 1;
+
+                    $ingreso_recepcions = $item_detalle->ingreso_recepcions;
+                    if ($fecha_ini && $fecha_fin && !$ingreso_producto_id) {
+                        $$ingreso_recepcions = $item_detalle->ingreso_recepcions->where("tipo", "RECEPCION")->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+                    }
+
+                    foreach ($ingreso_recepcions as $item_recepcion) {
+                        $pdf->cellAutoFontSize($pdf, 20, $alto, $cont_recep++, $font_size2, 5, 'N', 'L');
+                        $pdf->cellAutoFontSize($pdf, 100, $alto, $item_recepcion->almacen->nombre . ' - ' . $item_recepcion->sucursal->nombre, $font_size2, 5, 'N', 'L');
+                        $pdf->cellAutoFontSize($pdf, 25, $alto, $item_recepcion->cantidad, $font_size2, 5, 'N', 'C');
+                        $pdf->cellAutoFontSize($pdf, 51, $alto, $item_recepcion->user->full_name, $font_size2, 5, 'N', 'L');
+                        $pdf->Ln();
+                    }
+                }
+                $pdf->Ln();
+            }
+
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="recepcions' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "RECEPCIÓN DE COMPRAS");
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $sheet->setCellValue('A' . $fila, $titulo);
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+
+            foreach ($ingreso_productos as $item) {
+                $sheet->setCellValue('A' . $fila, "Código Compra:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->codigo);
+                $sheet->setCellValue('D' . $fila, "Fecha:");
+                $sheet->setCellValue('E' . $fila, $item->fecha_registro_t);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Proveedor:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->proveedor->nombre);
+                $sheet->setCellValue('D' . $fila, 'Tipo de Ingreso:');
+                $sheet->setCellValue('E' . $fila, $item->tipo_ingreso->nombre);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Tipo de Compra:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->tipo_compra);
+                $sheet->setCellValue('D' . $fila, "Responsable");
+                $sheet->setCellValue('F' . $fila, $item->user->full_name);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Almacén-Sucursal:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->almacen->nombre . ' - ' . $item->sucursal->nombre);
+                $sheet->setCellValue('D' . $fila, "Descripción:");
+                $sheet->setCellValue('F' . $fila, $item->descripcion);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Total Compra Bs.:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->total);
+                $sheet->setCellValue('D' . $fila, 'Total Cancelado Bs.:');
+                $sheet->setCellValue('E' . $fila, $item->total_cancelado);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Saldo Bs.:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->saldo);
+                $sheet->setCellValue('D' . $fila, 'Estado Compra:');
+                $sheet->setCellValue('E' . $fila, $item->estado_ingreso);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Faltantes:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->faltantes);
+                $sheet->getStyle('A' . $fila . ':B' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $cant_total = 0;
+                $cont = 1;
+                foreach ($item->ingreso_detalles as $key => $item_detalle) {
+                    $sheet->setCellValue('A' . $fila, $cont++ . ') ' . $item_detalle->producto->codigo . ' - ' . $item_detalle->producto->nombre);
+                    $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                    $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                    $fila++;
+                    $sheet->setCellValue('A' . $fila, 'Solicitado: ' . $item_detalle->cantidad . '  Recibido: ' . $item_detalle->verificado . '  Faltantes: ' . $item_detalle->faltantes);
+                    $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                    $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                    $fila++;
+
+                    $sheet->setCellValue('A' . $fila, 'NRO');
+                    $sheet->setCellValue('B' . $fila, 'ALMACÉN');
+                    $sheet->mergeCells("B" . $fila . ":D" . $fila);  //COMBINAR CELDAS
+                    $sheet->setCellValue('E' . $fila, 'CANTIDAD');
+                    $sheet->setCellValue('F' . $fila, 'RESPONSABLE');
+                    $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                    $fila++;
+
+                    $ingreso_recepcions = $item_detalle->ingreso_recepcions;
+                    if ($fecha_ini && $fecha_fin && !$ingreso_producto_id) {
+                        $$ingreso_recepcions = $item_detalle->ingreso_recepcions->where("tipo", "RECEPCION")->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+                    }
+
+                    $cont_recep = 1;
+                    foreach ($ingreso_recepcions->where("tipo", "RECEPCION") as $item_recepcion) {
+                        $sheet->setCellValue('A' . $fila, $cont_recep++);
+                        $sheet->setCellValue('B' . $fila, $item_recepcion->almacen->nombre . ' - ' . $item_recepcion->sucursal->nombre);
+                        $sheet->mergeCells("B" . $fila . ":D" . $fila);  //COMBINAR CELDAS
+                        $sheet->setCellValue('E' . $fila, $item_recepcion->cantidad);
+                        $sheet->setCellValue('F' . $fila, $item_recepcion->user->full_name);
+                        $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                        $cant_total += (float)$item_recepcion->cantidad;
+                        $fila++;
+                    }
+                }
+
+                $fila++;
+                $fila++;
+                $fila++;
+            }
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(30);
+
+            foreach (range('A', 'F') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_DEFAULT);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:F');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'recepcions_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
+    public function faltantes()
+    {
+        return Inertia::render("Admin/Reportes/Faltantes");
+    }
+
+    public function r_faltantes(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $almacen_id =  $request->almacen_id;
+        $ingreso_producto_id =  $request->ingreso_producto_id;
+        $proveedor_id =  $request->proveedor_id;
+        $user_id =  $request->user_id;
+        $tipo_compra =  $request->tipo_compra;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+        $ingreso_productos = IngresoProducto::select("ingreso_productos.*");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $ingreso_productos->where('almacen_id', $almacen_id);
+        }
+
+        if ($ingreso_producto_id) {
+            $ingreso_productos->where('id', $ingreso_producto_id);
+        }
+
+        if ($proveedor_id && $proveedor_id != 'todos') {
+            $ingreso_productos->where('proveedor_id', $proveedor_id);
+        }
+
+        if ($user_id && $user_id != 'todos') {
+            $ingreso_productos->where('user_id', $user_id);
+        }
+
+        if ($tipo_compra && $tipo_compra != 'todos') {
+            $ingreso_productos->where('tipo_compra', $tipo_compra);
+        }
+
+        $ingreso_productos = $ingreso_productos->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Recepción Faltantes');
+            $pdf->setMargins(10, 2, 2);
+            $pdf->AddPage('P', 'LETTER');
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "RECEPCIÓN DE FALTANTES", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 11);
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $pdf->Cell(0, 6, $titulo, 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 7;
+            $font_size = 8;
+            $font_size2 = 9;
+            $font_size3 = 10;
+
+            foreach ($ingreso_productos as $item) {
+                $pdf->setFont("helvetica", "B", $font_size2);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Código Compra: ' . $item->codigo, $font_size2, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Fecha: ' . $item->fecha_registro_t, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Proveedor: ' . $item->proveedor->nombre, $font_size2, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Tipo de Ingreso: ' . $item->tipo_ingreso->nombre, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Tipo de Compra: ' . $item->tipo_compra, $font_size, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Responsable: ' .  $item->user->full_name, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Almacén-Sucursal: ' . $item->user->full_name, $font_size, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Descripción: ' . $item->descripcion, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Total Compra Bs.: ' . $item->total, $font_size, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Total Cancelado Bs.: '  . $item->total_cancelado, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Saldo Bs.: ' . $item->saldo, $font_size, 5, 'B', 'L', 0);
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Estado Compra: ' .  $item->estado_ingreso, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $pdf->cellAutoFontSize($pdf, 100, $alto, 'Faltantes:  '
+                    . $item->faltantes, $font_size2, 5, 'B', 'L', 0);
+                $pdf->Ln();
+                $cant_total = 0;
+                $cont = 1;
+                $alto = 8;
+                foreach ($item->ingreso_detalles as $item_detalle) {
+                    $pdf->SetFillColor(239, 239, 239);
+                    $pdf->setFont("helvetica", "B", $font_size2);
+                    $pdf->cellAutoFontSize($pdf, 196, $alto, $cont++ . ') ' . $item_detalle->producto->codigo . ' - ' . $item_detalle->producto->nombre, $font_size2, 5, 'B', 'L', 1, 1);
+                    $pdf->Ln();
+
+                    $pdf->cellAutoFontSize($pdf, 40, $alto, 'Solicitado: ' . $item_detalle->cantidad, $font_size2, 5, 'B', 'L', 1, 1);
+                    $pdf->cellAutoFontSize($pdf, 40, $alto, 'Recibido: ' . $item_detalle->verificado, $font_size2, 5, 'B', 'L', 1, 1);
+                    $pdf->cellAutoFontSize($pdf, 116, $alto, 'Faltantes: ' . $item_detalle->faltantes, $font_size2, 5, 'B', 'L', 1, 1);
+                    $pdf->Ln();
+                    $cant_total += (float)$item_detalle->cantidad;
+                    $pdf->cellAutoFontSize($pdf, 20, $alto, 'NRO', $font_size2, 5, 'B', 'C');
+                    $pdf->cellAutoFontSize($pdf, 100, $alto, 'ALMACÉN', $font_size2, 5, 'B', 'C');
+                    $pdf->cellAutoFontSize($pdf, 25, $alto, 'CANTIDAD', $font_size2, 5, 'B', 'C');
+                    $pdf->cellAutoFontSize($pdf, 51, $alto, 'RESPONSABLE', $font_size2, 5, 'B', 'C');
+                    $pdf->Ln();
+                    $cont_recep = 1;
+
+                    $ingreso_recepcions_faltantes = $item_detalle->ingreso_recepcions_faltantes;
+                    if ($fecha_ini && $fecha_fin && !$ingreso_producto_id) {
+                        $$ingreso_recepcions_faltantes = $item_detalle->ingreso_recepcions_faltantes->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+                    }
+
+                    foreach ($ingreso_recepcions_faltantes as $item_recepcion) {
+                        $pdf->cellAutoFontSize($pdf, 20, $alto, $cont_recep++, $font_size2, 5, 'N', 'L');
+                        $pdf->cellAutoFontSize($pdf, 100, $alto, $item_recepcion->almacen->nombre . ' - ' . $item_recepcion->sucursal->nombre, $font_size2, 5, 'N', 'L');
+                        $pdf->cellAutoFontSize($pdf, 25, $alto, $item_recepcion->cantidad, $font_size2, 5, 'N', 'C');
+                        $pdf->cellAutoFontSize($pdf, 51, $alto, $item_recepcion->user->full_name, $font_size2, 5, 'N', 'L');
+                        $pdf->Ln();
+                    }
+                }
+                $pdf->Ln();
+            }
+
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="faltantes' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "RECEPCIÓN DE FALTANTES");
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $sheet->setCellValue('A' . $fila, $titulo);
+            $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+
+            foreach ($ingreso_productos as $item) {
+                $sheet->setCellValue('A' . $fila, "Código Compra:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->codigo);
+                $sheet->setCellValue('D' . $fila, "Fecha:");
+                $sheet->setCellValue('E' . $fila, $item->fecha_registro_t);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Proveedor:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->proveedor->nombre);
+                $sheet->setCellValue('D' . $fila, 'Tipo de Ingreso:');
+                $sheet->setCellValue('E' . $fila, $item->tipo_ingreso->nombre);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Tipo de Compra:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->tipo_compra);
+                $sheet->setCellValue('D' . $fila, "Responsable");
+                $sheet->setCellValue('F' . $fila, $item->user->full_name);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Almacén-Sucursal:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->almacen->nombre . ' - ' . $item->sucursal->nombre);
+                $sheet->setCellValue('D' . $fila, "Descripción:");
+                $sheet->setCellValue('F' . $fila, $item->descripcion);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Total Compra Bs.:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->total);
+                $sheet->setCellValue('D' . $fila, 'Total Cancelado Bs.:');
+                $sheet->setCellValue('E' . $fila, $item->total_cancelado);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Saldo Bs.:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->saldo);
+                $sheet->setCellValue('D' . $fila, 'Estado Compra:');
+                $sheet->setCellValue('E' . $fila, $item->estado_ingreso);
+                $sheet->mergeCells("E" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $sheet->setCellValue('A' . $fila, "Faltantes:");
+                $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
+                $sheet->setCellValue('C' . $fila, $item->faltantes);
+                $sheet->getStyle('A' . $fila . ':B' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+                $cant_total = 0;
+                $cont = 1;
+                foreach ($item->ingreso_detalles as $key => $item_detalle) {
+                    $sheet->setCellValue('A' . $fila, $cont++ . ') ' . $item_detalle->producto->codigo . ' - ' . $item_detalle->producto->nombre);
+                    $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                    $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                    $fila++;
+                    $sheet->setCellValue('A' . $fila, 'Solicitado: ' . $item_detalle->cantidad . '  Recibido: ' . $item_detalle->verificado . '  Faltantes: ' . $item_detalle->faltantes);
+                    $sheet->mergeCells("A" . $fila . ":F" . $fila);  //COMBINAR CELDAS
+                    $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                    $fila++;
+
+                    $sheet->setCellValue('A' . $fila, 'NRO');
+                    $sheet->setCellValue('B' . $fila, 'ALMACÉN');
+                    $sheet->mergeCells("B" . $fila . ":D" . $fila);  //COMBINAR CELDAS
+                    $sheet->setCellValue('E' . $fila, 'CANTIDAD');
+                    $sheet->setCellValue('F' . $fila, 'RESPONSABLE');
+                    $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+                    $fila++;
+                    $cont_recep = 1;
+
+                    $ingreso_recepcions_faltantes = $item_detalle->ingreso_recepcions_faltantes;
+                    if ($fecha_ini && $fecha_fin && !$ingreso_producto_id) {
+                        $$ingreso_recepcions_faltantes = $item_detalle->ingreso_recepcions_faltantes->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+                    }
+
+                    foreach ($ingreso_recepcions_faltantes as $item_recepcion) {
+                        $sheet->setCellValue('A' . $fila, $cont_recep++);
+                        $sheet->setCellValue('B' . $fila, $item_recepcion->almacen->nombre . ' - ' . $item_recepcion->sucursal->nombre);
+                        $sheet->mergeCells("B" . $fila . ":D" . $fila);  //COMBINAR CELDAS
+                        $sheet->setCellValue('E' . $fila, $item_recepcion->cantidad);
+                        $sheet->setCellValue('F' . $fila, $item_recepcion->user->full_name);
+                        $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->bodyTabla);
+                        $cant_total += (float)$item_recepcion->cantidad;
+                        $fila++;
+                    }
+                }
+
+                $fila++;
+                $fila++;
+                $fila++;
+            }
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(30);
+
+            foreach (range('A', 'F') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_DEFAULT);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:F');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'faltantes_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
+    public function pago_compras()
+    {
+        return Inertia::render("Admin/Reportes/PagoCompras");
+    }
+
+    public function r_pago_compras(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $almacen_id =  $request->almacen_id;
+        $proveedor_id =  $request->proveedor_id;
+        $tipo_compra =  $request->tipo_compra;
+        $ingreso_producto_id =  $request->ingreso_producto_id;
+        $user_id =  $request->user_id;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+        $ingreso_pagos = IngresoPago::select("ingreso_pagos.*");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $ingreso_pagos->where('almacen_id', $almacen_id);
+        }
+
+        if ($user_id && $user_id != 'todos') {
+            $ingreso_pagos->where('user_id', $user_id);
+        }
+
+        if ($proveedor_id && $proveedor_id != 'todos') {
+            $ingreso_pagos->where('proveedor_id', $proveedor_id);
+        }
+
+        if ($user_id && $user_id != 'todos') {
+            $ingreso_pagos->where('user_id', $user_id);
+        }
+
+        if ($fecha_ini && $fecha_fin && !$ingreso_producto_id) {
+            $ingreso_pagos->whereBetween('fecha', [$fecha_ini, $fecha_fin]);
+        }
+
+        $ingreso_pagos = $ingreso_pagos->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Lista Pago de Compras');
+            $pdf->setMargins(1, 2, 2);
+            $pdf->AddPage('P', 'LETTER');
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "LISTA PAGO DE COMPRAS", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 11);
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $pdf->Cell(0, 6, $titulo, 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 10;
+            $font_size = 8;
+            $font_size2 = 9;
+            $font_size3 = 10;
+
+            $pdf->setFont("helvetica", "B", $font_size2);
+            $pdf->cellAutoFontSize($pdf, 15, $alto, 'NRO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 32.5, $alto, 'SUCURSAL', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 32.5, $alto, 'ALMACÉN', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 35, $alto, 'PROVEEDOR', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 35, $alto, 'MONTO BS.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 30, $alto, 'RESPONSABLE', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 30, $alto, 'FECHA Y HORA', $font_size, 5, 'B');
+            $pdf->Ln();
+            $s_total = 0;
+            $cont = 1;
+            foreach ($ingreso_pagos as $item) {
+                $pdf->cellAutoFontSize($pdf, 15, $alto, $cont++, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 32.5, $alto, $item->sucursal->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 32.5, $alto, $item->almacen->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 35, $alto, $item->proveedor->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 35, $alto, $item->monto_total, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 30, $alto, $item->user->full_name, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 30, $alto, $item->fecha_hora_t, $font_size, 5, 'N', 'L');
+
+                $s_total += (float)$item->monto_total;
+                $pdf->Ln();
+            }
+            $pdf->cellAutoFontSize($pdf, 115, $alto, 'TOTAL BS.', $font_size3, 5, 'B', 'R');
+            $pdf->cellAutoFontSize($pdf, 35, $alto, number_format($s_total, 2, ".", ""), $font_size2, 5, 'B', 'L');
+
+
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="pago_compras' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":G" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTA PAGO DE COMPRAS");
+            $sheet->mergeCells("A" . $fila . ":G" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $sheet->setCellValue('A' . $fila, $titulo);
+            $sheet->mergeCells("A" . $fila . ":G" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'NRO');
+            $sheet->setCellValue('B' . $fila, 'SUCURSAL');
+            $sheet->setCellValue('C' . $fila, 'ALMACÉN');
+            $sheet->setCellValue('D' . $fila, 'PROVEEDOR');
+            $sheet->setCellValue('E' . $fila, 'MONTO BS.');
+            $sheet->setCellValue('F' . $fila, 'RESPONSABLE');
+            $sheet->setCellValue('G' . $fila, 'FECHA Y HORA');
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $cont = 1;
+            $s_total = 0;
+            foreach ($ingreso_pagos as $key => $item) {
+                $sheet->setCellValue('A' . $fila, $cont++);
+                $sheet->setCellValue('B' . $fila, $item->sucursal->nombre);
+                $sheet->setCellValue('C' . $fila, $item->almacen->nombre);
+                $sheet->setCellValue('D' . $fila, $item->proveedor->nombre);
+                $sheet->setCellValue('E' . $fila, $item->monto_total);
+                $sheet->setCellValue('F' . $fila, $item->user->full_name);
+                $sheet->setCellValue('G' . $fila, $item->fecha_hora_t);
+                $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->bodyTabla);
+
+                $s_total += (float)$item->monto_total;
+                $fila++;
+            }
+            $sheet->setCellValue('A' . $fila, "TOTALES");
+            $sheet->mergeCells("A" . $fila . ":D" . $fila);  //COMBINAR CELDAS
+            $sheet->setCellValue('E' . $fila, number_format($s_total, 2, ".", ""));
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->headerTabla);
+
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(30);
+            $sheet->getColumnDimension('G')->setWidth(15);
+
+            foreach (range('A', 'G') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_DEFAULT);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:G');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'pago_compras_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
+    public function cobro_creditos()
+    {
+        return Inertia::render("Admin/Reportes/CobroCreditos");
+    }
+
+    public function r_cobro_creditos(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $almacen_id =  $request->almacen_id;
+        $venta_id =  $request->venta_id;
+        $cliente_id =  $request->cliente_id;
+        $user_id =  $request->user_id;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+        $venta_cobros = VentaCobro::select("venta_cobros.*");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $venta_cobros->where('almacen_id', $almacen_id);
+        }
+
+        if ($venta_id) {
+            $venta_cobros->where('venta_id', $venta_id);
+        }
+
+        if ($cliente_id) {
+            $venta_cobros->where('cliente_id', $cliente_id);
+        }
+
+        if ($user_id && $user_id != 'todos') {
+            $venta_cobros->where('user_id', $user_id);
+        }
+
+        if ($fecha_ini && $fecha_fin && !$venta_id && !$cliente_id) {
+            $venta_cobros->whereBetween('fecha', [$fecha_ini, $fecha_fin]);
+        }
+
+        $venta_cobros = $venta_cobros->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Lista Cobro de Créditos');
+            $pdf->setMargins(1, 2, 2);
+            $pdf->AddPage('P', 'LETTER');
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "LISTA COBRO DE CRÉDITOS", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 11);
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $pdf->Cell(0, 6, $titulo, 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 10;
+            $font_size = 8;
+            $font_size2 = 9;
+            $font_size3 = 10;
+
+            $pdf->setFont("helvetica", "B", $font_size2);
+            $pdf->cellAutoFontSize($pdf, 15, $alto, 'NRO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 32, $alto, 'SUCURSAL', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 32, $alto, 'ALMACÉN', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 35, $alto, 'CLIENTE', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, 'TIPO PAGO', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'MONTO BS.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'RESPONSABLE', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'FECHA Y HORA', $font_size, 5, 'B');
+            $pdf->Ln();
+            $s_total = 0;
+            $cont = 1;
+            foreach ($venta_cobros as $item) {
+                $pdf->cellAutoFontSize($pdf, 15, $alto, $cont++, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 32, $alto, $item->sucursal->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 32, $alto, $item->almacen->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 35, $alto, $item->cliente->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 20, $alto, $item->tipo_pago, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->monto_total, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->user->full_name, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->fecha_hora_t, $font_size, 5, 'N', 'L');
+
+                $s_total += (float)$item->monto_total;
+                $pdf->Ln();
+            }
+            $pdf->cellAutoFontSize($pdf, 134, $alto, 'TOTAL BS.', $font_size3, 5, 'B', 'R');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, number_format($s_total, 2, ".", ""), $font_size2, 5, 'B', 'L');
+
+
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="cobro_creditos' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":H" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTA COBRO DE CRÉDITOS");
+            $sheet->mergeCells("A" . $fila . ":H" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $sheet->setCellValue('A' . $fila, $titulo);
+            $sheet->mergeCells("A" . $fila . ":H" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'NRO');
+            $sheet->setCellValue('B' . $fila, 'SUCURSAL');
+            $sheet->setCellValue('C' . $fila, 'ALMACÉN');
+            $sheet->setCellValue('D' . $fila, 'CLIENTE');
+            $sheet->setCellValue('E' . $fila, 'TIPO PAGO');
+            $sheet->setCellValue('F' . $fila, 'MONTO BS.');
+            $sheet->setCellValue('G' . $fila, 'RESPONSABLE');
+            $sheet->setCellValue('H' . $fila, 'FECHA Y HORA');
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $cont = 1;
+            $s_total = 0;
+            foreach ($venta_cobros as $key => $item) {
+                $sheet->setCellValue('A' . $fila, $cont++);
+                $sheet->setCellValue('B' . $fila, $item->sucursal->nombre);
+                $sheet->setCellValue('C' . $fila, $item->almacen->nombre);
+                $sheet->setCellValue('D' . $fila, $item->cliente->nombre);
+                $sheet->setCellValue('E' . $fila, $item->tipo_pago);
+                $sheet->setCellValue('F' . $fila, $item->monto_total);
+                $sheet->setCellValue('G' . $fila, $item->user->full_name);
+                $sheet->setCellValue('H' . $fila, $item->fecha_hora_t);
+                $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->bodyTabla);
+
+                $s_total += (float)$item->monto_total;
+                $fila++;
+            }
+            $sheet->setCellValue('A' . $fila, "TOTALES");
+            $sheet->mergeCells("A" . $fila . ":E" . $fila);  //COMBINAR CELDAS
+            $sheet->setCellValue('F' . $fila, number_format($s_total, 2, ".", ""));
+            $sheet->getStyle('A' . $fila . ':F' . $fila)->applyFromArray($this->headerTabla);
+
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(30);
+            $sheet->getColumnDimension('G')->setWidth(15);
+            $sheet->getColumnDimension('H')->setWidth(15);
+
+            foreach (range('A', 'H') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_DEFAULT);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:H');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'cobro_creditos_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
+    public function ventas_creditos()
+    {
+        return Inertia::render("Admin/Reportes/CreditosCobrar");
+    }
+
+    public function r_ventas_creditos(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $almacen_id =  $request->almacen_id;
+        $venta_id =  $request->venta_id;
+        $cliente_id =  $request->cliente_id;
+        $user_id =  $request->user_id;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+        $ventas = Venta::select("ventas.*")->where("tipo_venta", "CRÉDITO");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $ventas->where('almacen_id', $almacen_id);
+        }
+
+        if ($venta_id) {
+            $ventas->where('venta_id', $venta_id);
+        }
+
+        if ($cliente_id) {
+            $ventas->where('cliente_id', $cliente_id);
+        }
+
+        if ($user_id && $user_id != 'todos') {
+            $ventas->where('user_id', $user_id);
+        }
+
+        if ($fecha_ini && $fecha_fin && !$venta_id && !$cliente_id) {
+            $ventas->whereBetween('fecha', [$fecha_ini, $fecha_fin]);
+        }
+
+        $ventas = $ventas->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Ventas a Crédito');
+            $pdf->setMargins(1, 2, 2);
+            $pdf->AddPage('P', 'LETTER');
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "VENTAS A CRÉDITO", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 11);
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $pdf->Cell(0, 6, $titulo, 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 10;
+            $font_size = 8;
+            $font_size2 = 9;
+            $font_size3 = 10;
+
+            $pdf->setFont("helvetica", "B", $font_size2);
+            $pdf->cellAutoFontSize($pdf, 10, $alto, 'NRO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 29, $alto, 'SUCURSAL', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 29, $alto, 'ALMACÉN', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 35, $alto, 'CLIENTE', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, 'TOTAL BS.', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, 'CANCELADO BS.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, 'SALDO BS.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'RESPONSABLE', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'FECHA Y HORA', $font_size, 5, 'B');
+            $pdf->Ln();
+            $s_total = 0;
+            $s_total_cancelado = 0;
+            $s_saldo = 0;
+            $cont = 1;
+            foreach ($ventas as $item) {
+                $pdf->cellAutoFontSize($pdf, 10, $alto, $cont++, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 29, $alto, $item->sucursal->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 29, $alto, $item->almacen->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 35, $alto, $item->cliente->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 20, $alto, $item->total, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 20, $alto, $item->total_cancelado, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 20, $alto, $item->saldo, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->user->full_name, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->fecha_hora_t, $font_size, 5, 'N', 'L');
+
+                $s_total += (float)$item->total;
+                $s_total_cancelado += (float)$item->total_cancelado;
+                $s_saldo += (float)$item->saldo;
+                $pdf->Ln();
+            }
+            $pdf->cellAutoFontSize($pdf, 103, $alto, 'TOTAL BS.', $font_size3, 5, 'B', 'R');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, number_format($s_total, 2, ".", ""), $font_size2, 5, 'B', 'L');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, number_format($s_total_cancelado, 2, ".", ""), $font_size2, 5, 'B', 'L');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, number_format($s_saldo, 2, ".", ""), $font_size2, 5, 'B', 'L');
+
+
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="ventas_creditos' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":I" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':I' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':I' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "VENTAS A CRÉDITO");
+            $sheet->mergeCells("A" . $fila . ":I" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':I' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':I' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $sheet->setCellValue('A' . $fila, $titulo);
+            $sheet->mergeCells("A" . $fila . ":I" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':I' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':I' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'NRO');
+            $sheet->setCellValue('B' . $fila, 'SUCURSAL');
+            $sheet->setCellValue('C' . $fila, 'ALMACÉN');
+            $sheet->setCellValue('D' . $fila, 'CLIENTE');
+            $sheet->setCellValue('E' . $fila, 'TOTAL BS.');
+            $sheet->setCellValue('F' . $fila, 'CANCELADO BS.');
+            $sheet->setCellValue('G' . $fila, 'SALDO BS.');
+            $sheet->setCellValue('H' . $fila, 'RESPONSABLE');
+            $sheet->setCellValue('I' . $fila, 'FECHA Y HORA');
+            $sheet->getStyle('A' . $fila . ':I' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $cont = 1;
+            $s_total = 0;
+            $s_total_cancelado = 0;
+            $s_saldo = 0;
+            foreach ($ventas as $key => $item) {
+                $sheet->setCellValue('A' . $fila, $cont++);
+                $sheet->setCellValue('B' . $fila, $item->sucursal->nombre);
+                $sheet->setCellValue('C' . $fila, $item->almacen->nombre);
+                $sheet->setCellValue('D' . $fila, $item->cliente->nombre);
+                $sheet->setCellValue('E' . $fila, $item->total);
+                $sheet->setCellValue('F' . $fila, $item->total_cancelado);
+                $sheet->setCellValue('G' . $fila, $item->saldo);
+                $sheet->setCellValue('H' . $fila, $item->user->full_name);
+                $sheet->setCellValue('I' . $fila, $item->fecha_hora_t);
+                $sheet->getStyle('A' . $fila . ':I' . $fila)->applyFromArray($this->bodyTabla);
+
+                $s_total += (float)$item->total;
+                $s_total_cancelado += (float)$item->total_cancelado;
+                $s_saldo += (float)$item->saldo;
+                $fila++;
+            }
+            $sheet->setCellValue('A' . $fila, "TOTALES");
+            $sheet->mergeCells("A" . $fila . ":D" . $fila);  //COMBINAR CELDAS
+            $sheet->setCellValue('E' . $fila, number_format($s_total, 2, ".", ""));
+            $sheet->setCellValue('F' . $fila, number_format($s_total_cancelado, 2, ".", ""));
+            $sheet->setCellValue('G' . $fila, number_format($s_saldo, 2, ".", ""));
+            $sheet->getStyle('A' . $fila . ':G' . $fila)->applyFromArray($this->headerTabla);
+
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(30);
+            $sheet->getColumnDimension('G')->setWidth(15);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(15);
+
+            foreach (range('A', 'I') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_DEFAULT);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:I');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'ventas_creditos_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+    public function compras_credito()
+    {
+        return Inertia::render("Admin/Reportes/ComprasCredito");
+    }
+
+    public function r_compras_credito(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $almacen_id =  $request->almacen_id;
+        $proveedor_id =  $request->proveedor_id;
+        $ingreso_producto_id =  $request->ingreso_producto_id;
+        $user_id =  $request->user_id;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+        $ingreso_productos = IngresoProducto::select("ingreso_productos.*")
+            ->where("tipo_compra", "CRÉDITO");
+
+        if ($almacen_id && $almacen_id != 'todos') {
+            $ingreso_productos->where('almacen_id', $almacen_id);
+        }
+
+        if ($user_id && $user_id != 'todos') {
+            $ingreso_productos->where('user_id', $user_id);
+        }
+
+        if ($proveedor_id && $proveedor_id != 'todos') {
+            $ingreso_productos->where('proveedor_id', $proveedor_id);
+        }
+
+        if ($user_id && $user_id != 'todos') {
+            $ingreso_productos->where('user_id', $user_id);
+        }
+
+        if ($fecha_ini && $fecha_fin && !$ingreso_producto_id) {
+            $ingreso_productos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+        }
+
+        $ingreso_productos = $ingreso_productos->get();
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Compras a Crédito');
+            $pdf->setMargins(1, 2, 2);
+            $pdf->AddPage('L', 'LETTER');
+            $pdf->setPrintHeader(false);
+            $pdf->setY(13);
+            $pdf->SetFont('helvetica', 'B', 12);
+            $pdf->Cell(0, 6, "COMPRAS A CRÉDITO", 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 11);
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $pdf->Cell(0, 6, $titulo, 0, 1, 'C', 0, '', 0, false);
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->setY(33);
+            $alto = 10;
+            $font_size = 8;
+            $font_size2 = 9;
+            $font_size3 = 10;
+
+            $pdf->setFont("helvetica", "B", $font_size2);
+            $pdf->cellAutoFontSize($pdf, 15, $alto, 'CÓDIGO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 32.5, $alto, 'SUCURSAL', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 32.5, $alto, 'ALMACÉN', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 35, $alto, 'PROVEEDOR', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'TIPO DE INGRESO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'TOTAL BS.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'CANCELADO BS.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'SALDO BS.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 30, $alto, 'RESPONSABLE', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 30, $alto, 'FECHA', $font_size, 5, 'B');
+            $pdf->Ln();
+            $s_total = 0;
+            $s_total_cancelado = 0;
+            $s_saldo = 0;
+            $cont = 1;
+            foreach ($ingreso_productos as $item) {
+                $pdf->cellAutoFontSize($pdf, 15, $alto, $cont++, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 32.5, $alto, $item->sucursal->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 32.5, $alto, $item->almacen->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 35, $alto, $item->proveedor->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->tipo_ingreso->nombre, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->total, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->total_cancelado, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->saldo, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 30, $alto, $item->user->full_name, $font_size, 5, 'N', 'L');
+                $pdf->cellAutoFontSize($pdf, 30, $alto, $item->fecha_registro_t, $font_size, 5, 'N', 'L');
+
+                $s_total += (float)$item->total;
+                $s_total_cancelado += (float)$item->total_cancelado;
+                $s_saldo += (float)$item->saldo;
+                $pdf->Ln();
+            }
+            $pdf->cellAutoFontSize($pdf, 140, $alto, 'TOTAL BS.', $font_size3, 5, 'B', 'R');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, number_format($s_total, 2, ".", ""), $font_size2, 5, 'B', 'L');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, number_format($s_total_cancelado, 2, ".", ""), $font_size2, 5, 'B', 'L');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, number_format($s_saldo, 2, ".", ""), $font_size2, 5, 'B', 'L');
+
+
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="compras_credito' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "COMPRAS A CRÉDITO");
+            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $titulo = '"TODOS LOS ALMACENES"';
+            if ($almacen_id != "todos") {
+                $almacen = Almacen::find($almacen_id);
+                $titulo = '"' . $almacen->nombre . ' - ' . $almacen->sucursal->nombre . '"';
+            }
+            $sheet->setCellValue('A' . $fila, $titulo);
+            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'CÓDIGO');
+            $sheet->setCellValue('B' . $fila, 'SUCURSAL');
+            $sheet->setCellValue('C' . $fila, 'ALMACÉN');
+            $sheet->setCellValue('D' . $fila, 'PROVEEDOR');
+            $sheet->setCellValue('E' . $fila, 'TIPO DE INGRESO');
+            $sheet->setCellValue('F' . $fila, 'TOTAL BS.');
+            $sheet->setCellValue('G' . $fila, 'CANCELADO BS.');
+            $sheet->setCellValue('H' . $fila, 'SALDO BS.');
+            $sheet->setCellValue('I' . $fila, 'RESPONSABLE');
+            $sheet->setCellValue('J' . $fila, 'FECHA');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $cont = 1;
+            $s_total = 0;
+            $s_total_cancelado = 0;
+            $s_saldo = 0;
+            foreach ($ingreso_productos as $key => $item) {
+                $sheet->setCellValue('A' . $fila, $cont++);
+                $sheet->setCellValue('B' . $fila, $item->sucursal->nombre);
+                $sheet->setCellValue('C' . $fila, $item->almacen->nombre);
+                $sheet->setCellValue('D' . $fila, $item->proveedor->nombre);
+                $sheet->setCellValue('E' . $fila, $item->tipo_ingreso->nombre);
+                $sheet->setCellValue('F' . $fila, $item->total);
+                $sheet->setCellValue('G' . $fila, $item->total_cancelado);
+                $sheet->setCellValue('H' . $fila, $item->saldo);
+                $sheet->setCellValue('I' . $fila, $item->user->full_name);
+                $sheet->setCellValue('J' . $fila, $item->user->fecha_registro_t);
+                $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->bodyTabla);
+
+                $s_total += (float)$item->total;
+                $s_total_cancelado += (float)$item->total_cancelado;
+                $s_saldo += (float)$item->saldo;
+                $fila++;
+            }
+            $sheet->setCellValue('A' . $fila, "TOTALES");
+            $sheet->mergeCells("A" . $fila . ":E" . $fila);  //COMBINAR CELDAS
+            $sheet->setCellValue('F' . $fila, number_format($s_total, 2, ".", ""));
+            $sheet->setCellValue('G' . $fila, number_format($s_total_cancelado, 2, ".", ""));
+            $sheet->setCellValue('H' . $fila, number_format($s_saldo, 2, ".", ""));
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->headerTabla);
+
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(30);
+            $sheet->getColumnDimension('G')->setWidth(15);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(15);
+            $sheet->getColumnDimension('J')->setWidth(15);
+
+            foreach (range('A', 'J') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_DEFAULT);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:J');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'compras_credito_' . time() . '.xlsx',
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
+    public function movimiento_cajas()
+    {
+        return Inertia::render("Admin/Reportes/MovimientoCajas");
+    }
+
+
+    public function r_movimiento_cajas(Request $request)
     {
         ini_set('memory_limit', '1024M');
         set_time_limit(-1);
         $fecha_ini = $request->fecha_ini;
         $fecha_fin = $request->fecha_fin;
-        $sucursal_id = $request->sucursal_id;
+        $almacen_id = $request->almacen_id;
         $user_id = $request->user_id;
         $formato = $request->formato;
 
-        $array_res = $this->movimiento_caja_service->reporteMovimientos(
+        $movimiento_cajas = $this->movimiento_caja_service->reporteMovimientos(
             $fecha_ini,
             $fecha_fin,
-            $sucursal_id,
+            $almacen_id,
             $user_id
         );
-        $pagos = $array_res[0];
-        $suma_tipos = $array_res[1];
-        $pagos_sin_verificar = $array_res[2];
-        $suma_tipos_sin_verificar = $array_res[3];
-        $suma_total_tipos = $array_res[4];
-
-        $tipo_pagos = $this->tipo_pago_service->listado();
 
         if ($formato == 'pdf') {
-
             $pdf = new ReporteServiceTcpdf();
             $pdf->SetTitle('Caja');
             $pdf->setMargins(10, 5, 5);
-            $pdf->AddPage();
+            $pdf->AddPage('L', 'LETTER');
             $pdf->setPrintHeader(false);
             $pdf->setY(13);
             $pdf->SetFont('helvetica', 'B', 12);
-            $pdf->Cell(0, 6, "ARQUEO DE CAJA", 0, 1, 'C', 0, '', 0, false);
+            $pdf->Cell(0, 6, "MOVIMIENTO DE CAJA", 0, 1, 'C', 0, '', 0, false);
             $pdf->SetFont('helvetica', 'B', 10);
             $pdf->Cell(0, 5, "Expedido: " . date("d/m/Y"), 0, 1, 'C', 0, '', 0, false);
             $pdf->SetFont('helvetica', 'B', 8);
             $ancho = 20;
+
             $font_size = 8;
             $font_size2 = 9;
+            $font_size3 = 10;
 
             // Encabezado de tabla
             $pdf->Ln();
             $pdf->SetFont('helvetica', 'B', $font_size2);
             $pdf->SetX(9);
+            $pdf->Ln(2);
             $pdf->Cell(23, 5, "Elaborado por: ", 0, 0, 'L');
-
             $pdf->SetFont('helvetica', '', $font_size2);
             $pdf->Cell(40, 5,  Auth::user()->full_name, 0, 0);
-            $pdf->Cell(133, 5, "Del " . date('d/m/Y', strtotime($fecha_ini)) . " al " . date('d/m/Y', strtotime($fecha_fin)), 0, 1, 'R');
+            $pdf->Cell(195, 5, "Del " . date('d/m/Y', strtotime($fecha_ini)) . " al " . date('d/m/Y', strtotime($fecha_fin)), 0, 1, 'R');
 
-            $pdf->SetFont('helvetica', 'B', $font_size);
+            $alto = 10;
+            $font_size = 8;
+            $font_size2 = 9;
+            $font_size3 = 10;
 
-            $thTipoPagos = '';
-            foreach ($tipo_pagos as $item) {
-                $thTipoPagos .= '<th style="font-weight:bold;background-color:#153f59;color:white; text-align:right;">' . $item['value'] . ' Bs.</th>';
-            }
-
-            $html = '   <table border="1" cellpadding="3">
-            <thead class="bg-red" width="100%">
-                <tr>
-                    <th style="font-weight:bold;background-color:#153f59;color:white;" width="18">N°</th>
-                    <th style="font-weight:bold;background-color:#153f59;color:white;" width="50">FECHA</th>
-                    <th style="font-weight:bold;background-color:#153f59;color:white;" width="70">SUCURSAL</th>
-                    <th style="font-weight:bold;background-color:#153f59;color:white;" width="90">PACIENTE</th>
-                    <th style="font-weight:bold;background-color:#153f59;color:white;" width="120">DESCRIPCIÓN</th>
-                    <th style="font-weight:bold;background-color:#153f59;color:white;">MÉDICO</th>
-                    ' . $thTipoPagos . '
-                </tr>
-            </thead>
-            <tbody>';
-
+            $pdf->setFont("helvetica", "B", $font_size2);
+            $pdf->cellAutoFontSize($pdf, 15, $alto, 'NRO', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 31, $alto, 'SUCURSAL', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 31, $alto, 'ALMACÉN', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 35, $alto, 'DETALLE', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 20, $alto, 'TIPO', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'EFECTIVO BS.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'QR BS.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, 'TOTAL BS.', $font_size2, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 30, $alto, 'RESPONSABLE', $font_size, 5, 'B');
+            $pdf->cellAutoFontSize($pdf, 30, $alto, 'FECHA Y HORA', $font_size, 5, 'B');
+            $pdf->Ln();
+            $s_monto_efectivo = 0;
+            $s_monto_qr = 0;
+            $s_monto_total = 0;
             $cont = 1;
-            $pdf->SetFont('helvetica', 'N', $font_size);
-            foreach ($pagos as $item) {
-                $html .= '<tr>';
-                $html .= '<td  width="18">' . $cont++ . '</td>';
-                $html .= '<td  width="50">' . $item->fecha_verificado_t . '<br/>' . $item->hora_verificado . '</td>';
-                $html .= '<td  width="70">' . $item->sucursal->nombre . '</td>';
-                $html .= '<td width="90">' . $item->cliente->nombre . ' ' . $item->cliente->paterno . ' ' . $item->cliente->materno . '<br/>' . $item->cliente->full_ci . '</td>';
-                $html .= '<td width="120">' . $item->certificado_detalle->tipo_certificado->nombre . '<br/><small style="font-size:6pt">(' . $item->certificado_detalle->certificado->tipo . ($item->certificado_detalle->certificado->tramitador ? ' - ' . $item->certificado_detalle->certificado->tramitador->nombre : '') . '</small>)</td>';
-                $html .= '<td>' . ($item->medico ? $item->medico->nombre . ' ' . $item->medico->paterno . ' ' . $item->medico->materno : '') . '</td>';
+            foreach ($movimiento_cajas as $item) {
+                $pdf->cellAutoFontSize($pdf, 15, $alto, $cont++, $font_size, 5, 'N', 'L', 1, 0);
+                $pdf->cellAutoFontSize($pdf, 31, $alto, $item->sucursal->nombre, $font_size, 5, 'N', 'L', 1, 0);
+                $pdf->cellAutoFontSize($pdf, 31, $alto, $item->almacen->nombre, $font_size, 5, 'N', 'L', 1, 0);
+                $pdf->cellAutoFontSize($pdf, 35, $alto, $item->tipo, $font_size, 5, 'N', 'L', 1, 0);
+                $pdf->SetFillColor(255, 227, 227);
+                if ($item->tipo_movimiento == 'INGRESO') {
+                    $pdf->SetFillColor(211, 250, 229);
+                }
+                $pdf->cellAutoFontSize($pdf, 20, $alto, $item->tipo_movimiento, $font_size, 5, 'N', 'L', 1, 1);
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->monto_efectivo, $font_size, 5, 'N', 'L', 1, 1);
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->monto_qr, $font_size, 5, 'N', 'L', 1, 1);
+                $pdf->cellAutoFontSize($pdf, 25, $alto, $item->monto_total, $font_size, 5, 'N', 'L', 1, 1);
+                $pdf->cellAutoFontSize($pdf, 30, $alto, $item->user->full_name, $font_size, 5, 'N', 'L', 1, 0);
+                $pdf->cellAutoFontSize($pdf, 30, $alto, $item->fecha_hora_t, $font_size, 5, 'N', 'L', 1, 0);
 
-                $tdTipoPagos = '';
-                foreach ($tipo_pagos as $tipo_pago) {
-                    $tdTipoPagos .= '<td style="text-align:right;">' . ($item->tipo_pago == $tipo_pago['value'] ? $item->monto : '') . '</td>';
+                if ($item->tipo_movimiento == 'INGRESO') {
+                    $s_monto_total += (float)$item->monto_total;
+                    $s_monto_efectivo += (float)$item->monto_efectivo;
+                    $s_monto_qr += (float)$item->monto_qr;
+                } else {
+                    $s_monto_total -= (float)$item->monto_total;
+                    $s_monto_efectivo -= (float)$item->monto_efectivo;
+                    $s_monto_qr -= (float)$item->monto_qr;
                 }
 
-                $html .= $tdTipoPagos . '</tr>';
-            }
-            $suma_total = 0;
-            $html .= '<tr>';
-            $html .= '<td style="text-align:right;font-weight:bold;" colspan="6">TOTAL BS.</td>';
-            foreach ($tipo_pagos as $tipo_pago) {
-                $suma_total += (float) $suma_tipos[$tipo_pago['value']];
-                $html .= '<td style="text-align:right;font-weight:bold;">' . number_format($suma_tipos[$tipo_pago["value"]], 2, '.', '') . '</td>';
-            }
-
-            $html .= '</tr>';
-            $html .= '<tr>';
-            $html .= '<td style="text-align:right;font-weight:bold;" colspan="6">TOTAL FINAL BS.</td>';
-            $html .= '<td style="text-align:center;font-weight:bold;" colspan="2">' . number_format($suma_total, 2, '.', '') . '</td>';
-            $html .= '</tr>';
-            $html .= '</tbody></table>';
-            $pdf->writeHTML($html, true, false, true, false, '');
-
-            // SIN VERIFICAR
-            if (count($pagos_sin_verificar) > 0) {
                 $pdf->Ln();
-                $pdf->SetFont('helvetica', 'B', 12);
-                $pdf->Cell(0, 6, "PAGOS SIN RECEPCIÓN", 0, 1, 'C', 0, '', 0, false);
-                $html = '   <table border="1" cellpadding="3">
-                <thead class="bg-red" width="100%">
-                    <tr>
-                        <th style="font-weight:bold;background-color:#f02222;color:white;" width="18">N°</th>
-                        <th style="font-weight:bold;background-color:#f02222;color:white;" width="50">FECHA</th>
-                        <th style="font-weight:bold;background-color:#f02222;color:white;" width="70">SUCURSAL</th>
-                        <th style="font-weight:bold;background-color:#f02222;color:white;">PACIENTE</th>
-                        <th style="font-weight:bold;background-color:#f02222;color:white;" width="120">DESCRIPCIÓN</th>
-                        <th style="font-weight:bold;background-color:#f02222;color:white;">MÉDICO</th>
-                        ' . $thTipoPagos . '
-                    </tr>
-                </thead>
-                <tbody>';
-
-                $cont = 1;
-                $suma_total = 0;
-                $pdf->SetFont('helvetica', 'N', $font_size);
-                foreach ($pagos_sin_verificar as $item) {
-                    $html .= '<tr>';
-                    $html .= '<td  width="18">' . $cont++ . '</td>';
-                    $html .= '<td  width="50">' . $item->fecha_verificado_t . '<br/>' . $item->hora_verificado . '</td>';
-                    $html .= '<td  width="70">' . $item->sucursal->nombre . '</td>';
-                    $html .= '<td>' . $item->cliente->nombre . ' ' . $item->cliente->paterno . ' ' . $item->cliente->materno . '<br/>' . $item->cliente->full_ci . '</td>';
-                    $html .= '<td width="120">' . $item->certificado_detalle->tipo_certificado->nombre . '<br/><small style="font-size:6pt">(' . $item->certificado_detalle->certificado->tipo . ($item->certificado_detalle->certificado->tramitador ? ' - ' . $item->certificado_detalle->certificado->tramitador->nombre : '') . '</small>)</td>';
-                    $html .= '<td>' . ($item->medico ? $item->medico->nombre . ' ' . $item->medico->paterno . ' ' . $item->medico->materno : '') . '</td>';
-
-                    $tdTipoPagos = '';
-                    foreach ($tipo_pagos as $tipo_pago) {
-                        $tdTipoPagos .= '<td style="text-align:right;">' . ($item->tipo_pago == $tipo_pago['value'] ? $item->monto : '') . '</td>';
-                    }
-
-                    $html .= $tdTipoPagos . '</tr>';
-                }
-                $suma_total = 0;
-                $html .= '<tr>';
-                $html .= '<td style="text-align:right;font-weight:bold;" colspan="6">TOTAL BS.</td>';
-                foreach ($tipo_pagos as $tipo_pago) {
-                    $suma_total += (float) $suma_tipos_sin_verificar[$tipo_pago['value']];
-                    $html .= '<td style="text-align:right;font-weight:bold;">' . number_format($suma_tipos_sin_verificar[$tipo_pago["value"]], 2, '.', '') . '</td>';
-                }
-
-                $html .= '</tr>';
-                $html .= '<tr>';
-                $html .= '<td style="text-align:right;font-weight:bold;" colspan="6">TOTAL FINAL BS.</td>';
-                $html .= '<td style="text-align:center;font-weight:bold;" colspan="2">' . number_format($suma_total, 2, '.', '') . '</td>';
-                $html .= '</tr>';
-                $html .= '</tbody></table>';
-                $pdf->writeHTML($html, true, false, true, false, '');
-
-                // resumen
-                $pdf->Ln();
-                $pdf->SetFont('helvetica', 'B', 12);
-                $pdf->Cell(0, 6, "RESUMEN GENERAL", 0, 1, 'C', 0, '', 0, false);
-
-                $html = '<table border="1" cellpadding="3">';
-                $html .= '</thead>
-                    <tr>
-                    <th>TIPO DE PAGO</th>
-                    <th>MONTO BS.</th>
-                    </tr>
-                </thead><tbody>';
-                $total_final = 0;
-
-                foreach ($tipo_pagos as $tipo_pago) {
-                    $html .= '<tr>';
-                    $html .= '<td style="font-weight:normal;">' . $tipo_pago["value"] . '</td>';
-                    $html .= '<td style="font-weight:normal;">' . number_format($suma_total_tipos[$tipo_pago['value']], 2, '.', '') . '</td>';
-                    $html .= '</tr>';
-                    $total_final += (float) $suma_total_tipos[$tipo_pago['value']];
-                }
-                $html .= '<tr>';
-                $html .= '<td>TOTAL GENERAL</td>';
-                $html .= '<td>' . number_format($total_final, 2, '.', '') . '</td>';
-                $html .= '</tr>';
-
-                $html .= '</tbody></table>';
-                $pdf->writeHTML($html, true, false, true, false, '');
             }
-
+            $pdf->cellAutoFontSize($pdf, 132, $alto, 'TOTAL BS.', $font_size3, 5, 'B', 'R');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, number_format($s_monto_efectivo, 2, ".", ""), $font_size2, 5, 'B', 'L');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, number_format($s_monto_qr, 2, ".", ""), $font_size2, 5, 'B', 'L');
+            $pdf->cellAutoFontSize($pdf, 25, $alto, number_format($s_monto_total, 2, ".", ""), $font_size2, 5, 'B', 'L');
 
 
             // Guardar PDF o forzar descarga
@@ -2371,8 +4056,16 @@ class ReporteController extends Controller
                 ->header('Content-Disposition', 'inline; filename="caja.pdf"');
         } else {
             // EXCEL
-
             $spreadsheet = new Spreadsheet();
+
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
 
             $spreadsheet->getProperties()
                 ->setCreator("ADMIN")
@@ -2386,397 +4079,134 @@ class ReporteController extends Controller
             $sheet = $spreadsheet->getActiveSheet();
             $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
 
-            $fila = 1;
+            $sheet = $spreadsheet->getActiveSheet();
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
 
-            /* ===================== LOGO ===================== */
+            $fila = 1;
             if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
-                $drawing = new Drawing();
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
                 $drawing->setName('logo');
                 $drawing->setDescription('logo');
-                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo);
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
                 $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
             }
 
-            /* ===================== TITULOS ===================== */
-            $totalColumnas = 6 + count($tipo_pagos);
-            $lastColumn = Coordinate::stringFromColumnIndex($totalColumnas);
-
             $fila = 2;
-
             $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
-            $sheet->mergeCells("A{$fila}:{$lastColumn}{$fila}");
-            $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                ->getAlignment()->setHorizontal('center');
-            $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                ->applyFromArray($this->titulo);
-
+            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
             $fila++;
-
-            $sheet->setCellValue('A' . $fila, "ARQUEO DE CAJA");
-            $sheet->mergeCells("A{$fila}:{$lastColumn}{$fila}");
-            $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                ->getAlignment()->setHorizontal('center');
-            $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                ->applyFromArray($this->titulo);
-
-            $fila += 2;
+            $sheet->setCellValue('A' . $fila, "MOVIMIENTO DE CAJA");
+            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
+            $fila++;
             /* ===================== ELABORADO ===================== */
             $sheet->setCellValue('A' . $fila, 'Elaborado por:');
             $sheet->mergeCells("A{$fila}:B{$fila}");
             $sheet->getStyle("A{$fila}:B{$fila}")->applyFromArray($this->textRight);
             $sheet->setCellValue('C' . $fila, Auth::user()->nombre . ' ' . AUth::user()->paterno . ' ' . Auth::user()->materno);
-            $sheet->mergeCells("C{$fila}:{$lastColumn}{$fila}");
+            $sheet->mergeCells("C{$fila}:J{$fila}");
             $fila++;
-
             /* ===================== FECHA ===================== */
             $sheet->setCellValue('A' . $fila, 'Fecha:');
             $sheet->mergeCells("A{$fila}:B{$fila}");
             $sheet->getStyle("A{$fila}:B{$fila}")->applyFromArray($this->textRight);
 
             $sheet->setCellValue('C' . $fila, 'Del ' . date("d/m/Y", strtotime($fecha_ini)) . ' al ' . date("d/m/Y", strtotime($fecha_fin)));
-            $sheet->mergeCells("C{$fila}:{$lastColumn}{$fila}");
+            $sheet->mergeCells("C{$fila}:J{$fila}");
 
             $fila++;
-            /* ===================== HEADERS ===================== */
-            $colIndex = 1;
-
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'N°');
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'FECHA');
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'SUCURSAL');
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'PACIENTE');
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'DESCRIPCIÓN');
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'MÉDICO');
-
-            /* columnas dinámicas */
-            foreach ($tipo_pagos as $tipo) {
-                $sheet->setCellValue(
-                    Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                    $tipo['value'] . ' Bs.'
-                );
-            }
-
-            $totalColumnas = $colIndex - 1;
-            $lastColumn = Coordinate::stringFromColumnIndex($totalColumnas);
-
-            $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                ->applyFromArray($this->headerTabla);
-
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'NRO');
+            $sheet->setCellValue('B' . $fila, 'SUCURSAL');
+            $sheet->setCellValue('C' . $fila, 'ALMACÉN');
+            $sheet->setCellValue('D' . $fila, 'DETALLE');
+            $sheet->setCellValue('E' . $fila, 'TIPO');
+            $sheet->setCellValue('F' . $fila, 'EFECTIVO BS.');
+            $sheet->setCellValue('G' . $fila, 'QR BS.');
+            $sheet->setCellValue('H' . $fila, 'TOTAL BS.');
+            $sheet->setCellValue('I' . $fila, 'RESPONSABLE');
+            $sheet->setCellValue('J' . $fila, 'FECHA Y HORA');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->headerTabla);
             $fila++;
 
-            /* ===================== DATA ===================== */
-            foreach ($pagos as $key => $item) {
-                $colIndex = 1;
-
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, $key + 1);
-
-                $sheet->setCellValue(
-                    Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                    $item->fecha_verificado_t . "\n" . $item->hora_verificado
-                );
-
-                $sheet->setCellValue(
-                    Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                    $item->sucursal->nombre
-                );
-
-                $sheet->setCellValue(
-                    Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                    $item->cliente->nombre . ' ' .
-                        $item->cliente->paterno . ' ' .
-                        $item->cliente->materno
-                );
-
-                $tramitador_txt = "";
-                if ($item->certificado_detalle->certificado->tramitador) {
-                    $tramitador_txt = " - " . $item->certificado_detalle->certificado->tramitador->nombre;
-                }
-
-                $sheet->setCellValue(
-                    Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                    $item->certificado_detalle->tipo_certificado->nombre . "\n(" .
-                        $item->certificado_detalle->certificado->tipo . $tramitador_txt . ")"
-                );
-
-                if ($item->medico) {
-                    $sheet->setCellValue(
-                        Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                        $item->medico->nombre . ' ' . $item->medico->paterno
-                    );
+            $s_monto_efectivo = 0;
+            $s_monto_qr = 0;
+            $s_monto_total = 0;
+            $cont = 1;
+            foreach ($movimiento_cajas as $key => $item) {
+                $sheet->setCellValue('A' . $fila, $cont++);
+                $sheet->setCellValue('B' . $fila, $item->sucursal->nombre);
+                $sheet->setCellValue('C' . $fila, $item->almacen->nombre);
+                $sheet->setCellValue('D' . $fila, $item->tipo);
+                $sheet->setCellValue('E' . $fila, $item->tipo_movimiento);
+                if ($item->tipo_movimiento == 'INGRESO') {
+                    $sheet->setCellValue('F' . $fila, $item->monto_efectivo);
+                    $sheet->setCellValue('G' . $fila, $item->monto_qr);
+                    $sheet->setCellValue('H' . $fila, $item->monto_total);
                 } else {
-                    $sheet->setCellValue(
-                        Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                        ''
-                    );
+                    $sheet->setCellValue('F' . $fila, "-" . $item->monto_efectivo);
+                    $sheet->setCellValue('G' . $fila, "-" . $item->monto_qr);
+                    $sheet->setCellValue('H' . $fila, "-" . $item->monto_total);
                 }
-
-                foreach ($tipo_pagos as $tipo) {
-                    $value = ($item->tipo_pago == $tipo['value'])
-                        ? number_format($item->monto, 2, ".", "")
-                        : '';
-
-                    $sheet->setCellValue(
-                        Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                        $value
-                    );
+                $sheet->setCellValue('I' . $fila, $item->user->full_name);
+                $sheet->setCellValue('J' . $fila, $item->fecha_hora_t);
+                $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->bodyTabla);
+                if ($item->tipo_movimiento == 'INGRESO') {
+                    $s_monto_total += (float)$item->monto_total;
+                    $s_monto_efectivo += (float)$item->monto_efectivo;
+                    $s_monto_qr += (float)$item->monto_qr;
+                } else {
+                    $s_monto_total -= (float)$item->monto_total;
+                    $s_monto_efectivo -= (float)$item->monto_efectivo;
+                    $s_monto_qr -= (float)$item->monto_qr;
                 }
-
-                $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                    ->applyFromArray($this->bodyTabla);
 
                 $fila++;
             }
+            $sheet->setCellValue('A' . $fila, "TOTALES");
+            $sheet->mergeCells("A" . $fila . ":E" . $fila);  //COMBINAR CELDAS
+            $sheet->setCellValue('F' . $fila, number_format($s_monto_efectivo, 2, ".", ""));
+            $sheet->setCellValue('G' . $fila, number_format($s_monto_qr, 2, ".", ""));
+            $sheet->setCellValue('H' . $fila, number_format($s_monto_total, 2, ".", ""));
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->headerTabla);
 
-            /* ===================== TOTALES ===================== */
-            $sheet->setCellValue("A{$fila}", "TOTAL BS.");
-            $sheet->mergeCells("A{$fila}:" . Coordinate::stringFromColumnIndex(6) . "{$fila}");
-
-            $colIndex = 7;
-            $suma_total = 0;
-
-            foreach ($tipo_pagos as $tipo) {
-                $total = $suma_tipos[$tipo['value']] ?? 0;
-
-                $sheet->setCellValue(
-                    Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                    number_format($total, 2, ".", "")
-                );
-
-                $suma_total += $total;
-            }
-
-            $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                ->applyFromArray($this->headerTabla);
-
-            $fila++;
-
-            /* ===================== TOTAL FINAL ===================== */
-            $sheet->setCellValue("A{$fila}", "TOTAL FINAL BS.");
-            $sheet->mergeCells("A{$fila}:" . Coordinate::stringFromColumnIndex(6) . "{$fila}");
-
-            $sheet->setCellValue(
-                Coordinate::stringFromColumnIndex(7) . $fila,
-                number_format($suma_total, 2, ".", "")
-            );
-            $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                ->applyFromArray($this->headerTabla);
-
-            /*******************************
-             *  PAGO SIN VERIFICAR
-             ****************************** */
-            if (count($pagos_sin_verificar) > 0) {
-                $fila++;
-                $fila++;
-                $sheet->setCellValue('A' . $fila, "PAGOS SIN RECEPCIÓN");
-                $sheet->mergeCells("A{$fila}:{$lastColumn}{$fila}");
-                $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                    ->getAlignment()->setHorizontal('center');
-                $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                    ->applyFromArray($this->titulo);
-
-                $fila++;
-                /* ===================== HEADERS ===================== */
-                $colIndex = 1;
-
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'N°');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'FECHA');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'SUCURSAL');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'PACIENTE');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'DESCRIPCIÓN');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, 'MÉDICO');
-
-                /* columnas dinámicas */
-                foreach ($tipo_pagos as $tipo) {
-                    $sheet->setCellValue(
-                        Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                        $tipo['value'] . ' Bs.'
-                    );
-                }
-
-                $totalColumnas = $colIndex - 1;
-                $lastColumn = Coordinate::stringFromColumnIndex($totalColumnas);
-
-                $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                    ->applyFromArray($this->headerTablaRed);
-
-                $fila++;
-
-                /* ===================== DATA ===================== */
-                foreach ($pagos_sin_verificar as $key => $item) {
-                    $colIndex = 1;
-
-                    $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $fila, $key + 1);
-
-                    $sheet->setCellValue(
-                        Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                        $item->fecha_verificado_t . "\n" . $item->hora_verificado
-                    );
-
-                    $sheet->setCellValue(
-                        Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                        $item->sucursal->nombre
-                    );
-
-                    $sheet->setCellValue(
-                        Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                        $item->cliente->nombre . ' ' .
-                            $item->cliente->paterno . ' ' .
-                            $item->cliente->materno
-                    );
-
-                    $tramitador_txt = "";
-                    if ($item->certificado_detalle->certificado->tramitador) {
-                        $tramitador_txt = " - " . $item->certificado_detalle->certificado->tramitador->nombre;
-                    }
-
-                    $sheet->setCellValue(
-                        Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                        $item->certificado_detalle->tipo_certificado->nombre . "\n(" .
-                            $item->certificado_detalle->certificado->tipo . $tramitador_txt . ")"
-                    );
-
-                    if ($item->medico) {
-                        $sheet->setCellValue(
-                            Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                            $item->medico->nombre . ' ' . $item->medico->paterno
-                        );
-                    } else {
-                        $sheet->setCellValue(
-                            Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                            ''
-                        );
-                    }
-
-                    foreach ($tipo_pagos as $tipo) {
-                        $value = ($item->tipo_pago == $tipo['value'])
-                            ? number_format($item->monto, 2, ".", "")
-                            : '';
-
-                        $sheet->setCellValue(
-                            Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                            $value
-                        );
-                    }
-
-                    $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                        ->applyFromArray($this->bodyTabla);
-
-                    $fila++;
-                }
-
-                /* ===================== TOTALES ===================== */
-                $sheet->setCellValue("A{$fila}", "TOTAL BS.");
-                $sheet->mergeCells("A{$fila}:" . Coordinate::stringFromColumnIndex(6) . "{$fila}");
-
-                $colIndex = 7;
-                $suma_total = 0;
-
-                foreach ($tipo_pagos as $tipo) {
-                    $total = $suma_tipos_sin_verificar[$tipo['value']] ?? 0;
-
-                    $sheet->setCellValue(
-                        Coordinate::stringFromColumnIndex($colIndex++) . $fila,
-                        number_format($total, 2, ".", "")
-                    );
-
-                    $suma_total += $total;
-                }
-
-                $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                    ->applyFromArray($this->headerTablaRed);
-
-                $fila++;
-
-                /* ===================== TOTAL FINAL ===================== */
-                $sheet->setCellValue("A{$fila}", "TOTAL FINAL BS.");
-                $sheet->mergeCells("A{$fila}:" . Coordinate::stringFromColumnIndex(6) . "{$fila}");
-
-                $sheet->setCellValue(
-                    Coordinate::stringFromColumnIndex(7) . $fila,
-                    number_format($suma_total, 2, ".", "")
-                );
-                $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                    ->applyFromArray($this->headerTablaRed);
-
-                $fila++;
-                $fila++;
-                // RESUMEN
-                $sheet->setCellValue("A{$fila}", "RESUMEN GENERAL");
-                $sheet->mergeCells("A{$fila}:{$lastColumn}{$fila}");
-                $sheet->getStyle("A{$fila}:{$lastColumn}{$fila}")
-                    ->getAlignment()->setHorizontal('center');
-                $fila++;
-                $sheet->setCellValue("D{$fila}", "TIPO DE PAGO");
-                $sheet->setCellValue("E{$fila}", "MONTO");
-                $sheet->getStyle("D{$fila}:E{$fila}")
-                    ->applyFromArray($this->headerTabla);
-                $total_final = 0;
-                $fila++;
-                foreach ($tipo_pagos as $tipo) {
-                    $total = $suma_tipos[$tipo['value']] ?? 0;
-                    $total_sin_verificar = $suma_tipos_sin_verificar[$tipo['value']] ?? 0;
-                    $total_final_tipo = $total + $total_sin_verificar;
-                    $sheet->setCellValue(
-                        "D{$fila}",
-                        $tipo['value']
-                    );
-                    $sheet->setCellValue(
-                        "E{$fila}",
-                        number_format($total_final_tipo, 2, ".", "")
-                    );
-                    $total_final += (float)$total_final_tipo;
-                    $fila++;
-                }
-
-                // TOTAL FINAL GENERAL
-                $sheet->setCellValue("D{$fila}", "TOTAL GENERAL");
-                $sheet->getStyle("D{$fila}:E{$fila}")
-                    ->applyFromArray($this->titulo);
-                $sheet->setCellValue(
-                    "E{$fila}",
-                    number_format($total_final, 2, ".", "")
-                );
-                $sheet->getStyle("D{$fila}:E{$fila}")
-                    ->applyFromArray($this->headerTabla);
-            }
-
-            /* ===================== COLUMN WIDTH ===================== */
             $sheet->getColumnDimension('A')->setWidth(6);
-            $sheet->getColumnDimension('B')->setWidth(18);
-            $sheet->getColumnDimension('C')->setWidth(18);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(15);
             $sheet->getColumnDimension('D')->setWidth(30);
-            $sheet->getColumnDimension('E')->setWidth(30);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(20);
+            $sheet->getColumnDimension('G')->setWidth(15);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(15);
+            $sheet->getColumnDimension('J')->setWidth(15);
 
-            for ($i = 6; $i <= $totalColumnas; $i++) {
-                $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($i))->setWidth(15);
+            foreach (range('A', 'J') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
             }
 
-            /* ===================== WRAP TEXT ===================== */
-            for ($i = 1; $i <= $totalColumnas; $i++) {
-                $sheet->getStyle(Coordinate::stringFromColumnIndex($i))
-                    ->getAlignment()
-                    ->setWrapText(true);
-            }
-
-            /* ===================== PAGE SETUP ===================== */
-            $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
             $sheet->getPageMargins()->setTop(0.5);
             $sheet->getPageMargins()->setRight(0.1);
             $sheet->getPageMargins()->setLeft(0.1);
             $sheet->getPageMargins()->setBottom(0.1);
-
-            $sheet->getPageSetup()->setPrintArea("A1:{$lastColumn}{$fila}");
+            $sheet->getPageSetup()->setPrintArea('A:J');
             $sheet->getPageSetup()->setFitToWidth(1);
             $sheet->getPageSetup()->setFitToHeight(0);
 
-            /* ===================== EXPORT ===================== */
             return response()->streamDownload(
                 function () use ($spreadsheet) {
                     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
                     $writer->save('php://output');
                 },
-                'caja_' . time() . '.xlsx',
+                'movimiento_caja_' . time() . '.xlsx',
                 [
                     'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 ]

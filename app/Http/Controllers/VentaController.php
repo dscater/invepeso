@@ -41,6 +41,32 @@ class VentaController extends Controller
     {
         return Inertia::render("Admin/Ventas/Index");
     }
+    public function buscar(Request $request)
+    {
+        $request->validate([
+            'q' => ['required', 'string', 'min:2', 'max:100'],
+        ]);
+
+        $busqueda = trim($request->input('q'));
+
+        return Venta::query()
+            ->select([
+                'id',
+                'codigo_venta',
+                'fecha_registro',
+                'cliente_id',
+                'sucursal_id',
+                'almacen_id',
+            ])
+            ->with(['cliente:id,nombre', "sucursal:id,nombre", "almacen:id,nombre"])
+            ->where('status', 1)
+            ->where(function ($query) use ($busqueda) {
+                $query->where('codigo_venta', 'like', "%{$busqueda}%");
+            })
+            ->orderBy('codigo_venta')
+            ->limit(20)
+            ->get();
+    }
 
     public function eliminados(): ResponseInertia
     {

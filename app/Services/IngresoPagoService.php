@@ -149,6 +149,11 @@ class IngresoPagoService
         ];
 
         // SALDO
+        $ingreso_producto = $ingreso_pago->ingreso_producto;
+        $ingreso_producto->cancelado_efectivo = (float)$ingreso_producto->ingreso_pagos->sum("monto_efectivo");
+        $ingreso_producto->cancelado_qr = (float)$ingreso_producto->ingreso_pagos->sum("monto_qr");
+        $ingreso_producto->total_cancelado = (float)$ingreso_producto->ingreso_pagos->sum("monto_total");
+
         $ingreso_producto->saldo = (float)$ingreso_producto->saldo - (float)$ingreso_pago->monto_total;
         $ingreso_producto->save();
         if ($ingreso_producto->saldo < 0) {
@@ -231,6 +236,10 @@ class IngresoPagoService
 
         // SALDO
         $ingreso_producto = $ingreso_pago->ingreso_producto;
+        $ingreso_producto = $ingreso_pago->ingreso_producto;
+        $ingreso_producto->cancelado_efectivo = (float)$ingreso_producto->ingreso_pagos->sum("monto_efectivo");
+        $ingreso_producto->cancelado_qr = (float)$ingreso_producto->ingreso_pagos->sum("monto_qr");
+        $ingreso_producto->total_cancelado = (float)$ingreso_producto->ingreso_pagos->sum("monto_total");
         $ingreso_producto->saldo = (float)$ingreso_producto->total - (float)$monto_total_cancelado;
         $ingreso_producto->save();
         if ($ingreso_producto->saldo < 0) {

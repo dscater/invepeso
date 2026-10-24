@@ -32,6 +32,7 @@ use App\Http\Controllers\IngresoProductoController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\MovimientoCajaController;
+use App\Http\Controllers\NotificacionUserController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoSucursalController;
 use App\Http\Controllers\ProfileController;
@@ -123,6 +124,12 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::resource("usuarios", UsuarioController::class)->only(
         ["index", "store"]
     );
+
+    // NOTIFICACION USERS
+    Route::get("notificacion_users", [NotificacionUserController::class, 'index'])->name("notificacion_users.index");
+    Route::get("notificacion_users/paginado", [NotificacionUserController::class, 'paginado'])->name("notificacion_users.paginado");
+    Route::get("notificacion_users/getNotificacions", [NotificacionUserController::class, 'getNotificacions'])->name("notificacion_users.getNotificacions");
+    Route::get("notificacion_users/show/{notificacion}", [NotificacionUserController::class, 'show'])->name("notificacion_users.show");
 
     // ROLES
     Route::get("roles/api", [RoleController::class, 'api'])->name("roles.api");
@@ -236,6 +243,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("ingreso_productos/lista_sin_verificar", [IngresoProductoController::class, 'lista_sin_verificar'])->name("ingreso_productos.lista_sin_verificar");
     Route::get("ingreso_productos/lista_faltantes", [IngresoProductoController::class, 'lista_faltantes'])->name("ingreso_productos.lista_faltantes");
     Route::get("ingreso_productos/lista_para_reponer", [IngresoProductoController::class, 'lista_para_reponer'])->name("ingreso_productos.lista_para_reponer");
+    Route::get('ingreso_productos/buscar', [IngresoProductoController::class, 'buscar'])->name('ingreso_productos.buscar');
     Route::get("ingreso_productos/verificacion_ingresos", [IngresoProductoController::class, 'verificacion_ingresos'])->name("ingreso_productos.verificacion_ingresos");
     Route::get("ingreso_productos/verificacion_create/{ingreso_producto}", [IngresoProductoController::class, 'verificacion_create'])->name("ingreso_productos.verificacion_create");
     Route::get("ingreso_productos/verificacion_edit/{ingreso_producto}", [IngresoProductoController::class, 'verificacion_edit'])->name("ingreso_productos.verificacion_edit");
@@ -295,6 +303,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("ventas/paginado_eliminados", [VentaController::class, 'paginado_eliminados'])->name("ventas.paginado_eliminados");
     Route::post("ventas/restaurar/{venta}", [VentaController::class, 'restaurar'])->name("ventas.restaurar");
     Route::delete("ventas/eliminar_permanente/{venta}", [VentaController::class, 'eliminar_permanente'])->name("ventas.eliminar_permanente");
+    Route::get('ventas/buscar', [VentaController::class, 'buscar'])->name('ventas.buscar');
     Route::get("ventas/listado", [VentaController::class, 'listado'])->name("ventas.listado");
     Route::get("ventas/cobros", [VentaController::class, 'cobros'])->name("ventas.cobros");
     Route::get("ventas/cobros/lista_cobros_pendientes", [VentaController::class, 'lista_cobros_pendientes'])->name("ventas.lista_cobros_pendientes");
@@ -347,6 +356,9 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get('reportes/orden_compras', [ReporteController::class, 'orden_compras'])->name("reportes.orden_compras");
     Route::get('reportes/r_orden_compras', [ReporteController::class, 'r_orden_compras'])->name("reportes.r_orden_compras");
 
+    Route::get('reportes/salida_productos', [ReporteController::class, 'salida_productos'])->name("reportes.salida_productos");
+    Route::get('reportes/r_salida_productos', [ReporteController::class, 'r_salida_productos'])->name("reportes.r_salida_productos");
+
     Route::get('reportes/ventas', [ReporteController::class, 'ventas'])->name("reportes.ventas");
     Route::get('reportes/r_ventas', [ReporteController::class, 'r_ventas'])->name("reportes.r_ventas");
 
@@ -355,5 +367,26 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     Route::get('reportes/proformas', [ReporteController::class, 'proformas'])->name("reportes.proformas");
     Route::get('reportes/r_proformas', [ReporteController::class, 'r_proformas'])->name("reportes.r_proformas");
+
+    Route::get('reportes/recepcions', [ReporteController::class, 'recepcions'])->name("reportes.recepcions");
+    Route::get('reportes/r_recepcions', [ReporteController::class, 'r_recepcions'])->name("reportes.r_recepcions");
+
+    Route::get('reportes/faltantes', [ReporteController::class, 'faltantes'])->name("reportes.faltantes");
+    Route::get('reportes/r_faltantes', [ReporteController::class, 'r_faltantes'])->name("reportes.r_faltantes");
+
+    Route::get('reportes/pago_compras', [ReporteController::class, 'pago_compras'])->name("reportes.pago_compras");
+    Route::get('reportes/r_pago_compras', [ReporteController::class, 'r_pago_compras'])->name("reportes.r_pago_compras");
+
+    Route::get('reportes/compras_credito', [ReporteController::class, 'compras_credito'])->name("reportes.compras_credito");
+    Route::get('reportes/r_compras_credito', [ReporteController::class, 'r_compras_credito'])->name("reportes.r_compras_credito");
+
+    Route::get('reportes/cobro_creditos', [ReporteController::class, 'cobro_creditos'])->name("reportes.cobro_creditos");
+    Route::get('reportes/r_cobro_creditos', [ReporteController::class, 'r_cobro_creditos'])->name("reportes.r_cobro_creditos");
+
+    Route::get('reportes/ventas_creditos', [ReporteController::class, 'ventas_creditos'])->name("reportes.ventas_creditos");
+    Route::get('reportes/r_ventas_creditos', [ReporteController::class, 'r_ventas_creditos'])->name("reportes.r_ventas_creditos");
+
+    Route::get('reportes/movimiento_cajas', [ReporteController::class, 'movimiento_cajas'])->name("reportes.movimiento_cajas");
+    Route::get('reportes/r_movimiento_cajas', [ReporteController::class, 'r_movimiento_cajas'])->name("reportes.r_movimiento_cajas");
 });
 require __DIR__ . '/auth.php';

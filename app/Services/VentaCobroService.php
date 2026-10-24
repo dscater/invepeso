@@ -151,6 +151,10 @@ class VentaCobroService
         ];
 
         // SALDO
+        $venta = $venta_cobro->venta;
+        $venta->cancelado_efectivo = (float)$venta->venta_cobros->sum("monto_efectivo");
+        $venta->cancelado_qr = (float)$venta->venta_cobros->sum("monto_qr");
+        $venta->total_cancelado = (float)$venta->venta_cobros->sum("monto_total");
         $venta->saldo = (float)$venta->saldo - (float)$venta_cobro->monto_total;
         $venta->save();
         if ($venta->saldo < 0) {
@@ -234,6 +238,9 @@ class VentaCobroService
 
         // SALDO
         $venta = $venta_cobro->venta;
+        $venta->cancelado_efectivo = (float)$venta->venta_cobros->sum("monto_efectivo");
+        $venta->cancelado_qr = (float)$venta->venta_cobros->sum("monto_qr");
+        $venta->total_cancelado = (float)$venta->venta_cobros->sum("monto_total");
         $venta->saldo = (float)$venta->total - (float)$monto_total_cancelado;
         $venta->save();
         if ($venta->saldo < 0) {

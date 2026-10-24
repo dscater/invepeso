@@ -322,6 +322,7 @@ class IngresoProductoService
                     "tipo" => "FALTANTE",
                     "fecha" => $fecha_actual,
                     "hora" => $hora_actual,
+                    "user_id" => Auth::user()->id,
                 ];
             }
 

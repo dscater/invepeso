@@ -79,9 +79,22 @@ const sincronizarMenus = () => {
 
     if (
         route_current.value == "reportes.usuarios" ||
-        route_current.value == "reportes.casos_epidemiologicos" ||
-        route_current.value == "reportes.alerta_epidemiologicas" ||
-        route_current.value == "reportes.seguimientos"
+        route_current.value == "reportes.clientes" ||
+        route_current.value == "reportes.proveedors" ||
+        route_current.value == "reportes.productos" ||
+        route_current.value == "reportes.stock_productos" ||
+        route_current.value == "reportes.orden_compras" ||
+        route_current.value == "reportes.salida_productos" ||
+        route_current.value == "reportes.ventas" ||
+        route_current.value == "reportes.venta_detalles" ||
+        route_current.value == "reportes.proformas" ||
+        route_current.value == "reportes.recepcions" ||
+        route_current.value == "reportes.faltantes" ||
+        route_current.value == "reportes.pago_compras" ||
+        route_current.value == "reportes.compras_credito" ||
+        route_current.value == "reportes.cobro_creditos" ||
+        route_current.value == "reportes.ventas_creditos" ||
+        route_current.value == "reportes.movimiento_cajas"
     ) {
         openMenus.reportes = true;
     }
@@ -541,11 +554,25 @@ onUnmounted(() => {});
                             permisos.includes('categorias.index') ||
                             permisos.includes('marcas.index') ||
                             permisos.includes('unidad_medidas.index') ||
-                            permisos.includes('proveedors.index')
+                            permisos.includes('proveedors.index') ||
+                            permisos.includes('notificacion_users.index')
                         "
                     >
                         ADMINISTRACIÓN
                     </li>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('notificacion_users.index')
+                        "
+                        :label="'Notificaciones'"
+                        :array-ruta-class-active="[
+                            'notificacion_users.index',
+                            'notificacion_users.show',
+                        ]"
+                        :ruta="'notificacion_users.index'"
+                        :icon="'fa fa-bell'"
+                    ></ItemMenu>
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
@@ -703,9 +730,7 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('usuarios.index') ||
-                                    permisos.includes('roles.index') ||
-                                    permisos.includes('roles.edit')
+                                    permisos.includes('usuarios.index')
                                 "
                                 :label="'Lista de Usuarios'"
                                 :ruta="'usuarios.index'"
@@ -714,7 +739,8 @@ onUnmounted(() => {});
                             <ItemMenu
                                 v-if="
                                     permisos == '*' ||
-                                    permisos.includes('roles.index')
+                                    permisos.includes('roles.index') ||
+                                    permisos.includes('roles.edit')
                                 "
                                 :label="'Roles y Permisos'"
                                 :ruta="'roles.index'"
@@ -732,98 +758,256 @@ onUnmounted(() => {});
                             permisos == '*' ||
                             permisos.includes('reportes.usuarios') ||
                             permisos.includes('reportes.clientes') ||
-                            permisos.includes('reportes.certificados') ||
-                            permisos.includes(
-                                'reportes.certificados_interno',
-                            ) ||
-                            permisos.includes('reportes.historial_accions') ||
-                            permisos.includes('reportes.gcemitidos') ||
-                            permisos.includes('reportes.gmemitidos')
+                            permisos.includes('reportes.proveedors') ||
+                            permisos.includes('reportes.productos') ||
+                            permisos.includes('reportes.stock_productos') ||
+                            permisos.includes('reportes.orden_compras') ||
+                            permisos.includes('reportes.salida_productos') ||
+                            permisos.includes('reportes.ventas') ||
+                            permisos.includes('reportes.venta_detalles') ||
+                            permisos.includes('reportes.proformas') ||
+                            permisos.includes('reportes.recepcions') ||
+                            permisos.includes('reportes.faltantes') ||
+                            permisos.includes('reportes.pago_compras') ||
+                            permisos.includes('reportes.compras_credito') ||
+                            permisos.includes('reportes.cobro_creditos') ||
+                            permisos.includes('reportes.ventas_creditos') ||
+                            permisos.includes('reportes.movimiento_cajas')
                         "
                     >
                         REPORTES
                     </li>
-                    <ItemMenu
+
+                    <li
+                        class="nav-item"
                         v-if="
                             permisos == '*' ||
-                            permisos.includes('reportes.venta_detalles')
+                            permisos.includes('reportes.usuarios') ||
+                            permisos.includes('reportes.clientes') ||
+                            permisos.includes('reportes.proveedors') ||
+                            permisos.includes('reportes.productos') ||
+                            permisos.includes('reportes.stock_productos') ||
+                            permisos.includes('reportes.orden_compras') ||
+                            permisos.includes('reportes.salida_productos') ||
+                            permisos.includes('reportes.ventas') ||
+                            permisos.includes('reportes.venta_detalles') ||
+                            permisos.includes('reportes.proformas') ||
+                            permisos.includes('reportes.recepcions') ||
+                            permisos.includes('reportes.faltantes') ||
+                            permisos.includes('reportes.pago_compras') ||
+                            permisos.includes('reportes.compras_credito') ||
+                            permisos.includes('reportes.cobro_creditos') ||
+                            permisos.includes('reportes.ventas_creditos') ||
+                            permisos.includes('reportes.movimiento_cajas')
                         "
-                        :label="'Ventas Detalles'"
-                        :ruta="'reportes.venta_detalles'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.ventas')
-                        "
-                        :label="'Listado de Ventas'"
-                        :ruta="'reportes.ventas'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.proformas')
-                        "
-                        :label="'Listado de Proformas'"
-                        :ruta="'reportes.proformas'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.orden_compras')
-                        "
-                        :label="'Listado de Ordenes de Compra'"
-                        :ruta="'reportes.orden_compras'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.stock_productos')
-                        "
-                        :label="'Stock de Productos'"
-                        :ruta="'reportes.stock_productos'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.productos')
-                        "
-                        :label="'Lista de Productos'"
-                        :ruta="'reportes.productos'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.clientes')
-                        "
-                        :label="'Lista de Clientes'"
-                        :ruta="'reportes.clientes'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.proveedors')
-                        "
-                        :label="'Lista de Proveedores'"
-                        :ruta="'reportes.proveedors'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
-                    <ItemMenu
-                        v-if="
-                            permisos == '*' ||
-                            permisos.includes('reportes.usuarios')
-                        "
-                        :label="'Lista de Usuarios'"
-                        :ruta="'reportes.usuarios'"
-                        :icon="'fa fa-file-pdf'"
-                    ></ItemMenu>
+                        :class="{ 'menu-open': openMenus.reportes }"
+                    >
+                        <a
+                            href="#"
+                            class="nav-link"
+                            :class="[
+                                route_current == 'reportes.usuarios' ||
+                                route_current == 'reportes.clientes' ||
+                                route_current == 'reportes.proveedors' ||
+                                route_current == 'reportes.productos' ||
+                                route_current == 'reportes.stock_productos' ||
+                                route_current == 'reportes.orden_compras' ||
+                                route_current == 'reportes.salida_productos' ||
+                                route_current == 'reportes.ventas' ||
+                                route_current == 'reportes.venta_detalles' ||
+                                route_current == 'reportes.proformas' ||
+                                route_current == 'reportes.recepcions' ||
+                                route_current == 'reportes.faltantes' ||
+                                route_current == 'reportes.pago_compras' ||
+                                route_current == 'reportes.compras_credito' ||
+                                route_current == 'reportes.cobro_creditos' ||
+                                route_current == 'reportes.ventas_creditos' ||
+                                route_current == 'reportes.movimiento_cajas'
+                                    ? 'active menu-is-opening menu-open'
+                                    : '',
+                            ]"
+                            @click.prevent="toggleSubMenu('reportes')"
+                        >
+                            <i class="nav-icon fa fa-file-pdf"></i>
+                            <p>
+                                Reportes
+                                <i class="nav-arrow fa fa-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul
+                            class="nav nav-treeview"
+                            role="navigation"
+                            aria-label="Navigation 4"
+                            :style="{
+                                maxHeight: openMenus.reportes ? '500px' : '0px',
+                            }"
+                        >
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes(
+                                        'reportes.movimiento_cajas',
+                                    )
+                                "
+                                :label="'Movimiento de Cajas'"
+                                :ruta="'reportes.movimiento_cajas'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.recepcions')
+                                "
+                                :label="'Recepción de Compras'"
+                                :ruta="'reportes.recepcions'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.faltantes')
+                                "
+                                :label="'Recepción de Faltantes'"
+                                :ruta="'reportes.faltantes'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.pago_compras')
+                                "
+                                :label="'Lista Pago de Compras'"
+                                :ruta="'reportes.pago_compras'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.cobro_creditos')
+                                "
+                                :label="'Lista Cobro de Créditos'"
+                                :ruta="'reportes.cobro_creditos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes(
+                                        'reportes.ventas_creditos',
+                                    )
+                                "
+                                :label="'Ventas a Crédito'"
+                                :ruta="'reportes.ventas_creditos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes(
+                                        'reportes.compras_credito',
+                                    )
+                                "
+                                :label="'Compras a Crédito'"
+                                :ruta="'reportes.compras_credito'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.venta_detalles')
+                                "
+                                :label="'Ventas Detalles'"
+                                :ruta="'reportes.venta_detalles'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.ventas')
+                                "
+                                :label="'Listado de Ventas'"
+                                :ruta="'reportes.ventas'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.proformas')
+                                "
+                                :label="'Listado de Proformas'"
+                                :ruta="'reportes.proformas'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.orden_compras')
+                                "
+                                :label="'Listado de Ordenes de Compra'"
+                                :ruta="'reportes.orden_compras'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes(
+                                        'reportes.salida_productos',
+                                    )
+                                "
+                                :label="'Listado de Salida de Productos'"
+                                :ruta="'reportes.salida_productos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes(
+                                        'reportes.stock_productos',
+                                    )
+                                "
+                                :label="'Stock de Productos'"
+                                :ruta="'reportes.stock_productos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.productos')
+                                "
+                                :label="'Lista de Productos'"
+                                :ruta="'reportes.productos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.clientes')
+                                "
+                                :label="'Lista de Clientes'"
+                                :ruta="'reportes.clientes'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.proveedors')
+                                "
+                                :label="'Lista de Proveedores'"
+                                :ruta="'reportes.proveedors'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes('reportes.usuarios')
+                                "
+                                :label="'Lista de Usuarios'"
+                                :ruta="'reportes.usuarios'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                        </ul>
+                    </li>
+
                     <li class="nav-header font-weight-bold">OTROS</li>
                     <ItemMenu
                         v-if="

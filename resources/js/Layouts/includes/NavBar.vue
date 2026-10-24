@@ -37,24 +37,24 @@ const salir = () => {
 const intervalNotifaciones = ref(null);
 const listNotificacionUsers = ref([]);
 const getNotificacionUsers = () => {
-    // axios.get(route("notificacion_users.getNotificacions")).then((response) => {
-    //     if (
-    //         response.data.notificacion_users.length !=
-    //         listNotificacionUsers.value.length
-    //     )
-    //         listNotificacionUsers.value = response.data.notificacion_users;
-    // });
+    axios.get(route("notificacion_users.getNotificacions")).then((response) => {
+        if (
+            response.data.notificacion_users.length !=
+            listNotificacionUsers.value.length
+        )
+            listNotificacionUsers.value = response.data.notificacion_users;
+    });
 };
 
 onMounted(() => {
     if (
         props.auth?.user.permisos == "*" ||
-        props.auth?.user.permisos.includes("notificacions.index")
+        props.auth?.user.permisos.includes("notificacion_users.index")
     ) {
         getNotificacionUsers();
         intervalNotifaciones.value = setInterval(() => {
             getNotificacionUsers();
-        }, 1500);
+        }, 1000 * 120);
     }
 });
 
@@ -96,11 +96,13 @@ onBeforeUnmount(() => {
 
         <!-- Right navbar links -->
         <ul class="navbar-nav ms-auto">
-            <!-- <li
+            <li
                 class="nav-item dropdown"
                 v-if="
                     props.auth?.user.permisos == '*' ||
-                    props.auth?.user.permisos.includes('prediccions.index')
+                    props.auth?.user.permisos.includes(
+                        'notificacion_users.index',
+                    )
                 "
             >
                 <a
@@ -122,7 +124,7 @@ onBeforeUnmount(() => {
                     style="left: inherit; right: 0px"
                 >
                     <span class="dropdown-item dropdown-header border-bottom"
-                        >{{ listNotificacionUsers.length }} Notificationes</span
+                        >{{ listNotificacionUsers.length }} Notificaciones</span
                     >
                     <div class="contenedor_notificaciones">
                         <div
@@ -160,7 +162,7 @@ onBeforeUnmount(() => {
                         >Ver todas</Link
                     >
                 </div>
-            </li> -->
+            </li>
             <li class="nav-item">
                 <a
                     class="nav-link"

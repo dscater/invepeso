@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 24-10-2026 a las 15:29:21
+-- Tiempo de generación: 24-10-2026 a las 23:55:05
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -10221,7 +10221,25 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (4, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 199 EN LA SUCURSAL SUCURSAL 1; almacén ALMACEN 1', '{\"id\": 1, \"hora\": \"10:29:08\", \"tipo\": \"VENTA\", \"fecha\": \"2026-10-19\", \"modulo\": \"Venta\", \"user_id\": 1, \"monto_qr\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 2, \"created_at\": \"2026-10-19T14:29:08.000000Z\", \"updated_at\": \"2026-10-19T14:29:08.000000Z\", \"descripcion\": \"INGRESO POR VENTA\", \"monto_total\": 199, \"registro_id\": 2, \"sucursal_id\": 2, \"monto_efectivo\": \"199\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-10-19', '10:29:08', '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
 (5, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 2, \"hora\": \"10:29:08\", \"fecha\": \"2026-10-19\", \"saldo\": \"0.00\", \"total\": \"199.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"199.00\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 2, \"cliente_id\": 1, \"created_at\": \"2026-10-19T14:29:08.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-10-19T14:29:08.000000Z\", \"sucursal_id\": 2, \"cancelado_qr\": \"0\", \"codigo_venta\": \"V2\", \"fecha_registro\": \"2026-10-19\", \"venta_detalles\": [{\"id\": 3, \"total\": \"199.00\", \"precio\": \"199.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 2, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"199.00\", \"created_at\": \"2026-10-19T14:29:08.000000Z\", \"updated_at\": \"2026-10-19T14:29:08.000000Z\", \"producto_id\": 1, \"precio_final\": \"199.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 199, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"199\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-10-19', '10:29:08', '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
 (6, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 3, \"hora\": \"22:53:59\", \"fecha\": \"2026-10-19\", \"saldo\": \"199.00\", \"total\": \"199.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"199.00\", \"descuento\": \"0\", \"tipo_pago\": \"\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-10-20T02:53:59.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-10-20T02:53:59.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"0\", \"codigo_venta\": \"V3\", \"fecha_registro\": \"2026-10-19\", \"venta_detalles\": [{\"id\": 4, \"total\": \"199.00\", \"precio\": \"199.00\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 3, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"199.00\", \"created_at\": \"2026-10-20T02:53:59.000000Z\", \"updated_at\": \"2026-10-20T02:53:59.000000Z\", \"producto_id\": 1, \"precio_final\": \"199.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 0, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"0\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-10-19', '22:53:59', '2026-10-20 02:54:00', '2026-10-20 02:54:00'),
-(7, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA PROFORMA', '{\"id\": 1, \"hora\": \"10:51:13\", \"fecha\": \"2026-10-24\", \"saldo\": 0, \"total\": \"797.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"797.00\", \"cancelado\": \"797.00\", \"descuento\": \"0\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-10-24T14:51:13.000000Z\", \"updated_at\": \"2026-10-24T14:51:13.000000Z\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-10-24\", \"codigo_proforma\": \"P1\", \"proforma_detalles\": [{\"id\": 1, \"total\": \"597.00\", \"precio\": \"199.00\", \"cantidad\": 3, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"597.00\", \"created_at\": \"2026-10-24T14:51:13.000000Z\", \"updated_at\": \"2026-10-24T14:51:13.000000Z\", \"producto_id\": 1, \"proforma_id\": 1, \"precio_final\": \"199.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 2, \"total\": \"200.00\", \"precio\": \"200.00\", \"cantidad\": 1, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-10-24T14:51:13.000000Z\", \"updated_at\": \"2026-10-24T14:51:13.000000Z\", \"producto_id\": 2, \"proforma_id\": 1, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', NULL, 'PROFORMAS', '2026-10-24', '10:51:13', '2026-10-24 14:51:13', '2026-10-24 14:51:13');
+(7, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA PROFORMA', '{\"id\": 1, \"hora\": \"10:51:13\", \"fecha\": \"2026-10-24\", \"saldo\": 0, \"total\": \"797.00\", \"nit_ci\": \"123456-CM\", \"user_id\": 1, \"subtotal\": \"797.00\", \"cancelado\": \"797.00\", \"descuento\": \"0\", \"almacen_id\": 1, \"cliente_id\": 1, \"created_at\": \"2026-10-24T14:51:13.000000Z\", \"updated_at\": \"2026-10-24T14:51:13.000000Z\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-10-24\", \"codigo_proforma\": \"P1\", \"proforma_detalles\": [{\"id\": 1, \"total\": \"597.00\", \"precio\": \"199.00\", \"cantidad\": 3, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"597.00\", \"created_at\": \"2026-10-24T14:51:13.000000Z\", \"updated_at\": \"2026-10-24T14:51:13.000000Z\", \"producto_id\": 1, \"proforma_id\": 1, \"precio_final\": \"199.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}, {\"id\": 2, \"total\": \"200.00\", \"precio\": \"200.00\", \"cantidad\": 1, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"200.00\", \"created_at\": \"2026-10-24T14:51:13.000000Z\", \"updated_at\": \"2026-10-24T14:51:13.000000Z\", \"producto_id\": 2, \"proforma_id\": 1, \"precio_final\": \"200.00\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"tipo_documento_id\": 1, \"porcentaje_descuento\": 0}', NULL, 'PROFORMAS', '2026-10-24', '10:51:13', '2026-10-24 14:51:13', '2026-10-24 14:51:13'),
+(8, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 2000 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 2, \"hora\": \"17:05:17\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-10-24\", \"modulo\": \"IngresoPago\", \"user_id\": 1, \"monto_qr\": \"1000\", \"tipo_pago\": \"EFECTIVO-QR\", \"almacen_id\": 1, \"created_at\": \"2026-10-24T21:05:17.000000Z\", \"updated_at\": \"2026-10-24T21:05:17.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": 2000, \"registro_id\": 1, \"sucursal_id\": 1, \"monto_efectivo\": \"1000\", \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-10-24', '17:05:17', '2026-10-24 21:05:17', '2026-10-24 21:05:17'),
+(9, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 1, \"hora\": \"17:05:17\", \"fecha\": \"2026-10-24\", \"user_id\": 1, \"monto_qr\": \"1000\", \"almacen_id\": 1, \"created_at\": \"2026-10-24T21:05:17.000000Z\", \"updated_at\": \"2026-10-24T21:05:17.000000Z\", \"monto_total\": 2000, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": \"1000\", \"ingreso_producto_id\": 1}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-10-24', '17:05:17', '2026-10-24 21:05:17', '2026-10-24 21:05:17'),
+(10, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 100 EN LA SUCURSAL SUCURSAL 1; almacén ALMACEN 1', '{\"id\": 3, \"hora\": \"17:16:34\", \"tipo\": \"COBRO POR VENTA DE PRODUCTOS\", \"fecha\": \"2026-10-24\", \"modulo\": \"VentaCobro\", \"user_id\": 1, \"monto_qr\": 0, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 2, \"created_at\": \"2026-10-24T21:16:34.000000Z\", \"updated_at\": \"2026-10-24T21:16:34.000000Z\", \"descripcion\": \"COBRO POR VENTA DE PRODUCTOS\", \"monto_total\": 100, \"registro_id\": 1, \"sucursal_id\": 2, \"monto_efectivo\": \"100\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-10-24', '17:16:34', '2026-10-24 21:16:34', '2026-10-24 21:16:34'),
+(11, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 1, \"hora\": \"17:16:34\", \"fecha\": \"2026-10-24\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": 0, \"venta_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 2, \"cliente_id\": 13, \"created_at\": \"2026-10-24T21:16:34.000000Z\", \"updated_at\": \"2026-10-24T21:16:34.000000Z\", \"monto_total\": 100, \"sucursal_id\": 2, \"monto_efectivo\": \"100\"}', NULL, 'COBROS DE CRÉDITOS POR VENTAS', '2026-10-24', '17:16:34', '2026-10-24 21:16:34', '2026-10-24 21:16:34'),
+(12, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 62 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 4, \"hora\": \"17:16:43\", \"tipo\": \"COBRO POR VENTA DE PRODUCTOS\", \"fecha\": \"2026-10-24\", \"modulo\": \"VentaCobro\", \"user_id\": 1, \"monto_qr\": \"62\", \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"created_at\": \"2026-10-24T21:16:43.000000Z\", \"updated_at\": \"2026-10-24T21:16:43.000000Z\", \"descripcion\": \"COBRO POR VENTA DE PRODUCTOS\", \"monto_total\": 62, \"registro_id\": 2, \"sucursal_id\": 1, \"monto_efectivo\": 0, \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-10-24', '17:16:43', '2026-10-24 21:16:43', '2026-10-24 21:16:43'),
+(13, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 2, \"hora\": \"17:16:43\", \"fecha\": \"2026-10-24\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": \"62\", \"venta_id\": 1, \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"cliente_id\": 13, \"created_at\": \"2026-10-24T21:16:43.000000Z\", \"updated_at\": \"2026-10-24T21:16:43.000000Z\", \"monto_total\": 62, \"sucursal_id\": 1, \"monto_efectivo\": 0}', NULL, 'COBROS DE CRÉDITOS POR VENTAS', '2026-10-24', '17:16:43', '2026-10-24 21:16:43', '2026-10-24 21:16:43'),
+(14, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UN PAGO POR VENTA DE PRODUCTOS', '{\"id\": 2, \"hora\": \"17:16:43\", \"fecha\": \"2026-10-24\", \"saldo\": \"0.00\", \"user_id\": 1, \"monto_qr\": \"62.00\", \"venta_id\": 1, \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"cliente_id\": 13, \"created_at\": \"2026-10-24T21:16:43.000000Z\", \"updated_at\": \"2026-10-24T21:16:43.000000Z\", \"monto_total\": \"62.00\", \"sucursal_id\": 1, \"monto_efectivo\": \"0.00\"}', '{\"id\": 2, \"hora\": \"17:43:32\", \"fecha\": \"2026-10-24\", \"saldo\": 0, \"user_id\": 1, \"monto_qr\": \"62.00\", \"venta_id\": 1, \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"cliente_id\": 13, \"created_at\": \"2026-10-24T21:16:43.000000Z\", \"updated_at\": \"2026-10-24T21:43:32.000000Z\", \"monto_total\": 62, \"sucursal_id\": 1, \"monto_efectivo\": \"0.00\"}', 'COBROS DE CRÉDITOS POR VENTAS', '2026-10-24', '17:43:32', '2026-10-24 21:43:32', '2026-10-24 21:43:32'),
+(15, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 200 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 5, \"hora\": \"17:43:54\", \"tipo\": \"COBRO POR VENTA DE PRODUCTOS\", \"fecha\": \"2026-10-24\", \"modulo\": \"VentaCobro\", \"user_id\": 1, \"monto_qr\": 0, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-10-24T21:43:54.000000Z\", \"updated_at\": \"2026-10-24T21:43:54.000000Z\", \"descripcion\": \"COBRO POR VENTA DE PRODUCTOS\", \"monto_total\": 200, \"registro_id\": 3, \"sucursal_id\": 1, \"monto_efectivo\": \"200\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-10-24', '17:43:54', '2026-10-24 21:43:54', '2026-10-24 21:43:54'),
+(16, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 3, \"hora\": \"17:43:54\", \"fecha\": \"2026-10-24\", \"saldo\": 0, \"venta\": {\"id\": 1, \"hora\": \"10:26:57\", \"fecha\": \"2026-10-19\", \"saldo\": 1000, \"total\": \"1362.00\", \"nit_ci\": \"56565656\", \"status\": 1, \"user_id\": 1, \"subtotal\": \"1362.00\", \"descuento\": \"0.00\", \"tipo_pago\": \"\", \"almacen_id\": 1, \"cliente_id\": 13, \"created_at\": \"2026-10-19T14:26:57.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-10-24T21:43:54.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": 62, \"codigo_venta\": \"V1\", \"fecha_hora_t\": \"19/10/2026 10:26:57\", \"venta_cobros\": [{\"id\": 1, \"hora\": \"17:16:34\", \"fecha\": \"2026-10-24\", \"saldo\": \"0.00\", \"fecha_t\": \"24/10/2026\", \"user_id\": 1, \"monto_qr\": \"0.00\", \"venta_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 2, \"cliente_id\": 13, \"created_at\": \"2026-10-24T21:16:34.000000Z\", \"updated_at\": \"2026-10-24T21:16:34.000000Z\", \"monto_total\": \"100.00\", \"sucursal_id\": 2, \"fecha_hora_t\": \"24/10/2026 17:16:34\", \"monto_efectivo\": \"100.00\"}, {\"id\": 2, \"hora\": \"17:43:32\", \"fecha\": \"2026-10-24\", \"saldo\": \"0.00\", \"fecha_t\": \"24/10/2026\", \"user_id\": 1, \"monto_qr\": \"62.00\", \"venta_id\": 1, \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"cliente_id\": 13, \"created_at\": \"2026-10-24T21:16:43.000000Z\", \"updated_at\": \"2026-10-24T21:43:32.000000Z\", \"monto_total\": \"62.00\", \"sucursal_id\": 1, \"fecha_hora_t\": \"24/10/2026 17:43:32\", \"monto_efectivo\": \"0.00\"}, {\"id\": 3, \"hora\": \"17:43:54\", \"fecha\": \"2026-10-24\", \"saldo\": \"0.00\", \"fecha_t\": \"24/10/2026\", \"user_id\": 1, \"monto_qr\": \"0.00\", \"venta_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 13, \"created_at\": \"2026-10-24T21:43:54.000000Z\", \"updated_at\": \"2026-10-24T21:43:54.000000Z\", \"monto_total\": \"200.00\", \"sucursal_id\": 1, \"fecha_hora_t\": \"24/10/2026 17:43:54\", \"monto_efectivo\": \"200.00\"}], \"fecha_registro\": \"2026-10-19\", \"total_cancelado\": 362, \"fecha_registro_t\": \"19/10/2026\", \"tipo_documento_id\": 1, \"cancelado_efectivo\": 300, \"porcentaje_descuento\": 0}, \"user_id\": 1, \"monto_qr\": 0, \"venta_id\": 1, \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 13, \"created_at\": \"2026-10-24T21:43:54.000000Z\", \"updated_at\": \"2026-10-24T21:43:54.000000Z\", \"monto_total\": 200, \"sucursal_id\": 1, \"monto_efectivo\": \"200\"}', NULL, 'COBROS DE CRÉDITOS POR VENTAS', '2026-10-24', '17:43:54', '2026-10-24 21:43:54', '2026-10-24 21:43:54'),
+(17, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN EGRESO DE BS. 500 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 6, \"hora\": \"17:55:54\", \"tipo\": \"PAGO POR COMPRA DE PRODUCTOS\", \"fecha\": \"2026-10-24\", \"modulo\": \"IngresoPago\", \"user_id\": 1, \"monto_qr\": \"500\", \"tipo_pago\": \"QR\", \"almacen_id\": 1, \"created_at\": \"2026-10-24T21:55:54.000000Z\", \"updated_at\": \"2026-10-24T21:55:54.000000Z\", \"descripcion\": \"PAGO POR COMPRA DE PRODUCTOS\", \"monto_total\": 500, \"registro_id\": 2, \"sucursal_id\": 1, \"monto_efectivo\": 0, \"tipo_movimiento\": \"EGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-10-24', '17:55:54', '2026-10-24 21:55:54', '2026-10-24 21:55:54'),
+(18, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PAGO POR COMPRA DE PRODUCTOS', '{\"id\": 2, \"hora\": \"17:55:54\", \"fecha\": \"2026-10-24\", \"user_id\": 1, \"monto_qr\": \"500\", \"almacen_id\": 1, \"created_at\": \"2026-10-24T21:55:54.000000Z\", \"updated_at\": \"2026-10-24T21:55:54.000000Z\", \"monto_total\": 500, \"sucursal_id\": 1, \"proveedor_id\": 1, \"monto_efectivo\": 0, \"ingreso_producto\": {\"id\": 1, \"saldo\": 46100, \"total\": \"48600.00\", \"codigo\": \"F001\", \"status\": 1, \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-10-19T14:24:00.000000Z\", \"updated_at\": \"2026-10-24T21:55:54.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": 1500, \"proveedor_id\": 1, \"ingreso_pagos\": [{\"id\": 1, \"hora\": \"17:05:17\", \"fecha\": \"2026-10-24\", \"fecha_t\": \"24/10/2026\", \"user_id\": 1, \"monto_qr\": \"1000.00\", \"almacen_id\": 1, \"created_at\": \"2026-10-24T21:05:17.000000Z\", \"updated_at\": \"2026-10-24T21:05:17.000000Z\", \"monto_total\": \"2000.00\", \"sucursal_id\": 1, \"fecha_hora_t\": \"24/10/2026 17:05:17\", \"proveedor_id\": 1, \"monto_efectivo\": \"1000.00\", \"ingreso_producto_id\": 1}, {\"id\": 2, \"hora\": \"17:55:54\", \"fecha\": \"2026-10-24\", \"fecha_t\": \"24/10/2026\", \"user_id\": 1, \"monto_qr\": \"500.00\", \"almacen_id\": 1, \"created_at\": \"2026-10-24T21:55:54.000000Z\", \"updated_at\": \"2026-10-24T21:55:54.000000Z\", \"monto_total\": \"500.00\", \"sucursal_id\": 1, \"fecha_hora_t\": \"24/10/2026 17:55:54\", \"proveedor_id\": 1, \"monto_efectivo\": \"0.00\", \"ingreso_producto_id\": 1}], \"estado_ingreso\": \"VERIFICADO\", \"fecha_registro\": \"2026-10-19\", \"tipo_ingreso_id\": 1, \"total_cancelado\": 2500, \"estado_faltantes\": \"PENDIENTE\", \"fecha_registro_t\": \"19/10/2026\", \"cancelado_efectivo\": 1000}, \"ingreso_producto_id\": 1}', NULL, 'PAGOS DE INGRESO DE PRODUCTOS', '2026-10-24', '17:55:54', '2026-10-24 21:55:54', '2026-10-24 21:55:54'),
+(19, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA SALIDA DE PRODUCTOS', '{\"id\": 1, \"user_id\": 1, \"cantidad\": \"1\", \"almacen_id\": 1, \"created_at\": \"2026-10-24T22:16:57.000000Z\", \"updated_at\": \"2026-10-24T22:16:57.000000Z\", \"descripcion\": \"\", \"sucursal_id\": 1, \"fecha_registro\": \"2026-10-24\", \"tipo_salida_id\": null, \"salida_detalles\": [{\"id\": 1, \"cantidad\": 1, \"created_at\": \"2026-10-24T22:16:57.000000Z\", \"updated_at\": \"2026-10-24T22:16:57.000000Z\", \"observacion\": null, \"producto_id\": 1, \"tipo_salida_id\": 1, \"salida_producto_id\": 1}]}', NULL, 'SALIDA DE PRODUCTOS', '2026-10-24', '18:16:57', '2026-10-24 22:16:57', '2026-10-24 22:16:57'),
+(20, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 2, \"saldo\": \"3402.48\", \"total\": \"3402.48\", \"codigo\": \"F002\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-10-24T23:39:31.000000Z\", \"updated_at\": \"2026-10-24T23:39:31.000000Z\", \"descripcion\": \"PRUEBA NOTIFICACIONES\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0\", \"proveedor_id\": \"1\", \"fecha_registro\": \"2026-10-24\", \"tipo_ingreso_id\": \"1\", \"total_cancelado\": 0, \"ingreso_detalles\": [{\"id\": 5, \"costo\": \"3402.48\", \"cantidad\": 1, \"repuesto\": 0, \"subtotal\": \"3402.48\", \"faltantes\": null, \"created_at\": \"2026-10-24T23:39:31.000000Z\", \"updated_at\": \"2026-10-24T23:39:31.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 6, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 2}], \"cancelado_efectivo\": \"0\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-10-24', '19:39:31', '2026-10-24 23:39:31', '2026-10-24 23:39:31'),
+(21, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 3, \"saldo\": \"3402.48\", \"total\": \"3402.48\", \"codigo\": \"F003\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-10-24T23:40:51.000000Z\", \"updated_at\": \"2026-10-24T23:40:51.000000Z\", \"descripcion\": \"PRUEBA 2 NOTIFICACION\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0\", \"proveedor_id\": \"2\", \"fecha_registro\": \"2026-10-24\", \"tipo_ingreso_id\": \"1\", \"total_cancelado\": 0, \"ingreso_detalles\": [{\"id\": 6, \"costo\": \"3402.48\", \"cantidad\": 1, \"repuesto\": 0, \"subtotal\": \"3402.48\", \"faltantes\": null, \"created_at\": \"2026-10-24T23:40:51.000000Z\", \"updated_at\": \"2026-10-24T23:40:51.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 6, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 3}], \"cancelado_efectivo\": \"0\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-10-24', '19:40:51', '2026-10-24 23:40:51', '2026-10-24 23:40:51'),
+(22, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO DE BS. 4860.69 EN LA SUCURSAL SUCURSAL CENTRAL; almacén ALMACEN CENTRAL', '{\"id\": 7, \"hora\": \"19:43:33\", \"tipo\": \"VENTA\", \"fecha\": \"2026-10-24\", \"modulo\": \"Venta\", \"user_id\": 1, \"monto_qr\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"created_at\": \"2026-10-24T23:43:33.000000Z\", \"updated_at\": \"2026-10-24T23:43:33.000000Z\", \"descripcion\": \"INGRESO POR VENTA\", \"monto_total\": 4860.69, \"registro_id\": 4, \"sucursal_id\": 1, \"monto_efectivo\": \"4860.69\", \"tipo_movimiento\": \"INGRESO\"}', NULL, 'MOVIMIENTO DE CAJAS', '2026-10-24', '19:43:33', '2026-10-24 23:43:33', '2026-10-24 23:43:33'),
+(23, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 4, \"hora\": \"19:43:33\", \"fecha\": \"2026-10-24\", \"saldo\": \"0.00\", \"total\": \"4860.69\", \"nit_ci\": \"223332\", \"user_id\": 1, \"subtotal\": \"4860.69\", \"descuento\": \"0\", \"tipo_pago\": \"EFECTIVO\", \"almacen_id\": 1, \"cliente_id\": 7, \"created_at\": \"2026-10-24T23:43:33.000000Z\", \"tipo_venta\": \"AL CONTADO\", \"updated_at\": \"2026-10-24T23:43:33.000000Z\", \"sucursal_id\": 1, \"cancelado_qr\": \"0\", \"codigo_venta\": \"V4\", \"fecha_registro\": \"2026-10-24\", \"venta_detalles\": [{\"id\": 5, \"total\": \"4860.69\", \"precio\": \"4860.69\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 4, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"4860.69\", \"created_at\": \"2026-10-24T23:43:33.000000Z\", \"updated_at\": \"2026-10-24T23:43:33.000000Z\", \"producto_id\": 6, \"precio_final\": \"4860.69\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 4860.69, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"4860.69\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-10-24', '19:43:33', '2026-10-24 23:43:33', '2026-10-24 23:43:33'),
+(24, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA VENTA', '{\"id\": 6, \"hora\": \"19:45:01\", \"fecha\": \"2026-10-24\", \"saldo\": \"4860.69\", \"total\": \"4860.69\", \"nit_ci\": \"34343443\", \"user_id\": 1, \"subtotal\": \"4860.69\", \"descuento\": \"0\", \"tipo_pago\": \"\", \"almacen_id\": 2, \"cliente_id\": 12, \"created_at\": \"2026-10-24T23:45:01.000000Z\", \"tipo_venta\": \"CRÉDITO\", \"updated_at\": \"2026-10-24T23:45:01.000000Z\", \"sucursal_id\": 2, \"cancelado_qr\": \"0\", \"codigo_venta\": \"V6\", \"fecha_registro\": \"2026-10-24\", \"venta_detalles\": [{\"id\": 7, \"total\": \"4860.69\", \"precio\": \"4860.69\", \"status\": 1, \"cantidad\": 1, \"venta_id\": 6, \"porcen_dt\": 0, \"porcen_du\": 0, \"total_uni\": \"4860.69\", \"created_at\": \"2026-10-24T23:45:01.000000Z\", \"updated_at\": \"2026-10-24T23:45:01.000000Z\", \"producto_id\": 6, \"precio_final\": \"4860.69\", \"descuento_uni\": \"0.00\", \"descuento_total\": \"0.00\"}], \"total_cancelado\": 0, \"tipo_documento_id\": 1, \"cancelado_efectivo\": \"0\", \"porcentaje_descuento\": 0}', NULL, 'VENTAS', '2026-10-24', '19:45:01', '2026-10-24 23:45:01', '2026-10-24 23:45:01'),
+(25, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA INGRESO DE PRODUCTO', '{\"id\": 4, \"saldo\": \"3402.48\", \"total\": \"3402.48\", \"codigo\": \"F004\", \"user_id\": 1, \"almacen_id\": 1, \"created_at\": \"2026-10-24T23:49:45.000000Z\", \"updated_at\": \"2026-10-24T23:49:45.000000Z\", \"descripcion\": \"PRUEBA 3 NOTIFICACION\", \"sucursal_id\": 1, \"tipo_compra\": \"CRÉDITO\", \"cancelado_qr\": \"0\", \"proveedor_id\": \"2\", \"fecha_registro\": \"2026-10-24\", \"tipo_ingreso_id\": \"1\", \"total_cancelado\": 0, \"ingreso_detalles\": [{\"id\": 7, \"costo\": \"3402.48\", \"cantidad\": 1, \"repuesto\": 0, \"subtotal\": \"3402.48\", \"faltantes\": null, \"created_at\": \"2026-10-24T23:49:45.000000Z\", \"updated_at\": \"2026-10-24T23:49:45.000000Z\", \"verificado\": null, \"observacion\": null, \"producto_id\": 6, \"cantidad_fisica\": null, \"tipo_ingreso_id\": 1, \"ingreso_producto_id\": 4}], \"cancelado_efectivo\": \"0\"}', NULL, 'INGRESO DE PRODUCTOS', '2026-10-24', '19:49:45', '2026-10-24 23:49:45', '2026-10-24 23:49:45');
 
 -- --------------------------------------------------------
 
@@ -10253,8 +10271,11 @@ CREATE TABLE `ingreso_detalles` (
 INSERT INTO `ingreso_detalles` (`id`, `ingreso_producto_id`, `tipo_ingreso_id`, `producto_id`, `cantidad`, `verificado`, `faltantes`, `repuesto`, `observacion`, `cantidad_fisica`, `costo`, `subtotal`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, 1, 100, 100.30, 0, 0.00, NULL, 100.30, 120.00, 12000.00, '2026-10-19 14:24:00', '2026-10-19 14:24:52'),
 (2, 1, 1, 2, 100, 100.00, 0, 0.00, NULL, 100.00, 121.00, 12100.00, '2026-10-19 14:24:00', '2026-10-19 14:24:52'),
-(3, 1, 1, 3, 100, 50.00, 50, 0.00, NULL, 50.00, 122.00, 12200.00, '2026-10-19 14:24:00', '2026-10-19 14:24:52'),
-(4, 1, 1, 4, 100, 50.00, 50, 0.00, NULL, 50.00, 123.00, 12300.00, '2026-10-19 14:24:00', '2026-10-19 14:24:52');
+(3, 1, 1, 3, 100, 50.00, 40, 10.00, NULL, 60.00, 122.00, 12200.00, '2026-10-19 14:24:00', '2026-10-24 20:52:43'),
+(4, 1, 1, 4, 100, 50.00, 50, 0.00, NULL, 50.00, 123.00, 12300.00, '2026-10-19 14:24:00', '2026-10-19 14:24:52'),
+(5, 2, 1, 6, 1, 1.00, 0, 0.00, NULL, 1.00, 3402.48, 3402.48, '2026-10-24 23:39:31', '2026-10-24 23:39:59'),
+(6, 3, 1, 6, 1, 1.00, 0, 0.00, NULL, 1.00, 3402.48, 3402.48, '2026-10-24 23:40:51', '2026-10-24 23:40:59'),
+(7, 4, 1, 6, 1, 1.00, 0, 0.00, NULL, 1.00, 3402.48, 3402.48, '2026-10-24 23:49:45', '2026-10-24 23:49:59');
 
 -- --------------------------------------------------------
 
@@ -10273,6 +10294,13 @@ CREATE TABLE `ingreso_faltantes` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `ingreso_faltantes`
+--
+
+INSERT INTO `ingreso_faltantes` (`id`, `ingreso_producto_id`, `ingreso_detalle_id`, `cantidad`, `user_id`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
+(1, 1, 3, 10, 1, '2026-10-24', '16:52:43', '2026-10-24 20:52:43', '2026-10-24 20:52:43');
 
 -- --------------------------------------------------------
 
@@ -10295,6 +10323,14 @@ CREATE TABLE `ingreso_pagos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `ingreso_pagos`
+--
+
+INSERT INTO `ingreso_pagos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_producto_id`, `proveedor_id`, `monto_efectivo`, `monto_qr`, `monto_total`, `fecha`, `hora`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 1, 1, 1000.00, 1000.00, 2000.00, '2026-10-24', '17:05:17', 1, '2026-10-24 21:05:17', '2026-10-24 21:05:17'),
+(2, 1, 1, 1, 1, 0.00, 500.00, 500.00, '2026-10-24', '17:55:54', 1, '2026-10-24 21:55:54', '2026-10-24 21:55:54');
 
 -- --------------------------------------------------------
 
@@ -10330,7 +10366,10 @@ CREATE TABLE `ingreso_productos` (
 --
 
 INSERT INTO `ingreso_productos` (`id`, `codigo`, `sucursal_id`, `almacen_id`, `tipo_ingreso_id`, `proveedor_id`, `descripcion`, `total`, `cancelado_efectivo`, `cancelado_qr`, `total_cancelado`, `saldo`, `tipo_compra`, `fecha_registro`, `user_id`, `estado_ingreso`, `estado_faltantes`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'F001', 1, 1, 1, 1, '', 48600.00, 0.00, 0.00, 0.00, 48600.00, 'CRÉDITO', '2026-10-19', 1, 'VERIFICADO', 'PENDIENTE', 1, '2026-10-19 14:24:00', '2026-10-19 14:24:52');
+(1, 'F001', 1, 1, 1, 1, '', 48600.00, 1000.00, 1500.00, 2500.00, 46100.00, 'CRÉDITO', '2026-10-19', 1, 'VERIFICADO', 'PENDIENTE', 1, '2026-10-19 14:24:00', '2026-10-24 21:55:54'),
+(2, 'F002', 1, 1, 1, 1, 'PRUEBA NOTIFICACIONES', 3402.48, 0.00, 0.00, 0.00, 3402.48, 'CRÉDITO', '2026-10-24', 1, 'VERIFICADO', 'SIN FALTANTES', 1, '2026-10-24 23:39:31', '2026-10-24 23:39:59'),
+(3, 'F003', 1, 1, 1, 2, 'PRUEBA 2 NOTIFICACION', 3402.48, 0.00, 0.00, 0.00, 3402.48, 'CRÉDITO', '2026-10-24', 1, 'VERIFICADO', 'SIN FALTANTES', 1, '2026-10-24 23:40:51', '2026-10-24 23:40:59'),
+(4, 'F004', 1, 1, 1, 2, 'PRUEBA 3 NOTIFICACION', 3402.48, 0.00, 0.00, 0.00, 3402.48, 'CRÉDITO', '2026-10-24', 1, 'VERIFICADO', 'SIN FALTANTES', 1, '2026-10-24 23:49:45', '2026-10-24 23:49:59');
 
 -- --------------------------------------------------------
 
@@ -10365,7 +10404,11 @@ INSERT INTO `ingreso_recepcions` (`id`, `ingreso_producto_id`, `ingreso_detalle_
 (4, 1, 2, 1, 1, 2, 50, 'RECEPCION', '2026-10-19', '10:24:52', 1, '2026-10-19 14:24:52', '2026-10-19 14:24:52'),
 (5, 1, 2, 2, 2, 2, 50, 'RECEPCION', '2026-10-19', '10:24:52', 1, '2026-10-19 14:24:52', '2026-10-19 14:24:52'),
 (6, 1, 3, 1, 1, 3, 50, 'RECEPCION', '2026-10-19', '10:24:52', 1, '2026-10-19 14:24:52', '2026-10-19 14:24:52'),
-(7, 1, 4, 1, 1, 4, 50, 'RECEPCION', '2026-10-19', '10:24:52', 1, '2026-10-19 14:24:52', '2026-10-19 14:24:52');
+(7, 1, 4, 1, 1, 4, 50, 'RECEPCION', '2026-10-19', '10:24:52', 1, '2026-10-19 14:24:52', '2026-10-19 14:24:52'),
+(8, 1, 3, 2, 2, 3, 10, 'FALTANTE', '2026-10-24', '16:52:43', 1, '2026-10-24 20:52:43', '2026-10-24 20:52:43'),
+(9, 2, 5, 1, 1, 6, 1, 'RECEPCION', '2026-10-24', '19:39:59', 1, '2026-10-24 23:39:59', '2026-10-24 23:39:59'),
+(10, 3, 6, 2, 2, 6, 1, 'RECEPCION', '2026-10-24', '19:40:59', 1, '2026-10-24 23:40:59', '2026-10-24 23:40:59'),
+(11, 4, 7, 1, 1, 6, 1, 'RECEPCION', '2026-10-24', '19:49:59', 1, '2026-10-24 23:49:59', '2026-10-24 23:49:59');
 
 -- --------------------------------------------------------
 
@@ -10413,7 +10456,14 @@ INSERT INTO `kardex_productos` (`id`, `sucursal_id`, `almacen_id`, `ingreso_deta
 (8, 1, 1, NULL, 'VENTA DE PRODUCTO', 1, 'VentaDetalle', 1, 'SALIDA POR VENTA', 199.00, 'EGRESO', NULL, 3.00, 37.00, 199.00, NULL, 597.00, 4203.00, '2026-10-19', 1, '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
 (9, 1, 1, NULL, 'VENTA DE PRODUCTO', 2, 'VentaDetalle', 2, 'SALIDA POR VENTA', 255.00, 'EGRESO', NULL, 3.00, 47.00, 255.00, NULL, 765.00, 5285.00, '2026-10-19', 1, '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
 (10, 2, 2, NULL, 'VENTA DE PRODUCTO', 3, 'VentaDetalle', 1, 'SALIDA POR VENTA', 199.00, 'EGRESO', NULL, 1.00, 29.00, 199.00, NULL, 199.00, 3401.00, '2026-10-19', 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
-(11, 1, 1, NULL, 'VENTA DE PRODUCTO', 4, 'VentaDetalle', 1, 'SALIDA POR VENTA', 199.00, 'EGRESO', NULL, 1.00, 36.00, 199.00, NULL, 199.00, 4004.00, '2026-10-19', 1, '2026-10-20 02:53:59', '2026-10-20 02:53:59');
+(11, 1, 1, NULL, 'VENTA DE PRODUCTO', 4, 'VentaDetalle', 1, 'SALIDA POR VENTA', 199.00, 'EGRESO', NULL, 1.00, 36.00, 199.00, NULL, 199.00, 4004.00, '2026-10-19', 1, '2026-10-20 02:53:59', '2026-10-20 02:53:59'),
+(12, 2, 2, 3, 'INGRESO DE PRODUCTO', 8, 'IngresoRecepcion', 3, 'POR COMPRAS', 122.00, 'INGRESO', 10.00, NULL, 10.00, 122.00, 1220.00, NULL, 1220.00, '2026-10-24', 1, '2026-10-24 20:52:43', '2026-10-24 20:52:43'),
+(13, 1, 1, 1, 'SALIDA DE PRODUCTO', 1, 'SalidaDetalle', 1, 'SALIDA 1', 120.00, 'EGRESO', NULL, 1.00, 35.00, 120.00, NULL, 120.00, 3884.00, '2026-10-24', 1, '2026-10-24 22:16:57', '2026-10-24 22:16:57'),
+(14, 1, 1, 5, 'INGRESO DE PRODUCTO', 9, 'IngresoRecepcion', 6, 'POR COMPRAS', 3402.48, 'INGRESO', 1.00, NULL, 1.00, 3402.48, 3402.48, NULL, 3402.48, '2026-10-24', 1, '2026-10-24 23:39:59', '2026-10-24 23:39:59'),
+(15, 2, 2, 6, 'INGRESO DE PRODUCTO', 10, 'IngresoRecepcion', 6, 'POR COMPRAS', 3402.48, 'INGRESO', 1.00, NULL, 1.00, 3402.48, 3402.48, NULL, 3402.48, '2026-10-24', 1, '2026-10-24 23:40:59', '2026-10-24 23:40:59'),
+(16, 1, 1, NULL, 'VENTA DE PRODUCTO', 5, 'VentaDetalle', 6, 'SALIDA POR VENTA', 4860.69, 'EGRESO', NULL, 1.00, 0.00, 4860.69, NULL, 4860.69, -1458.21, '2026-10-24', 1, '2026-10-24 23:43:33', '2026-10-24 23:43:33'),
+(18, 2, 2, NULL, 'VENTA DE PRODUCTO', 7, 'VentaDetalle', 6, 'SALIDA POR VENTA', 4860.69, 'EGRESO', NULL, 1.00, 0.00, 4860.69, NULL, 4860.69, -1458.21, '2026-10-24', 1, '2026-10-24 23:45:01', '2026-10-24 23:45:01'),
+(19, 1, 1, 7, 'INGRESO DE PRODUCTO', 11, 'IngresoRecepcion', 6, 'POR COMPRAS', 3402.48, 'INGRESO', 1.00, NULL, 1.00, 3402.48, 3402.48, NULL, 1944.27, '2026-10-24', 1, '2026-10-24 23:49:59', '2026-10-24 23:49:59');
 
 -- --------------------------------------------------------
 
@@ -10516,107 +10566,120 @@ CREATE TABLE `modulos` (
 --
 
 INSERT INTO `modulos` (`id`, `modulo`, `nombre`, `accion`, `descripcion`, `created_at`, `updated_at`) VALUES
-(1, 'Gestión de usuarios', 'usuarios.index', 'VER', 'VER LA LISTA DE USUARIOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(2, 'Gestión de usuarios', 'usuarios.create', 'CREAR', 'CREAR USUARIOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(3, 'Gestión de usuarios', 'usuarios.edit', 'EDITAR', 'EDITAR USUARIOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(4, 'Gestión de usuarios', 'usuarios.destroy', 'ELIMINAR', 'ELIMINAR USUARIOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(5, 'Roles y Permisos', 'roles.index', 'VER', 'VER LA LISTA DE ROLES Y PERMISOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(6, 'Roles y Permisos', 'roles.create', 'CREAR', 'CREAR ROLES Y PERMISOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(7, 'Roles y Permisos', 'roles.edit', 'EDITAR', 'EDITAR ROLES Y PERMISOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(8, 'Roles y Permisos', 'roles.destroy', 'ELIMINAR', 'ELIMINAR ROLES Y PERMISOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(9, 'Configuración del sistema', 'configuracions.index', 'VER', 'VER INFORMACIÓN DE LA CONFIGURACIÓN DEL SISTEMA', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(10, 'Configuración del sistema', 'configuracions.edit', 'EDITAR', 'EDITAR LA CONFIGURACIÓN DEL SISTEMA', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(11, 'Gestión de sucursales', 'sucursals.index', 'VER', 'VER LA LISTA DE SUCURSALES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(12, 'Gestión de sucursales', 'sucursals.create', 'CREAR', 'CREAR SUCURSALES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(13, 'Gestión de sucursales', 'sucursals.edit', 'EDITAR', 'EDITAR SUCURSALES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(14, 'Gestión de sucursales', 'sucursals.destroy', 'ELIMINAR', 'ELIMINAR SUCURSALES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(15, 'Gestión de almacenes', 'almacens.index', 'VER', 'VER LA LISTA DE ALMACENES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(16, 'Gestión de almacenes', 'almacens.create', 'CREAR', 'CREAR ALMACENES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(17, 'Gestión de almacenes', 'almacens.edit', 'EDITAR', 'EDITAR ALMACENES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(18, 'Gestión de almacenes', 'almacens.destroy', 'ELIMINAR', 'ELIMINAR ALMACENES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(19, 'Gestión de tipo de documentos', 'tipo_documentos.index', 'VER', 'VER LA LISTA DE TIPO DE DOCUMENTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(20, 'Gestión de tipo de documentos', 'tipo_documentos.create', 'CREAR', 'CREAR TIPO DE DOCUMENTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(21, 'Gestión de tipo de documentos', 'tipo_documentos.edit', 'EDITAR', 'EDITAR TIPO DE DOCUMENTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(22, 'Gestión de tipo de documentos', 'tipo_documentos.destroy', 'ELIMINAR', 'ELIMINAR TIPO DE DOCUMENTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(23, 'Gestión de categorias', 'categorias.index', 'VER', 'VER LA LISTA DE CATEGORÍAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(24, 'Gestión de categorias', 'categorias.create', 'CREAR', 'CREAR CATEGORÍAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(25, 'Gestión de categorias', 'categorias.edit', 'EDITAR', 'EDITAR CATEGORÍAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(26, 'Gestión de categorias', 'categorias.destroy', 'ELIMINAR', 'ELIMINAR CATEGORÍAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(27, 'Gestión de marcas', 'marcas.index', 'VER', 'VER LA LISTA DE MARCAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(28, 'Gestión de marcas', 'marcas.create', 'CREAR', 'CREAR MARCAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(29, 'Gestión de marcas', 'marcas.edit', 'EDITAR', 'EDITAR MARCAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(30, 'Gestión de marcas', 'marcas.destroy', 'ELIMINAR', 'ELIMINAR MARCAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(31, 'Gestión de unidades de medida', 'unidad_medidas.index', 'VER', 'VER LA LISTA DE UNIDADES DE MEDIDA', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(32, 'Gestión de unidades de medida', 'unidad_medidas.create', 'CREAR', 'CREAR UNIDADES DE MEDIDA', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(33, 'Gestión de unidades de medida', 'unidad_medidas.edit', 'EDITAR', 'EDITAR UNIDADES DE MEDIDA', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(34, 'Gestión de unidades de medida', 'unidad_medidas.destroy', 'ELIMINAR', 'ELIMINAR UNIDADES DE MEDIDA', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(35, 'Gestión de productos', 'productos.index', 'VER', 'VER LA LISTA DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(36, 'Gestión de productos', 'productos.create', 'CREAR', 'CREAR PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(37, 'Gestión de productos', 'productos.edit', 'EDITAR', 'EDITAR PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(38, 'Gestión de productos', 'productos.destroy', 'ELIMINAR', 'ELIMINAR PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(39, 'Gestión de clientes', 'clientes.index', 'VER', 'VER LA LISTA DE CLIENTES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(40, 'Gestión de clientes', 'clientes.create', 'CREAR', 'CREAR CLIENTES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(41, 'Gestión de clientes', 'clientes.edit', 'EDITAR', 'EDITAR CLIENTES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(42, 'Gestión de clientes', 'clientes.destroy', 'ELIMINAR', 'ELIMINAR CLIENTES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(43, 'Gestión de clientes', 'cliente_productos.index', 'VER', 'VER LA LISTA DE PRODUCTOS POR CLIENTE', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(44, 'Gestión de clientes', 'cliente_productos.create', 'CREAR', 'ASIGNAR PRODUCTOS POR CLIENTE', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(45, 'Gestión de clientes', 'cliente_productos.edit', 'EDITAR', 'EDITAR PRODUCTOS ASIGNADOS POR CLIENTE', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(46, 'Gestión de clientes', 'cliente_productos.destroy', 'ELIMINAR', 'ELIMINAR PRODUCTOS ASIGNADOS POR CLIENTE', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(47, 'Gestión de tipo de ingresos', 'tipo_ingresos.index', 'VER', 'VER LA LISTA DE TIPO DE INGRESOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(48, 'Gestión de tipo de ingresos', 'tipo_ingresos.create', 'CREAR', 'CREAR TIPO DE INGRESOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(49, 'Gestión de tipo de ingresos', 'tipo_ingresos.edit', 'EDITAR', 'EDITAR TIPO DE INGRESOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(50, 'Gestión de tipo de ingresos', 'tipo_ingresos.destroy', 'ELIMINAR', 'ELIMINAR TIPO DE INGRESOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(51, 'Gestión de tipo de salidas', 'tipo_salidas.index', 'VER', 'VER LA LISTA DE TIPO DE SALIDAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(52, 'Gestión de tipo de salidas', 'tipo_salidas.create', 'CREAR', 'CREAR TIPO DE SALIDAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(53, 'Gestión de tipo de salidas', 'tipo_salidas.edit', 'EDITAR', 'EDITAR TIPO DE SALIDAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(54, 'Gestión de tipo de salidas', 'tipo_salidas.destroy', 'ELIMINAR', 'ELIMINAR TIPO DE SALIDAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(55, 'Gestión de proveedores', 'proveedors.index', 'VER', 'VER LA LISTA DE PROVEEDORES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(56, 'Gestión de proveedores', 'proveedors.create', 'CREAR', 'CREAR PROVEEDORES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(57, 'Gestión de proveedores', 'proveedors.edit', 'EDITAR', 'EDITAR PROVEEDORES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(58, 'Gestión de proveedores', 'proveedors.destroy', 'ELIMINAR', 'ELIMINAR PROVEEDORES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(59, 'Gestión de Inventario de Productos', 'ingreso_productos.index', 'VER', 'VER EL HISTORIAL DE COMPRAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(60, 'Gestión de Inventario de Productos', 'ingreso_productos.create', 'CREAR', 'CREAR ORDENES DE COMPRA', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(61, 'Gestión de Inventario de Productos', 'ingreso_productos.edit', 'EDITAR', 'EDITAR ORDENES DE COMPRA', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(62, 'Gestión de Inventario de Productos', 'ingreso_productos.destroy', 'ELIMINAR', 'ELIMINAR ORDENES DE COMPRA', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(63, 'Gestión de Inventario de Productos', 'ingreso_productos.verificacion_ingresos', 'VER', 'LISTA DE RECEPCIÓN DE COMPRAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(64, 'Gestión de Inventario de Productos', 'ingreso_productos.verificacion_create', 'CREAR', 'REGISTRAR RECEPCIÓN DE COMPRAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(65, 'Gestión de Inventario de Productos', 'ingreso_productos.faltantes_ingresos', 'VER', 'VER ORDENES DE COMPRA CON FALTANTES DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(66, 'Gestión de Inventario de Productos', 'ingreso_productos.faltantes_create', 'CREAR', 'REGISTRAR FALTANTES DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(67, 'Gestión de Inventario de Productos', 'ingreso_productos.pagos', 'VER', 'LISTA DE PAGOS PENDIENTES POR COMPRAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(68, 'Gestión de Inventario de Productos', 'ingreso_productos.registrar_pago', 'CREAR', 'REGISTRAR PAGOS POR COMPRAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(69, 'Gestión de Inventario de Productos', 'ingreso_productos.actualizar_pago', 'EDITAR', 'ACTUALIZAR PAGOS POR COMPRAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(70, 'Gestión de Inventario de Productos', 'ingreso_productos.eliminar_pago', 'ELIMINAR', 'ELIMINAR PAGOS POR COMPRAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(71, 'Gestión de Inventario de Productos', 'producto_sucursals.index', 'VER', 'VER LA LISTA DE PRODUCTOS POR ALMACÉN-SUCURSAL', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(72, 'Gestión de Inventario de Productos', 'producto_sucursals.create', 'CREAR', 'CARGAR PRODUCTOS POR ALMACÉN-SUCURSAL', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(73, 'Gestión de salida de productos', 'salida_productos.index', 'VER', 'VER LA LISTA DE SALIDA DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(74, 'Gestión de salida de productos', 'salida_productos.create', 'CREAR', 'CREAR SALIDA DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(75, 'Gestión de salida de productos', 'salida_productos.edit', 'EDITAR', 'EDITAR SALIDA DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(76, 'Gestión de salida de productos', 'salida_productos.destroy', 'ELIMINAR', 'ELIMINAR SALIDA DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(77, 'Gestión de movimientos de cajas', 'movimiento_cajas.index', 'VER', 'VER LA LISTA DE MOVIMIENTO DE CAJAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(78, 'Gestión de movimientos de cajas', 'movimiento_cajas.create', 'CREAR', 'CREAR MOVIMIENTO DE CAJAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(79, 'Gestión de movimientos de cajas', 'movimiento_cajas.edit', 'EDITAR', 'EDITAR MOVIMIENTO DE CAJAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(80, 'Gestión de movimientos de cajas', 'movimiento_cajas.destroy', 'ELIMINAR', 'ELIMINAR MOVIMIENTO DE CAJAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(81, 'Gestión de traspaso de productos', 'traspasos.index', 'VER', 'VER LA LISTA DE TRASPASO DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(82, 'Gestión de traspaso de productos', 'traspasos.create', 'CREAR', 'CREAR TRASPASO DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(83, 'Gestión de traspaso de productos', 'traspasos.edit', 'EDITAR', 'EDITAR TRASPASO DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(84, 'Gestión de traspaso de productos', 'traspasos.destroy', 'ELIMINAR', 'ELIMINAR TRASPASO DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(85, 'Gestión de ventas', 'ventas.index', 'VER', 'VER LA LISTA DE VENTAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(86, 'Gestión de ventas', 'ventas.create', 'CREAR', 'CREAR VENTAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(87, 'Gestión de ventas', 'ventas.edit', 'EDITAR', 'EDITAR VENTAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(88, 'Gestión de ventas', 'ventas.destroy', 'ELIMINAR', 'ELIMINAR VENTAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(89, 'Gestión de ventas', 'ventas.cobros', 'VER', 'VER LA LISTA DE COBROS PENDIENTES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(90, 'Gestión de ventas', 'ventas.registrar_cobro', 'CREAR', 'REGISTRAR PAGOS DE COBROS PENDIENTES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(91, 'Gestión de ventas', 'ventas.actualizar_cobro', 'EDITAR', 'ACTUALIZAR PAGOS DE COBROS PENDIENTES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(92, 'Gestión de ventas', 'ventas.eliminar_cobro', 'ELIMINAR', 'ELIMINAR PAGOS DE COBROS PENDIENTES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(93, 'Gestión de proformas', 'proformas.index', 'VER', 'VER LA LISTA DE PROFORMAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(94, 'Gestión de proformas', 'proformas.create', 'CREAR', 'CREAR PROFORMAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(95, 'Gestión de proformas', 'proformas.edit', 'EDITAR', 'EDITAR PROFORMAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(96, 'Gestión de proformas', 'proformas.destroy', 'ELIMINAR', 'ELIMINAR PROFORMAS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(97, 'Gestión de notificaciones', 'notificacions.index', 'RECIBIR Y VER NOTIFICACIONES', 'RECIBIR Y VER NOTIFICACIONES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(98, 'Reportes', 'reportes.usuarios', 'REPORTE LISTA DE USUARIOS', 'GENERAR REPORTES DE LISTA DE USUARIOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(99, 'Reportes', 'reportes.clientes', 'REPORTE LISTA DE CLIENTES', 'GENERAR REPORTES DE LISTA DE CLIENTES', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(100, 'Reportes', 'reportes.productos', 'REPORTE LISTA DE PRODUCTOS', 'GENERAR REPORTES DE LISTA DE PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22'),
-(101, 'Reportes', 'reportes.stock_productos', 'REPORTE LISTA DE STOCK POR PRODUCTOS', 'GENERAR REPORTES DE LISTA DE STOCK PRODUCTOS', '2026-10-19 13:33:22', '2026-10-19 13:33:22');
+(1, 'Gestión de usuarios', 'usuarios.index', 'VER', 'VER LA LISTA DE USUARIOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(2, 'Gestión de usuarios', 'usuarios.create', 'CREAR', 'CREAR USUARIOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(3, 'Gestión de usuarios', 'usuarios.edit', 'EDITAR', 'EDITAR USUARIOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(4, 'Gestión de usuarios', 'usuarios.destroy', 'ELIMINAR', 'ELIMINAR USUARIOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(5, 'Roles y Permisos', 'roles.index', 'VER', 'VER LA LISTA DE ROLES Y PERMISOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(6, 'Roles y Permisos', 'roles.create', 'CREAR', 'CREAR ROLES Y PERMISOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(7, 'Roles y Permisos', 'roles.edit', 'EDITAR', 'EDITAR ROLES Y PERMISOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(8, 'Roles y Permisos', 'roles.destroy', 'ELIMINAR', 'ELIMINAR ROLES Y PERMISOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(9, 'Configuración del sistema', 'configuracions.index', 'VER', 'VER INFORMACIÓN DE LA CONFIGURACIÓN DEL SISTEMA', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(10, 'Configuración del sistema', 'configuracions.edit', 'EDITAR', 'EDITAR LA CONFIGURACIÓN DEL SISTEMA', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(11, 'Gestión de sucursales', 'sucursals.index', 'VER', 'VER LA LISTA DE SUCURSALES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(12, 'Gestión de sucursales', 'sucursals.create', 'CREAR', 'CREAR SUCURSALES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(13, 'Gestión de sucursales', 'sucursals.edit', 'EDITAR', 'EDITAR SUCURSALES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(14, 'Gestión de sucursales', 'sucursals.destroy', 'ELIMINAR', 'ELIMINAR SUCURSALES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(15, 'Gestión de almacenes', 'almacens.index', 'VER', 'VER LA LISTA DE ALMACENES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(16, 'Gestión de almacenes', 'almacens.create', 'CREAR', 'CREAR ALMACENES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(17, 'Gestión de almacenes', 'almacens.edit', 'EDITAR', 'EDITAR ALMACENES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(18, 'Gestión de almacenes', 'almacens.destroy', 'ELIMINAR', 'ELIMINAR ALMACENES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(19, 'Gestión de tipo de documentos', 'tipo_documentos.index', 'VER', 'VER LA LISTA DE TIPO DE DOCUMENTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(20, 'Gestión de tipo de documentos', 'tipo_documentos.create', 'CREAR', 'CREAR TIPO DE DOCUMENTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(21, 'Gestión de tipo de documentos', 'tipo_documentos.edit', 'EDITAR', 'EDITAR TIPO DE DOCUMENTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(22, 'Gestión de tipo de documentos', 'tipo_documentos.destroy', 'ELIMINAR', 'ELIMINAR TIPO DE DOCUMENTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(23, 'Gestión de categorias', 'categorias.index', 'VER', 'VER LA LISTA DE CATEGORÍAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(24, 'Gestión de categorias', 'categorias.create', 'CREAR', 'CREAR CATEGORÍAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(25, 'Gestión de categorias', 'categorias.edit', 'EDITAR', 'EDITAR CATEGORÍAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(26, 'Gestión de categorias', 'categorias.destroy', 'ELIMINAR', 'ELIMINAR CATEGORÍAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(27, 'Gestión de marcas', 'marcas.index', 'VER', 'VER LA LISTA DE MARCAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(28, 'Gestión de marcas', 'marcas.create', 'CREAR', 'CREAR MARCAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(29, 'Gestión de marcas', 'marcas.edit', 'EDITAR', 'EDITAR MARCAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(30, 'Gestión de marcas', 'marcas.destroy', 'ELIMINAR', 'ELIMINAR MARCAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(31, 'Gestión de unidades de medida', 'unidad_medidas.index', 'VER', 'VER LA LISTA DE UNIDADES DE MEDIDA', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(32, 'Gestión de unidades de medida', 'unidad_medidas.create', 'CREAR', 'CREAR UNIDADES DE MEDIDA', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(33, 'Gestión de unidades de medida', 'unidad_medidas.edit', 'EDITAR', 'EDITAR UNIDADES DE MEDIDA', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(34, 'Gestión de unidades de medida', 'unidad_medidas.destroy', 'ELIMINAR', 'ELIMINAR UNIDADES DE MEDIDA', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(35, 'Gestión de productos', 'productos.index', 'VER', 'VER LA LISTA DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(36, 'Gestión de productos', 'productos.create', 'CREAR', 'CREAR PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(37, 'Gestión de productos', 'productos.edit', 'EDITAR', 'EDITAR PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(38, 'Gestión de productos', 'productos.destroy', 'ELIMINAR', 'ELIMINAR PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(39, 'Gestión de clientes', 'clientes.index', 'VER', 'VER LA LISTA DE CLIENTES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(40, 'Gestión de clientes', 'clientes.create', 'CREAR', 'CREAR CLIENTES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(41, 'Gestión de clientes', 'clientes.edit', 'EDITAR', 'EDITAR CLIENTES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(42, 'Gestión de clientes', 'clientes.destroy', 'ELIMINAR', 'ELIMINAR CLIENTES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(43, 'Gestión de clientes', 'cliente_productos.index', 'VER', 'VER LA LISTA DE PRODUCTOS POR CLIENTE', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(44, 'Gestión de clientes', 'cliente_productos.create', 'CREAR', 'ASIGNAR PRODUCTOS POR CLIENTE', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(45, 'Gestión de clientes', 'cliente_productos.edit', 'EDITAR', 'EDITAR PRODUCTOS ASIGNADOS POR CLIENTE', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(46, 'Gestión de clientes', 'cliente_productos.destroy', 'ELIMINAR', 'ELIMINAR PRODUCTOS ASIGNADOS POR CLIENTE', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(47, 'Gestión de tipo de ingresos', 'tipo_ingresos.index', 'VER', 'VER LA LISTA DE TIPO DE INGRESOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(48, 'Gestión de tipo de ingresos', 'tipo_ingresos.create', 'CREAR', 'CREAR TIPO DE INGRESOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(49, 'Gestión de tipo de ingresos', 'tipo_ingresos.edit', 'EDITAR', 'EDITAR TIPO DE INGRESOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(50, 'Gestión de tipo de ingresos', 'tipo_ingresos.destroy', 'ELIMINAR', 'ELIMINAR TIPO DE INGRESOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(51, 'Gestión de tipo de salidas', 'tipo_salidas.index', 'VER', 'VER LA LISTA DE TIPO DE SALIDAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(52, 'Gestión de tipo de salidas', 'tipo_salidas.create', 'CREAR', 'CREAR TIPO DE SALIDAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(53, 'Gestión de tipo de salidas', 'tipo_salidas.edit', 'EDITAR', 'EDITAR TIPO DE SALIDAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(54, 'Gestión de tipo de salidas', 'tipo_salidas.destroy', 'ELIMINAR', 'ELIMINAR TIPO DE SALIDAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(55, 'Gestión de proveedores', 'proveedors.index', 'VER', 'VER LA LISTA DE PROVEEDORES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(56, 'Gestión de proveedores', 'proveedors.create', 'CREAR', 'CREAR PROVEEDORES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(57, 'Gestión de proveedores', 'proveedors.edit', 'EDITAR', 'EDITAR PROVEEDORES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(58, 'Gestión de proveedores', 'proveedors.destroy', 'ELIMINAR', 'ELIMINAR PROVEEDORES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(59, 'Gestión de Inventario de Productos', 'ingreso_productos.index', 'VER', 'VER EL HISTORIAL DE COMPRAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(60, 'Gestión de Inventario de Productos', 'ingreso_productos.create', 'CREAR', 'CREAR ORDENES DE COMPRA', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(61, 'Gestión de Inventario de Productos', 'ingreso_productos.edit', 'EDITAR', 'EDITAR ORDENES DE COMPRA', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(62, 'Gestión de Inventario de Productos', 'ingreso_productos.destroy', 'ELIMINAR', 'ELIMINAR ORDENES DE COMPRA', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(63, 'Gestión de Inventario de Productos', 'ingreso_productos.verificacion_ingresos', 'VER', 'LISTA DE RECEPCIÓN DE COMPRAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(64, 'Gestión de Inventario de Productos', 'ingreso_productos.verificacion_create', 'CREAR', 'REGISTRAR RECEPCIÓN DE COMPRAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(65, 'Gestión de Inventario de Productos', 'ingreso_productos.faltantes_ingresos', 'VER', 'VER ORDENES DE COMPRA CON FALTANTES DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(66, 'Gestión de Inventario de Productos', 'ingreso_productos.faltantes_create', 'CREAR', 'REGISTRAR FALTANTES DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(67, 'Gestión de Inventario de Productos', 'ingreso_productos.pagos', 'VER', 'LISTA DE PAGOS PENDIENTES POR COMPRAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(68, 'Gestión de Inventario de Productos', 'ingreso_productos.registrar_pago', 'CREAR', 'REGISTRAR PAGOS POR COMPRAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(69, 'Gestión de Inventario de Productos', 'ingreso_productos.actualizar_pago', 'EDITAR', 'ACTUALIZAR PAGOS POR COMPRAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(70, 'Gestión de Inventario de Productos', 'ingreso_productos.eliminar_pago', 'ELIMINAR', 'ELIMINAR PAGOS POR COMPRAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(71, 'Gestión de Inventario de Productos', 'producto_sucursals.index', 'VER', 'VER LA LISTA DE PRODUCTOS POR ALMACÉN-SUCURSAL', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(72, 'Gestión de Inventario de Productos', 'producto_sucursals.create', 'CREAR', 'CARGAR PRODUCTOS POR ALMACÉN-SUCURSAL', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(73, 'Gestión de salida de productos', 'salida_productos.index', 'VER', 'VER LA LISTA DE SALIDA DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(74, 'Gestión de salida de productos', 'salida_productos.create', 'CREAR', 'CREAR SALIDA DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(75, 'Gestión de salida de productos', 'salida_productos.edit', 'EDITAR', 'EDITAR SALIDA DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(76, 'Gestión de salida de productos', 'salida_productos.destroy', 'ELIMINAR', 'ELIMINAR SALIDA DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(77, 'Gestión de movimientos de cajas', 'movimiento_cajas.index', 'VER', 'VER LA LISTA DE MOVIMIENTO DE CAJAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(78, 'Gestión de movimientos de cajas', 'movimiento_cajas.create', 'CREAR', 'CREAR MOVIMIENTO DE CAJAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(79, 'Gestión de movimientos de cajas', 'movimiento_cajas.edit', 'EDITAR', 'EDITAR MOVIMIENTO DE CAJAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(80, 'Gestión de movimientos de cajas', 'movimiento_cajas.destroy', 'ELIMINAR', 'ELIMINAR MOVIMIENTO DE CAJAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(81, 'Gestión de traspaso de productos', 'traspasos.index', 'VER', 'VER LA LISTA DE TRASPASO DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(82, 'Gestión de traspaso de productos', 'traspasos.create', 'CREAR', 'CREAR TRASPASO DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(83, 'Gestión de traspaso de productos', 'traspasos.edit', 'EDITAR', 'EDITAR TRASPASO DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(84, 'Gestión de traspaso de productos', 'traspasos.destroy', 'ELIMINAR', 'ELIMINAR TRASPASO DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(85, 'Gestión de ventas', 'ventas.index', 'VER', 'VER LA LISTA DE VENTAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(86, 'Gestión de ventas', 'ventas.create', 'CREAR', 'CREAR VENTAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(87, 'Gestión de ventas', 'ventas.edit', 'EDITAR', 'EDITAR VENTAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(88, 'Gestión de ventas', 'ventas.destroy', 'ELIMINAR', 'ELIMINAR VENTAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(89, 'Gestión de ventas', 'ventas.cobros', 'VER', 'VER LA LISTA DE COBROS PENDIENTES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(90, 'Gestión de ventas', 'ventas.registrar_cobro', 'CREAR', 'REGISTRAR PAGOS DE COBROS PENDIENTES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(91, 'Gestión de ventas', 'ventas.actualizar_cobro', 'EDITAR', 'ACTUALIZAR PAGOS DE COBROS PENDIENTES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(92, 'Gestión de ventas', 'ventas.eliminar_cobro', 'ELIMINAR', 'ELIMINAR PAGOS DE COBROS PENDIENTES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(93, 'Gestión de proformas', 'proformas.index', 'VER', 'VER LA LISTA DE PROFORMAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(94, 'Gestión de proformas', 'proformas.create', 'CREAR', 'CREAR PROFORMAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(95, 'Gestión de proformas', 'proformas.edit', 'EDITAR', 'EDITAR PROFORMAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(96, 'Gestión de proformas', 'proformas.destroy', 'ELIMINAR', 'ELIMINAR PROFORMAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(97, 'Gestión de notificaciones', 'notificacion_users.index', 'RECIBIR Y VER NOTIFICACIONES', 'RECIBIR Y VER NOTIFICACIONES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(98, 'Reportes', 'reportes.usuarios', 'REPORTE LISTA DE USUARIOS', 'GENERAR REPORTES DE LISTA DE USUARIOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(99, 'Reportes', 'reportes.clientes', 'REPORTE LISTA DE CLIENTES', 'GENERAR REPORTES DE LISTA DE CLIENTES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(100, 'Reportes', 'reportes.productos', 'REPORTE LISTA DE PRODUCTOS', 'GENERAR REPORTES DE LISTA DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(101, 'Reportes', 'reportes.proveedors', 'REPORTE LISTA DE PROVEEDORES', 'GENERAR REPORTES DE LISTA DE PROVEEDORES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(102, 'Reportes', 'reportes.stock_productos', 'REPORTE LISTA DE STOCK POR PRODUCTOS', 'GENERAR REPORTES DE LISTA DE STOCK PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(103, 'Reportes', 'reportes.orden_compras', 'REPORTE LISTA DE ORDENES DE COMPRA', 'GENERAR LISTADO DE ORDENES DE COMPRA', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(104, 'Reportes', 'reportes.salida_productos', 'REPORTE LISTA DE SALIDAS DE PRODUCTOS', 'GENERAR LISTADO DE SALIDAS DE PRODUCTOS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(105, 'Reportes', 'reportes.ventas', 'REPORTE LISTA DE VENTAS', 'GENERAR LISTADO DE VENTAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(106, 'Reportes', 'reportes.venta_detalles', 'REPORTE LISTA DE VENTAS', 'GENERAR VENTAS CON DETALLES', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(107, 'Reportes', 'reportes.proformas', 'REPORTE LISTA DE PROFORMAS', 'GENERAR LISTADO DE PROFORMAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(108, 'Reportes', 'reportes.recepcions', 'REPORTE DE RECEPCIÓN DE PRODUCTOS', 'GENERAR REPORTE DE LA RECEPCIÓN DE PRODUCTOS POR COMPRAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(109, 'Reportes', 'reportes.faltantes', 'REPORTE DE RECEPCIÓN DE FALTANTES', 'GENERAR REPORTE DE RECEPCIÓN DE FALTANTES POR COMPRAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(110, 'Reportes', 'reportes.pago_compras', 'REPORTE DE PAGOS REALIZADOS POR COMPRAS', 'GENERAR REPORTE DE LOS PAGOS REALIZADOS POR COMPRAS', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(111, 'Reportes', 'reportes.compras_credito', 'REPORTE DE COMPRAS A CRÉDITO', 'GENERAR REPORTE DE COMPRAS A CRÉDITO', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(112, 'Reportes', 'reportes.cobro_creditos', 'REPORTE DE COBROS REALIZADOS POR VENTAS A CRÉDITO', 'GENERAR REPORTE DE COBROS REALIZADOS POR VENTAS A CRÉDITO', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(113, 'Reportes', 'reportes.ventas_creditos', 'REPORTE DE VENTAS A CRÉDITO', 'GENERAR REPORTE DE VENTAS A CRÉDITO', '2026-10-24 23:11:07', '2026-10-24 23:11:07'),
+(114, 'Reportes', 'reportes.movimiento_cajas', 'REPORTE DE MOVIMIENTOS DE CAJA', 'GENERAR REPORTE DE LOS MOVIMIENTOS DE CAJA', '2026-10-24 23:11:07', '2026-10-24 23:11:07');
 
 -- --------------------------------------------------------
 
@@ -10650,7 +10713,13 @@ CREATE TABLE `movimiento_cajas` (
 --
 
 INSERT INTO `movimiento_cajas` (`id`, `sucursal_id`, `almacen_id`, `tipo`, `modulo`, `registro_id`, `monto_efectivo`, `monto_qr`, `monto_total`, `tipo_movimiento`, `tipo_pago`, `descripcion`, `fecha`, `hora`, `user_id`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, 2, 'VENTA', 'Venta', 2, 199.00, 0.00, 199.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-10-19', '10:29:08', 1, 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08');
+(1, 2, 2, 'VENTA', 'Venta', 2, 199.00, 0.00, 199.00, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-10-19', '10:29:08', 1, 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
+(2, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 1, 1000.00, 1000.00, 2000.00, 'EGRESO', 'EFECTIVO-QR', 'PAGO POR COMPRA DE PRODUCTOS', '2026-10-24', '17:05:17', 1, 1, '2026-10-24 21:05:17', '2026-10-24 21:05:17'),
+(3, 2, 2, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 1, 100.00, 0.00, 100.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-10-24', '17:16:34', 1, 1, '2026-10-24 21:16:34', '2026-10-24 21:16:34'),
+(4, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 2, 0.00, 62.00, 62.00, 'INGRESO', 'QR', 'COBRO POR VENTA DE PRODUCTOS', '2026-10-24', '17:16:43', 1, 1, '2026-10-24 21:16:43', '2026-10-24 21:43:32'),
+(5, 1, 1, 'COBRO POR VENTA DE PRODUCTOS', 'VentaCobro', 3, 200.00, 0.00, 200.00, 'INGRESO', 'EFECTIVO', 'COBRO POR VENTA DE PRODUCTOS', '2026-10-24', '17:43:54', 1, 1, '2026-10-24 21:43:54', '2026-10-24 21:43:54'),
+(6, 1, 1, 'PAGO POR COMPRA DE PRODUCTOS', 'IngresoPago', 2, 0.00, 500.00, 500.00, 'EGRESO', 'QR', 'PAGO POR COMPRA DE PRODUCTOS', '2026-10-24', '17:55:54', 1, 1, '2026-10-24 21:55:54', '2026-10-24 21:55:54'),
+(7, 1, 1, 'VENTA', 'Venta', 4, 4860.69, 0.00, 4860.69, 'INGRESO', 'EFECTIVO', 'INGRESO POR VENTA', '2026-10-24', '19:43:33', 1, 1, '2026-10-24 23:43:33', '2026-10-24 23:43:33');
 
 -- --------------------------------------------------------
 
@@ -10660,6 +10729,7 @@ INSERT INTO `movimiento_cajas` (`id`, `sucursal_id`, `almacen_id`, `tipo`, `modu
 
 CREATE TABLE `notificacions` (
   `id` bigint UNSIGNED NOT NULL,
+  `tipo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `modulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `registro_id` bigint UNSIGNED DEFAULT NULL,
   `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -10668,6 +10738,13 @@ CREATE TABLE `notificacions` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `notificacions`
+--
+
+INSERT INTO `notificacions` (`id`, `tipo`, `modulo`, `registro_id`, `descripcion`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
+(1, 'STOCK POR DEBAJO', 'ProductoSucursal', 9, 'EL PRODUCTO PRODUCTO et WHVLGHH2, DEL ALMACÉN ALMACEN CENTRAL, ESTA POR DEBAJO DEL STOCK MÍNIMO; STOCK ACTUAL DE 1', '2026-10-24', '19:49:00', '2026-10-24 23:49:59', '2026-10-24 23:49:59');
 
 -- --------------------------------------------------------
 
@@ -10683,6 +10760,14 @@ CREATE TABLE `notificacion_users` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `notificacion_users`
+--
+
+INSERT INTO `notificacion_users` (`id`, `notificacion_id`, `user_id`, `visto`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 1, '2026-10-24 23:49:59', '2026-10-24 23:53:14'),
+(2, 1, 3, 0, '2026-10-24 23:49:59', '2026-10-24 23:49:59');
 
 -- --------------------------------------------------------
 
@@ -10703,19 +10788,19 @@ CREATE TABLE `permisos` (
 --
 
 INSERT INTO `permisos` (`id`, `role_id`, `modulo_id`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, '2026-10-19 15:14:11', '2026-10-19 15:14:11'),
-(2, 2, 2, '2026-10-19 15:14:12', '2026-10-19 15:14:12'),
-(3, 2, 3, '2026-10-19 15:14:12', '2026-10-19 15:14:12'),
-(4, 2, 4, '2026-10-19 15:14:15', '2026-10-19 15:14:15'),
-(5, 2, 5, '2026-10-19 15:14:16', '2026-10-19 15:14:16'),
-(6, 2, 6, '2026-10-19 15:14:17', '2026-10-19 15:14:17'),
-(9, 2, 7, '2026-10-19 15:14:58', '2026-10-19 15:14:58'),
-(11, 3, 85, '2026-10-22 14:58:06', '2026-10-22 14:58:06'),
-(12, 3, 86, '2026-10-22 14:58:06', '2026-10-22 14:58:06'),
-(13, 3, 90, '2026-10-22 14:58:11', '2026-10-22 14:58:11'),
-(14, 3, 89, '2026-10-22 14:58:12', '2026-10-22 14:58:12'),
-(15, 3, 40, '2026-10-22 14:58:17', '2026-10-22 14:58:17'),
-(16, 3, 39, '2026-10-22 14:58:18', '2026-10-22 14:58:18');
+(1, 3, 85, '2026-10-24 23:11:16', '2026-10-24 23:11:16'),
+(2, 3, 86, '2026-10-24 23:11:16', '2026-10-24 23:11:16'),
+(3, 3, 90, '2026-10-24 23:11:18', '2026-10-24 23:11:18'),
+(4, 3, 89, '2026-10-24 23:11:19', '2026-10-24 23:11:19'),
+(5, 3, 93, '2026-10-24 23:11:25', '2026-10-24 23:11:25'),
+(6, 3, 94, '2026-10-24 23:11:26', '2026-10-24 23:11:26'),
+(7, 3, 71, '2026-10-24 23:11:35', '2026-10-24 23:11:35'),
+(8, 3, 114, '2026-10-24 23:11:41', '2026-10-24 23:11:41'),
+(9, 3, 113, '2026-10-24 23:11:43', '2026-10-24 23:11:43'),
+(10, 3, 112, '2026-10-24 23:11:45', '2026-10-24 23:11:45'),
+(11, 3, 105, '2026-10-24 23:11:51', '2026-10-24 23:11:51'),
+(12, 3, 102, '2026-10-24 23:11:54', '2026-10-24 23:11:54'),
+(13, 3, 97, '2026-10-24 23:44:04', '2026-10-24 23:44:04');
 
 -- --------------------------------------------------------
 
@@ -20829,13 +20914,16 @@ CREATE TABLE `producto_sucursals` (
 --
 
 INSERT INTO `producto_sucursals` (`id`, `sucursal_id`, `almacen_id`, `producto_id`, `stock_actual`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 1, 36.00, '2026-10-19 14:24:52', '2026-10-20 02:53:59'),
+(1, 1, 1, 1, 35.00, '2026-10-19 14:24:52', '2026-10-24 22:16:57'),
 (2, 2, 2, 1, 29.00, '2026-10-19 14:24:52', '2026-10-19 14:29:08'),
 (3, 3, 3, 1, 30.30, '2026-10-19 14:24:52', '2026-10-19 14:24:52'),
 (4, 1, 1, 2, 47.00, '2026-10-19 14:24:52', '2026-10-19 14:26:57'),
 (5, 2, 2, 2, 50.00, '2026-10-19 14:24:52', '2026-10-19 14:24:52'),
 (6, 1, 1, 3, 50.00, '2026-10-19 14:24:52', '2026-10-19 14:24:52'),
-(7, 1, 1, 4, 50.00, '2026-10-19 14:24:52', '2026-10-19 14:24:52');
+(7, 1, 1, 4, 50.00, '2026-10-19 14:24:52', '2026-10-19 14:24:52'),
+(8, 2, 2, 3, 10.00, '2026-10-24 20:52:43', '2026-10-24 20:52:43'),
+(9, 1, 1, 6, 1.00, '2026-10-24 23:39:59', '2026-10-24 23:49:59'),
+(10, 2, 2, 6, 0.00, '2026-10-24 23:40:59', '2026-10-24 23:45:01');
 
 -- --------------------------------------------------------
 
@@ -20970,6 +21058,13 @@ CREATE TABLE `salida_detalles` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `salida_detalles`
+--
+
+INSERT INTO `salida_detalles` (`id`, `salida_producto_id`, `tipo_salida_id`, `producto_id`, `cantidad`, `observacion`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 1, 1, NULL, '2026-10-24 22:16:57', '2026-10-24 22:16:57');
+
 -- --------------------------------------------------------
 
 --
@@ -20988,6 +21083,13 @@ CREATE TABLE `salida_productos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `salida_productos`
+--
+
+INSERT INTO `salida_productos` (`id`, `sucursal_id`, `almacen_id`, `tipo_salida_id`, `cantidad`, `descripcion`, `fecha_registro`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, NULL, 1.00, '', '2026-10-24', 1, '2026-10-24 22:16:57', '2026-10-24 22:16:57');
 
 -- --------------------------------------------------------
 
@@ -21253,9 +21355,11 @@ CREATE TABLE `ventas` (
 --
 
 INSERT INTO `ventas` (`id`, `codigo_venta`, `sucursal_id`, `almacen_id`, `cliente_id`, `tipo_documento_id`, `nit_ci`, `tipo_venta`, `tipo_pago`, `subtotal`, `descuento`, `porcentaje_descuento`, `total`, `cancelado_efectivo`, `cancelado_qr`, `total_cancelado`, `saldo`, `fecha`, `hora`, `fecha_registro`, `status`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 'V1', 1, 1, 13, 1, '56565656', 'CRÉDITO', '', 1362.00, 0.00, 0.00, 1362.00, 0.00, 0.00, 0.00, 1362.00, '2026-10-19', '10:26:57', '2026-10-19', 1, 1, '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
+(1, 'V1', 1, 1, 13, 1, '56565656', 'CRÉDITO', '', 1362.00, 0.00, 0.00, 1362.00, 300.00, 62.00, 362.00, 1000.00, '2026-10-19', '10:26:57', '2026-10-19', 1, 1, '2026-10-19 14:26:57', '2026-10-24 21:43:54'),
 (2, 'V2', 2, 2, 1, 1, '123456-CM', 'AL CONTADO', 'EFECTIVO', 199.00, 0.00, 0.00, 199.00, 199.00, 0.00, 199.00, 0.00, '2026-10-19', '10:29:08', '2026-10-19', 1, 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
-(3, 'V3', 1, 1, 1, 1, '123456-CM', 'CRÉDITO', '', 199.00, 0.00, 0.00, 199.00, 0.00, 0.00, 0.00, 199.00, '2026-10-19', '22:53:59', '2026-10-19', 1, 1, '2026-10-20 02:53:59', '2026-10-20 02:53:59');
+(3, 'V3', 1, 1, 1, 1, '123456-CM', 'CRÉDITO', '', 199.00, 0.00, 0.00, 199.00, 0.00, 0.00, 0.00, 199.00, '2026-10-19', '22:53:59', '2026-10-19', 1, 1, '2026-10-20 02:53:59', '2026-10-20 02:53:59'),
+(4, 'V4', 1, 1, 7, 1, '223332', 'AL CONTADO', 'EFECTIVO', 4860.69, 0.00, 0.00, 4860.69, 4860.69, 0.00, 4860.69, 0.00, '2026-10-24', '19:43:33', '2026-10-24', 1, 1, '2026-10-24 23:43:33', '2026-10-24 23:43:33'),
+(6, 'V6', 2, 2, 12, 1, '34343443', 'CRÉDITO', '', 4860.69, 0.00, 0.00, 4860.69, 0.00, 0.00, 0.00, 4860.69, '2026-10-24', '19:45:01', '2026-10-24', 1, 1, '2026-10-24 23:45:01', '2026-10-24 23:45:01');
 
 -- --------------------------------------------------------
 
@@ -21280,6 +21384,15 @@ CREATE TABLE `venta_cobros` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `venta_cobros`
+--
+
+INSERT INTO `venta_cobros` (`id`, `sucursal_id`, `almacen_id`, `venta_id`, `cliente_id`, `tipo_pago`, `monto_efectivo`, `monto_qr`, `monto_total`, `saldo`, `fecha`, `hora`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 2, 2, 1, 13, 'EFECTIVO', 100.00, 0.00, 100.00, 0.00, '2026-10-24', '17:16:34', 1, '2026-10-24 21:16:34', '2026-10-24 21:16:34'),
+(2, 1, 1, 1, 13, 'QR', 0.00, 62.00, 62.00, 0.00, '2026-10-24', '17:43:32', 1, '2026-10-24 21:16:43', '2026-10-24 21:43:32'),
+(3, 1, 1, 1, 13, 'EFECTIVO', 200.00, 0.00, 200.00, 0.00, '2026-10-24', '17:43:54', 1, '2026-10-24 21:43:54', '2026-10-24 21:43:54');
 
 -- --------------------------------------------------------
 
@@ -21313,7 +21426,9 @@ INSERT INTO `venta_detalles` (`id`, `venta_id`, `producto_id`, `cantidad`, `prec
 (1, 1, 1, 3, 199.00, 0.00, 0.00, 0.00, 0.00, 199.00, 597.00, 597.00, 1, '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
 (2, 1, 2, 3, 255.00, 0.00, 0.00, 0.00, 0.00, 255.00, 765.00, 765.00, 1, '2026-10-19 14:26:57', '2026-10-19 14:26:57'),
 (3, 2, 1, 1, 199.00, 0.00, 0.00, 0.00, 0.00, 199.00, 199.00, 199.00, 1, '2026-10-19 14:29:08', '2026-10-19 14:29:08'),
-(4, 3, 1, 1, 199.00, 0.00, 0.00, 0.00, 0.00, 199.00, 199.00, 199.00, 1, '2026-10-20 02:53:59', '2026-10-20 02:53:59');
+(4, 3, 1, 1, 199.00, 0.00, 0.00, 0.00, 0.00, 199.00, 199.00, 199.00, 1, '2026-10-20 02:53:59', '2026-10-20 02:53:59'),
+(5, 4, 6, 1, 4860.69, 0.00, 0.00, 0.00, 0.00, 4860.69, 4860.69, 4860.69, 1, '2026-10-24 23:43:33', '2026-10-24 23:43:33'),
+(7, 6, 6, 1, 4860.69, 0.00, 0.00, 0.00, 0.00, 4860.69, 4860.69, 4860.69, 1, '2026-10-24 23:45:01', '2026-10-24 23:45:01');
 
 --
 -- Índices para tablas volcadas
@@ -21693,43 +21808,43 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
 --
 ALTER TABLE `ingreso_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_faltantes`
 --
 ALTER TABLE `ingreso_faltantes`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_pagos`
 --
 ALTER TABLE `ingreso_pagos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_productos`
 --
 ALTER TABLE `ingreso_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_recepcions`
 --
 ALTER TABLE `ingreso_recepcions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `kardex_productos`
 --
 ALTER TABLE `kardex_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `marcas`
@@ -21747,31 +21862,31 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT de la tabla `modulos`
 --
 ALTER TABLE `modulos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 
 --
 -- AUTO_INCREMENT de la tabla `movimiento_cajas`
 --
 ALTER TABLE `movimiento_cajas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `notificacions`
 --
 ALTER TABLE `notificacions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `notificacion_users`
 --
 ALTER TABLE `notificacion_users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -21783,7 +21898,7 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `producto_sucursals`
 --
 ALTER TABLE `producto_sucursals`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `proformas`
@@ -21813,13 +21928,13 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `salida_detalles`
 --
 ALTER TABLE `salida_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `salida_productos`
 --
 ALTER TABLE `salida_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `sucursals`
@@ -21879,19 +21994,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `venta_cobros`
 --
 ALTER TABLE `venta_cobros`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `venta_detalles`
 --
 ALTER TABLE `venta_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Restricciones para tablas volcadas
