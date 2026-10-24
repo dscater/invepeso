@@ -14,7 +14,7 @@ class Venta extends Model
         "tipo_documento_id",
         "nit_ci",
         "tipo_venta", //CRÉDITO, AL CONTADO
-        "tipo_pago", // EFECTIVO, QR
+        "tipo_pago", // EFECTIVO, QR, EFECTIVO-QR
         "subtotal",
         "descuento",
         "porcentaje_descuento",

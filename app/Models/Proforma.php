@@ -53,6 +53,11 @@ class Proforma extends Model
         return $this->belongsTo(Cliente::class, "cliente_id");
     }
 
+    public function tipo_documento()
+    {
+        return $this->belongsTo(TipoDocumento::class, "tipo_documento_id");
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, "user_id");

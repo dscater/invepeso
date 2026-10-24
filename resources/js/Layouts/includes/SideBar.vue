@@ -746,6 +746,33 @@ onUnmounted(() => {});
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
+                            permisos.includes('reportes.venta_detalles')
+                        "
+                        :label="'Ventas Detalles'"
+                        :ruta="'reportes.venta_detalles'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.ventas')
+                        "
+                        :label="'Listado de Ventas'"
+                        :ruta="'reportes.ventas'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.proformas')
+                        "
+                        :label="'Listado de Proformas'"
+                        :ruta="'reportes.proformas'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
                             permisos.includes('reportes.orden_compras')
                         "
                         :label="'Listado de Ordenes de Compra'"
@@ -777,6 +804,15 @@ onUnmounted(() => {});
                         "
                         :label="'Lista de Clientes'"
                         :ruta="'reportes.clientes'"
+                        :icon="'fa fa-file-pdf'"
+                    ></ItemMenu>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('reportes.proveedors')
+                        "
+                        :label="'Lista de Proveedores'"
+                        :ruta="'reportes.proveedors'"
                         :icon="'fa fa-file-pdf'"
                     ></ItemMenu>
                     <ItemMenu

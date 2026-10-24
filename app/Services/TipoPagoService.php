@@ -17,6 +17,11 @@ class TipoPagoService
                 "label" => "QR",
                 "icon" => "fa fa-qrcode",
             ],
+            [
+                "value" => "EFECTIVO-QR",
+                "label" => "EFECTIVO-QR",
+                "icon" => "fa fa-qrcode",
+            ],
         ];
     }
 }

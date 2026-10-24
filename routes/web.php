@@ -335,6 +335,9 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get('reportes/clientes', [ReporteController::class, 'clientes'])->name("reportes.clientes");
     Route::get('reportes/r_clientes', [ReporteController::class, 'r_clientes'])->name("reportes.r_clientes");
 
+    Route::get('reportes/proveedors', [ReporteController::class, 'proveedors'])->name("reportes.proveedors");
+    Route::get('reportes/r_proveedors', [ReporteController::class, 'r_proveedors'])->name("reportes.r_proveedors");
+
     Route::get('reportes/productos', [ReporteController::class, 'productos'])->name("reportes.productos");
     Route::get('reportes/r_productos', [ReporteController::class, 'r_productos'])->name("reportes.r_productos");
 
@@ -346,6 +349,9 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     Route::get('reportes/ventas', [ReporteController::class, 'ventas'])->name("reportes.ventas");
     Route::get('reportes/r_ventas', [ReporteController::class, 'r_ventas'])->name("reportes.r_ventas");
+
+    Route::get('reportes/venta_detalles', [ReporteController::class, 'venta_detalles'])->name("reportes.venta_detalles");
+    Route::get('reportes/r_venta_detalles', [ReporteController::class, 'r_venta_detalles'])->name("reportes.r_venta_detalles");
 
     Route::get('reportes/proformas', [ReporteController::class, 'proformas'])->name("reportes.proformas");
     Route::get('reportes/r_proformas', [ReporteController::class, 'r_proformas'])->name("reportes.r_proformas");
