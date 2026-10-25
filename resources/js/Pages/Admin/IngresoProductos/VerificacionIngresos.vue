@@ -13,32 +13,38 @@ import axios from "axios";
 
 const { getFechaActual } = useDate();
 const { props: props_page } = usePage();
-
 const appStore = useAppStore();
+
+const props = defineProps({
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+});
 
 const { setIngresoProducto, limpiarIngresoProducto, form } =
     useIngresoProductos();
 
-const listAlmacens = ref([]);
+// const listAlmacens = ref([]);
 const almacen_id = ref("todos");
 const codigo = ref("");
 const fecha_ini = ref("");
 const fecha_fin = ref("");
 const ingreso_productos = ref([]);
 
-const cargarAlmacens = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"));
-        listAlmacens.value = res.data.almacens;
-        listAlmacens.value.unshift({
-            id: "todos",
-            nombre: "Todos los almacenes",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarAlmacens = async () => {
+//     try {
+//         const res = await axios.get(route("almacens.listado"));
+//         listAlmacens.value = res.data.almacens;
+//         listAlmacens.value.unshift({
+//             id: "todos",
+//             nombre: "Todos los almacenes",
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
 const cargarIngresosSinVerificar = () => {
     axios
@@ -64,7 +70,7 @@ const cargaListado = () => {
 };
 
 onBeforeMount(() => {
-    cargarAlmacens();
+    // cargarAlmacens();
     cargarIngresosSinVerificar();
     appStore.startLoading();
 });
@@ -110,8 +116,9 @@ onMounted(() => {
                     filterable
                     @change="cargarIngresosSinVerificar"
                 >
+                    <el-option value="todos" label="Todos los almacenes" />
                     <el-option
-                        v-for="item in listAlmacens"
+                        v-for="item in almacens"
                         :key="item.id"
                         :value="item.id"
                         :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
@@ -120,34 +127,37 @@ onMounted(() => {
             </div>
             <div class="col-md-3 col-sm-6">
                 <span class="text-muted text-sm">Código</span>
-                <input
+                <el-input
                     type="text"
                     v-model="codigo"
-                    class="form-control"
-                    placeholder="Ingresar Código"
+                    placeholder="Código de Compra"
                     @keyup="cargaListado"
                     @change="cargarIngresosSinVerificar"
-                />
+                    @clear="cargarIngresosSinVerificar"
+                    clearable
+                ></el-input>
             </div>
             <div class="col-md-3 col-sm-6">
                 <span class="text-muted text-sm">Desde</span>
-                <input
+                <el-input
                     type="date"
                     v-model="fecha_ini"
-                    class="form-control"
                     @keyup="cargaListado"
                     @change="cargarIngresosSinVerificar"
-                />
+                    @clear="cargarIngresosSinVerificar"
+                    clearable
+                ></el-input>
             </div>
             <div class="col-md-3 col-sm-6">
-                <span class="text-muted text-sm">Hasta</span>
-                <input
+                <span class="text-muted text-sm">Hasta</span
+                ><el-input
                     type="date"
                     v-model="fecha_fin"
-                    class="form-control"
                     @keyup="cargaListado"
                     @change="cargarIngresosSinVerificar"
-                />
+                    @clear="cargarIngresosSinVerificar"
+                    clearable
+                ></el-input>
             </div>
         </div>
         <div class="row">

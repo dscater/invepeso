@@ -7,6 +7,22 @@ import { useAppStore } from "@/stores/aplicacion/appStore";
 import Formulario from "./Formulario.vue";
 const { props: props_page } = usePage();
 const appStore = useAppStore();
+
+const props = defineProps({
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
+});
+
 onBeforeMount(() => {
     appStore.startLoading();
 });
@@ -46,6 +62,9 @@ const { setTraspaso, limpiarTraspaso, form } = useTraspasos();
             <div class="col-md-12">
                 <Formulario
                     :form="form"
+                    :almacens="almacens"
+                    :categorias="categorias"
+                    :marcas="marcas"
                     @envio-formulario="limpiarTraspaso"
                 ></Formulario>
             </div>

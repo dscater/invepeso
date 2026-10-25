@@ -6,6 +6,9 @@ use App\Http\Requests\TraspasoStoreRequest;
 use App\Http\Requests\TraspasoUpdateRequest;
 use App\Models\Traspaso;
 use App\Models\User;
+use App\Services\AlmacenService;
+use App\Services\CategoriaService;
+use App\Services\MarcaService;
 use App\Services\TraspasoService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -22,7 +25,12 @@ use Inertia\Response as ResponseInertia;
 
 class TraspasoController extends Controller
 {
-    public function __construct(private TraspasoService $traspasoService) {}
+    public function __construct(
+        private TraspasoService $traspasoService,
+        private AlmacenService $almacen_service,
+        private CategoriaService $categoria_service,
+        private MarcaService $marca_service,
+    ) {}
 
     /**
      * Página index
@@ -77,7 +85,14 @@ class TraspasoController extends Controller
 
     public function create(): ResponseInertia
     {
-        return Inertia::render("Admin/Traspasos/Create");
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        return Inertia::render("Admin/Traspasos/Create", [
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+        ]);
     }
 
     /**
@@ -131,7 +146,16 @@ class TraspasoController extends Controller
     public function edit(Traspaso $traspaso): ResponseInertia
     {
         $traspaso = $traspaso->load(["salida_detalles.producto", "salida_detalles.tipo_salida"]);
-        return Inertia::render("Admin/Traspasos/Edit", compact("traspaso"));
+
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        return Inertia::render("Admin/Traspasos/Edit", [
+            "traspaso" => $traspaso,
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+        ]);
     }
 
     public function update(Traspaso $traspaso, TraspasoUpdateRequest $request)

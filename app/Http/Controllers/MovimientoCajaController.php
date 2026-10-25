@@ -8,7 +8,9 @@ use App\Models\Almacen;
 use App\Models\MovimientoCaja;
 use App\Models\Sucursal;
 use App\Models\User;
+use App\Services\AlmacenService;
 use App\Services\MovimientoCajaService;
+use App\Services\UserService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -23,7 +25,11 @@ use Inertia\Response as ResponseInertia;
 
 class MovimientoCajaController extends Controller
 {
-    public function __construct(private MovimientoCajaService $movimiento_cajaService) {}
+    public function __construct(
+        private MovimientoCajaService $movimiento_cajaService,
+        private UserService $user_service,
+        private AlmacenService $almacen_service
+    ) {}
 
     /**
      * Página index
@@ -32,7 +38,14 @@ class MovimientoCajaController extends Controller
      */
     public function index(): ResponseInertia
     {
-        return Inertia::render("Admin/MovimientoCajas/Index");
+
+        $almacens = $this->almacen_service->listado(1);
+        $usuarios = $this->user_service->listado(1);
+
+        return Inertia::render("Admin/MovimientoCajas/Index", [
+            "almacens" => $almacens,
+            "usuarios" => $usuarios,
+        ]);
     }
 
     /**

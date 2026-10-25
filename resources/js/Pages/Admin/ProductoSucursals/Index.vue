@@ -232,7 +232,7 @@ const { axiosDelete } = useAxios();
                                                         >
                                                             <el-option
                                                                 value="todos"
-                                                                label="TODOS LOS ALMACENES"
+                                                                label="Todos los almacenes"
                                                             />
                                                             <el-option
                                                                 v-for="item in almacens"
@@ -258,7 +258,7 @@ const { axiosDelete } = useAxios();
                                                 >
                                                     <el-option
                                                         value="todos"
-                                                        label="TODAS LAS CATEGORÍAS"
+                                                        label="Todas las categorías"
                                                     />
                                                     <el-option
                                                         v-for="item in categorias"
@@ -282,7 +282,7 @@ const { axiosDelete } = useAxios();
                                                 >
                                                     <el-option
                                                         value="todos"
-                                                        label="TODAS LAS MARCAS"
+                                                        label="Todas las marcas"
                                                     />
                                                     <el-option
                                                         v-for="item in marcas"

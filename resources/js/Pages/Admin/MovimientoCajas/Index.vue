@@ -13,31 +13,17 @@ import { buttonProps } from "element-plus";
 const { props: props_page } = usePage();
 const appStore = useAppStore();
 
-const listAlmacens = ref([]);
-const cargarAlmacens = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"), {
-            params: {
-                activo: 1,
-            },
-        });
-        listAlmacens.value = res.data.almacens;
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+const props = defineProps({
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    usuarios: {
+        type: Array,
+        default: () => [],
+    },
+});
 
-const listUsers = ref([]);
-const cargarUsers = async () => {
-    try {
-        const res = await axios.get(route("usuarios.listado"));
-        listUsers.value = res.data.usuarios;
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
 const resumen = ref({
     ingresos: 0,
     ingresos_qr: 0,
@@ -64,8 +50,6 @@ const cargarResumen = async () => {
 
 onBeforeMount(() => {
     cargarResumen();
-    cargarAlmacens();
-    cargarUsers();
     appStore.startLoading();
 });
 onMounted(() => {
@@ -129,12 +113,18 @@ const headers = [
         width: "4%",
     },
 ];
-
+const getFechaAtual = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
 const multiSearch = ref({
     search: "",
     almacen_id: "",
-    fecha_ini: "",
-    fecha_fin: "",
+    fecha_ini: getFechaAtual(),
+    fecha_fin: getFechaAtual(),
     user_id: "",
     filtro: [],
 });
@@ -262,13 +252,17 @@ const eliminarMovimientoCaja = (item) => {
                                             class="el-select-input-group-right"
                                             no-data-text="Sin datos"
                                             no-match-text="Sin resultados"
-                                            placeholder="Seleccionar Usuario"
+                                            placeholder="Todos los usuarios"
                                             filterable
                                             clearable
                                             @change="actualizarResumen"
                                         >
                                             <el-option
-                                                v-for="item in listUsers"
+                                                value=""
+                                                label="Todos los usuarios"
+                                            />
+                                            <el-option
+                                                v-for="item in usuarios"
                                                 :key="item.id"
                                                 :value="item.id"
                                                 :label="`${item.full_name}`"
@@ -289,13 +283,17 @@ const eliminarMovimientoCaja = (item) => {
                                             class="el-select-input-group-right"
                                             no-data-text="Sin datos"
                                             no-match-text="Sin resultados"
-                                            placeholder="Seleccionar Almacén"
+                                            placeholder="Todos los almacenes"
                                             filterable
                                             clearable
                                             @change="actualizarResumen"
                                         >
                                             <el-option
-                                                v-for="item in listAlmacens"
+                                                value=""
+                                                label="Todos los almacenes"
+                                            />
+                                            <el-option
+                                                v-for="item in almacens"
                                                 :key="item.id"
                                                 :value="item.id"
                                                 :label="`${item.nombre} - ${item.sucursal.nombre}`"

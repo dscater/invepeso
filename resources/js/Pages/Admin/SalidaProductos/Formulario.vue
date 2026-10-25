@@ -8,6 +8,22 @@ const props = defineProps({
     form: {
         type: Object,
     },
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
+    tipo_salidas: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const enviando = ref(false);
@@ -92,12 +108,11 @@ const enviarFormulario = () => {
 
 const emits = defineEmits(["envio-formulario"]);
 
-const listAlmacens = ref([]);
-const listTipoSalidas = ref([]);
+// const listAlmacens = ref([]);
+// const listTipoSalidas = ref([]);
 const tipo_salida_id_default = ref("");
-const listProveedors = ref([]);
-const listCategorias = ref([]);
-const listMarcas = ref([]);
+// const listCategorias = ref([]);
+// const listMarcas = ref([]);
 const listProductoAlmacens = ref([]);
 const loadingLista = ref(true);
 const almacen_id = ref("");
@@ -131,7 +146,7 @@ const cargarProductos = async () => {
             cantidad: 1,
             costo: item.precio_compra,
             stock_aux: item.stock_total,
-            tipo_salida_id: tipo_salida_id_default,
+            tipo_salida_id: tipo_salida_id_default.value,
         }));
         total_registros.value = res.data.total;
     } catch (e) {
@@ -154,74 +169,7 @@ const filtrarNombres = () => {
     }, 370);
 };
 
-const cargarAlmacens = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"), {
-            params: {
-                activo: 1,
-            },
-        });
-        listAlmacens.value = res.data.almacens;
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarProveedors = () => {
-    axios.get(route("proveedors.listado")).then((response) => {
-        listProveedors.value = response.data.proveedors;
-    });
-};
-
-const cargarCategorias = async () => {
-    try {
-        const res = await axios.get(route("categorias.listado"));
-        listCategorias.value = res.data.categorias;
-        listCategorias.value.unshift({
-            id: "todos",
-            nombre: "Todas las Categorías",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarMarcas = async () => {
-    try {
-        const res = await axios.get(route("marcas.listado"));
-        listMarcas.value = res.data.marcas;
-        listMarcas.value.unshift({
-            id: "todos",
-            nombre: "Todas las Marcas",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarTipoSalidas = async () => {
-    try {
-        const res = await axios.get(route("tipo_salidas.listado"));
-        listTipoSalidas.value = res.data.tipo_salidas;
-        // tipo_salida_id_default.value = listTipoSalidas.value[0]
-        //     ? listTipoSalidas.value[0].id
-        //     : "";
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarListas = () => {
-    cargarTipoSalidas();
-    cargarAlmacens();
-    cargarProveedors();
-    cargarCategorias();
-    cargarMarcas();
-};
+const cargarListas = () => {};
 
 const agregarProductoSalida = async (item) => {
     const stock_total = Number(item.stock_total);
@@ -383,7 +331,7 @@ onMounted(() => {
                                             @change="detectarCambioSelect"
                                         >
                                             <el-option
-                                                v-for="item in listAlmacens"
+                                                v-for="item in almacens"
                                                 :key="item.id"
                                                 :value="item.id"
                                                 :label="`${item.nombre} - ${item.sucursal.nombre}`"
@@ -411,7 +359,11 @@ onMounted(() => {
                                     @change="detectarCambioSelect"
                                 >
                                     <el-option
-                                        v-for="item in listCategorias"
+                                        value="todos"
+                                        label="Todas las categorías"
+                                    />
+                                    <el-option
+                                        v-for="item in categorias"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -427,7 +379,11 @@ onMounted(() => {
                                     @change="detectarCambioSelect"
                                 >
                                     <el-option
-                                        v-for="item in listMarcas"
+                                        value="todos"
+                                        label="Todas las marcas"
+                                    />
+                                    <el-option
+                                        v-for="item in marcas"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -596,10 +552,8 @@ onMounted(() => {
                                                                             placeholder="Tipo de Salida"
                                                                         >
                                                                             <el-option
-                                                                                v-for="tipo in listTipoSalidas"
-                                                                                :key="
-                                                                                    tipo.id
-                                                                                "
+                                                                                v-for="tipo in tipo_salidas"
+                                                                                :key="`${item.id}-${tipo.id}`"
                                                                                 :label="
                                                                                     tipo.nombre
                                                                                 "
@@ -673,31 +627,6 @@ onMounted(() => {
                             </div>
                         </div>
                         <div class="row">
-                            <!-- <div class="col-md-12 mt-2">
-                                <label class="required">Tipo de Salida</label>
-                                <el-select
-                                    placeholder="Tipo de Salida"
-                                    no-data-text="Sin datos"
-                                    no-match-text="Sin resultados"
-                                    filterable
-                                    v-model="form.tipo_salida_id"
-                                >
-                                    <el-option
-                                        v-for="item in listTipoSalidas"
-                                        :key="item.id"
-                                        :value="item.id"
-                                        :label="item.nombre"
-                                    ></el-option>
-                                </el-select>
-                                <ul
-                                    v-if="form.errors?.proveedor_id"
-                                    class="d-block text-danger list-unstyled"
-                                >
-                                    <li class="parsley-required">
-                                        {{ form.errors?.proveedor_id }}
-                                    </li>
-                                </ul>
-                            </div> -->
                             <div class="col-12 mt-2">
                                 <label class="">Descripción</label>
                                 <el-input
@@ -756,7 +685,7 @@ onMounted(() => {
                                                 size="small"
                                             >
                                                 <el-option
-                                                    v-for="tipo in listTipoSalidas"
+                                                    v-for="tipo in tipo_salidas"
                                                     :key="tipo.id"
                                                     :label="tipo.nombre"
                                                     :value="tipo.id"

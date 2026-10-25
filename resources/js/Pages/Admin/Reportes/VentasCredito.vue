@@ -10,11 +10,18 @@ onBeforeMount(() => {
     appStore.startLoading();
 });
 
-const cargarListas = () => {
-    cargarSucursals();
-    cargarUsers();
-    cargarTipoVentas();
-};
+const props = defineProps({
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    usuarios: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const cargarListas = () => {};
 
 onMounted(() => {
     cargarListas();
@@ -76,20 +83,6 @@ const generarReporte = () => {
     setTimeout(() => {
         generando.value = false;
     }, 500);
-};
-
-const cargarSucursals = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"));
-        listAlmacens.value = res.data.almacens;
-        listAlmacens.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
 };
 
 const listVentas = ref([]);
@@ -176,30 +169,6 @@ const buscarClientes = (texto) => {
         }
     }, 300);
 };
-const cargarUsers = () => {
-    axios.get(route("usuarios.listado")).then((response) => {
-        listUsuarios.value = response.data.usuarios;
-        listUsuarios.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-            full_name: "TODOS",
-        });
-    });
-};
-
-const cargarTipoVentas = async () => {
-    try {
-        const res = await axios.get(route("tipo_compras.listado"));
-        listTipoVentas.value = res.data.tipo_compras;
-        listTipoVentas.value.unshift({
-            value: "todos",
-            label: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
 </script>
 <template>
     <Head title="Reporte Ventas a Crédito"></Head>
@@ -241,7 +210,11 @@ const cargarTipoVentas = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listAlmacens"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in almacens"
                                             :value="item.id"
                                             :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
                                         >
@@ -324,7 +297,11 @@ const cargarTipoVentas = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listUsuarios"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in usuarios"
                                             :value="item.id"
                                             :label="item.full_name"
                                         >

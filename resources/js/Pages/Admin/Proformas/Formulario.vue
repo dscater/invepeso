@@ -12,6 +12,18 @@ const props = defineProps({
     form: {
         type: Object,
     },
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const enviando = ref(false);
@@ -137,11 +149,11 @@ const enviarFormulario = () => {
 
 const emits = defineEmits(["envio-formulario"]);
 
-const listAlmacens = ref([]);
-const listTipoPagos = ref([]);
+// const listAlmacens = ref([]);
+// const listTipoPagos = ref([]);
 const tipo_proforma_id_default = ref("");
-const listCategorias = ref([]);
-const listMarcas = ref([]);
+// const listCategorias = ref([]);
+// const listMarcas = ref([]);
 const listProductoAlmacens = ref([]);
 const loadingLista = ref(true);
 const almacen_id = ref("");
@@ -173,9 +185,9 @@ const cargarProductos = async () => {
         listProductoAlmacens.value = res.data.data.map((item) => ({
             ...item,
             cantidad: 1,
-            precio_proforma: item.precio,
+            precio_venta: item.precio,
             stock_aux: item.stock_total,
-            tipo_proforma_id: tipo_proforma_id_default,
+            tipo_proforma_id: tipo_proforma_id_default.value,
         }));
         total_registros.value = res.data.total;
     } catch (e) {
@@ -198,64 +210,53 @@ const filtrarNombres = () => {
     }, 370);
 };
 
-const cargarAlmacens = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"), {
-            params: {
-                activo: 1,
-            },
-        });
-        listAlmacens.value = res.data.almacens;
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarAlmacens = async () => {
+//     try {
+//         const res = await axios.get(route("almacens.listado"), {
+//             params: {
+//                 activo: 1,
+//             },
+//         });
+//         listAlmacens.value = res.data.almacens;
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
-const cargarCategorias = async () => {
-    try {
-        const res = await axios.get(route("categorias.listado"));
-        listCategorias.value = res.data.categorias;
-        listCategorias.value.unshift({
-            id: "todos",
-            nombre: "Todas las Categorías",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarCategorias = async () => {
+//     try {
+//         const res = await axios.get(route("categorias.listado"));
+//         listCategorias.value = res.data.categorias;
+//         listCategorias.value.unshift({
+//             id: "todos",
+//             nombre: "Todas las Categorías",
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
-const cargarMarcas = async () => {
-    try {
-        const res = await axios.get(route("marcas.listado"));
-        listMarcas.value = res.data.marcas;
-        listMarcas.value.unshift({
-            id: "todos",
-            nombre: "Todas las Marcas",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarTipoPagos = async () => {
-    try {
-        const res = await axios.get(route("tipo_pagos.listado"));
-        listTipoPagos.value = res.data.tipo_pagos;
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarMarcas = async () => {
+//     try {
+//         const res = await axios.get(route("marcas.listado"));
+//         listMarcas.value = res.data.marcas;
+//         listMarcas.value.unshift({
+//             id: "todos",
+//             nombre: "Todas las Marcas",
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
 const cargarListas = () => {
-    cargarTipoPagos();
-    cargarProductos();
-    cargarAlmacens();
-    cargarCategorias();
-    cargarMarcas();
+    // cargarProductos();
+    // cargarAlmacens();
+    // cargarCategorias();
+    // cargarMarcas();
 };
 
 const listClientes = ref([]);
@@ -338,7 +339,7 @@ const reasignarPreciosPorClienteProductos = () => {
 
 const agregarProductoProforma = async (item) => {
     const stock_total = Number(item.stock_total);
-    let precio = Number(item.precio_proforma);
+    let precio = Number(item.precio_venta);
     let cliente_producto_precio = obtenerPrecioClienteProducto(item.id);
     if (cliente_producto_precio > -1) {
         precio = cliente_producto_precio;
@@ -590,6 +591,9 @@ onMounted(() => {
     // edit
     if (form.id != 0) {
         almacen_id.value = form.almacen_id;
+        almacen_id.value = form.almacen_id;
+        cargarProductos();
+        buscarClientes(form.cliente.nombre);
     }
     cargarListas();
 });
@@ -625,7 +629,7 @@ onMounted(() => {
                                             @change="detectarCambioSelect"
                                         >
                                             <el-option
-                                                v-for="item in listAlmacens"
+                                                v-for="item in almacens"
                                                 :key="item.id"
                                                 :value="item.id"
                                                 :label="`${item.nombre} - ${item.sucursal.nombre}`"
@@ -653,7 +657,11 @@ onMounted(() => {
                                     @change="detectarCambioSelect"
                                 >
                                     <el-option
-                                        v-for="item in listCategorias"
+                                        value="todos"
+                                        label="Todas las categorías"
+                                    />
+                                    <el-option
+                                        v-for="item in categorias"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -669,7 +677,11 @@ onMounted(() => {
                                     @change="detectarCambioSelect"
                                 >
                                     <el-option
-                                        v-for="item in listMarcas"
+                                        value="todos"
+                                        label="Todas las marcas"
+                                    />
+                                    <el-option
+                                        v-for="item in marcas"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -960,7 +972,8 @@ onMounted(() => {
                                     <i class="fa fa-clipboard-check"></i> Datos
                                     de la Proforma
                                     <span v-if="form.id != 0" class="fw-bold"
-                                        >- ACTUALIZACIÓN</span
+                                        >- Cod.:
+                                        {{ form.codigo_proforma }}</span
                                     >
                                 </h4>
                                 <div

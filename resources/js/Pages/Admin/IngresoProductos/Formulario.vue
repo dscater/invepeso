@@ -156,7 +156,7 @@ const cargarProductos = async () => {
             ...item,
             cantidad: 1,
             costo: item.precio_compra,
-            tipo_ingreso_id: tipo_ingreso_id_default,
+            tipo_ingreso_id: tipo_ingreso_id_default.value,
         }));
         total_registros.value = res.data.total;
     } catch (e) {

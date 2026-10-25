@@ -8,6 +8,9 @@ use App\Http\Requests\ProformaUpdateRequest;
 use App\Models\Almacen;
 use App\Models\Proforma;
 use App\Models\User;
+use App\Services\AlmacenService;
+use App\Services\CategoriaService;
+use App\Services\MarcaService;
 use App\Services\ProformaService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +28,10 @@ use Inertia\Response as ResponseInertia;
 class ProformaController extends Controller
 {
     public function __construct(
-        private ProformaService $proformaService
+        private ProformaService $proformaService,
+        private AlmacenService $almacen_service,
+        private CategoriaService $categoria_service,
+        private MarcaService $marca_service,
     ) {}
 
     /**
@@ -81,7 +87,14 @@ class ProformaController extends Controller
 
     public function create(): ResponseInertia
     {
-        return Inertia::render("Admin/Proformas/Create");
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        return Inertia::render("Admin/Proformas/Create", [
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+        ]);
     }
 
     /**
@@ -136,7 +149,17 @@ class ProformaController extends Controller
     public function edit(Proforma $proforma): ResponseInertia
     {
         $proforma = $proforma->load(["proforma_detalles.producto", "cliente", "sucursal:id,nombre", "almacen:id,nombre"]);
-        return Inertia::render("Admin/Proformas/Edit", compact("proforma"));
+
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+
+        return Inertia::render("Admin/Proformas/Edit", [
+            "proforma" => $proforma,
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+        ]);
     }
 
     public function update(Proforma $proforma, ProformaUpdateRequest $request)

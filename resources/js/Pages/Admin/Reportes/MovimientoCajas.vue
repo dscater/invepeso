@@ -8,14 +8,17 @@ const { props: props_page } = usePage();
 onBeforeMount(() => {
     appStore.startLoading();
 });
-
-const cargarListas = () => {
-    cargarSucursals();
-    cargarProveedors();
-    cargarUsers();
-    cargarTipoVentas();
-    cargarTipoCompras();
-};
+const props = defineProps({
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    usuarios: {
+        type: Array,
+        default: () => [],
+    },
+});
+const cargarListas = () => {};
 
 onMounted(() => {
     cargarListas();
@@ -54,12 +57,6 @@ const form = ref({
     formato: "pdf",
 });
 
-const listAlmacens = ref([]);
-const listProveedors = ref([]);
-const listUsuarios = ref([]);
-const listTipoVentas = ref([]);
-const listTipoCompras = ref([]);
-
 const generando = ref(false);
 const txtBtn = computed(() => {
     if (generando.value) {
@@ -75,70 +72,6 @@ const generarReporte = () => {
     setTimeout(() => {
         generando.value = false;
     }, 500);
-};
-
-const cargarSucursals = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"));
-        listAlmacens.value = res.data.almacens;
-        listAlmacens.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarProveedors = () => {
-    axios.get(route("proveedors.listado")).then((response) => {
-        listProveedors.value = response.data.proveedors;
-        listProveedors.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-            full_name: "TODOS",
-        });
-    });
-};
-
-const cargarUsers = () => {
-    axios.get(route("usuarios.listado")).then((response) => {
-        listUsuarios.value = response.data.usuarios;
-        listUsuarios.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-            full_name: "TODOS",
-        });
-    });
-};
-
-const cargarTipoVentas = async () => {
-    try {
-        const res = await axios.get(route("tipo_ventas.listado"));
-        listTipoVentas.value = res.data.tipo_ventas;
-        listTipoVentas.value.unshift({
-            value: "todos",
-            label: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarTipoCompras = async () => {
-    try {
-        const res = await axios.get(route("tipo_compras.listado"));
-        listTipoCompras.value = res.data.tipo_compras;
-        listTipoCompras.value.unshift({
-            value: "todos",
-            label: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
 };
 </script>
 <template>
@@ -181,7 +114,11 @@ const cargarTipoCompras = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listAlmacens"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in almacens"
                                             :value="item.id"
                                             :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
                                         >
@@ -202,7 +139,11 @@ const cargarTipoCompras = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listUsuarios"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in usuarios"
                                             :value="item.id"
                                             :label="item.full_name"
                                         >

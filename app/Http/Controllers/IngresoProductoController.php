@@ -53,6 +53,7 @@ class IngresoProductoController extends Controller
     {
         return Inertia::render("Admin/IngresoProductos/Index");
     }
+
     public function buscar(Request $request)
     {
         $request->validate([
@@ -267,7 +268,7 @@ class IngresoProductoController extends Controller
             "categorias" => $categorias,
             "marcas" => $marcas,
             "proveedors" => $proveedors,
-            "tipo_ingresos" => $marcas,
+            "tipo_ingresos" => $tipo_ingresos,
         ]);
     }
 
@@ -350,7 +351,10 @@ class IngresoProductoController extends Controller
 
     public function verificacion_ingresos()
     {
-        return Inertia::render("Admin/IngresoProductos/VerificacionIngresos");
+        $almacens = $this->almacen_service->listado(1);
+        return Inertia::render("Admin/IngresoProductos/VerificacionIngresos", [
+            "almacens" => $almacens
+        ]);
     }
 
     public function verificacion_create(IngresoProducto $ingreso_producto)
@@ -384,7 +388,10 @@ class IngresoProductoController extends Controller
     }
     public function faltantes_ingresos()
     {
-        return Inertia::render("Admin/IngresoProductos/FaltantesIngresos");
+        $almacens = $this->almacen_service->listado(1);
+        return Inertia::render("Admin/IngresoProductos/FaltantesIngresos", [
+            "almacens" => $almacens
+        ]);
     }
 
 
@@ -472,12 +479,16 @@ class IngresoProductoController extends Controller
         $almacens = $this->almacen_service->listado(1);
         $categorias = $this->categoria_service->listado();
         $marcas = $this->marca_service->listado();
+        $proveedors = $this->proveedor_service->listado();
+        $tipo_ingresos = $this->tipo_ingreso_service->listado();
 
         return Inertia::render("Admin/IngresoProductos/Edit", [
             "ingreso_producto" => $ingreso_producto,
             "almacens" => $almacens,
             "categorias" => $categorias,
             "marcas" => $marcas,
+            "proveedors" => $proveedors,
+            "tipo_ingresos" => $tipo_ingresos,
         ]);
     }
 

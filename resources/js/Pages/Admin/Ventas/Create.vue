@@ -7,6 +7,28 @@ import { useAppStore } from "@/stores/aplicacion/appStore";
 import Formulario from "./Formulario.vue";
 const { props: props_page } = usePage();
 const appStore = useAppStore();
+const props = defineProps({
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
+    tipo_ventas: {
+        type: Array,
+        default: () => [],
+    },
+    tipo_pagos: {
+        type: Array,
+        default: () => [],
+    },
+});
 onBeforeMount(() => {
     appStore.startLoading();
 });
@@ -44,6 +66,11 @@ const { setVenta, limpiarVenta, form } = useVentas();
             <div class="col-md-12">
                 <Formulario
                     :form="form"
+                    :almacens="almacens"
+                    :categorias="categorias"
+                    :marcas="marcas"
+                    :tipo_ventas="tipo_ventas"
+                    :tipo_pagos="tipo_pagos"
                     @envio-formulario="limpiarVenta"
                 ></Formulario>
             </div>

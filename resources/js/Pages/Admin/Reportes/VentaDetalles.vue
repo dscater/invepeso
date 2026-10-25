@@ -10,12 +10,26 @@ onBeforeMount(() => {
     appStore.startLoading();
 });
 
-const cargarListas = () => {
-    cargarSucursals();
-    cargarUsers();
-    cargarTipoVentas();
-    cargarTipoPagos();
-};
+const props = defineProps({
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    usuarios: {
+        type: Array,
+        default: () => [],
+    },
+    tipo_ventas: {
+        type: Array,
+        default: () => [],
+    },
+    tipo_pagos: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const cargarListas = () => {};
 
 onMounted(() => {
     cargarListas();
@@ -57,11 +71,6 @@ const form = ref({
     formato: "pdf",
 });
 
-const listAlmacens = ref([]);
-const listUsuarios = ref([]);
-const listTipoVentas = ref([]);
-const listTipoPagos = ref([]);
-
 const generando = ref(false);
 const txtBtn = computed(() => {
     if (generando.value) {
@@ -78,21 +87,6 @@ const generarReporte = () => {
         generando.value = false;
     }, 500);
 };
-
-const cargarSucursals = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"));
-        listAlmacens.value = res.data.almacens;
-        listAlmacens.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
 const listClientes = ref([]);
 const cargandoClientes = ref(false);
 
@@ -135,44 +129,6 @@ const buscarClientes = (texto) => {
         }
     }, 300);
 };
-const cargarUsers = () => {
-    axios.get(route("usuarios.listado")).then((response) => {
-        listUsuarios.value = response.data.usuarios;
-        listUsuarios.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-            full_name: "TODOS",
-        });
-    });
-};
-
-const cargarTipoVentas = async () => {
-    try {
-        const res = await axios.get(route("tipo_ventas.listado"));
-        listTipoVentas.value = res.data.tipo_ventas;
-        listTipoVentas.value.unshift({
-            value: "todos",
-            label: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarTipoPagos = async () => {
-    try {
-        const res = await axios.get(route("tipo_pagos.listado"));
-        listTipoPagos.value = res.data.tipo_pagos;
-        listTipoPagos.value.unshift({
-            value: "todos",
-            label: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
 </script>
 <template>
     <Head title="Reporte Venta Detalles"></Head>
@@ -214,7 +170,11 @@ const cargarTipoPagos = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listAlmacens"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in almacens"
                                             :value="item.id"
                                             :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
                                         >
@@ -266,7 +226,11 @@ const cargarTipoPagos = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listUsuarios"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in usuarios"
                                             :value="item.id"
                                             :label="item.full_name"
                                         >
@@ -282,7 +246,11 @@ const cargarTipoPagos = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listTipoVentas"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in tipo_ventas"
                                             :value="item.value"
                                             :label="item.label"
                                         >
@@ -298,7 +266,11 @@ const cargarTipoPagos = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listTipoPagos"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in tipo_pagos"
                                             :value="item.value"
                                             :label="item.label"
                                         >

@@ -22,12 +22,20 @@ use App\Models\TipoCertificado;
 use App\Models\User;
 use App\Models\Venta;
 use App\Models\VentaCobro;
+use App\Services\AlmacenService;
+use App\Services\CategoriaService;
 use App\Services\KardexProductoService;
+use App\Services\MarcaService;
 use App\Services\MovimientoCajaService;
 use App\Services\PagoService;
+use App\Services\ProveedorService;
 use App\Services\ReporteService;
 use App\Services\ReporteServiceTcpdf;
+use App\Services\TipoCompraService;
 use App\Services\TipoPagoService;
+use App\Services\TipoVentaService;
+use App\Services\UnidadMedidaService;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -189,8 +197,19 @@ class ReporteController extends Controller
     ];
 
     private $configuracion = null;
-    public function __construct(private MovimientoCajaService $movimiento_caja_service, private KardexProductoService $kardex_producto_service)
-    {
+    public function __construct(
+        private MovimientoCajaService $movimiento_caja_service,
+        private KardexProductoService $kardex_producto_service,
+        private AlmacenService $almacen_service,
+        private ProveedorService $proveedor_service,
+        private CategoriaService $categoria_service,
+        private MarcaService $marca_service,
+        private UnidadMedidaService $unidad_medida_service,
+        private TipoVentaService $tipo_venta_service,
+        private TipoPagoService $tipo_pago_service,
+        private TipoCompraService $tipo_compra_service,
+        private UserService $user_service,
+    ) {
         $this->configuracion = Configuracion::first();
         if (!$this->configuracion) {
             $this->configuracion = new Configuracion([
@@ -879,7 +898,17 @@ class ReporteController extends Controller
 
     public function stock_productos()
     {
-        return Inertia::render("Admin/Reportes/StockProductos");
+
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        $unidad_medidas = $this->unidad_medida_service->listado();
+        return Inertia::render("Admin/Reportes/StockProductos", [
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+            "unidad_medidas" => $unidad_medidas,
+        ]);
     }
 
     public function r_stock_productos(Request $request)
@@ -1104,7 +1133,16 @@ class ReporteController extends Controller
     }
     public function kardex_productos()
     {
-        return Inertia::render("Admin/Reportes/KardexProductos");
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        $unidad_medidas = $this->unidad_medida_service->listado();
+        return Inertia::render("Admin/Reportes/KardexProductos", [
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+            "unidad_medidas" => $unidad_medidas,
+        ]);
     }
 
     public function r_kardex_productos(Request $request)
@@ -1667,7 +1705,16 @@ class ReporteController extends Controller
 
     public function ingreso_bruto_productos()
     {
-        return Inertia::render("Admin/Reportes/IngresoBrutoProductos");
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        $unidad_medidas = $this->unidad_medida_service->listado();
+        return Inertia::render("Admin/Reportes/IngresoBrutoProductos", [
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+            "unidad_medidas" => $unidad_medidas,
+        ]);
     }
 
     public function r_ingreso_bruto_productos(Request $request)
@@ -2412,7 +2459,16 @@ class ReporteController extends Controller
 
     public function venta_detalles()
     {
-        return Inertia::render("Admin/Reportes/VentaDetalles");
+        $almacens = $this->almacen_service->listado(1);
+        $usuarios = $this->user_service->listado(1);
+        $tipo_ventas = $this->tipo_venta_service->listado();
+        $tipo_pagos = $this->tipo_pago_service->listado();
+        return Inertia::render("Admin/Reportes/VentaDetalles", [
+            "almacens" => $almacens,
+            "usuarios" => $usuarios,
+            "tipo_ventas" => $tipo_ventas,
+            "tipo_pagos" => $tipo_pagos,
+        ]);
     }
 
     public function r_venta_detalles(Request $request)
@@ -3013,7 +3069,16 @@ class ReporteController extends Controller
 
     public function recepcions()
     {
-        return Inertia::render("Admin/Reportes/Recepcions");
+        $almacens = $this->almacen_service->listado(1);
+        $proveedors = $this->proveedor_service->listado();
+        $usuarios = $this->user_service->listado(1);
+        $tipo_compras = $this->tipo_compra_service->listado();
+        return Inertia::render("Admin/Reportes/Recepcions", [
+            "almacens" => $almacens,
+            "usuarios" => $usuarios,
+            "proveedors" => $proveedors,
+            "tipo_compras" => $tipo_compras,
+        ]);
     }
 
     public function r_recepcions(Request $request)
@@ -3326,7 +3391,17 @@ class ReporteController extends Controller
 
     public function faltantes()
     {
-        return Inertia::render("Admin/Reportes/Faltantes");
+        $almacens = $this->almacen_service->listado(1);
+        $proveedors = $this->proveedor_service->listado();
+        $usuarios = $this->user_service->listado(1);
+        $tipo_compras = $this->tipo_compra_service->listado();
+
+        return Inertia::render("Admin/Reportes/Faltantes", [
+            "almacens" => $almacens,
+            "usuarios" => $usuarios,
+            "proveedors" => $proveedors,
+            "tipo_compras" => $tipo_compras,
+        ]);
     }
 
     public function r_faltantes(Request $request)
@@ -4060,7 +4135,12 @@ class ReporteController extends Controller
 
     public function ventas_creditos()
     {
-        return Inertia::render("Admin/Reportes/CreditosCobrar");
+        $almacens = $this->almacen_service->listado(1);
+        $usuarios = $this->user_service->listado(1);
+        return Inertia::render("Admin/Reportes/VentasCredito", [
+            "almacens" => $almacens,
+            "usuarios" => $usuarios,
+        ]);
     }
 
     public function r_ventas_creditos(Request $request)
@@ -4527,9 +4607,14 @@ class ReporteController extends Controller
 
     public function movimiento_cajas()
     {
-        return Inertia::render("Admin/Reportes/MovimientoCajas");
-    }
+        $almacens = $this->almacen_service->listado(1);
+        $usuarios = $this->user_service->listado(1);
 
+        return Inertia::render("Admin/Reportes/MovimientoCajas", [
+            "almacens" => $almacens,
+            "usuarios" => $usuarios,
+        ]);
+    }
 
     public function r_movimiento_cajas(Request $request)
     {

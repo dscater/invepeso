@@ -10,13 +10,26 @@ onBeforeMount(() => {
     appStore.startLoading();
 });
 
-const cargarListas = () => {
-    cargarSucursals();
-    cargarProveedors();
-    cargarUsers();
-    cargarTipoVentas();
-    cargarTipoCompras();
-};
+const props = defineProps({
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    proveedors: {
+        type: Array,
+        default: () => [],
+    },
+    usuarios: {
+        type: Array,
+        default: () => [],
+    },
+    tipo_compras: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const cargarListas = () => {};
 
 onMounted(() => {
     cargarListas();
@@ -81,20 +94,6 @@ const generarReporte = () => {
     }, 500);
 };
 
-const cargarSucursals = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"));
-        listAlmacens.value = res.data.almacens;
-        listAlmacens.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
 const listIngresoProductos = ref([]);
 const cargandoIngresoProductos = ref(false);
 
@@ -140,55 +139,6 @@ const buscarIngresoProductos = (texto) => {
         }
     }, 300);
 };
-const cargarProveedors = () => {
-    axios.get(route("proveedors.listado")).then((response) => {
-        listProveedors.value = response.data.proveedors;
-        listProveedors.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-            full_name: "TODOS",
-        });
-    });
-};
-
-const cargarUsers = () => {
-    axios.get(route("usuarios.listado")).then((response) => {
-        listUsuarios.value = response.data.usuarios;
-        listUsuarios.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-            full_name: "TODOS",
-        });
-    });
-};
-
-const cargarTipoVentas = async () => {
-    try {
-        const res = await axios.get(route("tipo_ventas.listado"));
-        listTipoVentas.value = res.data.tipo_ventas;
-        listTipoVentas.value.unshift({
-            value: "todos",
-            label: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarTipoCompras = async () => {
-    try {
-        const res = await axios.get(route("tipo_compras.listado"));
-        listTipoCompras.value = res.data.tipo_compras;
-        listTipoCompras.value.unshift({
-            value: "todos",
-            label: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
 </script>
 <template>
     <Head title="Reporte Recepción de Faltantes"></Head>
@@ -230,7 +180,11 @@ const cargarTipoCompras = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listAlmacens"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in almacens"
                                             :value="item.id"
                                             :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
                                         >
@@ -277,7 +231,11 @@ const cargarTipoCompras = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listProveedors"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in proveedors"
                                             :value="item.id"
                                             :label="item.nombre"
                                         >
@@ -298,7 +256,11 @@ const cargarTipoCompras = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listUsuarios"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in usuarios"
                                             :value="item.id"
                                             :label="item.full_name"
                                         >
@@ -314,7 +276,11 @@ const cargarTipoCompras = async () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listTipoCompras"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in tipo_compras"
                                             :value="item.value"
                                             :label="item.label"
                                         >

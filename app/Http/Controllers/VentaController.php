@@ -10,6 +10,12 @@ use App\Models\Almacen;
 use App\Models\Venta;
 use App\Models\User;
 use App\Models\VentaCobro;
+use App\Services\AlmacenService;
+use App\Services\CategoriaService;
+use App\Services\MarcaService;
+use App\Services\ProveedorService;
+use App\Services\TipoPagoService;
+use App\Services\TipoVentaService;
 use App\Services\VentaCobroService;
 use App\Services\VentaService;
 use Exception;
@@ -29,7 +35,12 @@ class VentaController extends Controller
 {
     public function __construct(
         private VentaService $ventaService,
-        private VentaCobroService $venta_cobro_service
+        private VentaCobroService $venta_cobro_service,
+        private AlmacenService $almacen_service,
+        private CategoriaService $categoria_service,
+        private MarcaService $marca_service,
+        private TipoVentaService $tipo_venta_service,
+        private TipoPagoService $tipo_pago_service
     ) {}
 
     /**
@@ -281,7 +292,19 @@ class VentaController extends Controller
 
     public function create(): ResponseInertia
     {
-        return Inertia::render("Admin/Ventas/Create");
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        $tipo_ventas = $this->tipo_venta_service->listado();
+        $tipo_pagos = $this->tipo_pago_service->listado();
+
+        return Inertia::render("Admin/Ventas/Create", [
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+            "tipo_ventas" => $tipo_ventas,
+            "tipo_pagos" => $tipo_pagos,
+        ]);
     }
 
     /**
@@ -376,7 +399,21 @@ class VentaController extends Controller
     public function edit(Venta $venta): ResponseInertia
     {
         $venta = $venta->load(["venta_detalles.producto", "cliente", "sucursal:id,nombre", "almacen:id,nombre", "tipo_documento:id,nombre"]);
-        return Inertia::render("Admin/Ventas/Edit", compact("venta"));
+
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        $tipo_ventas = $this->tipo_venta_service->listado();
+        $tipo_pagos = $this->tipo_pago_service->listado();
+
+        return Inertia::render("Admin/Ventas/Edit", [
+            "venta" => $venta,
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+            "tipo_ventas" => $tipo_ventas,
+            "tipo_pagos" => $tipo_pagos,
+        ]);
     }
 
     public function update(Venta $venta, VentaUpdateRequest $request)

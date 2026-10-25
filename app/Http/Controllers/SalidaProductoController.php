@@ -6,7 +6,11 @@ use App\Http\Requests\SalidaProductoStoreRequest;
 use App\Http\Requests\SalidaProductoUpdateRequest;
 use App\Models\SalidaProducto;
 use App\Models\User;
+use App\Services\AlmacenService;
+use App\Services\CategoriaService;
+use App\Services\MarcaService;
 use App\Services\SalidaProductoService;
+use App\Services\TipoSalidaService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +25,13 @@ use Inertia\Response as ResponseInertia;
 
 class SalidaProductoController extends Controller
 {
-    public function __construct(private SalidaProductoService $salida_productoService) {}
+    public function __construct(
+        private SalidaProductoService $salida_productoService,
+        private AlmacenService $almacen_service,
+        private CategoriaService $categoria_service,
+        private MarcaService $marca_service,
+        private TipoSalidaService $tipo_salida_service
+    ) {}
 
     /**
      * Página index
@@ -76,7 +86,16 @@ class SalidaProductoController extends Controller
 
     public function create(): ResponseInertia
     {
-        return Inertia::render("Admin/SalidaProductos/Create");
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        $tipo_salidas = $this->tipo_salida_service->listado();
+        return Inertia::render("Admin/SalidaProductos/Create", [
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+            "tipo_salidas" => $tipo_salidas,
+        ]);
     }
 
     /**
@@ -115,7 +134,19 @@ class SalidaProductoController extends Controller
     public function edit(SalidaProducto $salida_producto): ResponseInertia
     {
         $salida_producto = $salida_producto->load(["salida_detalles.producto", "salida_detalles.tipo_salida"]);
-        return Inertia::render("Admin/SalidaProductos/Edit", compact("salida_producto"));
+
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        $tipo_salidas = $this->tipo_salida_service->listado();
+
+        return Inertia::render("Admin/SalidaProductos/Edit", [
+            "salida_producto" => $salida_producto,
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+            "tipo_salidas" => $tipo_salidas,
+        ]);
     }
 
     public function update(SalidaProducto $salida_producto, SalidaProductoUpdateRequest $request)

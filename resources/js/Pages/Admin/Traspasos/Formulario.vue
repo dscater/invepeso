@@ -8,6 +8,18 @@ const props = defineProps({
     form: {
         type: Object,
     },
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const enviando = ref(false);
@@ -98,18 +110,15 @@ const enviarFormulario = () => {
 
 const emits = defineEmits(["envio-formulario"]);
 
-const listAlmacens = ref([]);
+// const listAlmacens = ref([]);
 const listAlmacensDestino = computed(() => {
     almacen_destino_id.value = "";
-    return listAlmacens.value.filter(
-        (item) => item.id != almacen_origen_id.value,
-    );
+    if (!props.almacens) return [];
+    return props.almacens.filter((item) => item.id != almacen_origen_id.value);
 });
-const listTipoTraspasos = ref([]);
 const tipo_traspaso_id_default = ref("");
-const listProveedors = ref([]);
-const listCategorias = ref([]);
-const listMarcas = ref([]);
+// const listCategorias = ref([]);
+// const listMarcas = ref([]);
 const listProductoAlmacens = ref([]);
 const loadingLista = ref(true);
 const almacen_origen_id = ref("");
@@ -144,7 +153,7 @@ const cargarProductos = async () => {
             cantidad: 1,
             costo: item.precio_compra,
             stock_aux: item.stock_total,
-            tipo_traspaso_id: tipo_traspaso_id_default,
+            tipo_traspaso_id: tipo_traspaso_id_default.value,
         }));
         total_registros.value = res.data.total;
     } catch (e) {
@@ -167,73 +176,52 @@ const filtrarNombres = () => {
     }, 370);
 };
 
-const cargarAlmacens = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"), {
-            params: {
-                activo: 1,
-            },
-        });
-        listAlmacens.value = res.data.almacens;
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarAlmacens = async () => {
+//     try {
+//         const res = await axios.get(route("almacens.listado"), {
+//             params: {
+//                 activo: 1,
+//             },
+//         });
+//         listAlmacens.value = res.data.almacens;
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
-const cargarProveedors = () => {
-    axios.get(route("proveedors.listado")).then((response) => {
-        listProveedors.value = response.data.proveedors;
-    });
-};
+// const cargarCategorias = async () => {
+//     try {
+//         const res = await axios.get(route("categorias.listado"));
+//         listCategorias.value = res.data.categorias;
+//         listCategorias.value.unshift({
+//             id: "todos",
+//             nombre: "Todas las Categorías",
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
-const cargarCategorias = async () => {
-    try {
-        const res = await axios.get(route("categorias.listado"));
-        listCategorias.value = res.data.categorias;
-        listCategorias.value.unshift({
-            id: "todos",
-            nombre: "Todas las Categorías",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarMarcas = async () => {
-    try {
-        const res = await axios.get(route("marcas.listado"));
-        listMarcas.value = res.data.marcas;
-        listMarcas.value.unshift({
-            id: "todos",
-            nombre: "Todas las Marcas",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarTipoTraspasos = async () => {
-    try {
-        const res = await axios.get(route("tipo_traspasos.listado"));
-        listTipoTraspasos.value = res.data.tipo_traspasos;
-        // tipo_traspaso_id_default.value = listTipoTraspasos.value[0]
-        //     ? listTipoTraspasos.value[0].id
-        //     : "";
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarMarcas = async () => {
+//     try {
+//         const res = await axios.get(route("marcas.listado"));
+//         listMarcas.value = res.data.marcas;
+//         listMarcas.value.unshift({
+//             id: "todos",
+//             nombre: "Todas las Marcas",
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
 const cargarListas = () => {
-    // cargarTipoTraspasos();
-    cargarAlmacens();
-    cargarProveedors();
-    cargarCategorias();
-    cargarMarcas();
+    // cargarAlmacens();
+    // cargarCategorias();
+    // cargarMarcas();
 };
 
 const agregarProductoTraspaso = async (item) => {
@@ -386,7 +374,7 @@ onMounted(() => {
                                             @change="detectarCambioSelect"
                                         >
                                             <el-option
-                                                v-for="item in listAlmacens"
+                                                v-for="item in almacens"
                                                 :key="item.id"
                                                 :value="item.id"
                                                 :label="`${item.nombre} - ${item.sucursal.nombre}`"
@@ -414,7 +402,11 @@ onMounted(() => {
                                     @change="detectarCambioSelect"
                                 >
                                     <el-option
-                                        v-for="item in listCategorias"
+                                        value="todos"
+                                        label="Todas las categorías"
+                                    />
+                                    <el-option
+                                        v-for="item in categorias"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -430,7 +422,11 @@ onMounted(() => {
                                     @change="detectarCambioSelect"
                                 >
                                     <el-option
-                                        v-for="item in listMarcas"
+                                        value="todos"
+                                        label="Todas las marcas"
+                                    />
+                                    <el-option
+                                        v-for="item in marcas"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -438,13 +434,14 @@ onMounted(() => {
                                 </el-select>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-6 mt-2">
-                                <input
+                                <el-input
                                     type="text"
-                                    class="form-control"
-                                    placeholder="Producto"
+                                    placeholder="Código o Nombre del Producto"
                                     v-model="nombreProducto"
                                     @keyup="filtrarNombres"
-                                />
+                                    @clear="cargarProductos"
+                                    clearable
+                                ></el-input>
                             </div>
                         </div>
                     </div>

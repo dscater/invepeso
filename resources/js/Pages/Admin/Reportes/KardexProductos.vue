@@ -9,12 +9,26 @@ onBeforeMount(() => {
     appStore.startLoading();
 });
 
-const cargarListas = () => {
-    cargarSucursals();
-    cargarCategorias();
-    cargarMarcas();
-    cargarUnidadMedidas();
-};
+const props = defineProps({
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
+    unidad_medidas: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const cargarListas = () => {};
 
 onMounted(() => {
     cargarListas();
@@ -73,50 +87,6 @@ const generarReporte = () => {
         generando.value = false;
     }, 500);
 };
-
-const cargarSucursals = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"));
-        listAlmacens.value = res.data.almacens;
-        listAlmacens.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
-
-const cargarCategorias = () => {
-    axios.get(route("categorias.listado")).then((response) => {
-        listCategorias.value = response.data.categorias;
-        listCategorias.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-        });
-    });
-};
-
-const cargarMarcas = () => {
-    axios.get(route("marcas.listado")).then((response) => {
-        listMarcas.value = response.data.marcas;
-        listMarcas.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-        });
-    });
-};
-
-const cargarUnidadMedidas = () => {
-    axios.get(route("unidad_medidas.listado")).then((response) => {
-        listUnidadMedidas.value = response.data.unidad_medidas;
-        listUnidadMedidas.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-        });
-    });
-};
 </script>
 <template>
     <Head title="Reporte Kardex de Productos"></Head>
@@ -158,7 +128,11 @@ const cargarUnidadMedidas = () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listAlmacens"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in almacens"
                                             :value="item.id"
                                             :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
                                         >
@@ -174,7 +148,11 @@ const cargarUnidadMedidas = () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listCategorias"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in categorias"
                                             :value="item.id"
                                             :label="item.nombre"
                                         >
@@ -190,7 +168,11 @@ const cargarUnidadMedidas = () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listMarcas"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in marcas"
                                             :value="item.id"
                                             :label="item.nombre"
                                         >
@@ -206,7 +188,11 @@ const cargarUnidadMedidas = () => {
                                         filterable
                                     >
                                         <el-option
-                                            v-for="item in listUnidadMedidas"
+                                            value="todos"
+                                            label="TODOS"
+                                        />
+                                        <el-option
+                                            v-for="item in unidad_medidas"
                                             :value="item.id"
                                             :label="item.nombre"
                                         >

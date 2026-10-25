@@ -13,6 +13,26 @@ const props = defineProps({
     form: {
         type: Object,
     },
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
+    tipo_ventas: {
+        type: Array,
+        default: () => [],
+    },
+    tipo_pagos: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const enviando = ref(false);
@@ -137,12 +157,12 @@ const enviarFormulario = () => {
 
 const emits = defineEmits(["envio-formulario"]);
 
-const listAlmacens = ref([]);
-const listTipoVentas = ref([]);
-const listTipoPagos = ref([]);
+// const listAlmacens = ref([]);
+// const listTipoVentas = ref([]);
+// const listTipoPagos = ref([]);
 const tipo_venta_id_default = ref("");
-const listCategorias = ref([]);
-const listMarcas = ref([]);
+// const listCategorias = ref([]);
+// const listMarcas = ref([]);
 const listProductoAlmacens = ref([]);
 const loadingLista = ref(true);
 const almacen_id = ref("");
@@ -176,7 +196,7 @@ const cargarProductos = async () => {
             cantidad: 1,
             precio_venta: item.precio,
             stock_aux: item.stock_total,
-            tipo_venta_id: tipo_venta_id_default,
+            tipo_venta_id: tipo_venta_id_default.value,
         }));
 
         if (form.id != 0 && almacen_id.value != form.almacen_id) {
@@ -209,77 +229,77 @@ const filtrarNombres = () => {
     }, 370);
 };
 
-const cargarAlmacens = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"), {
-            params: {
-                activo: 1,
-            },
-        });
-        listAlmacens.value = res.data.almacens;
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarAlmacens = async () => {
+//     try {
+//         const res = await axios.get(route("almacens.listado"), {
+//             params: {
+//                 activo: 1,
+//             },
+//         });
+//         listAlmacens.value = res.data.almacens;
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
-const cargarCategorias = async () => {
-    try {
-        const res = await axios.get(route("categorias.listado"));
-        listCategorias.value = res.data.categorias;
-        listCategorias.value.unshift({
-            id: "todos",
-            nombre: "Todas las Categorías",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarCategorias = async () => {
+//     try {
+//         const res = await axios.get(route("categorias.listado"));
+//         listCategorias.value = res.data.categorias;
+//         listCategorias.value.unshift({
+//             id: "todos",
+//             nombre: "Todas las Categorías",
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
-const cargarMarcas = async () => {
-    try {
-        const res = await axios.get(route("marcas.listado"));
-        listMarcas.value = res.data.marcas;
-        listMarcas.value.unshift({
-            id: "todos",
-            nombre: "Todas las Marcas",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarMarcas = async () => {
+//     try {
+//         const res = await axios.get(route("marcas.listado"));
+//         listMarcas.value = res.data.marcas;
+//         listMarcas.value.unshift({
+//             id: "todos",
+//             nombre: "Todas las Marcas",
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
-const cargarTipoVentas = async () => {
-    try {
-        const res = await axios.get(route("tipo_ventas.listado"));
-        listTipoVentas.value = res.data.tipo_ventas;
-        // tipo_venta_id_default.value = listTipoVentas.value[0]
-        //     ? listTipoVentas.value[0].id
-        //     : "";
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarTipoVentas = async () => {
+//     try {
+//         const res = await axios.get(route("tipo_ventas.listado"));
+//         listTipoVentas.value = res.data.tipo_ventas;
+//         // tipo_venta_id_default.value = listTipoVentas.value[0]
+//         //     ? listTipoVentas.value[0].id
+//         //     : "";
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
-const cargarTipoPagos = async () => {
-    try {
-        const res = await axios.get(route("tipo_pagos.listado"));
-        listTipoPagos.value = res.data.tipo_pagos;
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarTipoPagos = async () => {
+//     try {
+//         const res = await axios.get(route("tipo_pagos.listado"));
+//         listTipoPagos.value = res.data.tipo_pagos;
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
 const cargarListas = () => {
-    cargarTipoVentas();
-    cargarTipoPagos();
-    cargarAlmacens();
-    cargarCategorias();
-    cargarMarcas();
+    // cargarTipoVentas();
+    // cargarTipoPagos();
+    // cargarAlmacens();
+    // cargarCategorias();
+    // cargarMarcas();
 };
 
 const listClientes = ref([]);
@@ -624,6 +644,7 @@ onMounted(() => {
     if (form.id != 0) {
         almacen_id.value = form.almacen_id;
         cargarProductos();
+        buscarClientes(form.cliente.nombre);
     }
 });
 </script>
@@ -658,7 +679,7 @@ onMounted(() => {
                                             @change="detectarCambioSelect"
                                         >
                                             <el-option
-                                                v-for="item in listAlmacens"
+                                                v-for="item in almacens"
                                                 :key="item.id"
                                                 :value="item.id"
                                                 :label="`${item.nombre} - ${item.sucursal.nombre}`"
@@ -686,7 +707,11 @@ onMounted(() => {
                                     @change="detectarCambioSelect"
                                 >
                                     <el-option
-                                        v-for="item in listCategorias"
+                                        value="todos"
+                                        label="Todas las categorías"
+                                    />
+                                    <el-option
+                                        v-for="item in categorias"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -702,7 +727,11 @@ onMounted(() => {
                                     @change="detectarCambioSelect"
                                 >
                                     <el-option
-                                        v-for="item in listMarcas"
+                                        value="todos"
+                                        label="Todas las marcas"
+                                    />
+                                    <el-option
+                                        v-for="item in marcas"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -1202,7 +1231,7 @@ onMounted(() => {
                                     v-model="form.tipo_venta"
                                     @change="cambiarTipoVenta"
                                     ><el-radio-button
-                                        v-for="item in listTipoVentas"
+                                        v-for="item in tipo_ventas"
                                         :key="item.value"
                                         :value="item.value"
                                     >
@@ -1295,7 +1324,7 @@ onMounted(() => {
                                     <div class="col-8">
                                         <el-radio-group v-model="form.tipo_pago"
                                             ><el-radio-button
-                                                v-for="item in listTipoPagos"
+                                                v-for="item in tipo_pagos"
                                                 :key="item.value"
                                                 :value="item.value"
                                             >

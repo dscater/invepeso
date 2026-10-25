@@ -10,6 +10,18 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
 });
 const { props: props_page } = usePage();
 const appStore = useAppStore();
@@ -50,6 +62,9 @@ onMounted(() => {
             <div class="col-md-12">
                 <Formulario
                     :form="form"
+                    :almacens="almacens"
+                    :categorias="categorias"
+                    :marcas="marcas"
                     @envio-formulario="limpiarProforma"
                 ></Formulario>
             </div>
