@@ -11,6 +11,7 @@ use App\Models\HistorialAccion;
 use App\Models\IngresoPago;
 use App\Models\IngresoProducto;
 use App\Models\Inscripcion;
+use App\Models\KardexProducto;
 use App\Models\Pago;
 use App\Models\Producto;
 use App\Models\Proforma;
@@ -21,6 +22,7 @@ use App\Models\TipoCertificado;
 use App\Models\User;
 use App\Models\Venta;
 use App\Models\VentaCobro;
+use App\Services\KardexProductoService;
 use App\Services\MovimientoCajaService;
 use App\Services\PagoService;
 use App\Services\ReporteService;
@@ -36,9 +38,9 @@ use FPDF;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
 class ReporteController extends Controller
 {
@@ -187,7 +189,7 @@ class ReporteController extends Controller
     ];
 
     private $configuracion = null;
-    public function __construct(private MovimientoCajaService $movimiento_caja_service, private TipoPagoService $tipo_pago_service)
+    public function __construct(private MovimientoCajaService $movimiento_caja_service, private KardexProductoService $kardex_producto_service)
     {
         $this->configuracion = Configuracion::first();
         if (!$this->configuracion) {
@@ -1100,6 +1102,585 @@ class ReporteController extends Controller
             );
         }
     }
+    public function kardex_productos()
+    {
+        return Inertia::render("Admin/Reportes/KardexProductos");
+    }
+
+    public function r_kardex_productos(Request $request)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(-1);
+        $categoria_id =  $request->categoria_id;
+        $marca_id =  $request->marca_id;
+        $unidad_medida_id =  $request->unidad_medida_id;
+        $almacen_id =  $request->almacen_id;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $formato =  $request->formato;
+
+        $almacens = Almacen::select("almacens.id", "almacens.nombre", "almacens.sucursal_id")
+            ->with(["sucursal:id,nombre"]);
+        if ($almacen_id != 'todos') {
+            $almacens->where("id", $almacen_id);
+        }
+        $almacens = $almacens->get();
+
+        $productos = Producto::select(
+            'productos.id',
+            'productos.nombre',
+            'productos.precio',
+            'productos.categoria_id',
+            'productos.marca_id',
+            'productos.unidad_medida_id'
+        )
+            ->with([
+                'categoria:id,nombre',
+                'marca:id,nombre',
+                'unidad_medida:id,nombre',
+            ])
+            ->whereHas('kardex_productos', function ($query) use ($almacens) {
+                $query->whereIn(
+                    'almacen_id',
+                    $almacens->pluck('id')
+                );
+            });
+
+        if ($categoria_id != 'todos') {
+            $productos->where('productos.categoria_id', $categoria_id);
+        }
+
+        if ($marca_id != 'todos') {
+            $productos->where('productos.marca_id', $marca_id);
+        }
+
+        if ($unidad_medida_id != 'todos') {
+            $productos->where('productos.unidad_medida_id', $unidad_medida_id);
+        }
+
+        $productos = $productos->get();
+
+
+
+        $kardex_almacens = [];
+        foreach ($almacens as $almacen) {
+            $kardex_almacens[$almacen->id] = [
+                "array_kardex" => [],
+                "array_saldo_anterior" => [],
+            ];
+            $array_kardex = [];
+            $array_saldo_anterior = [];
+            foreach ($productos as $registro) {
+                $kardex = KardexProducto::where('producto_id', $registro->id)
+                    ->where("almacen_id", $almacen->id)->get();
+                $array_saldo_anterior[$registro->id] = [
+                    'sw' => false,
+                    'saldo_anterior' => []
+                ];
+                if ($fecha_ini && $fecha_fin) {
+                    $kardex = KardexProducto::where('producto_id', $registro->id)
+                        ->where("almacen_id", $almacen->id)
+                        ->whereBetween('fecha', [$fecha_ini, $fecha_fin])->get();
+                    // buscar saldo anterior si existe
+                    $saldo_anterior = KardexProducto::where('producto_id', $registro->id)
+                        ->where("almacen_id", $almacen->id)
+                        ->where('fecha', '<', $fecha_ini)
+                        ->orderBy('created_at', 'asc')->get()->last();
+                    if ($saldo_anterior) {
+                        $cantidad_saldo = $saldo_anterior->cantidad_saldo;
+                        $monto_saldo = $saldo_anterior->monto_saldo;
+                        $array_saldo_anterior[$registro->id] = [
+                            'sw' => true,
+                            'saldo_anterior' => [
+                                'cantidad_saldo' => $cantidad_saldo,
+                                'monto_saldo' => $monto_saldo,
+                            ]
+                        ];
+                    }
+                }
+
+                $array_kardex[$registro->id] = $kardex;
+            }
+            $kardex_almacens[$almacen->id]["array_kardex"] = $array_kardex;
+            $kardex_almacens[$almacen->id]["array_saldo_anterior"] = $array_saldo_anterior;
+        }
+
+        $array_dias = [
+            '0' => 'Domingo',
+            '1' => 'Lunes',
+            '2' => 'Martes',
+            '3' => 'Miércoles',
+            '4' => 'Jueves',
+            '5' => 'Viernes',
+            '6' => 'Sábado',
+        ];
+        $array_meses = [
+            '01' => 'enero',
+            '02' => 'febrero',
+            '03' => 'marzo',
+            '04' => 'abril',
+            '05' => 'mayo',
+            '06' => 'junio',
+            '07' => 'julio',
+            '08' => 'agosto',
+            '09' => 'septiembre',
+            '10' => 'octubre',
+            '11' => 'noviembre',
+            '12' => 'diciembre',
+        ];
+
+        if ($formato == 'pdf') {
+            $pdf = new ReporteServiceTcpdf();
+            $pdf->SetTitle('Kardex de Productos');
+            $pdf->setMargins(10, 5, 5);
+
+            foreach ($almacens as $almacen) {
+                $pdf->AddPage();
+                $pdf->setPrintHeader(false);
+                $pdf->setY(13);
+                $pdf->SetFont('helvetica', 'B', 12);
+                $pdf->Cell(0, 6, "KARDEX DE PRODUCTOS", 0, 1, 'C', 0, '', 0, false);
+                $pdf->SetFont('helvetica', 'B', 10);
+                $pdf->Cell(0, 5, $almacen->nombre . ' - ' . $almacen->sucursal->nombre, 0, 1, 'C', 0, '', 0, false);
+                $pdf->SetFont('helvetica', 'B', 8);
+                $pdf->Cell(0, 5, $array_dias[date('w')] . ', ' . date('d') . ' de ' . $array_meses[date('m')] . ' de ' . date('Y'), 0, 1, 'C', 0, '', 0, false);
+                $pdf->Cell(0, 5, "(Expresado en bolivianos)", 0, 1, 'C', 0, '', 0, false);
+                $pdf->SetFont('helvetica', 'B', 8);
+                $alto = 10;
+                $font_size = 8;
+                $font_size2 = 9;
+
+                $html = '';
+
+                foreach ($productos as $registro) {
+                    $pdf->SetFont('helvetica', 'B', $font_size2);
+                    $pdf->Cell(190, 10, $registro->nombre, 1, 1, 'C');
+                    $pdf->MultiCell(15, 20, 'FECHA', 1, 'C', false, 0, $x = '',  $y = '',  $reseth = true,  $stretch = 0,  $ishtml = false,  $autopadding = true,  $maxh = 0,  $valign = 'M',  $fitcell = false);
+                    $pdf->MultiCell(35, 20, 'DETALLE', 1, 'C', false, 0);
+                    $pdf->cellAutoFontSize($pdf, 60, $alto, 'CANTIDADES', $font_size, 5, "B");
+                    $pdf->cellAutoFontSize($pdf, 20, $alto, 'P/U', $font_size, 5, "B");
+                    $pdf->cellAutoFontSize($pdf, 60, $alto, 'BOLIVIANOS', $font_size, 5, "B");
+                    $pdf->Ln();
+                    $pdf->SetX(60);
+                    $pdf->cellAutoFontSize($pdf, 20, $alto, 'ENTRADA', $font_size, 5, "B");
+                    $pdf->cellAutoFontSize($pdf, 20, $alto, 'SALIDA', $font_size, 5, "B");
+                    $pdf->cellAutoFontSize($pdf, 20, $alto, 'SALDO', $font_size, 5, "B");
+                    $pdf->SetX(140);
+                    $pdf->cellAutoFontSize($pdf, 20, $alto, 'ENTRADA', $font_size, 5, "B");
+                    $pdf->cellAutoFontSize($pdf, 20, $alto, 'SALIDA', $font_size, 5, "B");
+                    $pdf->cellAutoFontSize($pdf, 20, $alto, 'SALDO', $font_size, 5, "B");
+                    $pdf->Ln();
+
+                    if (count($kardex_almacens[$almacen->id]['array_kardex'][$registro->id]) > 0 || $kardex_almacens[$almacen->id]['array_saldo_anterior'][$registro->id]['sw']) {
+
+                        $total = 0;
+                        if ($kardex_almacens[$almacen->id]['array_saldo_anterior'][$registro->id]['sw']) {
+                            $pdf->cellAutoFontSize($pdf, 15, $alto, "",);
+                            $pdf->cellAutoFontSize($pdf, 35, $alto, "SALDO ANTERIOR",);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, "",);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, "",);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, $kardex_almacens[$almacen->id]['array_saldo_anterior'][$registro->id]['saldo_anterior']['cantidad_saldo'],);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, $registro->precio,);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, "",);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, "",);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, number_format($kardex_almacens[$almacen->id]['array_saldo_anterior'][$registro->id]['saldo_anterior']['monto_saldo'], 2, '.', ','),);
+                            $pdf->Ln();
+                        }
+                        foreach ($kardex_almacens[$almacen->id]['array_kardex'][$registro->id] as $value) {
+                            $pdf->cellAutoFontSize($pdf, 15, $alto, date("d/m/Y", strtotime($value["fecha"])));
+                            $pdf->cellAutoFontSize($pdf, 35, $alto, $value["detalle"]);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, $value["cantidad_ingreso"]);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, $value["cantidad_salida"]);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, $value["cantidad_saldo"]);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, number_format($value["cu"], 2, '.', ','));
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, $value["monto_ingreso"]);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, $value["monto_salida"]);
+                            $pdf->cellAutoFontSize($pdf, 20, $alto, number_format($value["monto_saldo"], 2, '.', ','));
+                            $pdf->Ln();
+                        }
+                    } else {
+                        $pdf->Cell(190, 10, "NO SE ENCONTRARON REGISTROS", 1, 1);
+                    }
+                    $pdf->Ln();
+                }
+            }
+            // Guardar PDF o forzar descarga
+            return response($pdf->Output('S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="kardex_productos' . time() . '.pdf"');
+        } else {
+            $spreadsheet = new Spreadsheet();
+
+            $spreadsheet->getProperties()
+                ->setCreator('ADMIN')
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Kardex de Productos')
+                ->setSubject('Kardex de Productos')
+                ->setDescription('Reporte de movimientos de productos por almacén')
+                ->setKeywords('Kardex, Productos, Almacenes')
+                ->setCategory('Listado');
+
+            $spreadsheet->getDefaultStyle()
+                ->getFont()
+                ->setName('Arial')
+                ->setSize(10);
+
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setTitle('Kardex Productos');
+
+            $fila = 1;
+
+            // Logo, siguiendo la estructura de tu reporte anterior
+            if (
+                isset($this->configuracion->logo) &&
+                file_exists(public_path() . '/imgs/' . $this->configuracion->logo)
+            ) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('Logo');
+                $drawing->setPath(
+                    public_path() . '/imgs/' . $this->configuracion->logo
+                );
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+
+                $sheet->getRowDimension(1)->setRowHeight(45);
+            }
+
+            // Fecha en español
+            $fechaReporte = date('d/m/Y');
+
+            // Estilos para los encabezados
+            $estiloTitulo = $this->titulo;
+            $estiloEncabezado = $this->headerTabla;
+            $estiloCuerpo = $this->bodyTabla;
+
+            // Recorrer almacenes
+            foreach ($almacens as $almacen) {
+
+                // Encabezado del almacén
+                $sheet->mergeCells("A{$fila}:I{$fila}");
+                $sheet->setCellValue(
+                    "A{$fila}",
+                    $this->configuracion->nombre_sistema
+                );
+                $sheet->getStyle("A{$fila}:I{$fila}")
+                    ->getAlignment()
+                    ->setHorizontal('center');
+                $sheet->getStyle("A{$fila}:I{$fila}")
+                    ->applyFromArray($estiloTitulo);
+
+                $fila++;
+
+                $sheet->mergeCells("A{$fila}:I{$fila}");
+                $sheet->setCellValue("A{$fila}", 'KARDEX DE PRODUCTOS');
+                $sheet->getStyle("A{$fila}:I{$fila}")
+                    ->getAlignment()
+                    ->setHorizontal('center');
+                $sheet->getStyle("A{$fila}:I{$fila}")
+                    ->applyFromArray($estiloTitulo);
+
+                $fila++;
+
+                $sheet->mergeCells("A{$fila}:I{$fila}");
+                $sheet->setCellValue("A{$fila}", $almacen->nombre . ' - ' . $almacen->sucursal->nombre);
+                $sheet->getStyle("A{$fila}:I{$fila}")
+                    ->getAlignment()
+                    ->setHorizontal('center');
+                $sheet->getStyle("A{$fila}:I{$fila}")
+                    ->applyFromArray($estiloTitulo);
+
+                $fila++;
+
+                $sheet->mergeCells("A{$fila}:I{$fila}");
+                $sheet->setCellValue(
+                    "A{$fila}",
+                    'Fecha de reporte: ' . $fechaReporte
+                );
+                $sheet->getStyle("A{$fila}:I{$fila}")
+                    ->getAlignment()
+                    ->setHorizontal('center');
+
+                $fila++;
+
+                $sheet->mergeCells("A{$fila}:I{$fila}");
+                $sheet->setCellValue("A{$fila}", '(Expresado en bolivianos)');
+                $sheet->getStyle("A{$fila}:I{$fila}")
+                    ->getAlignment()
+                    ->setHorizontal('center');
+
+                $fila += 2;
+
+                // Recorrer productos
+                foreach ($productos as $registro) {
+
+                    // Título del producto
+                    $sheet->mergeCells("A{$fila}:I{$fila}");
+                    $sheet->setCellValue("A{$fila}", $registro->nombre);
+
+                    $sheet->getStyle("A{$fila}:I{$fila}")
+                        ->applyFromArray($estiloTitulo);
+
+                    $sheet->getStyle("A{$fila}:I{$fila}")
+                        ->getAlignment()
+                        ->setHorizontal('center');
+
+                    $fila++;
+
+                    /*
+         * Encabezados agrupados:
+         *
+         * A = FECHA
+         * B = DETALLE
+         * C:E = CANTIDADES
+         * F = P/U
+         * G:I = BOLIVIANOS
+         */
+
+                    $filaCabecera = $fila;
+                    $filaSubcabecera = $fila + 1;
+
+                    $sheet->mergeCells("A{$filaCabecera}:A{$filaSubcabecera}");
+                    $sheet->mergeCells("B{$filaCabecera}:B{$filaSubcabecera}");
+                    $sheet->mergeCells("F{$filaCabecera}:F{$filaSubcabecera}");
+
+                    $sheet->mergeCells("C{$filaCabecera}:E{$filaCabecera}");
+                    $sheet->mergeCells("G{$filaCabecera}:I{$filaCabecera}");
+
+                    $sheet->setCellValue("A{$filaCabecera}", 'FECHA');
+                    $sheet->setCellValue("B{$filaCabecera}", 'DETALLE');
+                    $sheet->setCellValue("C{$filaCabecera}", 'CANTIDADES');
+                    $sheet->setCellValue("F{$filaCabecera}", 'P/U');
+                    $sheet->setCellValue("G{$filaCabecera}", 'BOLIVIANOS');
+
+                    $sheet->setCellValue("C{$filaSubcabecera}", 'ENTRADA');
+                    $sheet->setCellValue("D{$filaSubcabecera}", 'SALIDA');
+                    $sheet->setCellValue("E{$filaSubcabecera}", 'SALDO');
+
+                    $sheet->setCellValue("G{$filaSubcabecera}", 'ENTRADA');
+                    $sheet->setCellValue("H{$filaSubcabecera}", 'SALIDA');
+                    $sheet->setCellValue("I{$filaSubcabecera}", 'SALDO');
+
+                    $sheet->getStyle(
+                        "A{$filaCabecera}:I{$filaSubcabecera}"
+                    )->applyFromArray($estiloEncabezado);
+
+                    $sheet->getStyle(
+                        "A{$filaCabecera}:I{$filaSubcabecera}"
+                    )->getAlignment()
+                        ->setHorizontal('center')
+                        ->setVertical('center')
+                        ->setWrapText(true);
+
+                    $sheet->getRowDimension($filaCabecera)->setRowHeight(22);
+                    $sheet->getRowDimension($filaSubcabecera)->setRowHeight(22);
+
+                    $fila += 2;
+
+                    // Obtener los movimientos del producto en el almacén actual
+                    $movimientos = $kardex_almacens[$almacen->id]['array_kardex'][$registro->id] ?? [];
+
+                    // Verificar si existe saldo anterior
+                    $saldoAnterior = $kardex_almacens[$almacen->id]['array_saldo_anterior'][$registro->id] ?? ['sw' => false];
+
+                    if (count($movimientos) > 0 || !empty($saldoAnterior['sw'])) {
+
+                        // Fila del saldo anterior
+                        if (!empty($saldoAnterior['sw'])) {
+
+                            $saldo = $saldoAnterior['saldo_anterior'];
+
+                            $sheet->setCellValue("A{$fila}", '');
+                            $sheet->setCellValue("B{$fila}", 'SALDO ANTERIOR');
+                            $sheet->setCellValue("C{$fila}", '');
+                            $sheet->setCellValue("D{$fila}", '');
+                            $sheet->setCellValue(
+                                "E{$fila}",
+                                $saldo['cantidad_saldo']
+                            );
+                            $sheet->setCellValue(
+                                "F{$fila}",
+                                $registro->precio
+                            );
+                            $sheet->setCellValue("G{$fila}", '');
+                            $sheet->setCellValue("H{$fila}", '');
+                            $sheet->setCellValue(
+                                "I{$fila}",
+                                $saldo['monto_saldo']
+                            );
+
+                            $fila++;
+                        }
+
+                        // Filas de movimientos
+                        foreach ($movimientos as $value) {
+
+                            $fechaMovimiento = !empty($value['fecha'])
+                                ? date('d/m/Y', strtotime($value['fecha']))
+                                : '';
+
+                            $sheet->setCellValue("A{$fila}", $fechaMovimiento);
+                            $sheet->setCellValue("B{$fila}", $value['detalle'] ?? '');
+
+                            $sheet->setCellValue(
+                                "C{$fila}",
+                                $value['cantidad_ingreso'] ?? 0
+                            );
+
+                            $sheet->setCellValue(
+                                "D{$fila}",
+                                $value['cantidad_salida'] ?? 0
+                            );
+
+                            $sheet->setCellValue(
+                                "E{$fila}",
+                                $value['cantidad_saldo'] ?? 0
+                            );
+
+                            $sheet->setCellValue(
+                                "F{$fila}",
+                                $value['cu'] ?? 0
+                            );
+
+                            $sheet->setCellValue(
+                                "G{$fila}",
+                                $value['monto_ingreso'] ?? 0
+                            );
+
+                            $sheet->setCellValue(
+                                "H{$fila}",
+                                $value['monto_salida'] ?? 0
+                            );
+
+                            $sheet->setCellValue(
+                                "I{$fila}",
+                                $value['monto_saldo'] ?? 0
+                            );
+
+                            $fila++;
+                        }
+                    } else {
+
+                        // No existen movimientos ni saldo anterior
+                        $sheet->mergeCells("A{$fila}:I{$fila}");
+                        $sheet->setCellValue(
+                            "A{$fila}",
+                            'NO SE ENCONTRARON REGISTROS'
+                        );
+
+                        $sheet->getStyle("A{$fila}:I{$fila}")
+                            ->applyFromArray($estiloCuerpo);
+
+                        $sheet->getStyle("A{$fila}:I{$fila}")
+                            ->getAlignment()
+                            ->setHorizontal('center');
+
+                        $fila++;
+                    }
+
+                    // Estilos de las filas del producto
+                    $ultimaFila = $fila - 1;
+
+                    if ($ultimaFila >= $filaSubcabecera + 1) {
+                        $sheet->getStyle(
+                            'A' . ($filaSubcabecera + 1) . ':I' . $ultimaFila
+                        )->applyFromArray($estiloCuerpo);
+                    }
+
+                    // Formato numérico para cantidades, precios y montos
+                    if ($ultimaFila >= $filaSubcabecera + 1) {
+                        $filaInicio = $filaSubcabecera + 1;
+
+                        foreach (['C', 'D', 'E'] as $columna) {
+                            $sheet->getStyle(
+                                $columna . $filaInicio . ':' . $columna . $ultimaFila
+                            )->getNumberFormat()->setFormatCode('#,##0.###');
+                        }
+
+                        foreach (['F', 'G', 'H', 'I'] as $columna) {
+                            $sheet->getStyle(
+                                $columna . $filaInicio . ':' . $columna . $ultimaFila
+                            )->getNumberFormat()->setFormatCode('#,##0.00');
+                        }
+                    }
+                    $fila += 2;
+                }
+
+                // Separación entre almacenes
+                $fila += 2;
+            }
+
+            // Anchos de las columnas
+            $sheet->getColumnDimension('A')->setWidth(13);
+            $sheet->getColumnDimension('B')->setWidth(35);
+            $sheet->getColumnDimension('C')->setWidth(15);
+            $sheet->getColumnDimension('D')->setWidth(15);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(13);
+            $sheet->getColumnDimension('G')->setWidth(17);
+            $sheet->getColumnDimension('H')->setWidth(17);
+            $sheet->getColumnDimension('I')->setWidth(17);
+
+            // Ajustes generales
+            $sheet->getStyle('A:I')
+                ->getAlignment()
+                ->setVertical('center')
+                ->setWrapText(true);
+
+            $sheet->getPageSetup()
+                ->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
+
+            $sheet->getPageSetup()
+                ->setPaperSize(PageSetup::PAPERSIZE_LETTER);
+
+            $sheet->getPageMargins()
+                ->setTop(0.5)
+                ->setRight(0.2)
+                ->setLeft(0.2)
+                ->setBottom(0.5);
+
+            $sheet->getPageSetup()->setPrintArea('A1:I' . max(1, $fila - 1));
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+            $sheet->getPageSetup()->setScale(0);
+
+            // Repetir encabezados de impresión no se configura aquí porque
+            // los encabezados se repiten por producto dentro del reporte.
+
+            // Descargar Excel
+            return response()->streamDownload(
+                function () use ($spreadsheet) {
+                    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                    $writer->save('php://output');
+                },
+                'kardex_productos_' . time() . '.xlsx',
+                [
+                    'Content-Type' =>
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            );
+        }
+    }
+
+    public function ingreso_bruto_productos()
+    {
+        return Inertia::render("Admin/Reportes/IngresoBrutoProductos");
+    }
+
+    public function r_ingreso_bruto_productos(Request $request)
+    {
+        $datos = $this->kardex_producto_service->obtenerDatosIngresoBrutoProductos($request);
+
+        if ($request->formato === 'excel') {
+            return $this->kardex_producto_service->generarExcelIngresoBrutoProductos($datos);
+        }
+
+        return $this->kardex_producto_service->generarPdfIngresoBrutoProductos($datos);
+    }
+
 
     public function orden_compras()
     {

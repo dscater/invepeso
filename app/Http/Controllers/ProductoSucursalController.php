@@ -6,7 +6,11 @@ use App\Http\Requests\ProductoSucursalStoreRequest;
 use App\Http\Requests\ProductoSucursalUpdateRequest;
 use App\Models\ProductoSucursal;
 use App\Models\User;
+use App\Services\AlmacenService;
+use App\Services\CategoriaService;
+use App\Services\MarcaService;
 use App\Services\ProductoSucursalService;
+use App\Services\SucursalService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +25,13 @@ use Inertia\Response as ResponseInertia;
 
 class ProductoSucursalController extends Controller
 {
-    public function __construct(private ProductoSucursalService $producto_sucursalService) {}
+    public function __construct(
+        private ProductoSucursalService $producto_sucursalService,
+        private AlmacenService $almacen_service,
+        private CategoriaService $categoria_service,
+        private MarcaService $marca_service,
+
+    ) {}
 
     /**
      * Página index
@@ -30,7 +40,15 @@ class ProductoSucursalController extends Controller
      */
     public function index(): ResponseInertia
     {
-        return Inertia::render("Admin/ProductoSucursals/Index");
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+
+        return Inertia::render("Admin/ProductoSucursals/Index", [
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+        ]);
     }
 
     /**

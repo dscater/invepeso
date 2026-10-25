@@ -8,6 +8,26 @@ const props = defineProps({
     form: {
         type: Object,
     },
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
+    proveedors: {
+        type: Array,
+        default: () => [],
+    },
+    tipo_ingresos: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const enviando = ref(false);
@@ -98,12 +118,12 @@ const enviarFormulario = () => {
 
 const emits = defineEmits(["envio-formulario"]);
 
-const listAlmacens = ref([]);
-const listTipoIngresos = ref([]);
+// const listAlmacens = ref([]);
+// const listTipoIngresos = ref([]);
 const tipo_ingreso_id_default = ref("");
-const listProveedors = ref([]);
-const listCategorias = ref([]);
-const listMarcas = ref([]);
+// const listProveedors = ref([]);
+// const listCategorias = ref([]);
+// const listMarcas = ref([]);
 const listProductoAlmacens = ref([]);
 const loadingLista = ref(true);
 const almacen_id = ref("");
@@ -221,11 +241,11 @@ const cargarTipoIngresos = async () => {
 };
 
 const cargarListas = () => {
-    cargarTipoIngresos();
-    cargarAlmacens();
-    cargarProveedors();
-    cargarCategorias();
-    cargarMarcas();
+    // cargarTipoIngresos();
+    // cargarAlmacens();
+    // cargarProveedors();
+    // cargarCategorias();
+    // cargarMarcas();
 };
 
 const agregarProductoCompra = async (item) => {
@@ -363,7 +383,7 @@ onMounted(() => {
                                             @change="detectarCambioSelect"
                                         >
                                             <el-option
-                                                v-for="item in listAlmacens"
+                                                v-for="item in almacens"
                                                 :key="item.id"
                                                 :value="item.id"
                                                 :label="`${item.nombre} - ${item.sucursal.nombre}`"
@@ -391,7 +411,11 @@ onMounted(() => {
                                     @change="detectarCambioSelect"
                                 >
                                     <el-option
-                                        v-for="item in listCategorias"
+                                        value="todos"
+                                        label="Todas las categorías"
+                                    />
+                                    <el-option
+                                        v-for="item in categorias"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -407,7 +431,11 @@ onMounted(() => {
                                     @change="detectarCambioSelect"
                                 >
                                     <el-option
-                                        v-for="item in listMarcas"
+                                        value="todos"
+                                        label="Todas las marcas"
+                                    />
+                                    <el-option
+                                        v-for="item in marcas"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -662,7 +690,7 @@ onMounted(() => {
                                     filterable
                                 >
                                     <el-option
-                                        v-for="item in listProveedors"
+                                        v-for="item in proveedors"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"
@@ -687,7 +715,7 @@ onMounted(() => {
                                     v-model="form.tipo_ingreso_id"
                                 >
                                     <el-option
-                                        v-for="item in listTipoIngresos"
+                                        v-for="item in tipo_ingresos"
                                         :key="item.id"
                                         :value="item.id"
                                         :label="item.nombre"

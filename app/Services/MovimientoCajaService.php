@@ -115,9 +115,11 @@ class MovimientoCajaService
             ->sum("monto_efectivo");
 
         $total_caja = $ingresos - $egresos;
+        $total_caja = number_format($total_caja, 2, ".", "");
         $total_caja_qr = $ingresos_qr - $egresos_qr;
+        $total_caja_qr = number_format($total_caja_qr, 2, ".", "");
         $total_caja_efectivo = $ingresos_efectivo - $egresos_efectivo;
-
+        $total_caja_efectivo = number_format($total_caja_efectivo, 2, ".", "");
         return [
             "ingresos" => $ingresos,
             "ingresos_qr" => $ingresos_qr,

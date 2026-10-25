@@ -7,20 +7,17 @@ import {
     onMounted,
     onBeforeUnmount,
 } from "vue";
-import { Head } from "@inertiajs/vue3";
+import { Head, usePage } from "@inertiajs/vue3";
 import axios from "axios";
 import Highcharts from "highcharts";
-
-import App from "@/Layouts/App.vue";
 import Content from "@/Components/Content.vue";
-
 import { ElSelect, ElOption } from "element-plus";
-
 import "element-plus/dist/index.css";
 
 // --------------------------------------------------
 // PROPS
 // --------------------------------------------------
+const { props: props_page } = usePage();
 
 const props = defineProps({
     usuarios: {
@@ -39,7 +36,9 @@ const props = defineProps({
 
 const periodo = ref("7dias");
 const anio = ref(new Date().getFullYear());
-const userId = ref("");
+const userId = ref(
+    props_page.auth.user.tipo == "EMPLEADO" ? props_page.auth.user.id : "",
+);
 const almacenId = ref("");
 
 // --------------------------------------------------
@@ -85,6 +84,9 @@ const graficos = [
         usaUsuario: true,
         usaAlmacen: true,
         usaPeriodo: true,
+        permisoGrafico:
+            props_page.auth.user.permisos == "*" ||
+            props_page.auth.user.permisos.includes("ventas.index"),
     },
     {
         id: "clientes_nuevos",
@@ -97,6 +99,9 @@ const graficos = [
         usaUsuario: false,
         usaAlmacen: false,
         usaPeriodo: true,
+        permisoGrafico:
+            props_page.auth.user.permisos == "*" ||
+            props_page.auth.user.permisos.includes("clientes.index"),
     },
     {
         id: "ingresos_egresos",
@@ -108,6 +113,9 @@ const graficos = [
         usaUsuario: true,
         usaAlmacen: true,
         usaPeriodo: true,
+        permisoGrafico:
+            props_page.auth.user.permisos == "*" ||
+            props_page.auth.user.permisos.includes("movimiento_cajas.index"),
     },
     {
         id: "contado_credito",
@@ -118,6 +126,9 @@ const graficos = [
         usaUsuario: true,
         usaAlmacen: true,
         usaPeriodo: true,
+        permisoGrafico:
+            props_page.auth.user.permisos == "*" ||
+            props_page.auth.user.permisos.includes("ventas.index"),
     },
     {
         id: "qrefectivo",
@@ -128,6 +139,9 @@ const graficos = [
         usaUsuario: true,
         usaAlmacen: true,
         usaPeriodo: true,
+        permisoGrafico:
+            props_page.auth.user.permisos == "*" ||
+            props_page.auth.user.permisos.includes("ventas.index"),
     },
     {
         id: "masVendidos",
@@ -140,6 +154,9 @@ const graficos = [
         usaUsuario: true,
         usaAlmacen: true,
         usaPeriodo: true,
+        permisoGrafico:
+            props_page.auth.user.permisos == "*" ||
+            props_page.auth.user.permisos.includes("productos.index"),
     },
     {
         id: "pocoStock",
@@ -151,11 +168,18 @@ const graficos = [
         usaUsuario: false,
         usaAlmacen: true,
         usaPeriodo: false,
+        permisoGrafico:
+            props_page.auth.user.permisos == "*" ||
+            props_page.auth.user.permisos.includes("productos.index"),
     },
 ];
 // --------------------------------------------------
 // ESTADOS
 // --------------------------------------------------
+
+const graficosPermitidos = computed(() =>
+    graficos.filter((config) => config.permisoGrafico),
+);
 
 const cargando = reactive({});
 const errores = reactive({});
@@ -551,7 +575,11 @@ async function cargarGrafico(config) {
 // --------------------------------------------------
 
 async function cargarTodosLosGraficos() {
-    await Promise.all(graficos.map((config) => cargarGrafico(config)));
+    await Promise.all(
+        graficos.map((config) => {
+            if (config.permisoGrafico) cargarGrafico(config);
+        }),
+    );
 }
 
 // --------------------------------------------------
@@ -626,7 +654,7 @@ onBeforeUnmount(() => {
 
                         <div>
                             <h5 class="dashboard-filter-title">
-                                Filtros del dashboard
+                                Filtros de los gráficos
                             </h5>
                             <p class="dashboard-filter-description">
                                 Personaliza la información que deseas consultar
@@ -699,7 +727,10 @@ onBeforeUnmount(() => {
                         </div>
 
                         <!-- USUARIO -->
-                        <div class="col-12 col-sm-6 col-xl-3">
+                        <div
+                            class="col-12 col-sm-6 col-xl-3"
+                            v-if="props_page.auth.user.tipo == 'ADMINISTRACIÓN'"
+                        >
                             <label class="dashboard-filter-label">
                                 <i class="fa fa-user"></i>
                                 Usuario
@@ -747,7 +778,10 @@ onBeforeUnmount(() => {
                                 placeholder="Todos los almacenes"
                                 no-data-text="Sin datos"
                                 no-match-text="Sin resultados"
-                            >
+                                ><el-option
+                                    label="Todos los almacenes"
+                                    value=""
+                                />
                                 <el-option
                                     v-for="item in almacens"
                                     :key="item.id"
@@ -773,7 +807,7 @@ onBeforeUnmount(() => {
             <!-- GRÁFICOS -->
             <div class="row g-4">
                 <div
-                    v-for="config in graficos"
+                    v-for="config in graficosPermitidos"
                     :key="config.id"
                     class="col-12 col-xl-6"
                 >

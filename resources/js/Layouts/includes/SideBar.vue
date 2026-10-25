@@ -83,6 +83,8 @@ const sincronizarMenus = () => {
         route_current.value == "reportes.proveedors" ||
         route_current.value == "reportes.productos" ||
         route_current.value == "reportes.stock_productos" ||
+        route_current.value == "reportes.kardex_productos" ||
+        route_current.value == "reportes.ingreso_bruto_productos" ||
         route_current.value == "reportes.orden_compras" ||
         route_current.value == "reportes.salida_productos" ||
         route_current.value == "reportes.ventas" ||
@@ -787,6 +789,10 @@ onUnmounted(() => {});
                             permisos.includes('reportes.proveedors') ||
                             permisos.includes('reportes.productos') ||
                             permisos.includes('reportes.stock_productos') ||
+                            permisos.includes('reportes.kardex_productos') ||
+                            permisos.includes(
+                                'reportes.ingreso_bruto_productos',
+                            ) ||
                             permisos.includes('reportes.orden_compras') ||
                             permisos.includes('reportes.salida_productos') ||
                             permisos.includes('reportes.ventas') ||
@@ -811,6 +817,9 @@ onUnmounted(() => {});
                                 route_current == 'reportes.proveedors' ||
                                 route_current == 'reportes.productos' ||
                                 route_current == 'reportes.stock_productos' ||
+                                route_current == 'reportes.kardex_productos' ||
+                                route_current ==
+                                    'reportes.ingreso_bruto_productos' ||
                                 route_current == 'reportes.orden_compras' ||
                                 route_current == 'reportes.salida_productos' ||
                                 route_current == 'reportes.ventas' ||
@@ -839,7 +848,9 @@ onUnmounted(() => {});
                             role="navigation"
                             aria-label="Navigation 4"
                             :style="{
-                                maxHeight: openMenus.reportes ? '500px' : '0px',
+                                maxHeight: openMenus.reportes
+                                    ? '1000px'
+                                    : '0px',
                             }"
                         >
                             <ItemMenu
@@ -956,6 +967,28 @@ onUnmounted(() => {});
                                 "
                                 :label="'Listado de Salida de Productos'"
                                 :ruta="'reportes.salida_productos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes(
+                                        'reportes.ingreso_bruto_productos',
+                                    )
+                                "
+                                :label="'Ingreso Bruto por Productos'"
+                                :ruta="'reportes.ingreso_bruto_productos'"
+                                :icon="'fa fa-angle-right'"
+                            ></ItemMenu>
+                            <ItemMenu
+                                v-if="
+                                    permisos == '*' ||
+                                    permisos.includes(
+                                        'reportes.kardex_productos',
+                                    )
+                                "
+                                :label="'Kardex de Productos'"
+                                :ruta="'reportes.kardex_productos'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                             <ItemMenu

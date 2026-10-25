@@ -10,6 +10,8 @@ use App\Models\Cliente;
 use App\Models\VentaDetalle;
 use App\Models\MovimientoCaja;
 use App\Models\ProductoSucursal;
+use App\Services\AlmacenService;
+use App\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +21,8 @@ use Inertia\Inertia;
 
 class InicioController extends Controller
 {
+
+    public function __construct(private AlmacenService $almacen_service, private UserService $user_service) {}
 
     public function verificaLogin()
     {
@@ -33,14 +37,8 @@ class InicioController extends Controller
     public function inicio()
     {
         $array_infos = UserController::getInfoBoxUser();
-        $usuarios = User::select('id', 'nombre', 'paterno', 'materno')
-            ->where("id", "!=", 1)
-            ->orderBy('paterno')
-            ->get();
-        $almacens = Almacen::with('sucursal:id,nombre')
-            ->select('id', 'nombre', 'sucursal_id')
-            ->orderBy('nombre')
-            ->get();
+        $usuarios = $this->user_service->listado(1);
+        $almacens = $this->almacen_service->listado(1);
         return Inertia::render('Admin/Home', [
             'array_infos' => $array_infos,
 

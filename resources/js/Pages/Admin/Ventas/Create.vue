@@ -23,7 +23,7 @@ const { setVenta, limpiarVenta, form } = useVentas();
         <template #header>
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="m-0">
+                    <h3 class="m-0 text-success">
                         <i class="fa fa-money-check-alt"></i> Nueva Venta
                     </h3>
                 </div>

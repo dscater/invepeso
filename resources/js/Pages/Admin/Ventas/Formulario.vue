@@ -993,7 +993,7 @@ onMounted(() => {
                                     <i class="fa fa-clipboard-check"></i> Datos
                                     de la Venta
                                     <span v-if="form.id != 0" class="fw-bold"
-                                        >- ACTUALIZACIÓN</span
+                                        >- Cód.: {{ form.codigo_venta }}</span
                                     >
                                 </h4>
                                 <div

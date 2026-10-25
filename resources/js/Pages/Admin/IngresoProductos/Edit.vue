@@ -7,6 +7,34 @@ import { useAppStore } from "@/stores/aplicacion/appStore";
 import Formulario from "./Formulario.vue";
 const { props: props_page } = usePage();
 const appStore = useAppStore();
+
+const props = defineProps({
+    ingreso_producto: {
+        type: Object,
+        default: null,
+    },
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
+    proveedors: {
+        type: Array,
+        default: () => [],
+    },
+    tipo_ingresos: {
+        type: Array,
+        default: () => [],
+    },
+});
+
 onBeforeMount(() => {
     appStore.startLoading();
 });
@@ -47,6 +75,11 @@ const { setIngresoProducto, limpiarIngresoProducto, form } =
             <div class="col-md-12">
                 <Formulario
                     :form="form"
+                    :almacens="almacens"
+                    :categorias="categorias"
+                    :marcas="marcas"
+                    :proveedors="proveedors"
+                    :tipo_ingresos="tipo_ingresos"
                     @envio-formulario="limpiarIngresoProducto"
                 ></Formulario>
             </div>

@@ -18,6 +18,21 @@ class UserService
     public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
 
 
+
+    public function listado($activo = null)
+    {
+        $users = User::select("users.*")
+            ->with(["sucursal:id,nombre", "role:id,nombre"])
+            ->where("users.id", "!=", 1);
+
+        if ($activo && $activo == 1) {
+            $users->where("status", 1);
+        }
+
+        $users = $users->get();
+        return $users;
+    }
+
     /**
      * Lista de users paginado con filtros
      *

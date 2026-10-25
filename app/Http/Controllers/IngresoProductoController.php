@@ -12,8 +12,13 @@ use App\Models\IngresoDetalle;
 use App\Models\IngresoPago;
 use App\Models\IngresoProducto;
 use App\Models\User;
+use App\Services\AlmacenService;
+use App\Services\CategoriaService;
 use App\Services\IngresoPagoService;
 use App\Services\IngresoProductoService;
+use App\Services\MarcaService;
+use App\Services\ProveedorService;
+use App\Services\TipoIngresoService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -31,7 +36,12 @@ class IngresoProductoController extends Controller
 {
     public function __construct(
         private IngresoProductoService $ingreso_productoService,
-        private IngresoPagoService $ingreso_pago_service
+        private IngresoPagoService $ingreso_pago_service,
+        private AlmacenService $almacen_service,
+        private CategoriaService $categoria_service,
+        private MarcaService $marca_service,
+        private ProveedorService $proveedor_service,
+        private TipoIngresoService $tipo_ingreso_service
     ) {}
 
     /**
@@ -246,7 +256,19 @@ class IngresoProductoController extends Controller
 
     public function create(): ResponseInertia
     {
-        return Inertia::render("Admin/IngresoProductos/Create");
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+        $proveedors = $this->proveedor_service->listado();
+        $tipo_ingresos = $this->tipo_ingreso_service->listado();
+
+        return Inertia::render("Admin/IngresoProductos/Create", [
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+            "proveedors" => $proveedors,
+            "tipo_ingresos" => $marcas,
+        ]);
     }
 
     /**
@@ -446,7 +468,17 @@ class IngresoProductoController extends Controller
     public function edit(IngresoProducto $ingreso_producto): ResponseInertia
     {
         $ingreso_producto = $ingreso_producto->load(["ingreso_detalles.producto", "ingreso_detalles.tipo_ingreso"]);
-        return Inertia::render("Admin/IngresoProductos/Edit", compact("ingreso_producto"));
+
+        $almacens = $this->almacen_service->listado(1);
+        $categorias = $this->categoria_service->listado();
+        $marcas = $this->marca_service->listado();
+
+        return Inertia::render("Admin/IngresoProductos/Edit", [
+            "ingreso_producto" => $ingreso_producto,
+            "almacens" => $almacens,
+            "categorias" => $categorias,
+            "marcas" => $marcas,
+        ]);
     }
 
     public function update(IngresoProducto $ingreso_producto, IngresoProductoUpdateRequest $request)

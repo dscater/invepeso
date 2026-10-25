@@ -757,6 +757,20 @@ class ModuloTableSeeder extends Seeder
 
         Modulo::create([
             "modulo" => "Reportes",
+            "nombre" => "reportes.kardex_productos",
+            "accion" => "REPORTE KARDEX DE PRODUCTOS",
+            "descripcion" => "GENERAR REPORTE DE KARDEX DE PRODUCTOS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
+            "nombre" => "reportes.ingreso_bruto_productos",
+            "accion" => "REPORTE DEL INGRESO BRUTO POR PRODUCTOS",
+            "descripcion" => "GENERAR REPORTE DEL INGRESO BRUTO POR PRODUCTOS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Reportes",
             "nombre" => "reportes.orden_compras",
             "accion" => "REPORTE LISTA DE ORDENES DE COMPRA",
             "descripcion" => "GENERAR LISTADO DE ORDENES DE COMPRA"

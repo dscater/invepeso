@@ -11,10 +11,25 @@ import MiPaginacion from "@/Components/MiPaginacion.vue";
 const { props: props_page } = usePage();
 const appStore = useAppStore();
 
+const props = defineProps({
+    almacens: {
+        type: Array,
+        default: () => [],
+    },
+    categorias: {
+        type: Array,
+        default: () => [],
+    },
+    marcas: {
+        type: Array,
+        default: () => [],
+    },
+});
+
 const muestra_formulario_carga = ref(false);
-const listAlmacens = ref([]);
-const listCategorias = ref([]);
-const listMarcas = ref([]);
+// const listAlmacens = ref([]);
+// const listCategorias = ref([]);
+// const listMarcas = ref([]);
 const listProductoSucursals = ref([]);
 const loadingLista = ref(false);
 const almacen_id = ref("todos");
@@ -67,47 +82,47 @@ const filtrarNombres = () => {
     }, 370);
 };
 
-const cargarSucursals = async () => {
-    try {
-        const res = await axios.get(route("almacens.listado"));
-        listAlmacens.value = res.data.almacens;
-        listAlmacens.value.unshift({
-            id: "todos",
-            nombre: "Todos los almacenes",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarSucursals = async () => {
+//     try {
+//         const res = await axios.get(route("almacens.listado"));
+//         listAlmacens.value = res.data.almacens;
+//         listAlmacens.value.unshift({
+//             id: "todos",
+//             nombre: "Todos los almacenes",
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
-const cargarCategorias = async () => {
-    try {
-        const res = await axios.get(route("categorias.listado"));
-        listCategorias.value = res.data.categorias;
-        listCategorias.value.unshift({
-            id: "todos",
-            nombre: "Todas las Categorías",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarCategorias = async () => {
+//     try {
+//         const res = await axios.get(route("categorias.listado"));
+//         listCategorias.value = res.data.categorias;
+//         listCategorias.value.unshift({
+//             id: "todos",
+//             nombre: "Todas las Categorías",
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
-const cargarMarcas = async () => {
-    try {
-        const res = await axios.get(route("marcas.listado"));
-        listMarcas.value = res.data.marcas;
-        listMarcas.value.unshift({
-            id: "todos",
-            nombre: "Todas las Marcas",
-        });
-    } catch (e) {
-        console.log(e);
-    } finally {
-    }
-};
+// const cargarMarcas = async () => {
+//     try {
+//         const res = await axios.get(route("marcas.listado"));
+//         listMarcas.value = res.data.marcas;
+//         listMarcas.value.unshift({
+//             id: "todos",
+//             nombre: "Todas las Marcas",
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     } finally {
+//     }
+// };
 
 onBeforeMount(async () => {
     appStore.startLoading();
@@ -115,9 +130,9 @@ onBeforeMount(async () => {
     try {
         await Promise.all([
             cargarProductos(),
-            cargarSucursals(),
-            cargarCategorias(),
-            cargarMarcas(),
+            // cargarSucursals(),
+            // cargarCategorias(),
+            // cargarMarcas(),
         ]);
     } finally {
         appStore.stopLoading();
@@ -177,80 +192,122 @@ const { axiosDelete } = useAxios();
                             Productos
                         </button>
                     </div>
-                    <div class="col-12 fs-7">Filtrar por:</div>
+                </div>
+                <div class="row mt-2">
                     <div class="col-12">
-                        <div class="row">
-                            <div class="col-lg-3 col-md-4 col-sm-6 mt-1">
-                                <div class="input-group">
-                                    <button
-                                        class="btn btn-light border"
-                                        type="button"
-                                        @click="cargarProductos"
-                                        title="Actualizar"
-                                    >
-                                        <i class="fa fa-sync"></i>
-                                    </button>
-                                    <div class="form-control border-0 p-0">
-                                        <el-select
-                                            v-model="almacen_id"
-                                            size="large"
-                                            class="el-select-input-group-right"
-                                            placeholder="Almacén"
-                                            no-data-text="Sin Datos"
-                                            no-match-text="Sin Resultados"
-                                            filterable
-                                            @change="detectarCambioSelect"
-                                        >
-                                            <el-option
-                                                v-for="item in listAlmacens"
-                                                :key="item.id"
-                                                :value="item.id"
-                                                :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
-                                            ></el-option>
-                                        </el-select>
+                        <div class="card">
+                            <div class="card-body py-2 bg-dark text-white">
+                                <div class="row">
+                                    <div class="col-12 fs-7">Filtrar por:</div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div
+                                                class="col-lg-3 col-md-4 col-sm-6 mt-2"
+                                            >
+                                                <div class="input-group">
+                                                    <button
+                                                        class="btn btn-light bg2 text-white border-0"
+                                                        type="button"
+                                                        @click="cargarProductos"
+                                                        title="Actualizar"
+                                                    >
+                                                        <i
+                                                            class="fa fa-sync"
+                                                        ></i>
+                                                    </button>
+                                                    <div
+                                                        class="form-control border-0 p-0"
+                                                    >
+                                                        <el-select
+                                                            v-model="almacen_id"
+                                                            size="large"
+                                                            class="el-select-input-group-right"
+                                                            placeholder="Almacén"
+                                                            no-data-text="Sin Datos"
+                                                            no-match-text="Sin Resultados"
+                                                            filterable
+                                                            @change="
+                                                                detectarCambioSelect
+                                                            "
+                                                        >
+                                                            <el-option
+                                                                value="todos"
+                                                                label="TODOS LOS ALMACENES"
+                                                            />
+                                                            <el-option
+                                                                v-for="item in almacens"
+                                                                :key="item.id"
+                                                                :value="item.id"
+                                                                :label="`${item.nombre} ${item.sucursal ? ' - ' + item.sucursal.nombre : ''}`"
+                                                            ></el-option>
+                                                        </el-select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-lg-2 col-md-4 col-sm-6 mt-2"
+                                            >
+                                                <el-select
+                                                    v-model="categoria_id"
+                                                    no-data-text="Sin Datos"
+                                                    no-match-text="Sin Resultados"
+                                                    filterable
+                                                    @change="
+                                                        detectarCambioSelect
+                                                    "
+                                                >
+                                                    <el-option
+                                                        value="todos"
+                                                        label="TODAS LAS CATEGORÍAS"
+                                                    />
+                                                    <el-option
+                                                        v-for="item in categorias"
+                                                        :key="item.id"
+                                                        :value="item.id"
+                                                        :label="item.nombre"
+                                                    ></el-option>
+                                                </el-select>
+                                            </div>
+                                            <div
+                                                class="col-lg-2 col-md-4 col-sm-6 mt-2"
+                                            >
+                                                <el-select
+                                                    v-model="marca_id"
+                                                    no-data-text="Sin Datos"
+                                                    no-match-text="Sin Resultados"
+                                                    filterable
+                                                    @change="
+                                                        detectarCambioSelect
+                                                    "
+                                                >
+                                                    <el-option
+                                                        value="todos"
+                                                        label="TODAS LAS MARCAS"
+                                                    />
+                                                    <el-option
+                                                        v-for="item in marcas"
+                                                        :key="item.id"
+                                                        :value="item.id"
+                                                        :label="item.nombre"
+                                                    ></el-option>
+                                                </el-select>
+                                            </div>
+                                            <div
+                                                class="col-lg-2 col-md-4 col-sm-6 mt-2"
+                                            >
+                                                <el-input
+                                                    type="text"
+                                                    placeholder="Código o Nombre del Producto"
+                                                    size="large"
+                                                    v-model="nombreProducto"
+                                                    @keyup="filtrarNombres"
+                                                    @clear="cargarProductos"
+                                                    clearable
+                                                ></el-input>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-2 col-md-4 col-sm-6 mt-1">
-                                <el-select
-                                    v-model="categoria_id"
-                                    no-data-text="Sin Datos"
-                                    no-match-text="Sin Resultados"
-                                    filterable
-                                    @change="detectarCambioSelect"
-                                >
-                                    <el-option
-                                        v-for="item in listCategorias"
-                                        :key="item.id"
-                                        :value="item.id"
-                                        :label="item.nombre"
-                                    ></el-option>
-                                </el-select>
-                            </div>
-                            <div class="col-lg-2 col-md-4 col-sm-6 mt-1">
-                                <el-select
-                                    v-model="marca_id"
-                                    no-data-text="Sin Datos"
-                                    no-match-text="Sin Resultados"
-                                    filterable
-                                    @change="detectarCambioSelect"
-                                >
-                                    <el-option
-                                        v-for="item in listMarcas"
-                                        :key="item.id"
-                                        :value="item.id"
-                                        :label="item.nombre"
-                                    ></el-option>
-                                </el-select>
-                            </div>
-                            <div class="col-lg-2 col-md-4 col-sm-6 mt-1">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="Producto"
-                                    v-model="nombreProducto"
-                                    @keyup="filtrarNombres"
-                                />
                             </div>
                         </div>
                     </div>

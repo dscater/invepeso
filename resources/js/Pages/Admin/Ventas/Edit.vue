@@ -30,7 +30,8 @@ onMounted(() => {
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-money-check-alt"></i> Editar Venta
+                        <i class="fa fa-money-check-alt text-success"></i>
+                        Editar Venta
                     </h3>
                 </div>
                 <!-- /.col -->

@@ -358,6 +358,12 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get('reportes/stock_productos', [ReporteController::class, 'stock_productos'])->name("reportes.stock_productos");
     Route::get('reportes/r_stock_productos', [ReporteController::class, 'r_stock_productos'])->name("reportes.r_stock_productos");
 
+    Route::get('reportes/kardex_productos', [ReporteController::class, 'kardex_productos'])->name("reportes.kardex_productos");
+    Route::get('reportes/r_kardex_productos', [ReporteController::class, 'r_kardex_productos'])->name("reportes.r_kardex_productos");
+
+    Route::get('reportes/ingreso_bruto_productos', [ReporteController::class, 'ingreso_bruto_productos'])->name("reportes.ingreso_bruto_productos");
+    Route::get('reportes/r_ingreso_bruto_productos', [ReporteController::class, 'r_ingreso_bruto_productos'])->name("reportes.r_ingreso_bruto_productos");
+
     Route::get('reportes/orden_compras', [ReporteController::class, 'orden_compras'])->name("reportes.orden_compras");
     Route::get('reportes/r_orden_compras', [ReporteController::class, 'r_orden_compras'])->name("reportes.r_orden_compras");
 
