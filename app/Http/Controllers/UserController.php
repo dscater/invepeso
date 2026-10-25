@@ -41,24 +41,24 @@ class UserController extends Controller
         if (Auth::check()) {
             $oUser = new User();
             $permisos = $oUser->permisos;
-            if ($permisos == '*' || (is_array($permisos) && in_array('usuarios.index', $permisos))) {
-                $array_infos[] = [
-                    'label' => 'USUARIOS',
-                    'cantidad' => User::where('id', '!=', 1)->count(),
-                    'color' => 'bgWhite',
-                    'icon' => "fa-users",
-                    "url" => "usuarios.index"
-                ];
-            }
-            if ($permisos == '*' || (is_array($permisos) && in_array('clientes.index', $permisos))) {
-                $array_infos[] = [
-                    'label' => 'CLIENTES',
-                    'cantidad' => Cliente::where('status', 1)->count(),
-                    'color' => 'bgWhite',
-                    'icon' => "fa-user-friends",
-                    "url" => "clientes.index"
-                ];
-            }
+            // if ($permisos == '*' || (is_array($permisos) && in_array('usuarios.index', $permisos))) {
+            //     $array_infos[] = [
+            //         'label' => 'USUARIOS',
+            //         'cantidad' => User::where('id', '!=', 1)->count(),
+            //         'color' => 'bgWhite',
+            //         'icon' => "fa-users",
+            //         "url" => "usuarios.index"
+            //     ];
+            // }
+            // if ($permisos == '*' || (is_array($permisos) && in_array('clientes.index', $permisos))) {
+            //     $array_infos[] = [
+            //         'label' => 'CLIENTES',
+            //         'cantidad' => Cliente::where('status', 1)->count(),
+            //         'color' => 'bgWhite',
+            //         'icon' => "fa-user-friends",
+            //         "url" => "clientes.index"
+            //     ];
+            // }
         }
 
 

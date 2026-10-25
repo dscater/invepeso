@@ -88,8 +88,13 @@ Route::get("sincronizarInicio", [CertificadoEmitidoController::class, 'sincroniz
 Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function () {
     // INICIO
     Route::get('/inicio', [InicioController::class, 'inicio'])->name('inicio');
-    Route::get('/certificadosEmitidosLinea', [InicioController::class, 'certificadosEmitidosLinea'])->name('certificadosEmitidosLinea');
-    Route::get('/cantidadTramitesNormal', [InicioController::class, 'cantidadTramitesNormal'])->name('cantidadTramitesNormal');
+    Route::get('/ventas_dia', [InicioController::class, 'ventas_dia'])->name('ventas_dia');
+    Route::get('/clientes_nuevos', [InicioController::class, 'clientes_nuevos'])->name('clientes_nuevos');
+    Route::get('/ingresos_egresos', [InicioController::class, 'ingresos_egresos'])->name('ingresos_egresos');
+    Route::get('/contado_credito', [InicioController::class, 'contado_credito'])->name('contado_credito');
+    Route::get('/qrefectivo', [InicioController::class, 'qrefectivo'])->name('qrefectivo');
+    Route::get('/masVendidos', [InicioController::class, 'masVendidos'])->name('masVendidos');
+    Route::get('/pocoStock', [InicioController::class, 'pocoStock'])->name('pocoStock');
 
     // CONFIGURACION
     Route::resource("configuracions", ConfiguracionController::class)->only(
