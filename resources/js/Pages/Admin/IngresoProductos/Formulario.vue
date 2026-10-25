@@ -415,13 +415,14 @@ onMounted(() => {
                                 </el-select>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-6 mt-2">
-                                <input
+                                <el-input
                                     type="text"
-                                    class="form-control"
-                                    placeholder="Producto"
+                                    placeholder="Código o Nombre del Producto"
                                     v-model="nombreProducto"
                                     @keyup="filtrarNombres"
-                                />
+                                    @clear="cargarProductos"
+                                    clearable
+                                ></el-input>
                             </div>
                         </div>
                     </div>
