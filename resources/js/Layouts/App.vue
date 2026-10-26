@@ -6,46 +6,29 @@ import Footer from "./includes/Footer.vue";
 import NavBar from "./includes/NavBar.vue";
 import SideBar from "./includes/SideBar.vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
+import { useAuthStore } from "@/stores/authStore";
 import { useConfiguracionStore } from "@/stores/configuracion/configuracionStore";
 const configuracionStore = useConfiguracionStore();
 const appStore = useAppStore();
+const authStore = useAuthStore();
 const { auth } = usePage().props;
 
 let inactivityTimer = null;
 // const INACTIVITY_LIMIT = 60 * 1000; // 1 minuto en ms
 let INACTIVITY_LIMIT = 60 * 5000; // 5 minuto en ms
 
-// Función para cerrar sesión
-const logout = async () => {
+// Resetear temporizador
+const resetTimer = () => {
     if (inactivityTimer) {
         clearTimeout(inactivityTimer);
     }
 
-    // Evita ejecutar varios cierres de sesión simultáneamente.
-    window.removeEventListener("mousemove", resetTimer);
-    window.removeEventListener("keydown", resetTimer);
-    window.removeEventListener("click", resetTimer);
-
-    try {
-        // Cierra la sesión real en Laravel.
-        await axios.post(route("logout"));
-    } catch (error) {
-        console.error("Error al cerrar la sesión:", error);
-    } finally {
-        // Limpia el historial administrado por Inertia.
-        if (typeof router.clearHistory === "function") {
-            router.clearHistory();
-        }
-
-        // Reemplaza la entrada actual en lugar de añadir otra.
-        window.location.replace("/");
+    if (!authStore.cerrandoSesion) {
+        inactivityTimer = setTimeout(() => {
+            // CERRAR SESIÓN
+            authStore.salir({ confirmar: false });
+        }, INACTIVITY_LIMIT);
     }
-};
-
-// Resetear temporizador
-const resetTimer = () => {
-    if (inactivityTimer) clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(logout, INACTIVITY_LIMIT);
 };
 
 onMounted(async () => {

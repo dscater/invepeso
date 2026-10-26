@@ -3,35 +3,16 @@
 import { usePage, Link } from "@inertiajs/vue3";
 import { onBeforeUnmount, onMounted, onUnmounted, ref } from "vue";
 import { useSideBar } from "@/composables/useSidebar.js";
+import { useAuthStore } from "@/stores/authStore";
 import { useConfiguracionStore } from "@/stores/configuracion/configuracionStore";
+const authStore = useAuthStore();
 const configuracionStore = useConfiguracionStore();
 
 const { props } = usePage();
 const { toggleSidebar } = useSideBar();
 
 const salir = () => {
-    Swal.fire({
-        icon: "question",
-        title: "Cerrar sesión",
-        html: `¿Esta seguro(a) de cerrar sesión?`,
-        showCancelButton: true,
-        confirmButtonText: "Si, salir",
-        cancelButtonText: "Cancelar",
-        denyButtonText: `Cancelar`,
-        customClass: {
-            confirmButton: "bg-success",
-        },
-    }).then(async (result) => {
-        /* Read more about isConfirmed, isDenied below */
-        if (result.isConfirmed) {
-            axios
-                .post(route("logout"))
-                .then((response) => {})
-                .finally(() => {
-                    window.location.href = "/";
-                });
-        }
-    });
+    authStore.salir();
 };
 
 const intervalNotifaciones = ref(null);

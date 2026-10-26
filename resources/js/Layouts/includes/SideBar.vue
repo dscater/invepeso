@@ -4,10 +4,12 @@ import { router, usePage, Link } from "@inertiajs/vue3";
 import ItemMenu from "@/Components/ItemMenu.vue";
 import { useSideBar } from "@/composables/useSidebar.js";
 import { useAppStore } from "@/stores/aplicacion/appStore";
+import { useAuthStore } from "@/stores/authStore";
 import { useConfiguracionStore } from "@/stores/configuracion/configuracionStore";
 const { closeSidebar, toggleSubMenuELem } = useSideBar();
 const { auth } = usePage().props;
 const configuracionStore = useConfiguracionStore();
+const authStore = useAuthStore();
 const appStore = useAppStore();
 const usuario = ref(null);
 const permisos = ref([]);
@@ -122,28 +124,7 @@ onMounted(() => {
 });
 
 const salir = () => {
-    Swal.fire({
-        icon: "question",
-        title: "Cerrar sesión",
-        html: `¿Esta seguro(a) de cerrar sesión?`,
-        showCancelButton: true,
-        confirmButtonText: "Si, salir",
-        cancelButtonText: "Cancelar",
-        denyButtonText: `Cancelar`,
-        customClass: {
-            confirmButton: "btn-success",
-        },
-    }).then(async (result) => {
-        /* Read more about isConfirmed, isDenied below */
-        if (result.isConfirmed) {
-            axios
-                .post(route("logout"))
-                .then((response) => {})
-                .finally(() => {
-                    window.location.href = "/";
-                });
-        }
-    });
+    authStore.salir();
 };
 
 onUnmounted(() => {});

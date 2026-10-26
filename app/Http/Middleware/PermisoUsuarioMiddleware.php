@@ -18,19 +18,30 @@ class PermisoUsuarioMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
-    {
+    public function handle(
+        Request $request,
+        Closure $next
+    ): Response {
+        $prefijo = $request->route()?->getPrefix();
+        $esAdmin = $prefijo === 'admin';
+
+        // Las rutas que no son administrativas continúan normalmente.
+        if (!$esAdmin) {
+            return $next($request);
+        }
+
         $user = $request->user();
 
         if (!$user) {
             if ($request->inertia()) {
-                return redirect('/');
+                return $this->noCache(redirect('/'));
             }
 
-            abort(403);
+            return $this->noCache(
+                response('No autenticado', 401)
+            );
         }
 
-        $prefijo = $request->route()?->getPrefix();
         $nom_ruta = $request->route()?->getName();
 
         $excepciones = [
@@ -41,36 +52,43 @@ class PermisoUsuarioMiddleware
             'users.getUser',
         ];
 
-        // Las rutas que no son de administración continúan normalmente.
-        if ($prefijo !== 'admin') {
-            return $next($request);
-        }
-
-        // Las rutas exceptuadas no necesitan comprobar permisos.
         if (in_array($nom_ruta, $excepciones, true)) {
-            return $next($request);
+            return $this->noCache($next($request));
         }
 
         $permisoService = app(PermisoService::class);
         $permisos = $permisoService->getPermisosUser();
 
         if (is_array($permisos)) {
-            // $modulos = Modulo::pluck('nombre')->toArray();
             $modulos = Cache::remember(
                 'modulos_nombres',
                 now()->addHours(8),
                 fn() => Modulo::pluck('nombre')->toArray()
             );
 
-            // Log::debug($modulos);
             if (
                 in_array($nom_ruta, $modulos, true) &&
                 !in_array($nom_ruta, $permisos, true)
             ) {
-                abort(401, 'Acceso denegado');
+                return $this->noCache(
+                    response('Acceso denegado', 403)
+                );
             }
         }
 
-        return $next($request);
+        return $this->noCache($next($request));
+    }
+
+    private function noCache(Response $response): Response
+    {
+        $response->headers->set(
+            'Cache-Control',
+            'no-store, private'
+        );
+
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+
+        return $response;
     }
 }
