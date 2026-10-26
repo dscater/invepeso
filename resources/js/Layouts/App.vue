@@ -16,13 +16,30 @@ let inactivityTimer = null;
 let INACTIVITY_LIMIT = 60 * 5000; // 5 minuto en ms
 
 // Función para cerrar sesión
-const logout = () => {
-    axios
-        .post(route("logout"))
-        .then((response) => {})
-        .finally(() => {
-            window.location.href = "/";
-        });
+const logout = async () => {
+    if (inactivityTimer) {
+        clearTimeout(inactivityTimer);
+    }
+
+    // Evita ejecutar varios cierres de sesión simultáneamente.
+    window.removeEventListener("mousemove", resetTimer);
+    window.removeEventListener("keydown", resetTimer);
+    window.removeEventListener("click", resetTimer);
+
+    try {
+        // Cierra la sesión real en Laravel.
+        await axios.post(route("logout"));
+    } catch (error) {
+        console.error("Error al cerrar la sesión:", error);
+    } finally {
+        // Limpia el historial administrado por Inertia.
+        if (typeof router.clearHistory === "function") {
+            router.clearHistory();
+        }
+
+        // Reemplaza la entrada actual en lugar de añadir otra.
+        window.location.replace("/");
+    }
 };
 
 // Resetear temporizador
