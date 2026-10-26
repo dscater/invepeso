@@ -35,17 +35,17 @@ onMounted(async () => {
     // Inicializar info de usuario
     appStore.initUserInfo();
 
-    // await nextTick();
+    await nextTick();
 
     // // reinicializa treeview
     // document.querySelectorAll('[data-lte-toggle="treeview"]');
 
     // Eventos que consideran actividad del usuario
-    // window.addEventListener("mousemove", resetTimer);
-    // window.addEventListener("keydown", resetTimer);
-    // window.addEventListener("click", resetTimer);
+    window.addEventListener("mousemove", resetTimer);
+    window.addEventListener("keydown", resetTimer);
+    window.addEventListener("click", resetTimer);
 
-    // resetTimer();
+    resetTimer();
 });
 
 onBeforeMount(async () => {
@@ -56,10 +56,10 @@ onBeforeMount(async () => {
 
     window.dispatchEvent(new Event("load"));
 
-    // window.removeEventListener("mousemove", resetTimer);
-    // window.removeEventListener("keydown", resetTimer);
-    // window.removeEventListener("click", resetTimer);
-    // if (inactivityTimer) clearTimeout(inactivityTimer);
+    window.removeEventListener("mousemove", resetTimer);
+    window.removeEventListener("keydown", resetTimer);
+    window.removeEventListener("click", resetTimer);
+    if (inactivityTimer) clearTimeout(inactivityTimer);
 });
 </script>
 <template>
