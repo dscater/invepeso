@@ -1,8 +1,7 @@
 <script setup>
-import { onMounted, ref, watch, computed } from "vue";
+import { computed } from "vue";
 import { usePage, router, Link } from "@inertiajs/vue3";
-// import { useAppStore } from "@/stores/aplicacion/appStore";
-// const appStore = useAppStore();
+
 const props = defineProps({
     label: {
         type: String,
@@ -22,78 +21,70 @@ const props = defineProps({
     },
     arrayRutaClassActive: {
         type: Array,
-        default: [],
+        default: () => [],
     },
-});
-
-const route_current = ref("");
-const arrRutasActive = ref(props.arrayRutaClassActive);
-const link = ref(null);
-
-watch(
-    () => props.arrayRutaClassActive,
-    (newVal) => {
-        arrRutasActive.value = newVal;
-    },
-);
-
-router.on("navigate", (event) => {
-    route_current.value = route().current();
-});
-
-const ejecutaPost = () => {
-    router.post(route(props.ruta));
-};
-
-const classActive = computed(() => {
-    if (arrRutasActive.value.length > 0) {
-        return arrRutasActive.value.includes(route_current.value)
-            ? "active"
-            : "";
-    }
-    return route_current.value == props.ruta ? "active" : "";
 });
 
 const emits = defineEmits(["onClick"]);
-onMounted(() => {
-    route_current.value = route().current();
-    link.value.addEventListener("click", function () {
-        // appStore.startLoading();
-        emits("onClick");
-    });
+
+const page = usePage();
+
+// Se actualiza cuando Inertia cambia de página.
+const route_current = computed(() => {
+    page.url;
+    return route().current() || "";
 });
+
+const classActive = computed(() => {
+    const rutas = props.arrayRutaClassActive;
+
+    if (rutas.length > 0) {
+        return rutas.includes(route_current.value) ? "active" : "";
+    }
+
+    return route_current.value === props.ruta ? "active" : "";
+});
+
+const ejecutaPost = () => {
+    emits("onClick");
+    router.post(route(props.ruta));
+};
+
+const ejecutaClick = () => {
+    emits("onClick");
+};
 </script>
+
 <template>
     <li
         class="nav-item"
-        v-if="method.toLowerCase() == 'get'"
-        ref="link"
+        v-if="method.toLowerCase() === 'get'"
         :class="[$attrs.class]"
     >
         <Link
-            v-if="ruta != route_current"
+            v-if="ruta !== route_current"
             :href="ruta ? route(ruta) : '/'"
             class="nav-link"
-            :class="[classActive ?? '']"
+            :class="classActive"
+            @click="ejecutaClick"
         >
-            <i class="nav-icon" :class="icon ? icon : 'fa-th'"></i>
-            <p>
-                {{ label }}
-            </p>
+            <i class="nav-icon" :class="icon || 'fa-th'"></i>
+
+            <p>{{ label }}</p>
         </Link>
-        <div v-else class="nav-link" :class="[classActive ?? '']">
-            <i class="nav-icon" :class="icon ? icon : 'fa-th'"></i>
-            <p>
-                {{ label }}
-            </p>
+
+        <div v-else class="nav-link" :class="classActive">
+            <i class="nav-icon" :class="icon || 'fa-th'"></i>
+
+            <p>{{ label }}</p>
         </div>
     </li>
+
     <li class="nav-item" v-else>
-        <a href="#" class="nav-link" @click.prevent="ejecutaPost()" ref="link">
-            <i class="nav-icon" :class="icon ? icon : 'fa-th'"></i>
-            <p>
-                {{ label }}
-            </p>
+        <a href="#" class="nav-link" @click.prevent="ejecutaPost">
+            <i class="nav-icon" :class="icon || 'fa-th'"></i>
+
+            <p>{{ label }}</p>
         </a>
     </li>
 </template>

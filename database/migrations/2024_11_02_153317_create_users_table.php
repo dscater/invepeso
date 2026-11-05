@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string("fono", 255);
             $table->string('password');
             $table->string("foto", 255)->nullable();
-            $table->string("tipo");
+            $table->string("tipo"); // ADMINISTRACIÓN, EMPLEADO
             $table->unsignedBigInteger("role_id")->nullable();
             $table->integer("acceso");
             $table->unsignedBigInteger("sucursal_id")->nullable();

@@ -1,1068 +1,1291 @@
 <script setup>
 import axios from "axios";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
-import {
-    ref,
-    onMounted,
-    onUpdated,
-    onUnmounted,
-    watch,
-    nextTick,
-    useSlots,
-} from "vue";
-import { debounce } from "lodash";
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
+
 const props = defineProps({
     cols: {
         type: Array,
-        default: [],
+        default: () => [],
     },
+
     data: {
         type: Array,
-        default: [],
+        default: () => [],
     },
+
     conPaginacion: {
         type: Boolean,
         default: true,
     },
+
     api: {
         type: Boolean,
         default: false,
     },
+
     url: {
         type: String,
         default: "",
     },
+
     sinRegistros: {
         type: String,
-        default: "No se encontrarón registros",
+        default: "No se encontraron registros",
     },
+
     tableResponsive: {
         type: Boolean,
         default: false,
     },
+
     tableHeight: {
         type: [String, Number],
         default: null,
     },
+
     tableWidth: {
         type: [String, Number],
         default: null,
     },
+
     fixedHeader: {
         type: Boolean,
         default: false,
     },
+
     tableClass: {
         type: String,
         default: "",
     },
+
     headerClass: {
         type: String,
         default: "",
     },
+
     bodyClass: {
         type: String,
         default: "",
     },
+
     footerClass: {
         type: String,
         default: "",
     },
+
     paginationClass: {
         type: String,
         default: "",
     },
+
     perPage: {
         type: Number,
         default: 5,
     },
+
     filterPage: {
         type: Array,
-        default: [5, 10, 20, 30, 50, 100],
+        default: () => [5, 10, 20, 30, 50, 100],
     },
+
     syncOrderBy: {
+        type: [String, Number],
         default: null,
     },
+
     syncOrderAsc: {
+        type: String,
         default: null,
     },
+
     search: {
         type: String,
         default: "",
     },
+
     multiSearch: {
         type: Object,
         default: null,
     },
+
     numPages: {
         type: Number,
         default: 7,
     },
+
     loading: {
         type: Boolean,
         default: false,
     },
+
     textCargando: {
         type: String,
         default: "Cargando...",
     },
+
     delaySearch: {
         type: Number,
         default: 300,
     },
-    // para listar los registros por cards - PENDIENTE
+
     card: {
         type: Boolean,
         default: false,
     },
 });
 
-const listCols = ref(props.cols);
-const listData = ref(props.data);
+/*
+|--------------------------------------------------------------------------
+| Estado principal
+|--------------------------------------------------------------------------
+*/
+
 const listItems = ref([]);
-const textSinRegistros = ref(props.sinRegistros);
+const pLoading = ref(props.loading);
 const error = ref(false);
-const mensajeError = ref("");
+const textSinRegistros = ref(props.sinRegistros);
+
 const per_page = ref(props.perPage);
-const orderBy = ref(props.syncOrderBy);
-const orderAsc = ref(
-    props.syncOrderAsc ? props.syncOrderAsc.toLowerCase() : null,
-);
-const total = ref(listData.value.length);
 const currentPage = ref(1);
-const filter_page = ref(props.filterPage);
+
+const orderBy = ref(props.syncOrderBy);
+const orderAsc = ref(normalizarOrden(props.syncOrderAsc));
+
 const tSearch = ref(props.search);
 const oMultiSearch = ref(props.multiSearch);
-const aPaginas = ref([]);
-const cDeRegistros = ref(1);
-const cARegistros = ref(per_page.value);
+
+const total = ref(0);
 const totalPages = ref(0);
-const pLoading = ref(false);
-const intervalSearch = ref(null);
 
-watch(
-    () => props.syncOrderBy,
-    (newVal) => {
-        orderBy.value = newVal;
-        // console.log("watch 1");
-        cargarDatos();
-    },
-);
+const cDeRegistros = ref(0);
+const cARegistros = ref(0);
 
-watch(
-    () => props.syncOrderAsc,
-    (newVal) => {
-        orderAsc.value = newVal ? newVal.toLowerCase() : null;
-        // console.log("watch 2");
-        cargarDatos();
-    },
-);
+let requestController = null;
+let requestSequence = 0;
+let searchTimer = null;
+let layoutFrame = null;
+
+/*
+|--------------------------------------------------------------------------
+| Computed
+|--------------------------------------------------------------------------
+*/
+
+const listCols = computed(() => props.cols ?? []);
+
+const filter_page = computed(() => props.filterPage ?? []);
+
+const dataLocal = computed(() => props.data ?? []);
+
+const searchableColumns = computed(() => {
+    return listCols.value.filter((column) => column.searchable !== false);
+});
+
+const fixedColumnMeta = computed(() => {
+    const leftOffsets = {};
+    const rightOffsets = {};
+
+    let left = 0;
+    let right = 0;
+    let leftCount = 0;
+    let rightCount = 0;
+
+    listCols.value.forEach((column, index) => {
+        if (column.fixed === true) {
+            leftOffsets[index] = left;
+            left += Number(listAnchoColumnas.value[index] ?? 0);
+            leftCount++;
+        }
+    });
+
+    for (let index = listCols.value.length - 1; index >= 0; index--) {
+        if (listCols.value[index]?.fixed === "right") {
+            rightOffsets[index] = right;
+            right += Number(listAnchoColumnas.value[index] ?? 0);
+            rightCount++;
+        }
+    }
+
+    return {
+        leftOffsets,
+        rightOffsets,
+        leftCount,
+        rightCount,
+    };
+});
+
+/*
+|--------------------------------------------------------------------------
+| Referencias DOM
+|--------------------------------------------------------------------------
+*/
+
+const miTable = ref(null);
+const miTableRef = ref(null);
+const miTableHeaderRef = ref(null);
+const miTableFooterRef = ref(null);
+
+const miContentHeaderRef = ref(null);
+const miContentTableRef = ref(null);
+const miContentScrollRef = ref(null);
+
+const scrollX = ref(null);
+const scrollY = ref(null);
+
+const widthMiTable = ref(0);
+const widthParamContent = ref(0);
+const listAnchoColumnas = ref([]);
+
+const resizeObserver = ref(null);
+
+/*
+|--------------------------------------------------------------------------
+| Watchers
+|--------------------------------------------------------------------------
+*/
 
 watch(
     () => props.loading,
-    (newVal) => {
-        // console.log("watch 3");
-        pLoading.value = newVal;
+    (value) => {
+        pLoading.value = value;
+    },
+);
+
+watch(
+    () => props.sinRegistros,
+    (value) => {
+        textSinRegistros.value = value;
+    },
+);
+
+watch(
+    () => props.perPage,
+    (value) => {
+        if (Number(value) !== Number(per_page.value)) {
+            per_page.value = Number(value);
+        }
+    },
+);
+
+watch(
+    () => props.search,
+    (value) => {
+        tSearch.value = value ?? "";
+        programarBusqueda();
     },
 );
 
 watch(
     () => props.multiSearch,
-    (newVal) => {
-        // console.log("watch 4");
-        setLoading(true);
-        clearInterval(intervalSearch.value);
-        intervalSearch.value = setTimeout(() => {
-            currentPage.value = 1;
-            oMultiSearch.value = newVal;
-            cargarDatos();
-        }, props.delaySearch);
+    (value) => {
+        oMultiSearch.value = value ?? null;
+        programarBusqueda();
     },
     { deep: true },
 );
 
 watch(
-    () => props.search,
-    (newVal) => {
-        // console.log("watch 5");
-        setLoading(true);
-        tSearch.value = newVal;
-        clearInterval(intervalSearch.value);
-        intervalSearch.value = setTimeout(() => {
-            currentPage.value = 1;
+    [() => props.syncOrderBy, () => props.syncOrderAsc],
+    ([newOrderBy, newOrderAsc]) => {
+        orderBy.value = newOrderBy;
+        orderAsc.value = normalizarOrden(newOrderAsc);
+
+        if (props.api) {
             cargarDatos();
-        }, props.delaySearch);
+        } else {
+            cargarDatosLocal();
+        }
     },
 );
-
-watch(per_page, (newValue, oldValue) => {
-    // console.log("watch 6");
-    cambiaPerPage();
-});
 
 watch(
     () => props.data,
-    (newVal) => {
-        // console.log("watch 7");
-        listData.value = newVal;
-        total.value = listData.value.length;
-        cargarDatos();
+    () => {
+        if (!props.api) {
+            cargarDatosLocal();
+        }
     },
+    { deep: true },
 );
 
 watch(
-    () => listItems.value,
-    async (newVal) => {
-        if (newVal.length > 0) {
-            // alto del contenedor
-            nextTick(() => {
-                establecerAltoContenedor();
-            });
-        }
+    () => props.cols,
+    async () => {
+        await nextTick();
+        programarLayout();
     },
+    { deep: true },
 );
 
-// funcion para determinar si se cargaron todos los elementos
-const esperarCargaElementos = () => {
-    return new Promise((r) => window.requestAnimationFrame(r));
-};
+watch(per_page, () => {
+    currentPage.value = 1;
+    cargarDatos();
+});
 
-/**
- * *****************************************
- *  FUNCIONES PARA LA CARGA DE DATOS
- */
+/*
+|--------------------------------------------------------------------------
+| Carga de datos
+|--------------------------------------------------------------------------
+*/
 
-// funcion general para generar los datos que se muestran en la tabla
-// ya sea via URL o el Listado pasado en propiedades
-const cargarDatos = async () => {
-    listItems.value = [];
-    setLoading(true);
+async function cargarDatos() {
     if (props.api) {
-        const resp = await apiRegistros();
-        total.value = resp.total;
-        listItems.value = resp.data;
-        totalPages.value = resp.lastPage;
-        muestraCantidadRegistros();
-    } else {
-        listItems.value = await generarDatosPorLista();
-        // Actualiza los contadores de registros
-        muestraCantidadRegistros();
+        await cargarDatosApi();
+        return;
     }
-    setLoading(false);
-};
 
-// cargar registros por URL axios
-const apiRegistros = async () => {
+    cargarDatosLocal();
+}
+
+async function cargarDatosApi() {
+    const currentRequest = ++requestSequence;
+
+    if (!props.url) {
+        error.value = true;
+        console.error(
+            "MiTable: la propiedad url es obligatoria cuando api=true.",
+        );
+        return;
+    }
+
+    requestController?.abort();
+    requestController = new AbortController();
+
+    setLoading(true);
+    error.value = false;
+
     try {
-        let dataParams = {
-            page: currentPage.value,
-            currentPage: currentPage.value,
-            perPage: per_page.value,
-            search: tSearch.value,
-            orderBy: orderBy.value,
-            orderAsc: orderAsc.value,
-        };
-        if (oMultiSearch.value) {
-            dataParams = {
+        const response = await axios.get(props.url, {
+            signal: requestController.signal,
+            params: {
                 page: currentPage.value,
                 currentPage: currentPage.value,
                 perPage: per_page.value,
-                ...oMultiSearch.value,
+                search: tSearch.value,
                 orderBy: orderBy.value,
                 orderAsc: orderAsc.value,
-            };
-        }
-        const response = await axios(props.url, {
-            params: dataParams,
+                ...(oMultiSearch.value ?? {}),
+            },
         });
 
-        return response.data;
-    } catch (err) {
-        setLoading(false);
-        error.value = true;
-        console.log(err);
-        return null;
-    }
-};
-// generar el listado de datos sin uso de una api
-const generarDatosPorLista = async () => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const page = parseInt(currentPage.value);
-            const pageSize = parseInt(per_page.value);
-            const vOrderBy = orderBy.value;
-            const vOrderAsc = orderAsc.value;
-
-            // Filtra el array por el valor de búsqueda en cualquier columna
-            let filteredArray = await listData.value.filter((item) => {
-                return Object.values(item).some((value) =>
-                    value
-                        .toString()
-                        .toLowerCase()
-                        .includes(tSearch.value.toLowerCase()),
-                );
-            });
-
-            total.value = filteredArray.length;
-            totalPages.value = Math.ceil(total.value / per_page.value);
-
-            // Aplica el ordenamiento según orderBy y orderAsc
-            if (vOrderAsc) {
-                filteredArray = filteredArray.sort((a, b) => {
-                    // Obtener la configuración de la columna por su key
-                    let columnConfig = listCols.value.find(
-                        (col) => col.key === vOrderBy,
-                    );
-                    if (!columnConfig) {
-                        return 0;
-                    }
-
-                    // Obtener valores a comparar
-                    let valA = getColumnValue(a, vOrderBy) ?? "";
-                    let valB = getColumnValue(b, vOrderBy) ?? "";
-                    // Si el tipo es Number, convertir los valores
-                    if (
-                        columnConfig.type &&
-                        columnConfig.type.toLowerCase() === "number"
-                    ) {
-                        valA = parseFloat(valA) || 0; // Asegurar que sea un número
-                        valB = parseFloat(valB) || 0;
-                    } else if (
-                        columnConfig.type &&
-                        columnConfig.type.toLowerCase() === "date"
-                    ) {
-                        // Convertir fechas al formato YYYY-MM-DD
-                        valA = formatDateToISO(valA);
-                        valB = formatDateToISO(valB);
-                        // Intentar convertir las fechas a milisegundos
-                        valA = isValidDate(valA) ? new Date(valA).getTime() : 0;
-                        valB = isValidDate(valB) ? new Date(valB).getTime() : 0;
-                    } else if (
-                        typeof valA === "string" &&
-                        typeof valB === "string"
-                    ) {
-                        // Si son cadenas, convertir a minúsculas
-                        valA = valA.toLowerCase();
-                        valB = valB.toLowerCase();
-                    }
-
-                    // Comparar valores
-                    if (valA < valB) {
-                        return vOrderAsc === "asc" ? -1 : 1;
-                    }
-                    if (valA > valB) {
-                        return vOrderAsc === "asc" ? 1 : -1;
-                    }
-                    return 0;
-                });
-            }
-
-            // Calcula el índice de inicio para la paginación
-            const startIndex = (page - 1) * pageSize;
-
-            // Realiza la paginación
-            let listaFiltrada = filteredArray;
-            if (props.conPaginacion) {
-                listaFiltrada = filteredArray.slice(
-                    startIndex,
-                    startIndex + pageSize,
-                );
-            }
-
-            // Devuelve la sección del array filtrado, ordenado y paginado
-            resolve(listaFiltrada);
-        } catch (error) {
-            reject(error);
+        if (currentRequest !== requestSequence) {
+            return;
         }
-    });
-};
 
-// Función para validar formatos de fecha
-function isValidDate(dateString) {
-    const date = new Date(dateString);
-    return !isNaN(date.getTime());
-}
-// Función para convertir fechas de DD/MM/YYYY a YYYY-MM-DD
-function formatDateToISO(dateString) {
-    if (/\d{2}\/\d{2}\/\d{4}/.test(dateString)) {
-        const [day, month, year] = dateString.split("/");
-        return `${year}-${month}-${day}`;
+        const responseData = response.data ?? {};
+
+        listItems.value = Array.isArray(responseData.data)
+            ? responseData.data
+            : [];
+
+        total.value = Number(responseData.total ?? 0);
+
+        totalPages.value = Number(
+            responseData.lastPage ??
+                responseData.last_page ??
+                calcularTotalPaginas(),
+        );
+
+        actualizarRangoRegistros();
+
+        await actualizarLayout();
+
+        emit("loaded", {
+            data: listItems.value,
+            total: total.value,
+            page: currentPage.value,
+        });
+
+        if (!primeraCargaCompletada.value) {
+            primeraCargaCompletada.value = true;
+            emit("ready");
+        }
+    } catch (exception) {
+        if (
+            exception?.name === "CanceledError" ||
+            exception?.name === "AbortError" ||
+            exception?.code === "ERR_CANCELED"
+        ) {
+            return;
+        }
+
+        error.value = true;
+        listItems.value = [];
+
+        emit("load-error", exception);
+
+        console.error("Error al cargar datos de MiTable:", exception);
+    } finally {
+        if (currentRequest === requestSequence) {
+            setLoading(false);
+        }
     }
-    return dateString; // Si ya está en formato ISO, devolverlo tal cual
 }
 
-// detectar el cambio de cantidad de registros por pagina
-const cambiaPerPage = async () => {
+async function cargarDatosLocal() {
+    if (props.api) {
+        return;
+    }
+
+    setLoading(true);
+    error.value = false;
+
+    const result = generarDatosPorLista();
+
+    listItems.value = result.data;
+    total.value = result.total;
+    totalPages.value = result.lastPage;
+
+    actualizarRangoRegistros();
+
+    await nextTick();
+    await actualizarLayout();
+
+    if (!primeraCargaCompletada.value) {
+        primeraCargaCompletada.value = true;
+        emit("ready");
+    }
+
+    emit("loaded", {
+        data: listItems.value,
+        total: total.value,
+        page: currentPage.value,
+    });
+
+    setLoading(false);
+}
+
+function programarBusqueda() {
+    clearTimeout(searchTimer);
+
+    setLoading(true);
+
+    searchTimer = setTimeout(
+        () => {
+            currentPage.value = 1;
+            cargarDatos();
+        },
+        Math.max(0, Number(props.delaySearch) || 0),
+    );
+}
+
+function setLoading(value) {
+    const newValue = Boolean(value);
+
+    if (props.loading) {
+        pLoading.value = props.loading;
+        emit("loading", pLoading.value);
+        return;
+    }
+
+    pLoading.value = newValue;
+    emit("loading", pLoading.value);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Procesamiento local
+|--------------------------------------------------------------------------
+*/
+
+function generarDatosPorLista() {
+    const search = normalizarTexto(tSearch.value);
+
+    let filtered = [...dataLocal.value];
+
+    if (search) {
+        filtered = filtered.filter((item) => {
+            return searchableColumns.value.some((column) => {
+                const value = getColumnValue(item, column.key);
+                return normalizarTexto(value).includes(search);
+            });
+        });
+    }
+
+    if (orderBy.value && orderAsc.value) {
+        const column = listCols.value.find(
+            (item) => item.key === orderBy.value,
+        );
+
+        if (column) {
+            filtered.sort((a, b) => compararValores(a, b, column));
+        }
+    }
+
+    const resultTotal = filtered.length;
+    const pageSize = Math.max(1, Number(per_page.value) || 1);
+
+    const lastPage = props.conPaginacion
+        ? Math.max(1, Math.ceil(resultTotal / pageSize))
+        : 1;
+
+    if (currentPage.value > lastPage) {
+        currentPage.value = lastPage;
+    }
+
+    const startIndex = props.conPaginacion
+        ? (currentPage.value - 1) * pageSize
+        : 0;
+
+    const data = props.conPaginacion
+        ? filtered.slice(startIndex, startIndex + pageSize)
+        : filtered;
+
+    return {
+        data,
+        total: resultTotal,
+        lastPage,
+    };
+}
+
+function compararValores(a, b, column) {
+    const direction = orderAsc.value === "desc" ? -1 : 1;
+
+    let valueA = getColumnValue(a, column.key);
+    let valueB = getColumnValue(b, column.key);
+
+    const type = String(column.type ?? "").toLowerCase();
+
+    if (type === "number") {
+        valueA = Number.parseFloat(valueA) || 0;
+        valueB = Number.parseFloat(valueB) || 0;
+    } else if (type === "date") {
+        valueA = convertirFecha(valueA);
+        valueB = convertirFecha(valueB);
+    } else {
+        valueA = normalizarTexto(valueA);
+        valueB = normalizarTexto(valueB);
+    }
+
+    if (valueA < valueB) return -1 * direction;
+    if (valueA > valueB) return 1 * direction;
+
+    return 0;
+}
+
+function normalizarTexto(value) {
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    if (typeof value === "object") {
+        return JSON.stringify(value).toLocaleLowerCase();
+    }
+
+    return String(value).trim().toLocaleLowerCase();
+}
+
+function convertirFecha(value) {
+    if (!value) {
+        return 0;
+    }
+
+    const text = String(value);
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(text)) {
+        const [day, month, year] = text.split("/");
+        return new Date(`${year}-${month}-${day}`).getTime() || 0;
+    }
+
+    return new Date(text).getTime() || 0;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Paginación y ordenación
+|--------------------------------------------------------------------------
+*/
+
+function changeOrderBy(columnKey) {
+    if (orderBy.value !== columnKey) {
+        orderBy.value = columnKey;
+        orderAsc.value = "asc";
+    } else if (orderAsc.value === "asc") {
+        orderAsc.value = "desc";
+    } else if (orderAsc.value === "desc") {
+        orderBy.value = null;
+        orderAsc.value = null;
+    } else {
+        orderAsc.value = "asc";
+    }
+
     currentPage.value = 1;
     cargarDatos();
-};
-
-// detectar cambio del orden
-const changeOrderBy = async (orderCol) => {
-    let oldOrderBy = orderBy.value;
-    orderBy.value = orderCol;
-    if (oldOrderBy != orderBy.value) {
-        orderAsc.value = "asc";
-    } else {
-        switch (orderAsc.value) {
-            case "asc":
-                orderAsc.value = "desc";
-                break;
-            case "desc":
-                orderAsc.value = null;
-                orderBy.value = null;
-                break;
-            case null:
-                orderAsc.value = "asc";
-                break;
-        }
-    }
-    cargarDatos();
-};
-
-// detectar cambio de pagina
-const cambioDePagina = async (value) => {
-    currentPage.value = value;
-    cargarDatos();
-};
-
-// Mostrar la cantidad de registgros encontrados
-// segun la página y total
-const muestraCantidadRegistros = () => {
-    const startIndex = (parseInt(currentPage.value) - 1) * per_page.value;
-    const total_reg = listItems.value.length - 1;
-    cDeRegistros.value = startIndex + 1; // Primer registro de la página
-    cARegistros.value = cDeRegistros.value + total_reg; // Último registro de la página
-};
-
-// obtener el valor anidado de la lista de items ej.: ["cliente.nombre"]
-function getColumnValue(obj, key) {
-    return key.split(".").reduce((acc, part) => acc && acc[part], obj);
 }
 
-// usar la funcion getRowClass enviado desde la lista de columnas
+function cambioDePagina(page) {
+    const nextPage = Number(page) || 1;
+
+    if (nextPage === currentPage.value) {
+        return;
+    }
+
+    currentPage.value = nextPage;
+    cargarDatos();
+}
+
+function cambiaPerPage() {
+    currentPage.value = 1;
+    cargarDatos();
+}
+
+function calcularTotalPaginas() {
+    const pageSize = Math.max(1, Number(per_page.value) || 1);
+
+    return props.conPaginacion
+        ? Math.max(1, Math.ceil(total.value / pageSize))
+        : 1;
+}
+
+function actualizarRangoRegistros() {
+    if (!listItems.value.length || !total.value) {
+        cDeRegistros.value = 0;
+        cARegistros.value = 0;
+        return;
+    }
+
+    const pageSize = Math.max(1, Number(per_page.value) || 1);
+    const startIndex = (currentPage.value - 1) * pageSize;
+
+    cDeRegistros.value = startIndex + 1;
+    cARegistros.value = Math.min(
+        startIndex + listItems.value.length,
+        total.value,
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Utilidades de columnas
+|--------------------------------------------------------------------------
+*/
+
+function getColumnValue(object, key) {
+    if (!key) {
+        return undefined;
+    }
+
+    return String(key)
+        .split(".")
+        .reduce((current, part) => {
+            return current == null ? undefined : current[part];
+        }, object);
+}
+
 function getRowClass(item) {
-    let classes = [];
-    for (const column of listCols.value) {
-        if (column.classRow) {
-            const className = column.classRow(item);
-            if (className) {
-                classes.push(className);
-            }
-        }
-    }
-    return classes.join(" ");
+    return listCols.value
+        .map((column) => {
+            return typeof column.classRow === "function"
+                ? column.classRow(item)
+                : "";
+        })
+        .filter(Boolean)
+        .join(" ");
 }
 
-// verificar la opcion activa de ordenacion en el header
-function getClassActiveSort(item) {
-    if (props.api) {
-        return (
-            orderBy.value == (item.keySortable ? item.keySortable : item.key)
-        );
-    }
-    return orderBy.value == item.key;
+function getClassActiveSort(column) {
+    const sortableKey = props.api
+        ? column.keySortable || column.key
+        : column.key;
+
+    return orderBy.value === sortableKey;
 }
 
-// setear el estado de loading del contenido de la tabla
-const setLoading = (value) => {
-    pLoading.value = value;
-};
-/**
- * FIN FUNCIONES CARGA DE DATOS
- * ******************************************************
- */
+function getSortableKey(column) {
+    return props.api ? column.keySortable || column.key : column.key;
+}
 
-/********************************************************
- * ******************************************************
- *  FUNCIONES Y VARIABLES DE RENDERIZACIÓN DE TABLA
- */
-const miTable = ref(null);
-const miContentHeaderRef = ref(null);
-const miTableHeaderRef = ref(null);
-const miContentScrollRef = ref(null);
-const miContentTableRef = ref(null);
-const miTableFooterRef = ref(null);
-const miContentFooter = ref(null);
-const miTableRef = ref(null);
-const listAnchoColumnas = ref([]);
-const widthMiTable = ref(
-    miTable.value ? parseInt(miTable.value.offsetWidth) : 0,
-);
-const widthColFirstDefault = ref(40);
-const widthColsDefault = ref(40);
-const refsRowsCol = ref({});
+function getClassShadow(column, index) {
+    if (!column?.fixed || !miContentTableRef.value || !miTableRef.value) {
+        return "";
+    }
 
-// Determinar el ancho de columnas
-const ajustarAnchoColumnas = async () => {
-    const tamanio_cols = listCols.value.length;
-    const residuo = widthMiTable.value % tamanio_cols;
-    let widthCol = parseInt(widthMiTable.value / tamanio_cols);
-    nextTick(async () => {
-        if (miContentHeaderRef.value && miContentTableRef.value) {
-            widthParamContent.value = miContentTableRef.value.offsetWidth;
-            // obtener la lista de columnas
-            const listThHeader =
-                miContentHeaderRef.value.querySelectorAll("th");
-            const colsColgroupHeader =
-                miContentHeaderRef.value.querySelectorAll("col");
-            const colsColgroupContent =
-                miContentTableRef.value.querySelectorAll("col");
+    if (miTableRef.value.offsetWidth <= miContentTableRef.value.offsetWidth) {
+        return "";
+    }
 
-            const colsColgroupFooter = miTableFooterRef.value
-                ? miTableFooterRef.value.querySelectorAll("col")
-                : [];
+    const meta = fixedColumnMeta.value;
 
-            // recorrer las columnas listThHeader
-            listThHeader.forEach((elemCol, indexCol) => {
-                const width = parseInt(elemCol.offsetWidth);
-                const iheader = elemCol.querySelector(".iheader");
-                const label = elemCol.querySelector(".label");
-                const widthContent = parseInt(label.offsetWidth) + 30; // la suma del padding
-
-                let widthDefinido = widthCol;
-                if (listCols.value[indexCol].width) {
-                    widthDefinido = getCalculoAnchoPVW(
-                        listCols.value[indexCol].width,
-                    );
-                    if (widthContent > widthDefinido) {
-                        widthDefinido = widthContent;
-                    }
-                } else {
-                    if (residuo != 0 && indexCol == 0) {
-                        widthDefinido = widthCol * (tamanio_cols - 1);
-                        widthDefinido = widthMiTable.value - widthDefinido;
-                    } else {
-                        if (widthContent > widthDefinido) {
-                            widthDefinido = widthContent;
-                        }
-                    }
-                }
-
-                colsColgroupHeader[indexCol].style.width = widthDefinido + "px";
-                colsColgroupContent[indexCol].style.width =
-                    widthDefinido + "px";
-                listAnchoColumnas.value[indexCol] = widthDefinido;
-                if (colsColgroupFooter.length > 0) {
-                    colsColgroupFooter[indexCol].style.width =
-                        widthDefinido + "px";
-                }
-            });
-        }
-
-        await establecerColumnasFixedSlot();
-        establecerAltoContenedor();
-    });
-};
-
-// Funcion del :style en th y td
-// obtiene el estilo de position right|left si el elemento es fixed
-const widthParamContent = ref(0);
-const getStyleColRenderizado = (indexCol, widthParam) => {
     if (
-        listCols.value[indexCol].fixed &&
-        miContentTableRef.value &&
-        miTableRef.value
+        column.fixed === "right" &&
+        index === listCols.value.length - meta.rightCount
     ) {
-        let axis = "";
-        let axisParam = "";
-        axis = "left";
-        axisParam = "l";
-        let claseBoxShadow = {};
-        const listLefts = listCols.value.filter(
-            (elem) => elem.fixed && elem.fixed == true,
-        );
-        const listRights = listCols.value.filter(
-            (elem) => elem.fixed && elem.fixed == "right",
-        );
+        return "fixed-shadow-right";
+    }
 
-        if (listCols.value[indexCol].fixed == "right") {
-            axis = "right";
-            axisParam = "r";
-        }
-        const distancia = calcularDistanciaPosicionRL(
-            indexCol,
-            axisParam,
-            listAnchoColumnas.value,
-        );
-        if (window.innerWidth > 790 || !props.tableResponsive) {
-            return {
-                [axis]: distancia,
-                ...claseBoxShadow,
-            };
-        }
+    if (column.fixed === true && index === meta.leftCount - 1) {
+        return "fixed-shadow-left";
     }
 
     return "";
-};
-
-// Funcion para el :class e th y td
-// para sombrear lo 1ros y ultimos de las columnas
-const getClassShadow = (item, indexCol, width_content) => {
-    let verificar = "";
-    let claseShadow = "";
-    if (item.fixed && miContentTableRef.value && miTableRef.value) {
-        verificar = item.fixed == "right" ? "r" : "l";
-        const listLefts = listCols.value.filter(
-            (elem) => elem.fixed && elem.fixed == true,
-        );
-        const listRights = listCols.value.filter(
-            (elem) => elem.fixed && elem.fixed == "right",
-        );
-
-        if (
-            miTableRef.value.offsetWidth > miContentTableRef.value.offsetWidth
-        ) {
-            if (verificar == "r") {
-                if (indexCol === listCols.value.length - listRights.length)
-                    claseShadow = "fixed-shadow-right";
-            } else {
-                if (indexCol === listLefts.length - 1)
-                    claseShadow = "fixed-shadow-left";
-            }
-        }
-    }
-    return claseShadow;
-};
-
-// Fijar el alto que tendra el contenedor segun la propiedad tableHeight
-const establecerAltoContenedor = () => {
-    if (miContentTableRef.value) {
-        miContentTableRef.value.style.minHeight = "";
-        if (props.tableHeight) {
-            miContentTableRef.value.style.height = `${props.tableHeight}`;
-            miContentTableRef.value.style.minHeight = `${props.tableHeight}`;
-        } else {
-            miContentTableRef.value.style.minHeight = `${
-                listItems.value.length * 53
-            }px`;
-        }
-    }
-
-    // resetPositionScroll();
-    setTimeout(() => {
-        updateScrollbars();
-    }, 300);
-};
-
-// Obtener la distancia right|left del array stylesRenderizados
-// para cada nueva carga de datos
-const getDistanciaEstablecida = (indexCol) => {
-    let styles = {};
-    if (stylesRenderizados.value && stylesRenderizados.value.length > 0) {
-        if (stylesRenderizados.value[indexCol]) {
-            styles = stylesRenderizados.value[indexCol];
-        }
-    }
-    return styles;
-};
-
-// funcion para calcular la distancia derecha|izquierda del elemento
-const calcularDistanciaPosicionRL = (indexCol, rl, listaActualizada) => {
-    // console.log(listaActualizada);
-    let inicio = 0;
-    let fin = indexCol > 0 ? indexCol : 0;
-    let tamanio_cols = listCols.value.length;
-    let distancia = 0;
-    let width_elems = [];
-    if (rl == "r") {
-        inicio = indexCol + 1 < tamanio_cols ? indexCol + 1 : tamanio_cols;
-        fin = tamanio_cols;
-    }
-    width_elems = listaActualizada.slice(inicio, fin);
-    distancia = width_elems.reduce((a, b) => {
-        return a + b;
-    }, 0);
-
-    return distancia + "px";
-};
-
-// renderizar columnas externas
-const establecerColumnasFixedSlot = () => {
-    return new Promise((resolve, reject) => {
-        try {
-            if (miTableFooterRef.value) {
-                const table = miTableFooterRef.value;
-                const listFilas = table.querySelectorAll("tr");
-                listFilas.forEach((fila) => {
-                    const listIzquierda =
-                        fila.querySelectorAll(".fixed-column-ext");
-                    const listDerechaIni = fila.querySelectorAll(
-                        ".fixed-column-ext-right",
-                    );
-                    const listDerecha = [...listDerechaIni].reverse();
-                    let distancia_acum = 0;
-                    listIzquierda.forEach((elem) => {
-                        elem.style.position = "sticky";
-                        elem.style.left = distancia_acum + "px";
-                        if (elem.classList.contains("footer-fixed")) {
-                            elem.style.bottom = "1px";
-                        }
-                        elem.style.left = distancia_acum + "px";
-                        distancia_acum += parseFloat(elem.offsetWidth);
-                    });
-
-                    distancia_acum = 0;
-                    listDerecha.forEach((elem) => {
-                        elem.style.position = "sticky";
-                        elem.style.right = distancia_acum + "px";
-                        if (elem.classList.contains("footer-fixed")) {
-                            elem.style.bottom = "1px";
-                        }
-                        elem.style.right = distancia_acum + "px";
-                        distancia_acum += parseFloat(elem.offsetWidth);
-                    });
-                });
-            }
-            resolve();
-        } catch (error) {
-            reject(error);
-        }
-    });
-};
-
-// calcular anchos % o vw
-const getCalculoAnchoPVW = (width) => {
-    const unidad_val = obtenerUnidadValor(width);
-    let resultado = unidad_val[1];
-    if (unidad_val[0] && unidad_val[0] != "px") {
-        resultado = (resultado * widthMiTable.value) / 100;
-    }
-    return parseInt(resultado);
-};
-function obtenerUnidadValor(valor) {
-    const coincidencia = valor.match(/^(\d+)(px|%)$/);
-    let unidad = null;
-    let width = valor;
-    if (coincidencia) {
-        unidad = coincidencia[2] || null;
-        width = coincidencia[1];
-    }
-    return [unidad, width];
 }
 
-/**
- * FIN FUNCIONES RENDER
- * ***********************************
- */
+function getStyleColRenderizado(index) {
+    const column = listCols.value[index];
 
-/************************************
- * **********************************
- * SCROLL
- **/
-const scrollX = ref(null);
-const scrollY = ref(null);
-// Variables para el drag
+    if (!column?.fixed) {
+        return {};
+    }
+
+    if (props.tableResponsive && window.innerWidth <= 790) {
+        return {};
+    }
+
+    if (column.fixed === "right") {
+        return {
+            right: `${fixedColumnMeta.value.rightOffsets[index] ?? 0}px`,
+        };
+    }
+
+    return {
+        left: `${fixedColumnMeta.value.leftOffsets[index] ?? 0}px`,
+    };
+}
+
+/*
+|--------------------------------------------------------------------------
+| Layout y columnas fijas
+|--------------------------------------------------------------------------
+*/
+
+function programarLayout() {
+    cancelAnimationFrame(layoutFrame);
+
+    layoutFrame = requestAnimationFrame(() => {
+        actualizarLayout();
+    });
+}
+
+async function actualizarLayout() {
+    await nextTick();
+
+    if (!miTable.value) {
+        return;
+    }
+
+    widthMiTable.value = miTable.value.offsetWidth || 0;
+
+    ajustarAnchoColumnas();
+    establecerAltoContenedor();
+    updateScrollbars();
+}
+
+function ajustarAnchoColumnas() {
+    if (!miTable.value || !listCols.value.length) {
+        return;
+    }
+
+    const tableWidth = miTable.value.offsetWidth || 0;
+
+    const headerColumns =
+        miContentHeaderRef.value?.querySelectorAll("col") ?? [];
+
+    const bodyColumns = miContentTableRef.value?.querySelectorAll("col") ?? [];
+
+    const footerColumns = miTableFooterRef.value?.querySelectorAll("col") ?? [];
+
+    const widths = listCols.value.map((column, index) => {
+        const minWidth = obtenerAnchoMinimoColumna(column, index);
+
+        if (column.width) {
+            const explicitWidth = convertirAnchoColumna(
+                column.width,
+                tableWidth,
+            );
+
+            return Math.max(explicitWidth, minWidth);
+        }
+
+        if (column.fitContent) {
+            return minWidth;
+        }
+
+        if (column.grow) {
+            return 0;
+        }
+
+        return minWidth;
+    });
+
+    const growIndexes = listCols.value
+        .map((column, index) => (column.grow ? index : null))
+        .filter((index) => index !== null);
+
+    const widthUsed = widths.reduce((total, width) => total + width, 0);
+
+    const remainingWidth = Math.max(0, tableWidth - widthUsed);
+
+    if (growIndexes.length && remainingWidth > 0) {
+        const widthPerGrowColumn = remainingWidth / growIndexes.length;
+
+        growIndexes.forEach((index) => {
+            widths[index] += widthPerGrowColumn;
+        });
+    }
+
+    listAnchoColumnas.value = widths;
+
+    aplicarAnchosColumnas(headerColumns, widths);
+    aplicarAnchosColumnas(bodyColumns, widths);
+    aplicarAnchosColumnas(footerColumns, widths);
+
+    establecerColumnasFixedFooter();
+}
+
+function obtenerAnchoMinimoColumna(column, index) {
+    const header = miContentHeaderRef.value?.querySelectorAll("th")[index];
+
+    const label = header?.querySelector(".label");
+
+    const labelWidth = label?.scrollWidth ?? label?.offsetWidth ?? 0;
+
+    const padding = Number(column.padding ?? 32);
+
+    const titleWidth = labelWidth + padding;
+
+    const configuredMinWidth = column.minWidth
+        ? convertirAnchoColumna(column.minWidth, widthMiTable.value)
+        : 0;
+
+    return Math.max(titleWidth, configuredMinWidth);
+}
+
+function convertirAnchoColumna(value, tableWidth) {
+    if (value === null || value === undefined) {
+        return 0;
+    }
+
+    if (typeof value === "number") {
+        return value;
+    }
+
+    const text = String(value).trim();
+
+    if (text.endsWith("%")) {
+        const percentage = Number.parseFloat(text);
+
+        return Number.isFinite(percentage)
+            ? (tableWidth * percentage) / 100
+            : 0;
+    }
+
+    if (text.endsWith("px")) {
+        return Number.parseFloat(text) || 0;
+    }
+
+    return Number.parseFloat(text) || 0;
+}
+
+function aplicarAnchosColumnas(columns, widths) {
+    columns.forEach((column, index) => {
+        const width = widths[index];
+
+        if (!column || !width) {
+            return;
+        }
+
+        column.style.width = `${width}px`;
+        column.style.minWidth = `${width}px`;
+        column.style.maxWidth = `${width}px`;
+    });
+}
+
+function getCalculoAnchoPVW(width) {
+    const { unit, value } = obtenerUnidadValor(width);
+
+    if (!unit || unit === "px") {
+        return Number.parseInt(value, 10) || 0;
+    }
+
+    return Math.round(
+        ((Number.parseFloat(value) || 0) * widthMiTable.value) / 100,
+    );
+}
+
+function obtenerUnidadValor(value) {
+    const text = String(value ?? "");
+    const match = text.match(/^(\d+(?:\.\d+)?)(px|%)$/);
+
+    if (!match) {
+        return {
+            unit: null,
+            value: text,
+        };
+    }
+
+    return {
+        unit: match[2],
+        value: match[1],
+    };
+}
+
+function establecerAltoContenedor() {
+    if (!miContentTableRef.value) {
+        return;
+    }
+
+    if (props.tableHeight) {
+        miContentTableRef.value.style.height = `${props.tableHeight}`;
+        miContentTableRef.value.style.minHeight = `${props.tableHeight}`;
+    } else {
+        miContentTableRef.value.style.height = "";
+        miContentTableRef.value.style.minHeight = `${
+            Math.max(listItems.value.length, 1) * 53
+        }px`;
+    }
+}
+
+function establecerColumnasFixedFooter() {
+    const footer = miTableFooterRef.value;
+
+    if (!footer) {
+        return;
+    }
+
+    footer.querySelectorAll("tr").forEach((row) => {
+        const leftColumns = [...row.querySelectorAll(".fixed-column-ext")];
+
+        const rightColumns = [
+            ...row.querySelectorAll(".fixed-column-ext-right"),
+        ].reverse();
+
+        let left = 0;
+
+        leftColumns.forEach((element) => {
+            element.style.position = "sticky";
+            element.style.left = `${left}px`;
+
+            if (element.classList.contains("footer-fixed")) {
+                element.style.bottom = "1px";
+            }
+
+            left += element.offsetWidth;
+        });
+
+        let right = 0;
+
+        rightColumns.forEach((element) => {
+            element.style.position = "sticky";
+            element.style.right = `${right}px`;
+
+            if (element.classList.contains("footer-fixed")) {
+                element.style.bottom = "1px";
+            }
+
+            right += element.offsetWidth;
+        });
+    });
+}
+
+/*
+|--------------------------------------------------------------------------
+| Scroll personalizado
+|--------------------------------------------------------------------------
+*/
+
 const isDragging = ref(false);
 const dragAxis = ref(null);
 const startPos = ref(0);
 const startScroll = ref(0);
 const originalScrollYpx = ref(-1);
-// resetear la posición de los scrollbars
-const resetPositionScroll = () => {
-    originalScrollYpx.value = -1;
-    startPos.value = 0;
-    if (miContentTableRef.value) {
-        miContentTableRef.value.scrollLeft = 0;
-        miContentTableRef.value.scrollTop = 0;
-    }
-    if (scrollX.value) {
-        scrollX.value.style.left = 0 + "px";
-    }
-    if (scrollY.value) {
-        scrollY.value.style.top = 0 + "px";
-    }
-};
-// actualizar el tamaño del elemento de scroll (track)
-const updateScrollbars = () => {
-    if (miContentTableRef.value) {
-        if (
-            miContentTableRef.value.scrollWidth >
-            miContentTableRef.value.offsetWidth
-        ) {
-            // El ancho de la barra de scroll visible en X
-            let anchoScrollX =
-                miContentTableRef.value.offsetWidth /
-                miContentTableRef.value.scrollWidth;
-            anchoScrollX *= 100;
-            scrollX.value.style.width = anchoScrollX + "%";
-            scrollX.value.parentElement.style.display = "block";
-        } else {
-            scrollX.value.parentElement.style.display = "none";
-        }
 
-        if (
-            miContentTableRef.value.scrollHeight >
-            miContentTableRef.value.offsetHeight
-        ) {
-            // El ancho de la barra de scroll visible en Y
-            let altoScrollY =
-                miContentTableRef.value.offsetHeight /
-                miContentTableRef.value.scrollHeight;
-            altoScrollY *= 100;
-            scrollY.value.style.height = altoScrollY + "%";
-            originalScrollYpx.value = scrollY.value.offsetHeight;
-            if (originalScrollYpx.value < 15 && originalScrollYpx.value > 0) {
-                scrollY.value.style.height = "16px";
-            }
-            scrollY.value.parentElement.style.display = "block";
-        } else {
-            scrollY.value.parentElement.style.display = "none";
-        }
-        syncScrollBodyHeader();
-    }
-};
+function updateScrollbars() {
+    const container = miContentTableRef.value;
 
-// sincronizar el scroll X del contenedor con el header
-const syncScrollBodyHeader = () => {
-    if (miContentTableRef.value) {
-        miContentTableRef.value.removeEventListener(
-            "scroll",
-            scrollContentAHeader,
-        );
-        miContentTableRef.value.addEventListener(
-            "scroll",
-            scrollContentAHeader,
-        );
+    if (!container) {
+        return;
     }
+
+    const hasHorizontalScroll = container.scrollWidth > container.clientWidth;
+
+    const hasVerticalScroll = container.scrollHeight > container.clientHeight;
+
+    const xTrack = scrollX.value?.parentElement;
+    const yTrack = scrollY.value?.parentElement;
+
+    if (xTrack) {
+        xTrack.style.display = hasHorizontalScroll ? "block" : "none";
+    }
+
+    if (yTrack) {
+        yTrack.style.display = hasVerticalScroll ? "block" : "none";
+    }
+
+    if (hasHorizontalScroll && scrollX.value) {
+        const width = (container.clientWidth / container.scrollWidth) * 100;
+
+        scrollX.value.style.width = `${width}%`;
+    }
+
+    if (hasVerticalScroll && scrollY.value) {
+        const height = (container.clientHeight / container.scrollHeight) * 100;
+
+        scrollY.value.style.height = `${Math.max(height, 4)}%`;
+        originalScrollYpx.value = scrollY.value.offsetHeight;
+    }
+}
+
+function syncScrollBodyHeader() {
+    if (!miContentTableRef.value || !miContentHeaderRef.value) {
+        return;
+    }
+
+    miContentHeaderRef.value.scrollLeft = miContentTableRef.value.scrollLeft;
+}
+
+function scrollContentAHeader(event) {
+    const target = event.currentTarget;
+
     if (miContentHeaderRef.value) {
-        miContentHeaderRef.value.removeEventListener(
-            "scroll",
-            scrollHeaderAContent,
-        );
-        miContentHeaderRef.value.addEventListener(
-            "scroll",
-            scrollHeaderAContent,
-        );
-    }
-};
-
-// eventos de scroll content
-const scrollContentAHeader = (e) => {
-    // Verifica si el contenedor tiene un scroll horizontal
-    if (e.target.scrollWidth > e.target.clientWidth) {
-        // Solo sincroniza el scroll si el contenedor tiene desplazamiento
-        miContentHeaderRef.value.scrollLeft = e.target.scrollLeft;
-        let positionLeftScroll =
-            e.target.scrollLeft / miContentTableRef.value.scrollWidth;
-        scrollX.value.style.left =
-            positionLeftScroll * (miContentTableRef.value.offsetWidth - 5) +
-            "px";
-    } else {
-        miContentTableRef.value.removeEventListener(
-            "scroll",
-            syncScrollBodyHeader,
-        );
+        miContentHeaderRef.value.scrollLeft = target.scrollLeft;
     }
 
-    // Verifica si el contenedor tiene un scroll vertical
-    if (e.target.scrollHeight > e.target.clientHeight) {
-        // Solo sincroniza el scroll si el contenedor tiene desplazamiento
-        miContentHeaderRef.value.scrollTop = e.target.scrollTop;
-        let positionTopScroll =
-            e.target.scrollTop / miContentTableRef.value.scrollHeight;
-        scrollY.value.style.top =
-            positionTopScroll *
-                (miContentTableRef.value.offsetHeight -
-                    (originalScrollYpx.value > -1 ? 16 : 5)) +
-            "px";
-    } else {
-        miContentTableRef.value.removeEventListener(
-            "scroll",
-            syncScrollBodyHeader,
-        );
-    }
-};
+    if (scrollX.value && target.scrollWidth > target.clientWidth) {
+        const progress =
+            target.scrollLeft /
+            Math.max(1, target.scrollWidth - target.clientWidth);
 
-// eventos de scroll header
-const scrollHeaderAContent = (e) => {
-    // Verifica si el contenedor tiene un scroll horizontal
-    if (e.target.scrollWidth > e.target.clientWidth) {
-        // Solo sincroniza el scroll si el contenedor tiene desplazamiento
-        miContentTableRef.value.scrollLeft = e.target.scrollLeft;
-        let positionLeftScroll =
-            e.target.scrollLeft / miContentHeaderRef.value.scrollWidth;
-        scrollX.value.style.left =
-            positionLeftScroll * (miContentHeaderRef.value.offsetWidth - 5) +
-            "px";
-    } else {
-        miContentHeaderRef.value.removeEventListener(
-            "scroll",
-            syncScrollBodyHeader,
-        );
-    }
-};
+        const maxTrack = target.clientWidth - scrollX.value.offsetWidth;
 
-// iniciar el drag del scroll
-const startDrag = (axis, event) => {
+        scrollX.value.style.left = `${progress * maxTrack}px`;
+    }
+
+    if (scrollY.value && target.scrollHeight > target.clientHeight) {
+        const progress =
+            target.scrollTop /
+            Math.max(1, target.scrollHeight - target.clientHeight);
+
+        const maxTrack = target.clientHeight - scrollY.value.offsetHeight;
+
+        scrollY.value.style.top = `${progress * maxTrack}px`;
+    }
+}
+
+function scrollHeaderAContent(event) {
+    if (miContentTableRef.value) {
+        miContentTableRef.value.scrollLeft = event.currentTarget.scrollLeft;
+    }
+}
+
+function startDrag(axis, event) {
+    if (!miContentTableRef.value) {
+        return;
+    }
+
     isDragging.value = true;
     dragAxis.value = axis;
+
     startPos.value = axis === "x" ? event.pageX : event.pageY;
-    const container = miContentTableRef.value;
+
     startScroll.value =
-        axis === "x" ? container.scrollLeft : container.scrollTop;
+        axis === "x"
+            ? miContentTableRef.value.scrollLeft
+            : miContentTableRef.value.scrollTop;
 
     document.body.classList.add("no-select");
-    removerEventosScroll();
+
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", stopDrag);
-};
+}
 
-// detectar el movimiento del scroll
-const handleMouseMove = (event) => {
-    if (isDragging.value === true) {
-        dragAxis.value === "x";
-        const mouseDifferential =
-            (dragAxis.value === "x" ? event.pageX : event.pageY) -
-            startPos.value;
-        const container = miContentTableRef.value;
-
-        let scrollEquivalent = 0;
-
-        if (dragAxis.value === "x") {
-            scrollEquivalent =
-                mouseDifferential *
-                (container.scrollWidth / container.offsetWidth);
-            container.scrollLeft = startScroll.value + scrollEquivalent;
-        } else {
-            scrollEquivalent =
-                mouseDifferential *
-                (container.scrollHeight / container.offsetHeight);
-            container.scrollTop = startScroll.value + scrollEquivalent;
-        }
+function handleMouseMove(event) {
+    if (!isDragging.value || !miContentTableRef.value) {
+        return;
     }
-};
 
-// detener el scroll
-const stopDrag = () => {
-    // Habilitar la selección de texto nuevamente
+    const container = miContentTableRef.value;
+
+    const currentPosition = dragAxis.value === "x" ? event.pageX : event.pageY;
+
+    const difference = currentPosition - startPos.value;
+
+    if (dragAxis.value === "x") {
+        const ratio = container.scrollWidth / container.clientWidth;
+
+        container.scrollLeft = startScroll.value + difference * ratio;
+    } else {
+        const ratio = container.scrollHeight / container.clientHeight;
+
+        container.scrollTop = startScroll.value + difference * ratio;
+    }
+
+    scrollContentAHeader({
+        currentTarget: container,
+    });
+}
+
+function stopDrag() {
+    isDragging.value = false;
+    dragAxis.value = null;
+
     document.body.classList.remove("no-select");
-    removerEventosScroll();
-};
 
-// remover los eventos de scroll
-const removerEventosScroll = () => {
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", stopDrag);
-};
+}
 
-/**
- * FIN SCROLL
- ******************************************
- **/
+/*
+|--------------------------------------------------------------------------
+| ResizeObserver
+|--------------------------------------------------------------------------
+*/
 
-const observerContentMiTable = ref(null);
-const inertavalResizeContent = ref(null);
-onMounted(async () => {
-    if (props.api) {
-        cargarDatos();
+function iniciarResizeObserver() {
+    if (typeof ResizeObserver === "undefined" || !miTable.value) {
+        return;
     }
-    await esperarCargaElementos();
-    widthMiTable.value = parseInt(miTable.value.offsetWidth);
-    syncScrollBodyHeader();
-    ajustarAnchoColumnas();
-    // Iniciar observer content miTable
-    observerContentMiTable.value = new ResizeObserver(async (entries) => {
-        clearInterval(inertavalResizeContent.value);
-        if (entries.length > 0) {
-            const newWidth = entries[entries.length - 1].contentRect.width;
-            inertavalResizeContent.value = setTimeout(async () => {
-                if (widthMiTable.value != newWidth) {
-                    widthMiTable.value = parseInt(newWidth);
-                    await esperarCargaElementos();
-                    ajustarAnchoColumnas();
-                }
-            }, 200);
-        }
+
+    resizeObserver.value = new ResizeObserver(() => {
+        programarLayout();
     });
-    if (miTable.value) {
-        observerContentMiTable.value.observe(miTable.value);
+
+    resizeObserver.value.observe(miTable.value);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Lifecycle
+|--------------------------------------------------------------------------
+*/
+
+onMounted(async () => {
+    await cargarDatos();
+
+    await nextTick();
+
+    if (!miTable.value) {
+        return;
     }
+
+    widthMiTable.value = miTable.value.offsetWidth || 0;
+
+    miContentTableRef.value?.addEventListener("scroll", scrollContentAHeader, {
+        passive: true,
+    });
+
+    miContentHeaderRef.value?.addEventListener("scroll", scrollHeaderAContent, {
+        passive: true,
+    });
+
+    iniciarResizeObserver();
+    programarLayout();
 });
 
 onUnmounted(() => {
-    // Limpiar observer
-    if (observerContentMiTable.value && miContentScrollRef.value) {
-        observerContentMiTable.value.unobserve(miContentScrollRef.value);
-    }
-    observerContentMiTable.value = null;
+    clearTimeout(searchTimer);
+    cancelAnimationFrame(layoutFrame);
+
+    requestController?.abort();
+
+    resizeObserver.value?.disconnect();
+
+    miContentTableRef.value?.removeEventListener(
+        "scroll",
+        scrollContentAHeader,
+    );
+
+    miContentHeaderRef.value?.removeEventListener(
+        "scroll",
+        scrollHeaderAContent,
+    );
+
+    stopDrag();
+    document.body.classList.remove("no-select");
 });
 
 defineExpose({
     cargarDatos,
     setLoading,
 });
+
+// EMITS
+const emit = defineEmits(["ready", "loaded", "load-error", "loading"]);
+
+const primeraCargaCompletada = ref(false);
+
+/*
+|--------------------------------------------------------------------------
+| Helpers
+|--------------------------------------------------------------------------
+*/
+
+function normalizarOrden(value) {
+    if (!value) {
+        return null;
+    }
+
+    const normalized = String(value).toLowerCase();
+
+    return ["asc", "desc"].includes(normalized) ? normalized : null;
+}
 </script>
+
 <template>
     <div
+        ref="miTable"
         class="mi-table"
         :class="[$attrs.class, fixedHeader ? 'tablaFixeada' : '']"
-        ref="miTable"
     >
         <div class="content-data">
-            <div class="mi-content-header" ref="miContentHeaderRef">
+            <!-- HEADER -->
+            <div ref="miContentHeaderRef" class="mi-content-header">
                 <table
+                    ref="miTableHeaderRef"
                     class="table table-bordered"
                     :class="[
                         tableResponsive ? 'table-resposive' : '',
                         fixedHeader ? 'tablaFixeada' : '',
                     ]"
-                    ref="miTableHeaderRef"
                 >
-                    <colgroup ref="tableHeaderGroup">
-                        <col v-for="item in listCols" />
+                    <colgroup>
+                        <col
+                            v-for="(column, index) in listCols"
+                            :key="column.key ?? column.label ?? index"
+                        />
                     </colgroup>
-                    <thead :class="[headerClass]">
+
+                    <thead :class="headerClass">
                         <template v-if="$slots.tableHeader">
-                            <slot name="tableHeader"></slot>
+                            <slot name="tableHeader" />
                         </template>
+
                         <template v-else>
                             <tr>
                                 <th
-                                    v-for="(item, index) in listCols"
-                                    :colspan="`${item.colspan ? item.colspan : 1}`"
+                                    v-for="(column, index) in listCols"
+                                    :key="column.key ?? column.label ?? index"
+                                    :colspan="column.colspan ?? 1"
                                     :class="[
-                                        item.fixed
-                                            ? item.fixed == 'right'
-                                                ? 'fixed-column-right'
-                                                : 'fixed-column'
+                                        column.fixed === true
+                                            ? 'fixed-column'
+                                            : '',
+                                        column.fixed === 'right'
+                                            ? 'fixed-column-right'
                                             : '',
                                         fixedHeader ? 'fixed-header' : '',
-                                        getClassShadow(
-                                            item,
-                                            index,
-                                            widthParamContent,
-                                        ),
+                                        getClassShadow(column, index),
                                     ]"
-                                    :data-width="item.width ? item.width : ''"
-                                    :style="
-                                        getStyleColRenderizado(
-                                            index,
-                                            widthParamContent,
-                                        )
-                                    "
+                                    :style="getStyleColRenderizado(index)"
                                 >
                                     <div
+                                        v-if="column.sortable"
                                         class="iheader sortable"
-                                        v-if="item.sortable"
                                         @click="
                                             changeOrderBy(
-                                                api
-                                                    ? item.keySortable
-                                                        ? item.keySortable
-                                                        : item.key
-                                                    : item.key,
+                                                getSortableKey(column),
                                             )
                                         "
                                     >
                                         <div class="label">
-                                            {{ item.label }}
+                                            {{ column.label }}
                                         </div>
+
                                         <div
                                             class="accion"
                                             :class="{
                                                 active: getClassActiveSort(
-                                                    item,
+                                                    column,
                                                 ),
                                             }"
                                         >
@@ -1070,36 +1293,33 @@ defineExpose({
                                                 class="fa"
                                                 :class="{
                                                     'fa-sort-amount-up-alt':
-                                                        orderAsc == 'asc' &&
-                                                        orderBy ==
-                                                            (api
-                                                                ? item.keySortable
-                                                                    ? item.keySortable
-                                                                    : item.key
-                                                                : item.key),
+                                                        orderAsc === 'asc' &&
+                                                        orderBy ===
+                                                            getSortableKey(
+                                                                column,
+                                                            ),
+
                                                     'fa-sort-amount-down':
-                                                        orderAsc == 'desc' &&
-                                                        orderBy ==
-                                                            (api
-                                                                ? item.keySortable
-                                                                    ? item.keySortable
-                                                                    : item.key
-                                                                : item.key),
+                                                        orderAsc === 'desc' &&
+                                                        orderBy ===
+                                                            getSortableKey(
+                                                                column,
+                                                            ),
+
                                                     'fa-sort':
                                                         !orderAsc ||
-                                                        orderBy !=
-                                                            (api
-                                                                ? item.keySortable
-                                                                    ? item.keySortable
-                                                                    : item.key
-                                                                : item.key),
+                                                        orderBy !==
+                                                            getSortableKey(
+                                                                column,
+                                                            ),
                                                 }"
-                                            ></i>
+                                            />
                                         </div>
                                     </div>
-                                    <div class="iheader" v-else>
+
+                                    <div v-else class="iheader">
                                         <div class="label">
-                                            {{ item.label }}
+                                            {{ column.label }}
                                         </div>
                                     </div>
                                 </th>
@@ -1108,111 +1328,116 @@ defineExpose({
                     </thead>
                 </table>
             </div>
-            <div class="mi-content-scroll" ref="miContentScrollRef">
+
+            <!-- BODY -->
+            <div ref="miContentScrollRef" class="mi-content-scroll">
                 <div
+                    ref="miContentTableRef"
                     class="content-table"
                     :style="{
-                        maxHeight: tableHeight ? tableHeight : '',
-                        width: tableWidth ? tableWidth : '',
+                        maxHeight: tableHeight ? `${tableHeight}` : '',
+                        width: tableWidth ? `${tableWidth}` : '',
                     }"
-                    ref="miContentTableRef"
                 >
-                    <div
-                        class="mi-loading-table"
-                        v-show="pLoading"
-                        ref="miLoading"
-                    >
+                    <div v-show="pLoading" class="mi-loading-table">
                         <div>
-                            <template v-if="$slots.loading">
-                                <slot name="loading"></slot>
+                            <slot v-if="$slots.loading" name="loading" />
+
+                            <template v-else>
+                                {{ textCargando }}
                             </template>
-                            <template v-else> {{ textCargando }} </template>
                         </div>
                     </div>
+
                     <table
+                        ref="miTableRef"
                         class="table table-bordered mb-0"
                         :class="[
                             tableClass,
                             tableResponsive ? 'table-resposive' : '',
                         ]"
-                        ref="miTableRef"
                     >
-                        <colgroup ref="tableContentGroup">
-                            <col v-for="item in listCols" />
+                        <colgroup>
+                            <col
+                                v-for="(column, index) in listCols"
+                                :key="column.key ?? column.label ?? index"
+                            />
                         </colgroup>
+
                         <tbody
+                            class="table-body"
                             :class="[
                                 bodyClass,
                                 pLoading ? 'loading_active' : '',
                             ]"
-                            ref="eTbody"
                         >
-                            <template v-if="listItems.length > 0">
+                            <template v-if="listItems.length">
                                 <tr
-                                    v-for="(item, index_row) in listItems"
+                                    v-for="(item, rowIndex) in listItems"
+                                    :key="item.id ?? item.uuid ?? rowIndex"
                                     :class="getRowClass(item)"
-                                    :key="item.id ? item.id : index_row"
                                 >
                                     <td
-                                        v-for="(i_col, index_col) in listCols"
-                                        :class="[
-                                            i_col.fixed
-                                                ? i_col.fixed == 'right'
-                                                    ? 'fixed-column-right'
-                                                    : 'fixed-column'
-                                                : '',
-                                            getClassShadow(
-                                                i_col,
-                                                index_col,
-                                                widthParamContent,
-                                            ),
-                                        ]"
-                                        :colspan="`${item.colspan ? item.colspan : 1}`"
-                                        :ref="
-                                            (el) =>
-                                                (refsRowsCol[
-                                                    `${index_row}-${index_col}`
-                                                ] = el)
+                                        v-for="(
+                                            column, columnIndex
+                                        ) in listCols"
+                                        :key="
+                                            column.key ??
+                                            column.label ??
+                                            columnIndex
                                         "
+                                        :colspan="item.colspan ?? 1"
+                                        :class="[
+                                            column.fixed === true
+                                                ? 'fixed-column'
+                                                : '',
+                                            column.fixed === 'right'
+                                                ? 'fixed-column-right'
+                                                : '',
+                                            getClassShadow(column, columnIndex),
+                                        ]"
                                         :style="
-                                            getStyleColRenderizado(
-                                                index_col,
-                                                widthParamContent,
-                                            )
+                                            getStyleColRenderizado(columnIndex)
                                         "
                                     >
                                         <div
                                             class="label-responsive"
-                                            v-text="`${i_col.label}:`"
-                                        ></div>
+                                            v-text="`${column.label}:`"
+                                        />
+
                                         <div
                                             class="mi-celda"
-                                            :class="[
-                                                i_col.classTd
-                                                    ? i_col.classTd(item)
-                                                    : '',
-                                            ]"
+                                            :class="
+                                                typeof column.classTd ===
+                                                'function'
+                                                    ? column.classTd(item)
+                                                    : ''
+                                            "
                                         >
-                                            <template v-if="$slots[i_col.key]">
-                                                <slot
-                                                    :name="i_col.key"
-                                                    :item="item"
-                                                    v-bind="$attrs"
-                                                ></slot>
-                                            </template>
+                                            <slot
+                                                v-if="
+                                                    column.key &&
+                                                    $slots[column.key]
+                                                "
+                                                :name="column.key"
+                                                :item="item"
+                                                v-bind="$attrs"
+                                            />
+
                                             <template v-else>
                                                 {{
-                                                    i_col.isIndex
-                                                        ? index_row + 1
-                                                        : i_col.render
-                                                          ? i_col.render(
+                                                    column.isIndex
+                                                        ? rowIndex + 1
+                                                        : typeof column.render ===
+                                                            "function"
+                                                          ? column.render(
                                                                 item,
-                                                                index_row,
+                                                                rowIndex,
                                                             )
-                                                          : i_col.key
+                                                          : column.key
                                                             ? getColumnValue(
                                                                   item,
-                                                                  i_col.key,
+                                                                  column.key,
                                                               )
                                                             : ""
                                                 }}
@@ -1221,6 +1446,7 @@ defineExpose({
                                     </td>
                                 </tr>
                             </template>
+
                             <template v-else>
                                 <tr>
                                     <td
@@ -1234,65 +1460,88 @@ defineExpose({
                         </tbody>
                     </table>
                 </div>
+
+                <!-- SCROLL HORIZONTAL -->
                 <div class="content-scroll-x">
                     <div
+                        ref="scrollX"
                         class="mi-custom-scroll-x"
                         @mousedown="startDrag('x', $event)"
-                        ref="scrollX"
-                    ></div>
+                    />
                 </div>
+
+                <!-- SCROLL VERTICAL -->
                 <div class="content-scroll-y">
                     <div
+                        ref="scrollY"
                         class="mi-custom-scroll-y"
                         @mousedown="startDrag('y', $event)"
-                        ref="scrollY"
-                    ></div>
+                    />
                 </div>
             </div>
+
+            <!-- FOOTER -->
             <div
-                class="mi-content-footer"
-                ref="miContentFooter"
                 v-if="$slots.tableFooter"
+                ref="miContentFooter"
+                class="mi-content-footer"
             >
-                <table class="table table-bordered" ref="miTableFooterRef">
-                    <colgroup ref="tableFooterGroup">
-                        <col v-for="item in listCols" />
+                <table ref="miTableFooterRef" class="table table-bordered">
+                    <colgroup>
+                        <col
+                            v-for="(column, index) in listCols"
+                            :key="column.key ?? column.label ?? index"
+                        />
                     </colgroup>
-                    <tbody :class="[footerClass]">
-                        <slot name="tableFooter"></slot>
+
+                    <tbody :class="footerClass">
+                        <slot name="tableFooter" />
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="content-foot" v-if="conPaginacion">
+        <!-- PAGINATION -->
+        <div v-if="conPaginacion" class="content-foot">
             <div class="row mt-1">
                 <div class="my-1 col-md-3">
-                    <select class="form-select rounded-0" v-model="per_page">
-                        <option v-for="item in filter_page" :value="item">
+                    <select v-model="per_page" class="form-control rounded-0">
+                        <option
+                            v-for="item in filter_page"
+                            :key="item"
+                            :value="item"
+                        >
                             Mostrar {{ item }} registros
                         </option>
                     </select>
                 </div>
-                <div class="my-1 col-md-6 d-flex justify-content-center">
+
+                <div
+                    class="my-1 col-md-6 d-flex justify-content-center"
+                    :class="paginationClass"
+                >
                     <MiPaginacion
                         :current-page="currentPage"
                         :total-data="total"
                         :per-page="per_page"
+                        :num-pages="numPages"
                         @updatePage="cambioDePagina"
                     />
                 </div>
+
                 <div class="my-1 col-md-3 text-right">
-                    Mostrando {{ cDeRegistros }} a {{ cARegistros }} registros -
-                    Total {{ total }} registros
+                    Mostrando {{ cDeRegistros }} a {{ cARegistros }} registros.
+                    Total {{ total }} registros.
                 </div>
             </div>
+
             <div v-if="error" class="alert alert-danger">
-                Ocurrió un error al intentar obtener los registros
+                Ocurrió un error al intentar obtener los registros.
             </div>
         </div>
     </div>
 </template>
+
 <style scoped>
 .mi-content-scroll {
     position: relative;
@@ -1300,20 +1549,23 @@ defineExpose({
 
 .content-scroll-x,
 .content-scroll-y {
-    opacity: 70%;
+    opacity: 0.7;
     position: absolute;
     background-color: transparent;
     z-index: 3;
 }
+
 .mi-table .mi-content-scroll:hover .content-scroll-x,
 .mi-table .mi-content-scroll:hover .content-scroll-y {
-    opacity: 100%;
+    opacity: 1;
 }
+
 .content-scroll-x {
     height: 10px;
     width: 100%;
-    bottom: 0px;
+    bottom: 0;
 }
+
 .content-scroll-y {
     height: 100%;
     width: 10px;
@@ -1333,12 +1585,30 @@ defineExpose({
     margin-left: 2px;
     width: 8px;
     top: 0;
-    right: 0px;
+    right: 0;
 }
 
 .mi-custom-scroll-x {
     margin-top: 2px;
     height: 8px;
-    left: 0px;
+    left: 0;
+}
+
+.mi-content-header table,
+.content-table table,
+.mi-content-footer table {
+    table-layout: fixed;
+    width: max-content;
+    min-width: 100%;
+}
+
+.mi-content-header th,
+.content-table td,
+.content-table th,
+.mi-content-footer td,
+.mi-content-footer th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>
