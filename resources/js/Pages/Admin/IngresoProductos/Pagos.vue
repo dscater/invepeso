@@ -2,20 +2,13 @@
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { useIngresoProductos } from "@/composables/ingreso_productos/useIngresoProductos";
-import { useAxios } from "@/composables/axios/useAxios";
 import { ref, onMounted, onBeforeMount } from "vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
-// import { useMenu } from "@/composables/useMenu";
 import FormularioPago from "./FormularioPago.vue";
-import { buttonProps } from "element-plus";
 import { useDate } from "@/composables/useDate.js";
 import axios from "axios";
-// const { mobile, identificaDispositivo } = useMenu();
 
 const { getFechaActual } = useDate();
 const { props: props_page } = usePage();
-
-const appStore = useAppStore();
 
 const { setIngresoProducto, limpiarIngresoProducto, form } =
     useIngresoProductos();
@@ -67,11 +60,6 @@ const cargaListado = () => {
 onBeforeMount(() => {
     cargarAlmacens();
     cargarIngresosFormularioPagos();
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
 });
 
 const recepcionar = (item) => {

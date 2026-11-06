@@ -6,7 +6,6 @@ use App\Models\Certificado;
 use App\Models\Cliente;
 use App\Models\LoginUser;
 use App\Models\User;
-use App\Services\LoginUserService;
 use App\Services\PermisoService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +16,7 @@ class UserController extends Controller
 {
 
 
-    public function __construct(private LoginUserService $login_user_service) {}
+    public function __construct() {}
 
     public function permisosUsuario(Request $request)
     {

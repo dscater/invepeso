@@ -2460,7 +2460,28 @@ class ReporteController extends Controller
     public function venta_detalles()
     {
         $almacens = $this->almacen_service->listado(1);
-        $usuarios = $this->user_service->listado(1);
+        $usuarios = $usuarios = $this->user_service->listado(1, [
+            'id',
+            'usuario',
+            'nombre',
+            'paterno',
+            'materno',
+            'ci',
+            'ci_exp',
+            'role_id',
+            'sucursal_id',
+            'sucursal_todos',
+            'status'
+        ], [
+            'password',
+            'remember_token',
+            "permisos",
+            'foto_b64',
+            'url_foto',
+            'full_ci',
+            'fecha_registro_t',
+            'usuario_abrev'
+        ]);
         $tipo_ventas = $this->tipo_venta_service->listado();
         $tipo_pagos = $this->tipo_pago_service->listado();
         return Inertia::render("Admin/Reportes/VentaDetalles", [
@@ -3071,7 +3092,28 @@ class ReporteController extends Controller
     {
         $almacens = $this->almacen_service->listado(1);
         $proveedors = $this->proveedor_service->listado();
-        $usuarios = $this->user_service->listado(1);
+        $usuarios = $usuarios = $this->user_service->listado(1, [
+            'id',
+            'usuario',
+            'nombre',
+            'paterno',
+            'materno',
+            'ci',
+            'ci_exp',
+            'role_id',
+            'sucursal_id',
+            'sucursal_todos',
+            'status'
+        ], [
+            'password',
+            'remember_token',
+            "permisos",
+            'foto_b64',
+            'url_foto',
+            'full_ci',
+            'fecha_registro_t',
+            'usuario_abrev'
+        ]);
         $tipo_compras = $this->tipo_compra_service->listado();
         return Inertia::render("Admin/Reportes/Recepcions", [
             "almacens" => $almacens,
@@ -3393,7 +3435,28 @@ class ReporteController extends Controller
     {
         $almacens = $this->almacen_service->listado(1);
         $proveedors = $this->proveedor_service->listado();
-        $usuarios = $this->user_service->listado(1);
+        $usuarios = $usuarios = $this->user_service->listado(1, [
+            'id',
+            'usuario',
+            'nombre',
+            'paterno',
+            'materno',
+            'ci',
+            'ci_exp',
+            'role_id',
+            'sucursal_id',
+            'sucursal_todos',
+            'status'
+        ], [
+            'password',
+            'remember_token',
+            "permisos",
+            'foto_b64',
+            'url_foto',
+            'full_ci',
+            'fecha_registro_t',
+            'usuario_abrev'
+        ]);
         $tipo_compras = $this->tipo_compra_service->listado();
 
         return Inertia::render("Admin/Reportes/Faltantes", [
@@ -4136,7 +4199,28 @@ class ReporteController extends Controller
     public function ventas_creditos()
     {
         $almacens = $this->almacen_service->listado(1);
-        $usuarios = $this->user_service->listado(1);
+        $usuarios = $usuarios = $this->user_service->listado(1, [
+            'id',
+            'usuario',
+            'nombre',
+            'paterno',
+            'materno',
+            'ci',
+            'ci_exp',
+            'role_id',
+            'sucursal_id',
+            'sucursal_todos',
+            'status'
+        ], [
+            'password',
+            'remember_token',
+            "permisos",
+            'foto_b64',
+            'url_foto',
+            'full_ci',
+            'fecha_registro_t',
+            'usuario_abrev'
+        ]);
         return Inertia::render("Admin/Reportes/VentasCredito", [
             "almacens" => $almacens,
             "usuarios" => $usuarios,
@@ -4608,7 +4692,28 @@ class ReporteController extends Controller
     public function movimiento_cajas()
     {
         $almacens = $this->almacen_service->listado(1);
-        $usuarios = $this->user_service->listado(1);
+        $usuarios = $usuarios = $this->user_service->listado(1, [
+            'id',
+            'usuario',
+            'nombre',
+            'paterno',
+            'materno',
+            'ci',
+            'ci_exp',
+            'role_id',
+            'sucursal_id',
+            'sucursal_todos',
+            'status'
+        ], [
+            'password',
+            'remember_token',
+            "permisos",
+            'foto_b64',
+            'url_foto',
+            'full_ci',
+            'fecha_registro_t',
+            'usuario_abrev'
+        ]);
 
         return Inertia::render("Admin/Reportes/MovimientoCajas", [
             "almacens" => $almacens,

@@ -40,7 +40,27 @@ class MovimientoCajaController extends Controller
     {
 
         $almacens = $this->almacen_service->listado(1);
-        $usuarios = $this->user_service->listado(1);
+        $usuarios = $this->user_service->listado(1, [
+            'id',
+            'usuario',
+            'nombre',
+            'paterno',
+            'materno',
+            'ci',
+            'ci_exp',
+            'role_id',
+            'sucursal_id',
+            'sucursal_todos',
+            'status'
+        ], [
+            'password',
+            'remember_token',
+            'foto_b64',
+            'url_foto',
+            'full_ci',
+            'fecha_registro_t',
+            'usuario_abrev'
+        ]);
 
         return Inertia::render("Admin/MovimientoCajas/Index", [
             "almacens" => $almacens,

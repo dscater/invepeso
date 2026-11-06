@@ -1,19 +1,8 @@
 <script setup>
-import { ref, onMounted, onBeforeMount } from "vue";
+import { ref } from "vue";
 import { router, useForm, usePage, Head, Link } from "@inertiajs/vue3";
 import { useUser } from "@/composables/useUser";
 import Content from "@/Components/Content.vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
-const appStore = useAppStore();
-
-onBeforeMount(() => {
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
-});
-
 const props = defineProps({
     user: {
         type: Object,
@@ -122,11 +111,11 @@ const enviaFormulario = () => {
         <template #header>
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Perfil</h1>
+                    <h4 class="m-0"><i class="fa fa-user"></i> Perfil</h4>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
+                    <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item">
                             <Link :href="route('inicio')">Inicio</Link>
                         </li>

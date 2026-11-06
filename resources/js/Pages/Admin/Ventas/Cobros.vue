@@ -3,12 +3,10 @@
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { useVentas } from "@/composables/ventas/useVentas";
-import { useAxios } from "@/composables/axios/useAxios";
-import { ref, onMounted, onBeforeMount } from "vue";
+import { ref, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 // import { useMenu } from "@/composables/useMenu";
 import FormularioCobro from "./FormularioCobro.vue";
-import { buttonProps } from "element-plus";
 import { useDate } from "@/composables/useDate.js";
 import axios from "axios";
 // const { mobile, identificaDispositivo } = useMenu();
@@ -67,11 +65,6 @@ const cargaListado = () => {
 onBeforeMount(() => {
     cargarAlmacens();
     cargarVentasFormularioCobros();
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
 });
 
 const recepcionar = (item) => {

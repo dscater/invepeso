@@ -2,8 +2,7 @@
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { useIngresoProductos } from "@/composables/ingreso_productos/useIngresoProductos";
-import { ref, onMounted, onBeforeMount } from "vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
+import { ref, onMounted } from "vue";
 import FormularioVerificar from "./FormularioVerificar.vue";
 const props = defineProps({
     ingreso_producto: {
@@ -12,17 +11,11 @@ const props = defineProps({
     },
 });
 const { props: props_page } = usePage();
-const appStore = useAppStore();
-onBeforeMount(() => {
-    appStore.startLoading();
-});
 
 const { setIngresoProducto, limpiarIngresoProducto, form } =
     useIngresoProductos();
 onMounted(() => {
     setIngresoProducto(props.ingreso_producto);
-
-    appStore.stopLoading();
 });
 </script>
 <template>

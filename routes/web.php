@@ -21,6 +21,26 @@ Route::get('/prueba-db', function () {
     ]);
 });
 
+Route::get('/test-db-connection', function () {
+    try {
+        DB::connection()->getPdo();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Conexión MySQL correcta',
+            'host' => config('database.connections.mysql.host'),
+            'port' => config('database.connections.mysql.port'),
+            'persistent' => config('database.connections.mysql.options')[PDO::ATTR_PERSISTENT] ?? false,
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+});
+
+
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
@@ -72,6 +92,7 @@ Route::get('/login', function () {
     }
     return Inertia::render('Auth/Login');
 })->name("login");
+
 
 Route::get("configuracions/getConfiguracion", [ConfiguracionController::class, 'getConfiguracion'])->name("configuracions.getConfiguracion");
 

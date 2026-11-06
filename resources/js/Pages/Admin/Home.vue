@@ -754,7 +754,7 @@ onBeforeUnmount(() => {
                                     v-for="usuario in usuarios"
                                     :key="usuario.id"
                                     :label="
-                                        usuario.name ??
+                                        usuario.full_name ??
                                         usuario.nombre ??
                                         `Usuario ${usuario.id}`
                                     "

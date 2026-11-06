@@ -4,6 +4,8 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use RuntimeException;
 
 class CargarArchivoService
 {
@@ -15,16 +17,28 @@ class CargarArchivoService
      * @param string|null $nombre
      * @return string
      */
-    public function cargarArchivo(UploadedFile $file, string $ruta, string $nombre = null): string
-    {
-        $nombre_archivo = time();
-        if ($nombre) {
-            $nombre_archivo = $nombre;
-        }
-        $extension = "." . $file->getClientOriginalExtension();
-        $nombre_archivo .= $extension;
-        $file->move($ruta, $nombre_archivo);
+    public function cargarArchivo(
+        UploadedFile $file,
+        string $ruta,
+        ?string $nombre = null
+    ): string {
 
-        return $nombre_archivo;
+        if (!$file->isValid()) {
+            throw new RuntimeException('El archivo recibido no es válido.');
+        }
+
+        if (!is_dir($ruta) && !mkdir($ruta, 0755, true) && !is_dir($ruta)) {
+            throw new RuntimeException('No se pudo crear el directorio de destino.');
+        }
+
+        // Obtener la extensión original del archivo
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        $nombreArchivo = ($nombre ?: (string) Str::uuid())
+            . ($extension ? ".{$extension}" : '');
+
+        $file->move($ruta, $nombreArchivo);
+
+        return $nombreArchivo;
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Symfony\Component\HttpFoundation\Response;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -29,5 +30,22 @@ return Application::configure(basePath: dirname(__DIR__))
                 return Inertia::render("Errors/401");
             }
             return $response;
+        });
+        $exceptions->report(function (Throwable $exception): void {
+            if (
+                str_contains(
+                    $exception->getMessage(),
+                    'SQLSTATE[HY000] [2002]'
+                )
+            ) {
+                Log::channel('daily')->critical(
+                    'Fallo al abrir conexión PDO MySQL',
+                    [
+                        'message' => $exception->getMessage(),
+                        'trace' => $exception->getTraceAsString(),
+                        'pid' => getmypid(),
+                    ]
+                );
+            }
         });
     })->create();

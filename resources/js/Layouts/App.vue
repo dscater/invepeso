@@ -33,7 +33,8 @@ const resetTimer = () => {
 
 onMounted(async () => {
     // Inicializar info de usuario
-    appStore.initUserInfo();
+    appStore.stopLoading();
+    console.log("App.vue onMounted");
 
     await nextTick();
 
@@ -49,17 +50,10 @@ onMounted(async () => {
 });
 
 onBeforeMount(async () => {
+    appStore.setLoading(true);
+    appStore.initUserInfo();
     configuracionStore.initConfiguracion();
     appStore.initUserInfo();
-
-    await nextTick();
-
-    window.dispatchEvent(new Event("load"));
-
-    window.removeEventListener("mousemove", resetTimer);
-    window.removeEventListener("keydown", resetTimer);
-    window.removeEventListener("click", resetTimer);
-    if (inactivityTimer) clearTimeout(inactivityTimer);
 });
 </script>
 <template>
@@ -78,7 +72,10 @@ onBeforeMount(async () => {
     </div>
     <div class="app-wrapper">
         <NavBar></NavBar>
-        <SideBar></SideBar>
+        <SideBar
+            :usuario="appStore.getUsuario"
+            :permisos="auth.user.permisos"
+        ></SideBar>
         <slot />
         <Footer></Footer>
     </div>

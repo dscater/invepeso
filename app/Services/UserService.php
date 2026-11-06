@@ -9,28 +9,140 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 class UserService
 {
+    private const CACHE_TTL = 28800; // 8 horas
+
     private $modulo = "USUARIOS";
     public function __construct(private  CargarArchivoService $cargarArchivoService, private HistorialAccionService $historialAccionService) {}
 
+    public function listado(
+        $activo = null,
+        array $columns = [
+            'id',
+            "usuario",
+            "nombre",
+            "paterno",
+            "materno",
+            "ci",
+            "ci_exp",
+            "role_id",
+            "sucursal_id",
+            "sucursal_todos",
+            "status",
+        ],
+        array $hidden = []
+    ) {
+
+        // Garantizar columnas necesarias
+        $columns = array_unique(array_merge(
+            ['id', 'sucursal_id', 'role_id'],
+            $columns
+        ));
+
+        return Cache::remember(
+            'usuarios_listado_' . md5(json_encode([$activo, $columns])),
+            self::CACHE_TTL,
+            function () use ($activo, $columns, $hidden) {
+
+                $users = User::select($columns)
+                    ->with([
+                        "sucursal:id,nombre",
+                        "role:id,nombre"
+                    ])
+                    ->where("users.id", "!=", 1);
+
+                if ($activo == 1) {
+                    $users->where("status", 1);
+                }
+
+                return $users->get()->makeHidden($hidden);
+            }
+        );
+    }
 
 
-    public function listado($activo = null)
+    public function listadoByTipo(
+        $tipo = null,
+        $order = null,
+        $order_ad = 'asc',
+        $activo = null,
+        array $columns = [
+            'id',
+            "usuario",
+            "nombre",
+            "paterno",
+            "materno",
+            "ci",
+            "ci_exp",
+            "role_id",
+            "sucursal_id",
+            "sucursal_todos",
+            "status",
+        ],
+        array $hidden = []
+    ) {
+        $version = Cache::get('usuarios_cache_version', 1);
+
+        // Garantizar columnas necesarias
+        $columns = array_unique(array_merge(
+            ['id', 'sucursal_id', 'role_id'],
+            $columns
+        ));
+
+        $key = 'usuarios_v' . $version . '_tipo_' . md5(serialize([
+            'tipo' => $tipo,
+            'order' => $order,
+            'order_ad' => $order_ad,
+            'activo' => $activo,
+            'columns' => $columns,
+        ]));
+
+        return Cache::remember(
+            $key,
+            self::CACHE_TTL,
+            function () use ($tipo, $order, $order_ad, $activo, $columns, $hidden) {
+
+                $usuarios = User::select($columns)
+                    ->with([
+                        "sucursal:id,nombre",
+                        "role:id,nombre"
+                    ])
+                    ->where('users.id', '!=', 1);
+
+                if ($tipo !== null) {
+                    if (is_array($tipo)) {
+                        $usuarios->whereIn('tipo', $tipo);
+                    } else {
+                        $usuarios->where('tipo', $tipo);
+                    }
+                }
+
+                if ($order !== null) {
+                    $usuarios->orderBy('users.id', $order_ad);
+                }
+
+                if ($activo == 1) {
+                    $usuarios->where('status', 1);
+                }
+
+                return $usuarios->get()->makeHidden($hidden);
+            }
+        );
+    }
+
+    public function limpiarCacheListado(): void
     {
-        $users = User::select("users.*")
-            ->with(["sucursal:id,nombre", "role:id,nombre"])
-            ->where("users.id", "!=", 1);
+        Cache::forget('usuarios_listado');
 
-        if ($activo && $activo == 1) {
-            $users->where("status", 1);
-        }
+        $version = Cache::get('usuarios_cache_version', 1);
 
-        $users = $users->get();
-        return $users;
+        Cache::forever('usuarios_cache_version', $version + 1);
     }
 
     /**
@@ -180,6 +292,8 @@ class UserService
         if (isset($datos["foto"]) && !is_string($datos["foto"])) {
             $this->cargarFoto($user, $datos["foto"]);
         }
+
+        $this->limpiarCacheListado();
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN USUARIO", $user);
         return $user;
@@ -222,6 +336,7 @@ class UserService
             $this->cargarFoto($user, $datos["foto"]);
         }
 
+        $this->limpiarCacheListado();
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN USUARIO", $old_user, $user->withoutRelations());
         return $user;
@@ -250,13 +365,34 @@ class UserService
      */
     public function cargarFoto(User $user, UploadedFile $foto): void
     {
-        if ($user->foto) {
-            \File::delete(public_path("imgs/users/" . $user->foto));
+        $directorio = public_path('imgs/users');
+
+        $nombre = $$user->id . '_' . Str::uuid();
+
+        $nuevoArchivo = $this->cargarArchivoService->cargarArchivo(
+            $foto,
+            $directorio,
+            $nombre
+        );
+
+        if (!$nuevoArchivo) {
+            throw new RuntimeException(
+                'No se pudo guardar el archivo.'
+            );
         }
 
-        $nombre = $user->id . time();
-        $user->foto = $this->cargarArchivoService->cargarArchivo($foto, public_path("imgs/users"), $nombre);
+        $archivoAnterior = $user->foto;
+
+        // Actualizar la referencia en la base de datos.
+        $user->foto = $nuevoArchivo;
         $user->save();
+
+        // Eliminar el archivo anterior después de guardar el nuevo.
+        if ($archivoAnterior && $archivoAnterior !== $nuevoArchivo) {
+            File::delete(
+                $directorio . DIRECTORY_SEPARATOR . $archivoAnterior
+            );
+        }
     }
 
     /**
@@ -276,6 +412,7 @@ class UserService
         }
         $user->status = 0;
         $user->save();
+        $this->limpiarCacheListado();
         // registrar accion
         $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ AL USUARIO " . $old_user->usuario, $old_user, $user);
 

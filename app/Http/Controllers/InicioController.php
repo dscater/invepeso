@@ -37,7 +37,28 @@ class InicioController extends Controller
     public function inicio()
     {
         $array_infos = UserController::getInfoBoxUser();
-        $usuarios = $this->user_service->listado(1);
+        $usuarios = $this->user_service->listado(1, [
+            'id',
+            'usuario',
+            'nombre',
+            'paterno',
+            'materno',
+            'ci',
+            'ci_exp',
+            'role_id',
+            'sucursal_id',
+            'sucursal_todos',
+            'status'
+        ], [
+            'password',
+            'remember_token',
+            "permisos",
+            'foto_b64',
+            'url_foto',
+            'full_ci',
+            'fecha_registro_t',
+            'usuario_abrev'
+        ]);
         $almacens = $this->almacen_service->listado(1);
         return Inertia::render('Admin/Home', [
             'array_infos' => $array_infos,

@@ -35,8 +35,9 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         if ($request->ajax()) {
-            $user = Auth::user();
-            return response()->JSON(["user" => $user]);
+            return response()->json([
+                'user' => $request->user()
+            ]);
         }
 
         return redirect()->intended(route('inicio'));

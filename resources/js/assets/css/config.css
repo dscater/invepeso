@@ -118,6 +118,11 @@ td .descripcion {
     color: var(--bg1);
 }
 
+/* Barra de progreso Inertia / NProgress */
+#nprogress .bar {
+    z-index: 999999 !important;
+}
+
 .loading {
     z-index: -1;
     position: fixed;

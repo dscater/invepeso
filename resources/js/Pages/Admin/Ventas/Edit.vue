@@ -2,7 +2,7 @@
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { useVentas } from "@/composables/ventas/useVentas";
-import { ref, onMounted, onBeforeMount } from "vue";
+import { ref, onBeforeMount } from "vue";
 import { useAppStore } from "@/stores/aplicacion/appStore";
 import Formulario from "./Formulario.vue";
 const props = defineProps({
@@ -36,11 +36,6 @@ const appStore = useAppStore();
 const { setVenta, limpiarVenta, form } = useVentas();
 onBeforeMount(() => {
     setVenta(props.venta);
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
 });
 </script>
 <template>

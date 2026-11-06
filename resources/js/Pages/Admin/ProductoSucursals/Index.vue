@@ -1,15 +1,11 @@
 <script setup>
 import Content from "@/Components/Content.vue";
 import { Head, Link, usePage } from "@inertiajs/vue3";
-import { useAxios } from "@/composables/axios/useAxios";
-import { ref, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
+import { ref, onBeforeMount, onBeforeUnmount } from "vue";
 import FormularioCarga from "./FormularioCarga.vue";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
 
-// import { useMenu } from "@/composables/useMenu";
 const { props: props_page } = usePage();
-const appStore = useAppStore();
 
 const props = defineProps({
     almacens: {
@@ -27,9 +23,6 @@ const props = defineProps({
 });
 
 const muestra_formulario_carga = ref(false);
-// const listAlmacens = ref([]);
-// const listCategorias = ref([]);
-// const listMarcas = ref([]);
 const listProductoSucursals = ref([]);
 const loadingLista = ref(false);
 const almacen_id = ref("todos");
@@ -82,71 +75,16 @@ const filtrarNombres = () => {
     }, 370);
 };
 
-// const cargarSucursals = async () => {
-//     try {
-//         const res = await axios.get(route("almacens.listado"));
-//         listAlmacens.value = res.data.almacens;
-//         listAlmacens.value.unshift({
-//             id: "todos",
-//             nombre: "Todos los almacenes",
-//         });
-//     } catch (e) {
-//         console.log(e);
-//     } finally {
-//     }
-// };
-
-// const cargarCategorias = async () => {
-//     try {
-//         const res = await axios.get(route("categorias.listado"));
-//         listCategorias.value = res.data.categorias;
-//         listCategorias.value.unshift({
-//             id: "todos",
-//             nombre: "Todas las Categorías",
-//         });
-//     } catch (e) {
-//         console.log(e);
-//     } finally {
-//     }
-// };
-
-// const cargarMarcas = async () => {
-//     try {
-//         const res = await axios.get(route("marcas.listado"));
-//         listMarcas.value = res.data.marcas;
-//         listMarcas.value.unshift({
-//             id: "todos",
-//             nombre: "Todas las Marcas",
-//         });
-//     } catch (e) {
-//         console.log(e);
-//     } finally {
-//     }
-// };
-
 onBeforeMount(async () => {
-    appStore.startLoading();
-
     try {
-        await Promise.all([
-            cargarProductos(),
-            // cargarSucursals(),
-            // cargarCategorias(),
-            // cargarMarcas(),
-        ]);
+        await Promise.all([cargarProductos()]);
     } finally {
-        appStore.stopLoading();
     }
 });
 
 onBeforeUnmount(() => {
     intervalNombre.value ?? clearTimeout(intervalNombre.value);
 });
-
-onMounted(() => {
-    // appStore.stopLoading();
-});
-const { axiosDelete } = useAxios();
 </script>
 <template>
     <Head title="Stock de Inventario"></Head>

@@ -2,22 +2,15 @@
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { useMovimientoCajas } from "@/composables/movimiento_cajas/useMovimientoCajas";
-import { ref, onMounted, onBeforeMount } from "vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
+import { onBeforeMount } from "vue";
 import Formulario from "./Formulario.vue";
 const props = defineProps({
     movimiento_caja: Object,
 });
 const { props: props_page } = usePage();
-const appStore = useAppStore();
 const { setMovimientoCaja, limpiarMovimientoCaja, form } = useMovimientoCajas();
 onBeforeMount(() => {
     setMovimientoCaja(props.movimiento_caja);
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
 });
 </script>
 <template>

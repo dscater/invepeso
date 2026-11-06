@@ -2,12 +2,6 @@
 import Content from "@/Components/Content.vue";
 import { computed, onBeforeMount, onMounted, ref } from "vue";
 import { Head, usePage, Link } from "@inertiajs/vue3";
-import { useAppStore } from "@/stores/aplicacion/appStore";
-const appStore = useAppStore();
-
-onBeforeMount(() => {
-    appStore.startLoading();
-});
 
 const cargarListas = () => {
     cargarUsuarios();
@@ -15,7 +9,6 @@ const cargarListas = () => {
 
 onMounted(() => {
     cargarListas();
-    appStore.stopLoading();
 });
 
 const getFechaAtual = () => {

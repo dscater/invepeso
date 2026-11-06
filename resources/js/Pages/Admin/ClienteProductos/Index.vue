@@ -1,11 +1,11 @@
 <script setup>
 import Content from "@/Components/Content.vue";
+import MiTableSkeleton from "@/Components/MiTableSkeleton.vue";
 import MiTable from "@/Components/MiTable.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { useClienteProductos } from "@/composables/cliente_productos/useClienteProductos";
 import { useAxios } from "@/composables/axios/useAxios";
-import { ref, onMounted, onBeforeMount } from "vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
+import { ref } from "vue";
 import Formulario from "./Formulario.vue";
 const props = defineProps({
     cliente: {
@@ -14,14 +14,6 @@ const props = defineProps({
     },
 });
 const { props: props_page } = usePage();
-const appStore = useAppStore();
-onBeforeMount(() => {
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
-});
 
 const { setClienteProducto, limpiarClienteProducto, form } =
     useClienteProductos();
@@ -98,6 +90,17 @@ const eliminarClienteProducto = (item) => {
         }
     });
 };
+const tablaLista = ref(false);
+const tablaError = ref(false);
+
+function tablaPreparada() {
+    tablaLista.value = true;
+    tablaError.value = false;
+}
+
+function tablaConError() {
+    tablaError.value = true;
+}
 </script>
 <template>
     <Head title="Precio Productos por Cliente"></Head>
@@ -206,7 +209,26 @@ const eliminarClienteProducto = (item) => {
                 </div>
                 <div class="row">
                     <div class="col-12">
+                        <div
+                            v-if="!tablaLista && !tablaError"
+                            class="table-loading-overlay"
+                        >
+                            <MiTableSkeleton
+                                theme="light"
+                                responsive
+                                responsive-breakpoint="900px"
+                                :rows="8"
+                                :columns="headers.length || 5"
+                                :show-toolbar="true"
+                                :show-pagination="true"
+                            />
+                        </div>
+
+                        <div v-if="tablaError" class="table-error-message">
+                            No se pudieron cargar los registros.
+                        </div>
                         <MiTable
+                            v-show="tablaLista"
                             :tableClass="'bg-white mitabla'"
                             ref="miTable"
                             :cols="headers"
@@ -223,6 +245,8 @@ const eliminarClienteProducto = (item) => {
                             table-responsive
                             :header-class="'bg__primary'"
                             fixed-header
+                            @ready="tablaPreparada"
+                            @load-error="tablaConError"
                         >
                             <template #producto="{ item }">
                                 <div>

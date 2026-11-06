@@ -1,21 +1,10 @@
 <script setup>
 import Content from "@/Components/Content.vue";
+import MiTableSkeleton from "@/Components/MiTableSkeleton.vue";
 import MiTable from "@/Components/MiTable.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
-import { useAxios } from "@/composables/axios/useAxios";
-import { ref, onMounted, onBeforeMount } from "vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
+import { ref } from "vue";
 const { props: props_page } = usePage();
-const appStore = useAppStore();
-onBeforeMount(() => {
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
-});
-
-const { axiosDelete } = useAxios();
 
 const miTable = ref(null);
 const headers = [
@@ -58,8 +47,17 @@ const multiSearch = ref({
     filtro: [],
 });
 
-const accion_formulario = ref(0);
-const muestra_formulario = ref(false);
+const tablaLista = ref(false);
+const tablaError = ref(false);
+
+function tablaPreparada() {
+    tablaLista.value = true;
+    tablaError.value = false;
+}
+
+function tablaConError() {
+    tablaError.value = true;
+}
 </script>
 <template>
     <Head title="Notificaciones"></Head>
@@ -115,7 +113,26 @@ const muestra_formulario = ref(false);
                 </div>
                 <div class="row">
                     <div class="col-12">
+                        <div
+                            v-if="!tablaLista && !tablaError"
+                            class="table-loading-overlay"
+                        >
+                            <MiTableSkeleton
+                                theme="light"
+                                responsive
+                                responsive-breakpoint="900px"
+                                :rows="8"
+                                :columns="headers.length || 5"
+                                :show-toolbar="true"
+                                :show-pagination="true"
+                            />
+                        </div>
+
+                        <div v-if="tablaError" class="table-error-message">
+                            No se pudieron cargar los registros.
+                        </div>
                         <MiTable
+                            v-show="tablaLista"
                             :tableClass="'bg-white mitabla'"
                             ref="miTable"
                             :cols="headers"
@@ -128,6 +145,8 @@ const muestra_formulario = ref(false);
                             table-responsive
                             :header-class="'bg__primary'"
                             fixed-header
+                            @ready="tablaPreparada"
+                            @load-error="tablaConError"
                         >
                             <template #fecha="{ item }">
                                 <span

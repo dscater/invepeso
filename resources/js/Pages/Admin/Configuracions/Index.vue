@@ -4,16 +4,10 @@ defineOptions({
     layout: App,
 });
 import Content from "@/Components/Content.vue";
-import { onMounted, ref, computed, onBeforeMount } from "vue";
+import { ref, computed } from "vue";
 import { usePage, Head, useForm, Link } from "@inertiajs/vue3";
-import { useAppStore } from "@/stores/aplicacion/appStore";
 import { useConfiguracionStore } from "@/stores/configuracion/configuracionStore";
-const appStore = useAppStore();
 const configuracionStore = useConfiguracionStore();
-
-onBeforeMount(() => {
-    appStore.startLoading();
-});
 
 const props_page = defineProps({
     configuracion: {
@@ -106,10 +100,6 @@ const btnGuardar = computed(() => {
     }
 
     return `Guardar cambios <i class="fa fa-save"></i>`;
-});
-
-onMounted(() => {
-    appStore.stopLoading();
 });
 </script>
 <template>

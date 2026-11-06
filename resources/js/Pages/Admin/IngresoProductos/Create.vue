@@ -2,11 +2,8 @@
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { useIngresoProductos } from "@/composables/ingreso_productos/useIngresoProductos";
-import { ref, onMounted, onBeforeMount } from "vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
 import Formulario from "./Formulario.vue";
 const { props: props_page } = usePage();
-const appStore = useAppStore();
 
 const props = defineProps({
     almacens: {
@@ -29,14 +26,6 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-});
-
-onBeforeMount(() => {
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
 });
 
 const { setIngresoProducto, limpiarIngresoProducto, form } =

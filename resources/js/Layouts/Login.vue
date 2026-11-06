@@ -1,14 +1,38 @@
 <script setup>
-import { onBeforeUnmount, onMounted } from "vue";
+import { onBeforeMount, onBeforeUnmount, onMounted } from "vue";
+import { useAppStore } from "@/stores/aplicacion/appStore";
+import { useConfiguracionStore } from "@/stores/configuracion/configuracionStore";
+const configuracionStore = useConfiguracionStore();
+const appStore = useAppStore();
 
 onMounted(() => {
     document.getElementsByTagName("body")[0].classList.add("login");
+    appStore.stopLoading();
 });
+
+onBeforeMount(async () => {
+    appStore.setLoading(true);
+    configuracionStore.initConfiguracion();
+});
+
 onBeforeUnmount(() => {
     document.getElementsByTagName("body")[0].classList.remove("login");
 });
 </script>
 <template>
+    <div class="loading" :class="[appStore.getLoading == true ? 'show' : '']">
+        <!-- <div class="loading show"> -->
+        <template v-if="$slots.loading">
+            <slot name="loading"></slot>
+        </template>
+        <template v-else>
+            <i class="fa fa-spin fa-spinner fa-4x text1"></i>
+            <br />
+            <span class="font-weight-bold text1 h4">
+                {{ configuracionStore.oConfiguracion.nombre_sistema }}
+            </span>
+        </template>
+    </div>
     <div class="container-fluid content-principal-login">
         <div class="capa"></div>
         <div

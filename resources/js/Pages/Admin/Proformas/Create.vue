@@ -2,11 +2,8 @@
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { useProformas } from "@/composables/proformas/useProformas";
-import { ref, onMounted, onBeforeMount } from "vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
 import Formulario from "./Formulario.vue";
 const { props: props_page } = usePage();
-const appStore = useAppStore();
 
 const props = defineProps({
     almacens: {
@@ -21,14 +18,6 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-});
-
-onBeforeMount(() => {
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
 });
 
 const { setProforma, limpiarProforma, form } = useProformas();

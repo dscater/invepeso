@@ -1,15 +1,10 @@
 <script setup>
 import Content from "@/Components/Content.vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
 import { Head, Link } from "@inertiajs/vue3";
 import { ref, onMounted, onBeforeMount, computed } from "vue";
 // TOAST
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
-const appStore = useAppStore();
-onBeforeMount(() => {
-    appStore.startLoading();
-});
 const props = defineProps({
     role: {
         type: Object,
@@ -126,9 +121,6 @@ const listModulosRole = computed(() => {
             },
         ),
     );
-});
-onMounted(() => {
-    appStore.stopLoading();
 });
 </script>
 <template>

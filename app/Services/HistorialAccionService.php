@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 
 class HistorialAccionService
 {
-    private $descripcion = "EL USUARIO ";
     /**
      * Registrar historial de accion
      *
@@ -18,11 +17,16 @@ class HistorialAccionService
      * @param string $descripcion
      * @return void
      */
-    public function registrarAccion(string $modulo, string $accion, string $descripcion = "", Model $modelo, Model $modelo_update = null, array $relaciones = []): void
-    {
+    public function registrarAccion(
+        string $modulo,
+        string $accion,
+        string $descripcion = "",
+        Model $modelo,
+        Model $modelo_update = null,
+        array $relaciones = []
+    ): void {
         $user = Auth::user();
         $user_id = $user->id;
-        $this->descripcion .= $user->usuario . " " . $descripcion;
 
         if (!empty($relaciones)) {
             $datos_original = $modelo->loadMissing($relaciones)->makeHidden($modelo->getAppends())->toArray();
@@ -30,10 +34,12 @@ class HistorialAccionService
             $datos_original = $modelo->makeHidden($modelo->getAppends())->toArray();
         }
 
+        $descripcionFinal = "EL USUARIO {$user->usuario} {$descripcion}";
+
         $datos = [
             "user_id" => $user_id,
             "accion" => $accion,
-            "descripcion" => $this->descripcion,
+            "descripcion" => $descripcionFinal,
             'datos_original' => $datos_original,
             'datos_nuevo' => null,
             'modulo' => $modulo
@@ -77,15 +83,17 @@ class HistorialAccionService
 
     private function crearAccion(array $datos): void
     {
+        $ahora = Carbon::now('America/La_Paz');
+
         HistorialAccion::create([
-            "user_id" => $datos["user_id"],
-            "accion" => $datos["accion"],
-            "descripcion" => $datos["descripcion"],
-            'datos_original' => $datos["datos_original"],
-            'datos_nuevo' => $datos["datos_nuevo"],
-            'modulo' => $datos["modulo"],
-            'fecha' => date('Y-m-d'),
-            'hora' => date('H:i:s')
+            'user_id'       => $datos['user_id'],
+            'accion'        => $datos['accion'],
+            'descripcion'   => $datos['descripcion'],
+            'datos_original' => $datos['datos_original'],
+            'datos_nuevo'   => $datos['datos_nuevo'],
+            'modulo'        => $datos['modulo'],
+            'fecha'         => $ahora->toDateString(),
+            'hora'          => $ahora->toTimeString(),
         ]);
     }
 }

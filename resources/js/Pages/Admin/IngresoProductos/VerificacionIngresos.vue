@@ -2,18 +2,12 @@
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { useIngresoProductos } from "@/composables/ingreso_productos/useIngresoProductos";
-import { useAxios } from "@/composables/axios/useAxios";
-import { ref, onMounted, onBeforeMount } from "vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
-// import { useMenu } from "@/composables/useMenu";
-import { buttonProps } from "element-plus";
+import { ref, onBeforeMount } from "vue";
 import { useDate } from "@/composables/useDate.js";
 import axios from "axios";
-// const { mobile, identificaDispositivo } = useMenu();
 
 const { getFechaActual } = useDate();
 const { props: props_page } = usePage();
-const appStore = useAppStore();
 
 const props = defineProps({
     almacens: {
@@ -31,20 +25,6 @@ const codigo = ref("");
 const fecha_ini = ref("");
 const fecha_fin = ref("");
 const ingreso_productos = ref([]);
-
-// const cargarAlmacens = async () => {
-//     try {
-//         const res = await axios.get(route("almacens.listado"));
-//         listAlmacens.value = res.data.almacens;
-//         listAlmacens.value.unshift({
-//             id: "todos",
-//             nombre: "Todos los almacenes",
-//         });
-//     } catch (e) {
-//         console.log(e);
-//     } finally {
-//     }
-// };
 
 const cargarIngresosSinVerificar = () => {
     axios
@@ -70,13 +50,7 @@ const cargaListado = () => {
 };
 
 onBeforeMount(() => {
-    // cargarAlmacens();
     cargarIngresosSinVerificar();
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
 });
 </script>
 <template>

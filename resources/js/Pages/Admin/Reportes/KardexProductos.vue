@@ -1,13 +1,7 @@
 <script setup>
 import Content from "@/Components/Content.vue";
-import { computed, onBeforeMount, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import { Head, usePage, Link } from "@inertiajs/vue3";
-import { useAppStore } from "@/stores/aplicacion/appStore";
-const appStore = useAppStore();
-
-onBeforeMount(() => {
-    appStore.startLoading();
-});
 
 const props = defineProps({
     almacens: {
@@ -26,13 +20,6 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-});
-
-const cargarListas = () => {};
-
-onMounted(() => {
-    cargarListas();
-    appStore.stopLoading();
 });
 
 const listFormatos = ref([
@@ -65,11 +52,6 @@ const form = ref({
     fecha_fin: getFechaAtual(),
     formato: "pdf",
 });
-
-const listAlmacens = ref([]);
-const listCategorias = ref([]);
-const listMarcas = ref([]);
-const listUnidadMedidas = ref([]);
 
 const generando = ref(false);
 const txtBtn = computed(() => {

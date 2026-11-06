@@ -1,13 +1,8 @@
 <script setup>
 import Content from "@/Components/Content.vue";
-import { computed, onBeforeMount, onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { Head, usePage, Link } from "@inertiajs/vue3";
-import { useAppStore } from "@/stores/aplicacion/appStore";
-const appStore = useAppStore();
 const { props: props_page } = usePage();
-onBeforeMount(() => {
-    appStore.startLoading();
-});
 
 const cargarListas = () => {
     cargarSucursals();
@@ -16,7 +11,6 @@ const cargarListas = () => {
 
 onMounted(() => {
     cargarListas();
-    appStore.stopLoading();
 });
 
 const listFormatos = ref([
@@ -131,14 +125,43 @@ const buscarClientes = (texto) => {
     }, 300);
 };
 const cargarUsers = () => {
-    axios.get(route("usuarios.listado")).then((response) => {
-        listUsuarios.value = response.data.usuarios;
-        listUsuarios.value.unshift({
-            id: "todos",
-            nombre: "TODOS",
-            full_name: "TODOS",
+    axios
+        .get(route("usuarios.listado"), {
+            params: {
+                columns: [
+                    "id",
+                    "usuario",
+                    "nombre",
+                    "paterno",
+                    "materno",
+                    "ci",
+                    "ci_exp",
+                    "role_id",
+                    "sucursal_id",
+                    "sucursal_todos",
+                    "tipo",
+                    "status",
+                ],
+                hidden: [
+                    "password",
+                    "remember_token",
+                    "permisos",
+                    "foto_b64",
+                    "url_foto",
+                    "full_ci",
+                    "fecha_registro_t",
+                    "usuario_abrev",
+                ],
+            },
+        })
+        .then((response) => {
+            listUsuarios.value = response.data.usuarios;
+            listUsuarios.value.unshift({
+                id: "todos",
+                nombre: "TODOS",
+                full_name: "TODOS",
+            });
         });
-    });
 };
 </script>
 <template>

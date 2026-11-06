@@ -1,23 +1,10 @@
 <script setup>
 import Content from "@/Components/Content.vue";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
-import { useAxios } from "@/composables/axios/useAxios";
-import { ref, onMounted, onBeforeMount } from "vue";
-import { useAppStore } from "@/stores/aplicacion/appStore";
 const { props: props_page } = usePage();
 const props = defineProps({
     notificacion: Object,
 });
-const appStore = useAppStore();
-onBeforeMount(() => {
-    appStore.startLoading();
-});
-
-onMounted(() => {
-    appStore.stopLoading();
-});
-
-const { axiosDelete } = useAxios();
 </script>
 <template>
     <Head title="Notificaciones"></Head>

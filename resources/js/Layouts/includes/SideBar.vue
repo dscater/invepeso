@@ -1,18 +1,25 @@
 <script setup>
 import { onMounted, onUnmounted, ref, nextTick, reactive } from "vue";
-import { router, usePage, Link } from "@inertiajs/vue3";
+import { router, Link } from "@inertiajs/vue3";
 import ItemMenu from "@/Components/ItemMenu.vue";
 import { useSideBar } from "@/composables/useSidebar.js";
-import { useAppStore } from "@/stores/aplicacion/appStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useConfiguracionStore } from "@/stores/configuracion/configuracionStore";
 const { closeSidebar, toggleSubMenuELem } = useSideBar();
-const { auth } = usePage().props;
 const configuracionStore = useConfiguracionStore();
 const authStore = useAuthStore();
-const appStore = useAppStore();
-const usuario = ref(null);
-const permisos = ref([]);
+
+const props = defineProps({
+    usuario: {
+        type: Object,
+        required: true,
+    },
+    permisos: {
+        type: [Array, String],
+        required: true,
+    },
+});
+
 const route_current = ref("");
 
 const toggleSubMenu = (menu) => {
@@ -110,15 +117,14 @@ const openMenus = reactive({
     reportes: false,
 });
 
-router.on("navigate", (event) => {
+// se obtiene le metodo llamado removeNavigateListener para eliminar el listener de navegación cuando el componente se desmonte
+const removeNavigateListener = router.on("navigate", () => {
     route_current.value = route().current();
     sincronizarMenus();
     closeSidebar();
 });
 
 onMounted(() => {
-    usuario.value = appStore.getUsuario;
-    permisos.value = auth.user.permisos;
     route_current.value = route().current();
     sincronizarMenus();
 });
@@ -127,7 +133,9 @@ const salir = () => {
     authStore.salir();
 };
 
-onUnmounted(() => {});
+onUnmounted(() => {
+    removeNavigateListener();
+});
 </script>
 <template>
     <!-- Main Sidebar Container -->
