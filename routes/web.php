@@ -21,6 +21,7 @@ Route::get('/prueba-db', function () {
     ]);
 });
 
+/*
 Route::get('/test-db-connection', function () {
     try {
         DB::connection()->getPdo();
@@ -38,10 +39,9 @@ Route::get('/test-db-connection', function () {
             'error' => $e->getMessage(),
         ], 500);
     }
-});
+});*/
 
 
-use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ClienteProductoController;
@@ -173,13 +173,6 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("sucursals/paginado", [SucursalController::class, 'paginado'])->name("sucursals.paginado");
     Route::get("sucursals/listado", [SucursalController::class, 'listado'])->name("sucursals.listado");
     Route::resource("sucursals", SucursalController::class)->only(
-        ["index", "store", "edit", "show", "update", "destroy"]
-    );
-
-    // ALMACENES
-    Route::get("almacens/paginado", [AlmacenController::class, 'paginado'])->name("almacens.paginado");
-    Route::get("almacens/listado", [AlmacenController::class, 'listado'])->name("almacens.listado");
-    Route::resource("almacens", AlmacenController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );
 

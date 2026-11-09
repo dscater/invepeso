@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\HistorialAccion;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
