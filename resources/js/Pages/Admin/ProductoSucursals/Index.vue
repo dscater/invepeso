@@ -359,7 +359,7 @@ onBeforeUnmount(() => {
         <FormularioCarga
             v-if="muestra_formulario_carga"
             :muestra_formulario="muestra_formulario_carga"
-            :almacens="listAlmacens"
+            :almacens="almacens"
             @envio-formulario="cargarProductos"
             @cerrar-formulario="muestra_formulario_carga = false"
         ></FormularioCarga>
