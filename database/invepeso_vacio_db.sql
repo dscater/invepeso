@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 25-10-2026 a las 18:58:15
+-- Tiempo de generación: 12-11-2026 a las 16:47:02
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `invepeso_db`
+-- Base de datos: `invepeso_vacio_db`
 --
 
 -- --------------------------------------------------------
@@ -522,7 +522,7 @@ CREATE TABLE `movimiento_cajas` (
 
 CREATE TABLE `notificacions` (
   `id` bigint UNSIGNED NOT NULL,
-  `tipo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tipo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `modulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `registro_id` bigint UNSIGNED DEFAULT NULL,
   `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -910,7 +910,7 @@ CREATE TABLE `unidad_medidas` (
 
 INSERT INTO `unidad_medidas` (`id`, `nombre`, `created_at`, `updated_at`) VALUES
 (1, 'PIEZA', '2026-07-11 19:53:50', '2026-07-11 19:53:50'),
-(2, 'CAJAS', '2026-07-11 19:54:00', '2026-07-11 19:54:00');
+(2, 'CAJA', '2026-07-11 19:54:00', '2026-07-11 19:54:00');
 
 -- --------------------------------------------------------
 
@@ -1192,7 +1192,6 @@ ALTER TABLE `permisos`
 --
 ALTER TABLE `productos`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `productos_nombre_unique` (`nombre`),
   ADD UNIQUE KEY `productos_codigo_unique` (`codigo`),
   ADD KEY `productos_categoria_id_foreign` (`categoria_id`),
   ADD KEY `productos_marca_id_foreign` (`marca_id`),

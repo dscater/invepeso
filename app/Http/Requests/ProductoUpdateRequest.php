@@ -24,7 +24,7 @@ class ProductoUpdateRequest extends FormRequest
     {
         $rules = [
             "codigo" => "required|unique:productos,codigo," . $this->producto->id,
-            "nombre" => "required|unique:productos,nombre," . $this->producto->id,
+            "nombre" => "required",
             "categoria_id" => "required",
             "marca_id" => "required",
             "unidad_medida_id" => "required",

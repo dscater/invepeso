@@ -24,7 +24,7 @@ class ProductoStoreRequest extends FormRequest
     {
         return [
             "codigo" => "required|unique:productos,codigo",
-            "nombre" => "required|unique:productos,nombre",
+            "nombre" => "required",
             "categoria_id" => "required",
             "marca_id" => "required",
             "unidad_medida_id" => "required",
