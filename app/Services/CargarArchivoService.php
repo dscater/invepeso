@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use RuntimeException;
+use Illuminate\Support\Facades\Log;
 
 class CargarArchivoService
 {

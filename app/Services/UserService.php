@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
+use Illuminate\Support\Str;
 
 class UserService
 {
@@ -367,7 +368,7 @@ class UserService
     {
         $directorio = public_path('imgs/users');
 
-        $nombre = $$user->id . '_' . Str::uuid();
+        $nombre = $user->id . '_' . Str::uuid();
 
         $nuevoArchivo = $this->cargarArchivoService->cargarArchivo(
             $foto,
