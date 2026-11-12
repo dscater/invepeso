@@ -213,11 +213,15 @@ class VentaCobroService
             "user_id" => Auth::user()->id,
         ]);
 
-        $cancelado = $venta_cobro->venta->total_cancelado;
+        $cancelado = (float)$venta_cobro->venta->total_cancelado - (float)$venta_cobro->monto_total;
         $monto_total_cancelado = VentaCobro::where("id", "!=", $venta_cobro->id)
             ->where("venta_id", $venta_cobro->venta_id)
             ->sum("monto_total");
+        // Log::debug("monto_total_cancelado - " . $monto_total_cancelado);
+        // Log::debug("venta_cobro->monto_total - " . $venta_cobro->monto_total);
+        // Log::debug("cancelado - " . $cancelado);
         $monto_total_cancelado = (float)$monto_total_cancelado + (float)$venta_cobro->monto_total + $cancelado;
+        // Log::debug($monto_total_cancelado);
         if ((float)$monto_total_cancelado > (float)$venta_cobro->venta->total) {
             throw new Exception("El monto cancelado no puede ser mayor al total de la venta " . $venta_cobro->venta->total);
         }
@@ -241,7 +245,8 @@ class VentaCobroService
         $venta->cancelado_efectivo = (float)$venta->venta_cobros->sum("monto_efectivo");
         $venta->cancelado_qr = (float)$venta->venta_cobros->sum("monto_qr");
         $venta->total_cancelado = (float)$venta->venta_cobros->sum("monto_total");
-        $venta->saldo = (float)$venta->total - (float)$monto_total_cancelado;
+        $venta->saldo = (float)$venta->total - (float)$venta->total_cancelado;
+        // Log::debug("SALDO VENTA - " . $venta->saldo);
         $venta->save();
         if ($venta->saldo < 0) {
             throw new Exception("No se pudo realizar el registro por que el saldo calculado es menor a 0");

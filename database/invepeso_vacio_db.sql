@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 12-11-2026 a las 16:47:02
+-- Tiempo de generación: 12-11-2026 a las 17:18:42
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -147,7 +147,7 @@ CREATE TABLE `ingreso_detalles` (
   `producto_id` bigint UNSIGNED NOT NULL,
   `cantidad` double NOT NULL,
   `verificado` double(8,2) DEFAULT '0.00',
-  `faltantes` int DEFAULT NULL,
+  `faltantes` double(8,2) DEFAULT NULL,
   `repuesto` double(8,2) NOT NULL DEFAULT '0.00',
   `observacion` varchar(900) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cantidad_fisica` double(8,2) DEFAULT NULL,

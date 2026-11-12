@@ -102,7 +102,24 @@ class ProductoSucursalService
         array $orderBy = []
     ): LengthAwarePaginator {
         $productos = Producto::select(
-            'productos.*',
+            'productos.id',
+            'productos.codigo',
+            'productos.nombre',
+            'productos.categoria_id',
+            'productos.marca_id',
+            'productos.unidad_medida_id',
+            'productos.caracteristicas',
+            'productos.calidad',
+            'productos.cobertura',
+            'productos.formato',
+            'productos.precio',
+            'productos.precio2',
+            'productos.precio3',
+            'productos.precio4',
+            'productos.precio_compra',
+            'productos.stock_min',
+            'productos.imagen',
+            'productos.activo',
             DB::raw('COALESCE(SUM(producto_sucursals.stock_actual),0) as stock_total')
 
         )->with(["categoria:id,nombre", "marca:id,nombre"])
