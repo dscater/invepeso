@@ -247,6 +247,7 @@ class ProductoService
             ]);
         }
 
+        Log::debug("INCREMENTAR STOCK");
         $producto->stock_actual = (float)$producto->stock_actual + $cantidad;
         $producto->save();
 

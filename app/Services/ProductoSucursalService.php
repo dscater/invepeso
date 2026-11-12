@@ -668,7 +668,7 @@ class ProductoSucursalService
 
             $codigo = trim((string) ($fila["A"] ?? ""));
 
-            $stock = $fila["L"] ?? null;
+            $stock = $fila["P"] ?? null;
 
             /*
          * Si STOCK está vacío no hacemos nada.
