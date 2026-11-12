@@ -101,76 +101,94 @@ class ProductoSucursalService
         $activo = NULL,
         array $orderBy = []
     ): LengthAwarePaginator {
-        $productos = Producto::select(
-            'productos.id',
-            'productos.codigo',
-            'productos.nombre',
-            'productos.categoria_id',
-            'productos.marca_id',
-            'productos.unidad_medida_id',
-            'productos.caracteristicas',
-            'productos.calidad',
-            'productos.cobertura',
-            'productos.formato',
-            'productos.precio',
-            'productos.precio2',
-            'productos.precio3',
-            'productos.precio4',
-            'productos.precio_compra',
-            'productos.stock_min',
-            'productos.imagen',
-            'productos.activo',
-            DB::raw('COALESCE(SUM(producto_sucursals.stock_actual),0) as stock_total')
-
-        )->with(["categoria:id,nombre", "marca:id,nombre"])
-            ->leftJoin('producto_sucursals', function ($join) use ($almacen_id) {
-                $join->on('productos.id', '=', 'producto_sucursals.producto_id');
-                if (!empty($almacen_id) && $almacen_id != 'todos') {
-                    $join->where('producto_sucursals.almacen_id', $almacen_id);
+        $stockQuery = DB::table('producto_sucursals')
+            ->select(
+                'producto_id',
+                DB::raw('COALESCE(SUM(stock_actual), 0) as stock_total')
+            )
+            ->when(
+                !empty($almacen_id) && $almacen_id !== 'todos',
+                function ($query) use ($almacen_id) {
+                    $query->where('almacen_id', $almacen_id);
                 }
-
-                if (Auth::user()->tipo != 'ADMINISTRACIÓN') {
-                    $join->where("producto_sucursals.sucursal_id", Auth::user()->sucursal_id);
+            )
+            ->when(
+                Auth::user()->tipo !== 'ADMINISTRACIÓN',
+                function ($query) {
+                    $query->where('sucursal_id', Auth::user()->sucursal_id);
                 }
-            });
+            )
+            ->groupBy('producto_id');
 
-        if (!empty($categoria_id) && $categoria_id != 'todos') {
-            // Log::debug("categoria");
+        $productos = Producto::query()
+            ->select(
+                'productos.id',
+                'productos.codigo',
+                'productos.nombre',
+                'productos.categoria_id',
+                'productos.marca_id',
+                'productos.unidad_medida_id',
+                'productos.caracteristicas',
+                'productos.calidad',
+                'productos.cobertura',
+                'productos.formato',
+                'productos.precio',
+                'productos.precio2',
+                'productos.precio3',
+                'productos.precio4',
+                'productos.precio_compra',
+                'productos.stock_min',
+                'productos.imagen',
+                'productos.activo',
+                DB::raw('COALESCE(stock_totales.stock_total, 0) as stock_total')
+            )
+            ->leftJoinSub($stockQuery, 'stock_totales', function ($join) {
+                $join->on('productos.id', '=', 'stock_totales.producto_id');
+            })
+            ->with([
+                'categoria:id,nombre',
+                'marca:id,nombre',
+            ]);
+
+        if (!empty($categoria_id) && $categoria_id !== 'todos') {
             $productos->where('productos.categoria_id', $categoria_id);
         }
 
-        if (!empty($marca_id) && $marca_id != 'todos') {
+        if (!empty($marca_id) && $marca_id !== 'todos') {
             $productos->where('productos.marca_id', $marca_id);
         }
 
         if (!empty(trim($nombreProducto))) {
             $productos->where(function ($query) use ($nombreProducto) {
-                $query->orWhere("productos.nombre", "LIKE", "%$nombreProducto%");
-                $query->orWhere("productos.codigo", "LIKE", "%$nombreProducto%");
+                $query->where('productos.nombre', 'LIKE', "%{$nombreProducto}%")
+                    ->orWhere('productos.codigo', 'LIKE', "%{$nombreProducto}%");
             });
         }
-        if ($activo != NULL) {
-            $productos->where("productos.activo", $activo);
+
+        if ($activo !== null) {
+            $productos->where('productos.activo', $activo);
         }
-        // Búsqueda en múltiples columnas con LIKE
+
         if (!empty($search) && !empty($columnsSerachLike)) {
             $productos->where(function ($query) use ($search, $columnsSerachLike) {
                 foreach ($columnsSerachLike as $col) {
-                    $query->orWhere("$col", "LIKE", "%$search%");
+                    $query->orWhere($col, 'LIKE', "%{$search}%");
                 }
             });
         }
 
-        // Ordenamiento
         foreach ($orderBy as $value) {
             if (isset($value[0], $value[1])) {
-                // $value[0] = 'productos.columna'
                 $productos->orderBy($value[0], $value[1]);
             }
         }
 
-        $productos = $productos->groupBy('productos.id')->paginate($length, ['*'], 'page', $page);
-        return $productos;
+        return $productos->paginate(
+            $length,
+            ['*'],
+            'page',
+            $page
+        );
     }
 
     /**

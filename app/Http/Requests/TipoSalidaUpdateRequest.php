@@ -23,7 +23,7 @@ class TipoSalidaUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nombre" => "required|unique:tipo_ingresos,nombre," . $this->tipo_ingreso->id,
+            "nombre" => "required|unique:tipo_ingresos,nombre," . $this->tipo_salida->id,
             "descripcion" => "nullable",
         ];
     }
