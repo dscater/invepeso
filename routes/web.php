@@ -229,6 +229,8 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("productos/listado", [ProductoController::class, 'listado'])->name("productos.listado");
     Route::get("productos/formato", [ProductoController::class, 'formato'])->name("productos.formato");
     Route::post("productos/cargaProductos", [ProductoController::class, 'cargaProductos'])->name("productos.cargaProductos");
+    Route::get("productos/producto_precios", [ProductoController::class, 'producto_precios'])->name("productos.producto_precios");
+    Route::post("productos/cargarPrecioProductos", [ProductoController::class, 'cargarPrecioProductos'])->name("productos.cargarPrecioProductos");
     Route::resource("productos", ProductoController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );

@@ -18,6 +18,7 @@ use Exception;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -741,6 +742,206 @@ class ProductoService
 
         return count($productos);
     }
+
+    public function cargarPrecioProductos($datos)
+    {
+        $archivo = $datos["archivo"];
+        $extension = '.' . $archivo->getClientOriginalExtension();
+        if ($extension == '.xlsx') {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        } else {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+        }
+        $spreadsheet = $reader->load($archivo);
+
+        $hoja = $spreadsheet->getActiveSheet();
+
+        $filas = $hoja->toArray(null, true, true, true);
+
+        if (empty($filas)) {
+            throw new \Exception("El archivo Excel está vacío.");
+        }
+
+        /*
+        * ============================================================
+        * VALIDAR ENCABEZADOS
+        * ============================================================
+        */
+        $encabezadosEsperados = [
+            "A" => "CÓDIGO*",
+            "B" => "NOMBRE",
+            "C" => "PRECIO 1*",
+            "D" => "PRECIO 2",
+            "E" => "PRECIO 3",
+            "F" => "PRECIO 4",
+        ];
+
+        $encabezados = array_shift($filas);
+
+        foreach ($encabezadosEsperados as $columna => $encabezadoEsperado) {
+
+            $encabezadoActual = trim(
+                strtoupper($encabezados[$columna] ?? "")
+            );
+
+            if ($encabezadoActual !== $encabezadoEsperado) {
+                throw new \Exception(
+                    "El encabezado de la columna {$columna} debe ser '{$encabezadoEsperado}'."
+                );
+            }
+        }
+
+        $productos = [];
+
+        foreach ($filas as $indice => $fila) {
+
+            // Excel empieza en fila 1.
+            // Como quitamos el encabezado, sumamos 2.
+            $filaExcel = $indice + 2;
+
+            /*
+            * Ignorar filas completamente vacías
+            */
+            if (empty(array_filter($fila, fn($valor) => trim((string) $valor) !== ""))) {
+                continue;
+            }
+
+            /*
+            * ========================================================
+            * DATOS
+            * ========================================================
+            */
+
+            $codigo = trim((string) ($fila["A"] ?? ""));
+            $nombre = trim((string) ($fila["B"] ?? ""));
+
+            $precio1 = $fila["C"] ?? null;
+            $precio2 = $fila["D"] ?? null;
+            $precio3 = $fila["E"] ?? null;
+            $precio4 = $fila["F"] ?? null;
+
+            /*
+            * ========================================================
+            * CAMPOS OBLIGATORIOS
+            * ========================================================
+            */
+
+            if ($codigo === "") {
+                throw new \Exception(
+                    "La columna CÓDIGO es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($nombre === "") {
+                throw new \Exception(
+                    "La columna NOMBRE es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            if ($precio1 === null || $precio1 === "") {
+                throw new \Exception(
+                    "La columna PRECIO 1 es obligatoria. Fila: {$filaExcel}"
+                );
+            }
+
+            /*
+            * ========================================================
+            * VALIDAR NÚMEROS
+            * ========================================================
+            */
+
+            $camposNumericos = [
+                "PRECIO 1*" => $precio1,
+                "PRECIO 2" => $precio2,
+                "PRECIO 3" => $precio3,
+                "PRECIO 4" => $precio4,
+            ];
+
+            foreach ($camposNumericos as $campo => $valor) {
+                if (
+                    $valor !== null &&
+                    $valor !== "" &&
+                    !is_numeric($valor)
+                ) {
+                    throw new \Exception(
+                        "El campo {$campo} debe ser numérico. Fila: {$filaExcel}"
+                    );
+                }
+            }
+
+
+            /*
+         * ========================================================
+         * PREPARAR PRODUCTO
+         * ========================================================
+         */
+            $productos[] = [
+                "codigo" => $codigo,
+                "nombre" => $nombre,
+
+                "precio" => $precio1,
+                "precio2" => $precio2 ?: null,
+                "precio3" => $precio3 ?: null,
+                "precio4" => $precio4 ?: null,
+            ];
+        }
+
+        if (!empty($productos)) {
+            $codigosExcel = collect($productos)->pluck('codigo');
+
+            $codigosBD = Producto::whereIn('codigo', $codigosExcel)
+                ->pluck('codigo');
+
+            $noEncontrados = $codigosExcel->diff($codigosBD);
+
+            Log::debug($noEncontrados->values()->toArray());
+
+            // array_chunck divide el array en bloques de 500 en este caso
+            foreach (array_chunk($productos, 500) as $bloque) {
+
+                $case = [
+                    'precio' => 'CASE codigo ',
+                    'precio2' => 'CASE codigo ',
+                    'precio3' => 'CASE codigo ',
+                    'precio4' => 'CASE codigo ',
+                ];
+
+                $codigos = [];
+
+                foreach ($bloque as $producto) {
+
+                    $codigo = DB::getPdo()->quote($producto['codigo']);
+
+                    $codigos[] = $codigo;
+
+                    foreach (['precio', 'precio2', 'precio3', 'precio4'] as $campo) {
+
+                        $valor = $producto[$campo] === null
+                            ? 'NULL'
+                            : (float) $producto[$campo];
+
+                        $case[$campo] .= "WHEN {$codigo} THEN {$valor} ";
+                    }
+                }
+
+                $actualizaciones = [];
+
+                foreach ($case as $campo => $expresion) {
+                    $actualizaciones[] = "{$campo} = {$expresion} ELSE {$campo} END";
+                }
+
+                $sql = "
+        UPDATE productos
+        SET " . implode(', ', $actualizaciones) . "
+        WHERE codigo IN (" . implode(',', $codigos) . ")
+    ";
+
+                DB::statement($sql);
+            }
+        }
+        return count($productos);
+    }
+
     // // cantidad disponible
     // // VERIFICAR EN UNA TABLA DONDE SE GUARDAN MOVIMIENTOS ACTUALES COMO VENTAS
     // // TODO: modificar y aplicar

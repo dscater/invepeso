@@ -152,7 +152,9 @@ onMounted(() => {
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <div class="alert alert-success text-center">
+                        <div
+                            class="alert bgPrimary2 border-primary text-center"
+                        >
                             <a
                                 :href="route('producto_sucursals.formato')"
                                 target="_blank"
@@ -177,7 +179,7 @@ onMounted(() => {
                 </div>
                 <div class="row">
                     <div class="col-6">
-                        <label>Seleccionar Almacén</label>
+                        <label class="required">Seleccionar Almacén</label>
                         <el-select
                             v-model="form.almacen_id"
                             placeholder="Almacén"
@@ -194,8 +196,10 @@ onMounted(() => {
                         </el-select>
                     </div>
                     <div class="col-6">
+                        <label class="required">Cargue el archivo aquí</label>
                         <input
                             type="file"
+                            class="form-control"
                             ref="archivo"
                             @change="cargaArchivo($event, 'archivo')"
                         />

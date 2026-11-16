@@ -66,7 +66,6 @@ const sincronizarMenus = () => {
     }
 
     if (
-        route_current.value == "producto_sucursals.index" ||
         route_current.value == "ingreso_productos.index" ||
         route_current.value == "salida_productos.index" ||
         route_current.value == "ingreso_productos.create" ||
@@ -368,11 +367,19 @@ onUnmounted(() => {
                             ></ItemMenu>
                         </ul>
                     </li>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('producto_sucursals.index')
+                        "
+                        :label="'Stock de Inventario'"
+                        :ruta="'producto_sucursals.index'"
+                        :icon="'fa fa-tags'"
+                    ></ItemMenu>
                     <li
                         class="nav-item"
                         v-if="
                             permisos == '*' ||
-                            permisos.includes('producto_sucursals.index') ||
                             permisos.includes('ingreso_productos.index') ||
                             permisos.includes('ingreso_productos.create') ||
                             permisos.includes(
@@ -397,7 +404,6 @@ onUnmounted(() => {
                             href="#"
                             class="nav-link"
                             :class="[
-                                route_current == 'producto_sucursals.index' ||
                                 route_current == 'ingreso_productos.index' ||
                                 route_current == 'ingreso_productos.create' ||
                                 route_current ==
@@ -491,17 +497,6 @@ onUnmounted(() => {
                                 ]"
                                 :label="'Traspasos de Productos'"
                                 :ruta="'traspasos.index'"
-                                :icon="'fa fa-angle-right'"
-                            ></ItemMenu>
-                            <ItemMenu
-                                v-if="
-                                    permisos == '*' ||
-                                    permisos.includes(
-                                        'producto_sucursals.index',
-                                    )
-                                "
-                                :label="'Stock de Inventario'"
-                                :ruta="'producto_sucursals.index'"
                                 :icon="'fa fa-angle-right'"
                             ></ItemMenu>
                             <ItemMenu

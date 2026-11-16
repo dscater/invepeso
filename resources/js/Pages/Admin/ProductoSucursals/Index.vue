@@ -4,6 +4,7 @@ import { Head, Link, usePage } from "@inertiajs/vue3";
 import { ref, onBeforeMount, onBeforeUnmount } from "vue";
 import FormularioCarga from "./FormularioCarga.vue";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
+import FormularioPrecios from "../Productos/FormularioPrecios.vue";
 
 const { props: props_page } = usePage();
 
@@ -23,6 +24,7 @@ const props = defineProps({
 });
 
 const muestra_formulario_carga = ref(false);
+const muestra_formulario_precios = ref(false);
 const listProductoSucursals = ref([]);
 const loadingLista = ref(false);
 const almacen_id = ref("todos");
@@ -59,6 +61,7 @@ const cargarProductos = async () => {
     } finally {
         loadingLista.value = false;
         muestra_formulario_carga.value = false;
+        muestra_formulario_precios.value = false;
     }
 };
 
@@ -93,7 +96,7 @@ onBeforeUnmount(() => {
             <div class="row">
                 <div class="col-sm-6">
                     <h3 class="m-0">
-                        <i class="fa fa-boxes"></i> Stock de Inventario
+                        <i class="fa fa-tags"></i> Stock de Inventario
                     </h3>
                 </div>
                 <!-- /.col -->
@@ -129,12 +132,25 @@ onBeforeUnmount(() => {
                             <i class="fa fa-upload"></i> Cargar Stock de
                             Productos
                         </button>
+                        <button
+                            v-if="
+                                props_page.auth?.user.permisos == '*' ||
+                                props_page.auth?.user.permisos.includes(
+                                    'productos.edit',
+                                )
+                            "
+                            type="button"
+                            class="btn btn-info text-sm ms-1"
+                            @click="muestra_formulario_precios = true"
+                        >
+                            <i class="fa fa-tags"></i> Actualización de Precios
+                        </button>
                     </div>
                 </div>
                 <div class="row mt-2">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-body py-2 bg-dark text-white">
+                            <div class="card-body py-2 bg1 text-white">
                                 <div class="row">
                                     <div class="col-12 fs-7">Filtrar por:</div>
                                     <div class="col-12">
@@ -144,7 +160,7 @@ onBeforeUnmount(() => {
                                             >
                                                 <div class="input-group">
                                                     <button
-                                                        class="btn btn-light bg2 text-white border-0"
+                                                        class="btn btn-primary bg2 text-white border-0"
                                                         type="button"
                                                         @click="cargarProductos"
                                                         title="Actualizar"
@@ -189,6 +205,7 @@ onBeforeUnmount(() => {
                                                     v-model="categoria_id"
                                                     no-data-text="Sin Datos"
                                                     no-match-text="Sin Resultados"
+                                                    size="large"
                                                     filterable
                                                     @change="
                                                         detectarCambioSelect
@@ -213,6 +230,7 @@ onBeforeUnmount(() => {
                                                     v-model="marca_id"
                                                     no-data-text="Sin Datos"
                                                     no-match-text="Sin Resultados"
+                                                    size="large"
                                                     filterable
                                                     @change="
                                                         detectarCambioSelect
@@ -363,6 +381,14 @@ onBeforeUnmount(() => {
             @envio-formulario="cargarProductos"
             @cerrar-formulario="muestra_formulario_carga = false"
         ></FormularioCarga>
+
+        <FormularioPrecios
+            v-if="muestra_formulario_precios"
+            :muestra_formulario="muestra_formulario_precios"
+            :redirect_ruta="'producto_sucursals.index'"
+            @envio-formulario="cargarProductos"
+            @cerrar-formulario="muestra_formulario_precios = false"
+        ></FormularioPrecios>
     </Content>
 </template>
 <style scoped></style>

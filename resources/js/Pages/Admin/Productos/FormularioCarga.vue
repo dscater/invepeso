@@ -144,7 +144,9 @@ onMounted(() => {
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <div class="alert alert-success text-center">
+                        <div
+                            class="alert bgPrimary2 border-primary text-center"
+                        >
                             <a
                                 :href="route('productos.formato')"
                                 target="_blank"
@@ -156,8 +158,10 @@ onMounted(() => {
                 </div>
                 <div class="row">
                     <div class="col-12">
+                        <label class="required">Cargue el archivo aquí</label>
                         <input
                             type="file"
+                            class="form-control"
                             ref="archivo"
                             @change="cargaArchivo($event, 'archivo')"
                         />

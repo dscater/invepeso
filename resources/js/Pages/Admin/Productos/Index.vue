@@ -8,6 +8,7 @@ import { useAxios } from "@/composables/axios/useAxios";
 import { ref } from "vue";
 import Formulario from "./Formulario.vue";
 import FormularioCarga from "./FormularioCarga.vue";
+import FormularioPrecios from "./FormularioPrecios.vue";
 const { props: props_page } = usePage();
 
 const { setProducto, limpiarProducto, form } = useProductos();
@@ -105,6 +106,7 @@ const multiSearch = ref({
 
 const muestra_formulario = ref(false);
 const muestra_formulario_carga = ref(false);
+const muestra_formulario_precios = ref(false);
 
 const agregarRegistro = () => {
     limpiarProducto();
@@ -117,6 +119,7 @@ const updateDatatable = async () => {
         limpiarProducto();
         muestra_formulario.value = false;
         muestra_formulario_carga.value = false;
+        muestra_formulario_precios.value = false;
     }
 };
 
@@ -184,7 +187,7 @@ function tablaConError() {
         <div class="row">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <button
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
@@ -211,8 +214,21 @@ function tablaConError() {
                         >
                             <i class="fa fa-upload"></i> Cargar Productos
                         </button>
+                        <button
+                            v-if="
+                                props_page.auth?.user.permisos == '*' ||
+                                props_page.auth?.user.permisos.includes(
+                                    'productos.edit',
+                                )
+                            "
+                            type="button"
+                            class="btn btn-info text-sm ms-1"
+                            @click="muestra_formulario_precios = true"
+                        >
+                            <i class="fa fa-tags"></i> Actualización de Precios
+                        </button>
                     </div>
-                    <div class="col-md-8 my-1">
+                    <div class="col-md-6 my-1">
                         <div class="row justify-content-end">
                             <div class="col-md-5">
                                 <div class="input-group">
@@ -273,16 +289,36 @@ function tablaConError() {
                             @load-error="tablaConError"
                         >
                             <template #precio="{ item }">
-                                <div class="fw-bold">Bs. {{ item.precio }}</div>
-                                <div class="fw-bolder" v-if="item.precio2">
-                                    Bs. {{ item.precio2 }}
+                                <div class="fw-bolder w-100">
+                                    <i class="fa fa-tag fa-sm"></i> Bs.
+                                    {{ item.precio }}
                                 </div>
-                                <div class="fw-bolder" v-if="item.precio3">
-                                    Bs. {{ item.precio3 }}
+                                <div
+                                    class="fw-bolder w-100"
+                                    v-if="item.precio2"
+                                >
+                                    <i class="fa fa-tag fa-sm"></i> Bs.
+                                    {{ item.precio2 }}
                                 </div>
-                                <div class="fw-bolder" v-if="item.precio4">
-                                    Bs. {{ item.precio4 }}
+                                <div
+                                    class="fw-bolder w-100"
+                                    v-if="item.precio3"
+                                >
+                                    <i class="fa fa-tag fa-sm"></i> Bs.
+                                    {{ item.precio3 }}
                                 </div>
+                                <div
+                                    class="fw-bolder w-100"
+                                    v-if="item.precio4"
+                                >
+                                    <i class="fa fa-tag fa-sm"></i> Bs.
+                                    {{ item.precio4 }}
+                                </div>
+                            </template>
+                            <template #precio_compra="{ item }">
+                                <span class="text-xs"
+                                    >Bs. {{ item.precio_compra }}</span
+                                >
                             </template>
                             <template #activo="{ item }">
                                 <span
@@ -373,5 +409,11 @@ function tablaConError() {
             @envio-formulario="updateDatatable"
             @cerrar-formulario="muestra_formulario_carga = false"
         ></FormularioCarga>
+        <FormularioPrecios
+            v-if="muestra_formulario_precios"
+            :muestra_formulario="muestra_formulario_precios"
+            @envio-formulario="updateDatatable"
+            @cerrar-formulario="muestra_formulario_precios = false"
+        ></FormularioPrecios>
     </Content>
 </template>
