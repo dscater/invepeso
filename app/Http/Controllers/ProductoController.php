@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ActualizarPreciosRequest;
 use App\Http\Requests\ProductoStoreRequest;
 use App\Http\Requests\ProductoUpdateRequest;
 use App\Models\Producto;
@@ -36,6 +37,11 @@ class ProductoController extends Controller
         return Inertia::render("Admin/Productos/Index");
     }
 
+    public function actualizacionPrecios()
+    {
+        return Inertia::render("Admin/Productos/ActualizacionPrecios");
+    }
+
     /**
      * Listado de productos sin ids: 1 y 2
      *
@@ -46,6 +52,34 @@ class ProductoController extends Controller
         return response()->JSON([
             "productos" => $this->productoService->listado($request->input("activo", null))
         ]);
+    }
+
+    public function buscar(Request $request)
+    {
+        $request->validate([
+            'q' => ['required', 'string', 'min:2', 'max:100'],
+        ]);
+
+        $busqueda = trim($request->input('q'));
+
+        return Producto::query()
+            ->select([
+                'id',
+                'nombre',
+                'codigo',
+                'precio',
+                'precio2',
+                'precio3',
+                'precio4',
+            ])
+            ->where('activo', 1)
+            ->where(function ($query) use ($busqueda) {
+                $query->where('nombre', 'like', "%{$busqueda}%")
+                    ->orWhere('codigo', 'like', "%{$busqueda}%");
+            })
+            ->orderBy('nombre')
+            ->limit(20)
+            ->get();
     }
 
     public function paginado(Request $request)
@@ -118,6 +152,33 @@ class ProductoController extends Controller
             $this->productoService->actualizar($request->validated(), $producto);
             DB::commit();
             return redirect()->route("productos.index")->with("bien", "Registro actualizado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log::debug($e->getMessage());
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+
+    public function actualizarPrecios(ActualizarPreciosRequest $request)
+    {
+        $datos = $request->validated();
+        DB::beginTransaction();
+        try {
+            // actualizar producto
+            $res = $this->productoService->actualizarPrecios($datos);
+            DB::commit();
+            if ($request->ajax()) {
+                return response()->JSON([
+                    "sw" => $res["success"],
+                    "message" => "Registros actualizados: " . $res["total_productos"],
+                    "total" => $res["total_productos"],
+                    "registro_id" => $res["registro_id"],
+                ]);
+            }
+            return redirect()->route("productos.actualizacionPrecios")->with("bien", "Registros actualizados");
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 12-11-2026 a las 17:18:18
+-- Tiempo de generación: 18-11-2026 a las 13:40:47
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -20921,6 +20921,22 @@ INSERT INTO `productos` (`id`, `codigo`, `nombre`, `categoria_id`, `marca_id`, `
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `producto_precios`
+--
+
+CREATE TABLE `producto_precios` (
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
+  `total_productos` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `producto_sucursals`
 --
 
@@ -21691,6 +21707,13 @@ ALTER TABLE `productos`
   ADD KEY `productos_unidad_medida_id_foreign` (`unidad_medida_id`);
 
 --
+-- Indices de la tabla `producto_precios`
+--
+ALTER TABLE `producto_precios`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `producto_precios_user_id_foreign` (`user_id`);
+
+--
 -- Indices de la tabla `producto_sucursals`
 --
 ALTER TABLE `producto_sucursals`
@@ -21987,6 +22010,12 @@ ALTER TABLE `productos`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10007;
 
 --
+-- AUTO_INCREMENT de la tabla `producto_precios`
+--
+ALTER TABLE `producto_precios`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `producto_sucursals`
 --
 ALTER TABLE `producto_sucursals`
@@ -22207,6 +22236,12 @@ ALTER TABLE `productos`
   ADD CONSTRAINT `productos_categoria_id_foreign` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`),
   ADD CONSTRAINT `productos_marca_id_foreign` FOREIGN KEY (`marca_id`) REFERENCES `marcas` (`id`),
   ADD CONSTRAINT `productos_unidad_medida_id_foreign` FOREIGN KEY (`unidad_medida_id`) REFERENCES `unidad_medidas` (`id`);
+
+--
+-- Filtros para la tabla `producto_precios`
+--
+ALTER TABLE `producto_precios`
+  ADD CONSTRAINT `producto_precios_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Filtros para la tabla `producto_sucursals`

@@ -289,6 +289,13 @@ class ModuloTableSeeder extends Seeder
             "descripcion" => "ELIMINAR PRODUCTOS"
         ]);
 
+        Modulo::create([
+            "modulo" => "Gestión de productos",
+            "nombre" => "productos.actualizacionPrecios",
+            "accion" => "EDITAR",
+            "descripcion" => "ACTUALIZAR PRECIOS DE PRODUCTOS"
+        ]);
+
         // CLIENTES
         Modulo::create([
             "modulo" => "Gestión de clientes",

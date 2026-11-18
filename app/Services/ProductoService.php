@@ -7,6 +7,7 @@ use App\Models\IngresoDetalle;
 use App\Models\Marca;
 use App\Services\HistorialAccionService;
 use App\Models\Producto;
+use App\Models\ProductoPrecio;
 use App\Models\ProductoSucursal;
 use App\Models\SalidaProducto;
 use App\Models\UnidadMedida;
@@ -970,4 +971,123 @@ class ProductoService
 
     //     return [$disponible, $stock_disponible];
     // }
+
+    public function actualizarPrecios($datos)
+    {
+        $porcentajeMonto = $datos["porcentajeMonto"]; // porcentaje | monto
+        $filtro = $datos["filtro"];                   // todos | solo | excepto
+        $producto_ids = $datos["producto_ids"] ?? [];
+        $valor = (float) $datos["valor"];
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDAR DATOS
+        |--------------------------------------------------------------------------
+        */
+
+        if (!in_array($porcentajeMonto, ['porcentaje', 'monto'])) {
+            throw new \Exception("Tipo de actualización inválido.");
+        }
+
+        if (!in_array($filtro, ['todos', 'solo', 'excepto'])) {
+            throw new \Exception("Filtro de productos inválido.");
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONSULTA BASE
+        |--------------------------------------------------------------------------
+        */
+
+        $query = Producto::query()
+            ->where('activo', 1);
+
+        /*
+        |--------------------------------------------------------------------------
+        | APLICAR FILTROS
+        |--------------------------------------------------------------------------
+        */
+
+        if ($filtro === 'solo') {
+            $query->whereIn('id', $producto_ids);
+        }
+
+        if ($filtro === 'excepto') {
+            $query->whereNotIn('id', $producto_ids);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONTAR PRODUCTOS AFECTADOS
+        |--------------------------------------------------------------------------
+        */
+
+        $totalProductos = (clone $query)->count();
+
+        if ($totalProductos === 0) {
+            throw new \Exception("No existen productos para actualizar.");
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONSTRUIR EXPRESIÓN DE ACTUALIZACIÓN
+        |--------------------------------------------------------------------------
+        */
+
+        $valorSQL = sprintf('%.8F', $valor);
+
+        $campos = [
+            'precio',
+            'precio2',
+            'precio3',
+            'precio4',
+        ];
+
+        $actualizaciones = [];
+
+        foreach ($campos as $campo) {
+
+            if ($porcentajeMonto === 'porcentaje') {
+
+                $actualizaciones[$campo] = DB::raw(
+                    "ROUND({$campo} * (1 + ({$valorSQL} / 100)), 2)"
+                );
+            } else {
+                $actualizaciones[$campo] = DB::raw(
+                    "ROUND({$campo} + ({$valorSQL}), 2)"
+                );
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | ACTUALIZAR PRODUCTOS
+        |--------------------------------------------------------------------------
+        */
+
+        $query->update($actualizaciones);
+
+        /*
+        |--------------------------------------------------------------------------
+        | REGISTRAR HISTORIAL
+        |--------------------------------------------------------------------------
+        */
+        $ahora = now();
+
+        $registro = ProductoPrecio::create([
+            'user_id' => auth()->id(),
+            'fecha' => $ahora->toDateString(),
+            'hora' => $ahora->format('H:i:s'),
+            'total_productos' => $totalProductos,
+        ]);
+
+        // registrar accion
+        $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ PRECIOS DE PRODUCTOS", $registro);
+
+        return [
+            'success' => true,
+            'total_productos' => $totalProductos,
+            'registro_id' => $registro->id,
+        ];
+    }
 }

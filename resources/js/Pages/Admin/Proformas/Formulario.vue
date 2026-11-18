@@ -281,7 +281,7 @@ const buscarClientes = (texto) => {
         cargandoClientes.value = true;
 
         try {
-            const response = await axios.get("/admin/clientes/buscar", {
+            const response = await axios.get(route("clientes.buscar"), {
                 params: { q: busqueda },
             });
 
@@ -703,6 +703,12 @@ onMounted(() => {
                     <div class="card-header">
                         <div class="col-12">
                             <h4 class="card-title text-center w-100">
+                                <a
+                                    href="#"
+                                    @click.prevent="cargarProductos"
+                                    class="float-end text-xs"
+                                    ><i class="fa fa-sync"></i> Actualizar</a
+                                >
                                 <i class="fa fa-truck-loading"></i> Agregar
                                 Productos
                             </h4>

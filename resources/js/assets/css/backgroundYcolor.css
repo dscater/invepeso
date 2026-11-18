@@ -74,6 +74,22 @@ table .bg-principal,
     background-color: var(--bgPrimary2);
 }
 
+.bgInfo {
+    background-color: var(--bgInfo);
+}
+
+.bgInfo2 {
+    background-color: var(--bgInfo2);
+}
+
+.bgWarning {
+    background-color: var(--bgWarning);
+}
+
+.bgWarning2 {
+    background-color: var(--bgWarning2);
+}
+
 .bgActivo {
     background-color: var(--bgActivo);
 }

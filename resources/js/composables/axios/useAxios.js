@@ -20,8 +20,8 @@ export const useAxios = () => {
                     flash.error
                         ? flash.error
                         : err.response?.data
-                        ? err.response?.data?.message
-                        : "Ocurrió un error inesperado y no se pudieron obtener los registros"
+                          ? err.response?.data?.message
+                          : "Ocurrió un error inesperado y no se pudieron obtener los registros"
                 }`,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: `Aceptar`,
@@ -47,8 +47,8 @@ export const useAxios = () => {
                     flash.bien
                         ? flash.bien
                         : response.data.message
-                        ? response.data.message
-                        : "Proceso realizado"
+                          ? response.data.message
+                          : "Proceso realizado"
                 }`,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: `Aceptar`,
@@ -97,7 +97,13 @@ export const useAxios = () => {
             Swal.fire({
                 icon: "success",
                 title: "Correcto",
-                text: `${flash.bien ? flash.bien : "Proceso realizado"}`,
+                html: `${
+                    flash.bien
+                        ? flash.bien
+                        : response.data.message
+                          ? response.data.message
+                          : "Proceso realizado"
+                }`,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: `Aceptar`,
             });
@@ -159,8 +165,8 @@ export const useAxios = () => {
                     flash.error
                         ? flash.error
                         : err.response?.data
-                        ? err.response?.data?.message
-                        : "Ocurrió un error inesperado, no se pudo ejecutar la función"
+                          ? err.response?.data?.message
+                          : "Ocurrió un error inesperado, no se pudo ejecutar la función"
                 }`,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: `Aceptar`,

@@ -203,6 +203,9 @@ onUnmounted(() => {
                             permisos.includes('ventas.index') ||
                             permisos.includes('ventas.create') ||
                             permisos.includes('producto_sucursals.index') ||
+                            permisos.includes(
+                                'productos.actualizacionPrecios',
+                            ) ||
                             permisos.includes('ingreso_productos.index') ||
                             permisos.includes('ingreso_productos.create') ||
                             permisos.includes('salida_productos.index') ||
@@ -367,6 +370,15 @@ onUnmounted(() => {
                             ></ItemMenu>
                         </ul>
                     </li>
+                    <ItemMenu
+                        v-if="
+                            permisos == '*' ||
+                            permisos.includes('productos.actualizacionPrecios')
+                        "
+                        :label="'Actualización de precios'"
+                        :ruta="'productos.actualizacionPrecios'"
+                        :icon="'fa fa-sync'"
+                    ></ItemMenu>
                     <ItemMenu
                         v-if="
                             permisos == '*' ||
