@@ -417,46 +417,46 @@ const agregarProductoVenta = async (item) => {
             (elem) => elem.producto_id == producto.id,
         );
         // console.log(indexExiste);
-        if (indexExiste < 0) {
-            // no existe
-            form.venta_detalles.push({
-                id: 0,
-                venta_id: "",
-                producto: producto,
-                producto_id: producto.id,
-                cantidad: cantidad,
-                precio: precio,
-                descuento_uni: 0,
-                porcen_du: 0,
-                descuento_total: 0,
-                porcen_dt: 0,
-                precio_final: precio,
-                total: subtotal.toFixed(2),
-                total_uni: subtotal.toFixed(2),
-            });
-        } else {
-            // existe
-            const cantidadFila = form.venta_detalles[indexExiste].cantidad;
-            const nuevaCantidad =
-                parseFloat(cantidad) + parseFloat(cantidadFila);
-            const total_uni =
-                nuevaCantidad *
-                (precio -
-                    parseFloat(form.venta_detalles[indexExiste].descuento_uni));
-            const total =
-                nuevaCantidad *
-                (precio -
-                    (parseFloat(
-                        form.venta_detalles[indexExiste].descuento_uni,
-                    ) +
-                        parseFloat(
-                            form.venta_detalles[indexExiste].descuento_total,
-                        )));
+        // if (indexExiste < 0) {
+        // no existe
+        form.venta_detalles.push({
+            id: 0,
+            venta_id: "",
+            producto: producto,
+            producto_id: producto.id,
+            cantidad: cantidad,
+            precio: precio,
+            descuento_uni: 0,
+            porcen_du: 0,
+            descuento_total: 0,
+            porcen_dt: 0,
+            precio_final: precio,
+            total: subtotal.toFixed(2),
+            total_uni: subtotal.toFixed(2),
+        });
+        // } else {
+        //     // existe
+        //     const cantidadFila = form.venta_detalles[indexExiste].cantidad;
+        //     const nuevaCantidad =
+        //         parseFloat(cantidad) + parseFloat(cantidadFila);
+        //     const total_uni =
+        //         nuevaCantidad *
+        //         (precio -
+        //             parseFloat(form.venta_detalles[indexExiste].descuento_uni));
+        //     const total =
+        //         nuevaCantidad *
+        //         (precio -
+        //             (parseFloat(
+        //                 form.venta_detalles[indexExiste].descuento_uni,
+        //             ) +
+        //                 parseFloat(
+        //                     form.venta_detalles[indexExiste].descuento_total,
+        //                 )));
 
-            form.venta_detalles[indexExiste].cantidad = nuevaCantidad;
-            form.venta_detalles[indexExiste].total = total.toFixed(2);
-            form.venta_detalles[indexExiste].total_uni = total_uni.toFixed(2);
-        }
+        //     form.venta_detalles[indexExiste].cantidad = nuevaCantidad;
+        //     form.venta_detalles[indexExiste].total = total.toFixed(2);
+        //     form.venta_detalles[indexExiste].total_uni = total_uni.toFixed(2);
+        // }
         // console.log(item);
         item.cantidad = 1;
         toast.success("Producto Agregado!!!", {
@@ -1033,6 +1033,26 @@ onMounted(() => {
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="required">Fecha</label>
+                                        <input
+                                            type="date"
+                                            class="form-control"
+                                            v-model="form.fecha"
+                                        />
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="required">Hora</label>
+                                        <input
+                                            type="time"
+                                            class="form-control"
+                                            v-model="form.hora"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-12 mt-2">
                                 <label class="required">Cliente</label>
                                 <div class="input-group">

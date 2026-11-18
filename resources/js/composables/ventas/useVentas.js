@@ -1,6 +1,6 @@
 import { useForm } from "@inertiajs/vue3";
 import { onMounted, ref } from "vue";
-
+import { useDate } from "../useDate";
 export const useVentas = () => {
     const initialState = {
         id: 0,
@@ -20,8 +20,8 @@ export const useVentas = () => {
         cancelado_qr: 0,
         total_cancelado: 0,
         saldo: "",
-        fecha: "",
-        hora: "",
+        fecha: useDate().getFechaActual(),
+        hora: useDate().getHoraActual(),
         fecha_registro: "",
         status: "",
         user_id: "",

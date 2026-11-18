@@ -215,8 +215,8 @@ class VentaService
             "cancelado_qr" => $datos["cancelado_qr"],
             "total_cancelado" => $total_cancelado,
             "saldo" => $datos["saldo"],
-            "fecha" => date("Y-m-d"),
-            "hora" => date("H:i:s"),
+            "fecha" => $datos["fecha"] ?? date("Y-m-d"),
+            "hora" => $datos["hora"] ?? date("H:i:s"),
             "fecha_registro" => date("Y-m-d"),
             "user_id" => Auth::user()->id
         ]);
@@ -340,7 +340,8 @@ class VentaService
             }
         }
 
-        $venta->update([
+
+        $datos_update = [
             "sucursal_id" => $almacen->sucursal_id,
             "almacen_id" => $almacen->id,
             "cliente_id" => $cliente->id,
@@ -356,7 +357,17 @@ class VentaService
             "cancelado_qr" => $datos["cancelado_qr"],
             "total_cancelado" => $total_cancelado,
             "saldo" => $datos["saldo"],
-        ]);
+            "fecha" => $datos["fecha"] ?? date("Y-m-d"),
+            "hora" => $datos["hora"] ?? date("H:i:s"),
+        ];
+        if ($datos["fecha"]) {
+            $datos_update["fecha"] = $datos["fecha"];
+        }
+        if ($datos["hora"]) {
+            $datos_update["hora"] = $datos["hora"];
+        }
+
+        $venta->update($datos_update);
 
         foreach ($datos["venta_detalles"] as $item) {
             $datos_venta_detalle = [

@@ -26,6 +26,8 @@ class VentaUpdateRequest extends FormRequest
         $rules = [
             "almacen_id" => "required",
             "cliente_id" => "required",
+            "fecha" => "required|date",
+            "hora" => "required",
             "tipo_venta" => "required",
             "tipo_documento_id" => "nullable",
             "descripcion" => "nullable",
@@ -52,6 +54,9 @@ class VentaUpdateRequest extends FormRequest
         return [
             "almacen_id.required" => "Debes indicar el almacén",
             "cliente_id.required" => "Debes seleccionar el cliente",
+            "fecha.required" => "Debes indicar la fecha de la venta",
+            "fecha.date" => "Debes indicar una fecha valida",
+            "hora.required" => "Debes indicar la hora de la venta",
             "tipo_venta.required" => "Debes seleccionar el tipo de venta",
             "tipo_documento_id.required" => "Debes seleccionar el tipo de documento",
             "descripcion.required" => "Debes completar este campo",

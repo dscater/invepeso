@@ -15,7 +15,8 @@ const { auth } = usePage().props;
 
 let inactivityTimer = null;
 // const INACTIVITY_LIMIT = 60 * 1000; // 1 minuto en ms
-let INACTIVITY_LIMIT = 60 * 5000; // 5 minuto en ms
+// let INACTIVITY_LIMIT = 60 * 5000; // 5 minuto en ms
+let INACTIVITY_LIMIT = 60 * 60000; // 60 minutos en ms
 
 // Resetear temporizador
 const resetTimer = () => {
